@@ -13,9 +13,11 @@ import Link from "next/link"
 import { account } from "@/lib/appwrite"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
+import { useToast } from "@/hooks/use-toast"
 
 export function LoginForm() {
   const router = useRouter()
+  const { toast } = useToast()
 
   const form = useForm({
     defaultValues: {
@@ -25,7 +27,6 @@ export function LoginForm() {
   })
 
   async function onSubmit(values: { email: string, password: string }) {
-    console.log(values)
     try {
       const promise = await account.createEmailPasswordSession(values.email, values.password)
 
@@ -33,6 +34,11 @@ export function LoginForm() {
 
       router.push('/dashboard')
     } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: "Falha no login",
+        description: "Email ou senha incorretos",
+      })
       console.error("Erro ao logar: ", error)
     }
   }
