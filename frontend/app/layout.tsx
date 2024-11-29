@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster"
 import { Roboto } from 'next/font/google';
 import "./globals.css";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 const roboto = Roboto({
   subsets: ['latin'], // Escolha o conjunto de caracteres necessário
@@ -24,7 +26,9 @@ export default function RootLayout({
       <body
         className={`${roboto.className} antialiased min-h-screen bg-white`}
       >
+        <Header />
         {children}
+        <Footer />
         <Toaster />
       </body>
     </html>

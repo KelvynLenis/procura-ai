@@ -1,6 +1,7 @@
 import landingBackground from '../assets/images/landing-bg.png'
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import Link from 'next/link';
 
 export function Hero() {
   return (
@@ -20,7 +21,9 @@ export function Hero() {
           Faça o bloqueio, notificação e <br />
           rastreamento do aparelho aqui
         </span>
-        <Button className="bg-primary text-white rounded-full text-3xl px-8 py-7 shadow-md shadow-zinc-800 hover:bg-white hover:text-primary">Comece agora</Button>
+        <Link href={'/login'}>
+          <Button className="bg-primary text-white rounded-full text-3xl px-8 py-7 shadow-md shadow-zinc-800 hover:bg-white hover:text-primary">Comece agora</Button>
+        </Link>
       </div>
     </section>
   )

@@ -80,17 +80,17 @@ export function Board() {
   }
 
   return (
-    <>
+    <main className="py-10">
       <div className="absolute flex flex-row-reverse gap-3 right-5 top-4 w-full">
         <button onClick={logout} className="h-10 px-2 bg-red-500 text-white rounded-md  hover:bg-red-600 drop-shadow-md">Log Out</button>
         <button className="h-10 px-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 drop-shadow-md">Mapa de ocorrências</button>
         <NotificationButton />
       </div>
-      <div className="w-full h-full flex justify-between">
+      <div className="w-full h-full flex justify-around px-4">
         <div className="w-1/3">
           <AddDeviceForm setDevices={setDevices} />
         </div>
-        <div className="bg-zinc-500 w-3/5 h-[580px] rounded-md flex flex-col gap-2 overflow-y-scroll">
+        <div className="bg-zinc-500 w-3/5 h-[580px] rounded-md flex flex-col gap-2">
           {
             devices.map((device) => (
               <div key={device.$id} className="flex flex-row gap-2 p-2 bg-slate-700 rounded-lg justify-between">
@@ -115,6 +115,6 @@ export function Board() {
           }
         </div>
       </div>
-    </>
+    </main>
   )
 }

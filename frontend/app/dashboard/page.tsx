@@ -7,7 +7,6 @@ export default async function Dashboard() {
   return (
     <>
       <ProtectedRoute>
-        <h1>Dashboard</h1>
         <Board />
       </ProtectedRoute>
     </>

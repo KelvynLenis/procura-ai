@@ -14,6 +14,9 @@ import { account } from "@/lib/appwrite"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { useToast } from "@/hooks/use-toast"
+import logo from '../assets/icons/procura-ai-logo-header.svg'
+import Image from "next/image"
+import { Button } from "./ui/button"
 
 export function LoginForm() {
   const router = useRouter()
@@ -61,16 +64,18 @@ export function LoginForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 bg-white items-center p-5 rounded-md">
-        <h1 className="text-2xl text-zinc-700">Faça login</h1>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-[400px] h-fit flex flex-col gap-4 bg-white items-center px-10 py-5 rounded-xl shadow-form">
+        <Image src={logo} alt="logo" width={200} height={100} />
+        <h3 className="text-center">Para acessar o Procura.Aí faça login  abaixo:</h3>
+
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="text-zinc-700">Email</FormLabel>
+            <FormItem className="flex flex-col w-full">
+              <FormLabel className="text-zinc-700 ml-4 font-bold">Usuário</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="Email" {...field} className="bg-zinc-100" />
+                <Input type="text" placeholder="Email" {...field} />
               </FormControl>
             </FormItem>
           )}
@@ -80,20 +85,30 @@ export function LoginForm() {
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="text-zinc-700">Senha</FormLabel>
+            <FormItem className="flex flex-col w-full">
+              <FormLabel className="text-zinc-700 ml-4 font-bold">Senha</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Senha" {...field} className="bg-zinc-100" />
+                <Input type="password" placeholder="Senha" {...field} />
               </FormControl>
             </FormItem>
           )}
         />
+        <Link href="/forgot-password" className="underline self-start hover:opacity-50 text-sm">Esqueceu sua senha?</Link>
 
-        <button type="submit" className="w-72 h-10 self-center text-zinc-100 bg-green-400 rounded-md hover:opacity-60">Entrar</button>
+        <Button className="bg-primary text-white rounded-full text-lg px-12 py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">Entrar</Button>
 
-        <span>
-          Não tem uma conta? <Link href="/register" className="text-blue-400 hover:opacity-50">Cadastre-se</Link>
-        </span>
+        <span className="w-full h-[1px] rounded-full bg-secondary" />
+
+        <div className="w-full flex flex-col gap-3">
+          <span className="font-bold self-center">
+            Se preferir, acesse pela conta Gov.br
+          </span>
+          <Button className="bg-secondary text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gob.br</Button>
+          <span className="font-bold self-center">
+            Não possui conta?
+          </span>
+          <Button className="bg-secondary w-full text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Cadastre-se</Button>
+        </div>
       </form>
     </Form>
   )
