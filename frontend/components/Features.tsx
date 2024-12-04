@@ -12,19 +12,19 @@ import dollar from '../assets/icons/dollar.svg'
 export function Features() {
 
   return (
-    <section className="w-full h-screen relative flex flex-col items-center justify-center">
+    <section className="w-full h-screen relative flex flex-col items-center justify-center px-4">
       <Image src={shapesLeft} alt="formas esquerda" className="absolute -top-14 left-0 z-0" />
       <Image src={shapesRight} alt="formas direita" className="absolute -bottom-1/4 right-0 z-0" />
 
-      <div className="flex gap-10 z-10">
-        <div className="flex justify-center items-center">
-          <div className="flex flex-col w-[390px]">
-            <Image src={arrow} alt="arrow" />
-            <span className="text-3xl font-medium">Veja a que é possível fazer através do Procura.Aí</span>
+      <div className="flex md:flex-row flex-col lg:gap-10 z-10 gap-5 md:px-10">
+        <div className="md:flex justify-center items-center hidden">
+          <div className="flex flex-col lg:w-[390px]">
+            <Image src={arrow} alt="arrow" className="rotate-90 md:rotate-0" />
+            <span className="lg:text-4xl text-2xl font-medium">Veja a que é possível fazer através do Procura.Aí</span>
           </div>
         </div>
 
-        <div className="w-[500px] h-[400px] bg-primary/5 border border-primary rounded-xl mb-20">
+        <div className="w-full lg:w-[500px] xl:h-[400px] bg-primary/5 border border-primary rounded-xl mb-10 lg:mb-20">
           <ul className="font-medium text-lg flex flex-col items-center h-full pt-5">
             <li className="flex items-center w-full">
               <Image src={block} alt="celular cortado" height={90} />
@@ -46,8 +46,8 @@ export function Features() {
         </div>
       </div>
 
-      <span className="font-bold mb-4 text-lg">Baixe nas principais lojas de aplicativos</span>
-      <div className="flex">
+      <span className="font-bold mb-4 text-lg z-10">Baixe nas principais lojas de aplicativos</span>
+      <div className="flex z-10">
         <button>
           <Image src={googlePlay} alt="disponível no google play" />
         </button>

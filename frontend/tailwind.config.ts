@@ -14,7 +14,8 @@ export default {
 				secondary: '#0F2498'
 			},
 			backgroundImage: {
-				faq: "url('../assets/images/footer-bg.png')"
+				faq: "url('../assets/images/footer-bg.png')",
+				'landing-bg': "url('../assets/images/landing-bg.png')",
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
