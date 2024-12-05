@@ -8,8 +8,8 @@ export default function Login() {
     <>
       <main className="flex flex-col row-start-2 items-center sm:items-start">
         <div className="flex items-center w-full">
-          <Image src={loginImages} alt="login images" height={780} />
-          <div className="flex w-full justify-center">
+          <Image src={loginImages} alt="login images" height={780} className="hidden lg:flex lg:h-[500px] xl:h-[780px]" />
+          <div className="flex w-full justify-center my-5 px-3">
             <LoginForm />
           </div>
         </div>

@@ -11,11 +11,21 @@ export default {
 		extend: {
 			colors: {
 				primary: '#F58701',
-				secondary: '#0F2498'
+				secondary: '#0F2498',
+				sidebar: {
+					DEFAULT: 'hsl(var(--sidebar-background))',
+					foreground: 'hsl(var(--sidebar-foreground))',
+					primary: 'hsl(var(--sidebar-primary))',
+					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+					accent: 'hsl(var(--sidebar-accent))',
+					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+					border: 'hsl(var(--sidebar-border))',
+					ring: 'hsl(var(--sidebar-ring))'
+				}
 			},
 			backgroundImage: {
 				faq: "url('../assets/images/footer-bg.png')",
-				'landing-bg': "url('../assets/images/landing-bg.png')",
+				'landing-bg': "url('../assets/images/landing-bg.png')"
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

@@ -35,7 +35,7 @@ export function LoginForm() {
 
       console.log(promise)
 
-      router.push('/dashboard')
+      router.push('/home')
     } catch (error) {
       toast({
         variant: 'destructive',

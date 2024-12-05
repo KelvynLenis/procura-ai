@@ -29,7 +29,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   }, [router]);
 
   if (isLoading) {
-    return <p>Carregando...</p>;
+    return <p className='self-center'>Carregando...</p>;
   }
 
   return isAuthenticated ? children : null;
