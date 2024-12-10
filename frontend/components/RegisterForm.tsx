@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form"
 import { useRouter } from 'next/navigation'
 import { Input } from "./Input"
 import Link from "next/link"
-import { account } from "@/lib/appwrite"
+import { account, ID } from "@/lib/appwrite"
 
 export function RegisterForm() {
   const router = useRouter()
@@ -25,7 +25,7 @@ export function RegisterForm() {
         form.setError('confirmPassword', { message: 'As senhas não coincidem' })
       }
 
-      const promise = await account.create('fffgfgfg', values.email, values.password)
+      const promise = await account.create(ID.unique(), values.email, values.password)
 
       console.log(values)
 

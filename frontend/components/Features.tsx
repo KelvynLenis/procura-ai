@@ -13,7 +13,7 @@ export function Features() {
 
   return (
     <section className="w-full h-screen relative flex flex-col items-center justify-center px-4">
-      <Image src={shapesLeft} alt="formas esquerda" className="absolute -top-14 left-0 z-0" />
+      {/* <Image src={shapesLeft} alt="formas esquerda" className="absolute -top-14 left-0 z-0" /> */}
       <Image src={shapesRight} alt="formas direita" className="absolute -bottom-1/4 right-0 z-0" />
 
       <div className="flex md:flex-row flex-col lg:gap-10 z-10 gap-5 md:px-10">

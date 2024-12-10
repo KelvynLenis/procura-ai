@@ -12,18 +12,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { useRouter } from "next/navigation"
-import { account, client, databases, functions } from "@/lib/appwrite"
+import { account, databases, functions } from "@/lib/appwrite"
 import { useEffect, useState } from "react"
 import { z } from "zod"
 import DeviceSchema from "@/utils/deviceSchema"
-import { NotificationButton } from "./NotificationButton"
 import { AddDeviceForm } from "./AddDeviceForm"
-import { OpenSidebarTrigger } from "./OpenSidebarTrigger"
-import { Input } from "./Input"
-import { DeviceProps } from "@/utils/types"
-import { Label } from "./ui/label"
-import { Form, FormControl, FormField, FormItem } from "./ui/form"
-import { useForm } from "react-hook-form"
 
 type Device = z.infer<typeof DeviceSchema>;
 
@@ -104,16 +97,10 @@ export function Board() {
 
   return (
     <>
-      <div className="py-5 w-full flex">
+      <div className=" w-full flex overflow-y-scroll">
 
-        {/* <div className="absolute flex flex-row-reverse gap-3 right-5 top-4 w-full">
-          <button onClick={logout} className="h-10 px-2 bg-red-500 text-white rounded-md  hover:bg-red-600 drop-shadow-md">Log Out</button>
-          <button className="h-10 px-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 drop-shadow-md">Mapa de ocorrências</button>
-          <NotificationButton />
-        </div> */}
-
-        <div className="w-full h-full flex justify-around px-4">
-          <div className=" w-full h-[580px] rounded-md flex flex-col gap-5">
+        <div className="w-full h-full flex justify-around px-4 py-5">
+          <div className=" w-full h-full rounded-md flex flex-col gap-5">
             {
               devices.map((device) => (
                 <div key={device.$id} className="flex flex-row gap-2 p-4 shadow-form bg-zinc-100 rounded-xl justify-between text-zinc-900">

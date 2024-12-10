@@ -3,6 +3,7 @@
 import { account } from '@/lib/appwrite';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useEffect, useState } from 'react';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -29,7 +30,11 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   }, [router]);
 
   if (isLoading) {
-    return <p className='self-center'>Carregando...</p>;
+    return (
+      <div className='w-full h-screen flex justify-center items-center'>
+        <ClipLoader color='#0F2498' size={75} />
+      </div>
+    );
   }
 
   return isAuthenticated ? children : null;

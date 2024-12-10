@@ -6,9 +6,7 @@ export default async function Home() {
 
   return (
     <>
-      <ProtectedRoute>
-        <Board />
-      </ProtectedRoute>
+      <Board />
     </>
   )
 }

@@ -4,7 +4,6 @@ import { Roboto } from 'next/font/google';
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 const roboto = Roboto({
   subsets: ['latin'], // Escolha o conjunto de caracteres necessário

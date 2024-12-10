@@ -7,11 +7,9 @@ export default async function AddDevice() {
 
   return (
     <>
-      <ProtectedRoute>
-        <div className="w-full flex items-center justify-center">
-          <AddDeviceForm />
-        </div>
-      </ProtectedRoute>
+      <div className="w-full flex items-center justify-center">
+        <AddDeviceForm />
+      </div>
     </>
   )
 }

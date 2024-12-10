@@ -18,7 +18,11 @@ import logo from '../assets/icons/procura-ai-logo-header.svg'
 import Image from "next/image"
 import { Button } from "./ui/button"
 
-export function LoginForm() {
+interface LoginFormProps {
+  admin?: boolean
+}
+
+export function LoginForm({ admin }: LoginFormProps) {
   const router = useRouter()
   const { toast } = useToast()
 
@@ -35,7 +39,8 @@ export function LoginForm() {
 
       console.log(promise)
 
-      router.push('/home')
+      admin ? router.push('/dashboard') : router.push('/home')
+
     } catch (error) {
       toast({
         variant: 'destructive',
@@ -66,7 +71,14 @@ export function LoginForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-[400px] h-fit flex flex-col gap-4 bg-white items-center px-10 py-5 rounded-xl shadow-form">
         <Image src={logo} alt="logo" width={200} height={100} />
-        <h3 className="text-center">Para acessar o Procura.Aí faça login  abaixo:</h3>
+
+        {
+          admin ? (
+            <h3 className="text-center text-secondary font-bold">Acesso do Admin</h3>
+          ) : (
+            <h3 className="text-center">Para acessar o Procura.Aí faça login  abaixo:</h3>
+          )
+        }
 
         <FormField
           control={form.control}
@@ -99,16 +111,32 @@ export function LoginForm() {
 
         <span className="w-full h-[1px] rounded-full bg-secondary" />
 
-        <div className="w-full flex flex-col gap-3">
-          <span className="font-bold self-center">
-            Se preferir, acesse pela conta Gov.br
-          </span>
-          <Button type="button" className="bg-secondary text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gob.br</Button>
-          <span className="font-bold self-center">
-            Não possui conta?
-          </span>
-          <Button type="button" className="bg-secondary w-full text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Cadastre-se</Button>
-        </div>
+        {
+          admin ? (
+            <div className="w-full flex flex-col gap-3">
+              <Link className="flex w-full" href={'/login'}>
+                <Button type="button" className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Retroceder à página do usuário</Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="w-full flex flex-col gap-3">
+              <span className="font-bold self-center">
+                Se preferir, acesse pela conta Gov.br
+              </span>
+              <Button type="button" className="bg-secondary text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gob.br</Button>
+              <span className="font-bold self-center">
+                Não possui conta?
+              </span>
+              <Button type="button" className="bg-secondary w-full text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Cadastre-se</Button>
+              <span className="font-bold self-center">
+                Acesso do administrador
+              </span>
+              <Link className="flex w-full" href={'/admin-login'}>
+                <Button type="button" className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entre como Administrador</Button>
+              </Link>
+            </div>
+          )
+        }
       </form>
     </Form>
   )

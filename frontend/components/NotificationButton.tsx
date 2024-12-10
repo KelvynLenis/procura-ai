@@ -11,9 +11,16 @@ export function NotificationButton() {
   const [filteredNotifications, setFilteredNotifications] = useState([])
 
   client.subscribe("documents", response => {
-    setNotifications(prevNotifications => [...prevNotifications, response.payload])
-    setNotificationsCount(notificationsCount + 1)
-    console.log(response.payload);
+    if (response.payload.isStolen === true) {
+      notifications.map(notification => {
+        if (notification.$id === response.payload.$id) {
+          return
+        }
+      })
+      setNotifications(prevNotifications => [...prevNotifications, response.payload])
+      setNotificationsCount(notificationsCount + 1)
+      console.log(response.payload);
+    }
   });
 
   function handleToggle() {
@@ -27,7 +34,7 @@ export function NotificationButton() {
 
   return (
     <>
-      <button className="relative" onClick={handleToggle}>
+      <button className="absolute right-10 top-5" onClick={handleToggle}>
         <Bell className="size-7" />
         {
           filteredNotifications.length > 0 ? (
