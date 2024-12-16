@@ -57,7 +57,7 @@ export function LoginForm({ admin }: LoginFormProps) {
         const sessions = await account.get()
 
         if (sessions.status) {
-          router.push('/dashboard')
+          admin ? router.push('/dashboard') : router.push('/home')
         }
       } catch (error) {
         console.error("Erro: ", error)
@@ -69,7 +69,7 @@ export function LoginForm({ admin }: LoginFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-[400px] h-fit flex flex-col gap-4 bg-white items-center px-10 py-5 rounded-xl shadow-form">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-[400px] h-fit flex flex-col gap-4 bg-white items-center px-10 py-5 rounded-xl">
         <Image src={logo} alt="logo" width={200} height={100} />
 
         {
@@ -87,7 +87,7 @@ export function LoginForm({ admin }: LoginFormProps) {
             <FormItem className="flex flex-col w-full">
               <FormLabel className="text-zinc-700 ml-4 font-bold">Usuário</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="Email" {...field} />
+                <Input type="text" placeholder="Email" {...field} className="rounded-md" />
               </FormControl>
             </FormItem>
           )}
@@ -100,7 +100,7 @@ export function LoginForm({ admin }: LoginFormProps) {
             <FormItem className="flex flex-col w-full">
               <FormLabel className="text-zinc-700 ml-4 font-bold">Senha</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Senha" {...field} />
+                <Input type="password" placeholder="Senha" {...field} className="rounded-md" />
               </FormControl>
             </FormItem>
           )}
@@ -127,7 +127,9 @@ export function LoginForm({ admin }: LoginFormProps) {
               <span className="font-bold self-center">
                 Não possui conta?
               </span>
-              <Button type="button" className="bg-secondary w-full text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Cadastre-se</Button>
+              <Link href={'/cadastro'}>
+                <Button type="button" className="bg-secondary w-full text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Cadastre-se</Button>
+              </Link>
               <span className="font-bold self-center">
                 Acesso do administrador
               </span>

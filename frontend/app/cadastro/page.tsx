@@ -1,7 +1,6 @@
-import { FAQ } from "@/components/FAQ";
 import loginImages from '../../assets/images/login-images.png'
 import Image from "next/image";
-import { LoginForm } from "@/components/LoginForm";
+import { RegisterForm } from '@/components/RegisterForm';
 
 export default function Login() {
   return (
@@ -10,10 +9,9 @@ export default function Login() {
         <div className="flex items-center w-full">
           <Image src={loginImages} alt="login images" height={780} className="hidden lg:flex lg:h-[500px] xl:h-[780px]" />
           <div className="flex w-full justify-center my-5 px-3">
-            <LoginForm />
+            <RegisterForm />
           </div>
         </div>
-        {/* <FAQ /> */}
       </main>
     </>
   );

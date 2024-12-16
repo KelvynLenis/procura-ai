@@ -6,7 +6,7 @@ import gov from '../assets/icons/gov.png'
 export function Footer() {
 
   return (
-    <footer className="w-full bg-secondary flex items-center gap-10 lg:gap-20 px-2 py-1 md:gap-20">
+    <footer className="w-full bg-secondary hidden lg:flex items-center gap-10 lg:gap-20 px-2 py-1 md:gap-20">
       <div className='flex items-center gap-3'>
         <Image src={logo} alt="logo" className='w-28 md:w-36' />
 

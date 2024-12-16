@@ -1,56 +1,168 @@
 'use client'
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form"
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp"
+
 import { useForm } from "react-hook-form"
-import { useRouter } from 'next/navigation'
 import { Input } from "./Input"
 import Link from "next/link"
-import { account, ID } from "@/lib/appwrite"
+import { account } from "@/lib/appwrite"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
+import { useToast } from "@/hooks/use-toast"
+import logo from '../assets/icons/procura-ai-logo-header.svg'
+import Image from "next/image"
+import { Button } from "./ui/button"
 
-export function RegisterForm() {
+interface RegisterFormProps {
+  admin?: boolean
+}
+
+export function RegisterForm({ admin }: RegisterFormProps) {
   const router = useRouter()
+  const { toast } = useToast()
 
   const form = useForm({
     defaultValues: {
+      name: '',
+      cpf: '',
       email: '',
+      confirmEmail: '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
     }
   })
 
-  async function onSubmit(values: { email: string, password: string, confirmPassword: string }) {
+  async function onSubmit(values: { email: string, password: string }) {
     try {
+      const promise = await account.createEmailPasswordSession(values.email, values.password)
 
-      if (values.password !== values.confirmPassword) {
-        form.setError('confirmPassword', { message: 'As senhas não coincidem' })
-      }
+      console.log(promise)
 
-      const promise = await account.create(ID.unique(), values.email, values.password)
-
-      console.log(values)
-
-      if (promise.status) {
-        router.push('/')
-      }
-
+      admin ? router.push('/dashboard') : router.push('/home')
 
     } catch (error) {
-      console.error("Erro ao registrar: ", error)
+      toast({
+        variant: 'destructive',
+        title: "Falha no login",
+        description: "Email ou senha incorretos",
+      })
+      console.error("Erro ao logar: ", error)
     }
   }
 
+  useEffect(() => {
+    const getSession = async () => {
+      try {
+        const sessions = await account.get()
+
+        if (sessions.status) {
+          router.push('/dashboard')
+        }
+      } catch (error) {
+        console.error("Erro: ", error)
+      }
+    }
+
+    getSession()
+  }, [])
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 bg-white items-center p-5 rounded-md">
-        <h1 className="text-2xl text-zinc-700">Crie sua conta</h1>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-[400px] h-fit flex flex-col gap-6 bg-white items-center px-10 py-5 rounded-xl">
+        <Image src={logo} alt="logo" width={200} height={100} />
+
+        {
+          admin ? (
+            <h3 className="text-center text-secondary font-bold">Acesso do Admin</h3>
+          ) : (
+            <h3 className="text-center">Para se cadastrar, preencha as informações a seguir:</h3>
+          )
+        }
+
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem className="flex flex-col w-full">
+              <FormLabel className="text-zinc-900 ml-4 font-bold">Nome completo</FormLabel>
+              <FormControl>
+                <Input type="text" placeholder="Nome completo" {...field} className="rounded-xl" />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="cpf"
+          render={({ field }) => (
+            <FormItem className="flex flex-col w-full">
+              <FormLabel className="text-zinc-900 ml-4 font-bold">CPF</FormLabel>
+              <FormControl>
+                <InputOTP maxLength={11} {...field} className="w-full flex justify-center items-center" >
+                  <InputOTPGroup>
+                    <InputOTPSlot className="w-5 h-5 border-t-0 border-r-0 border-black  shadow-transparent" index={0} />
+                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={1} />
+                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={2} />
+                  </InputOTPGroup>
+                  <InputOTPSeparator className="relative -bottom-2" />
+                  <InputOTPGroup>
+                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={3} />
+                    <InputOTPSlot className="w-4 h-5 border-t-0 border-r-0 border-black shadow-transparent" index={4} />
+                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={5} />
+                  </InputOTPGroup>
+                  <InputOTPSeparator className="relative -bottom-2" />
+                  <InputOTPGroup>
+                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={6} />
+                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={7} />
+                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={8} />
+                  </InputOTPGroup>
+                  <InputOTPSeparator data-dash />
+                  <InputOTPGroup>
+                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={9} />
+                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={10} />
+                  </InputOTPGroup>
+                </InputOTP>
+
+                {/* <Input type="text" placeholder="cpf" {...field} className="rounded-xl" /> */}
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="text-zinc-700">Email</FormLabel>
+            <FormItem className="flex flex-col w-full">
+              <FormLabel className="text-zinc-900 ml-4 font-bold">e-mail</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="Email" {...field} className="bg-zinc-100" />
+                <Input type="text" placeholder="Email" {...field} className="rounded-xl" />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="confirmEmail"
+          render={({ field }) => (
+            <FormItem className="flex flex-col w-full">
+              <FormLabel className="text-zinc-900 ml-4 font-bold">Confirmar e-mail</FormLabel>
+              <FormControl>
+                <Input type="text" placeholder="Confirmar e-mail" {...field} className="rounded-xl" />
               </FormControl>
             </FormItem>
           )}
@@ -60,12 +172,11 @@ export function RegisterForm() {
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="text-zinc-700">Senha</FormLabel>
+            <FormItem className="flex flex-col w-full">
+              <FormLabel className="text-zinc-900 ml-4 font-bold">Senha</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Senha" {...field} className="bg-zinc-100" />
+                <Input type="password" placeholder="Senha" {...field} className="rounded-xl" />
               </FormControl>
-              <FormMessage>{form.formState.errors.confirmPassword?.message}</FormMessage>
             </FormItem>
           )}
         />
@@ -74,21 +185,42 @@ export function RegisterForm() {
           control={form.control}
           name="confirmPassword"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="text-zinc-700">Confirme sua senha</FormLabel>
+            <FormItem className="flex flex-col w-full">
+              <FormLabel className="text-zinc-900 ml-4 font-bold">Confirmar senha</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Confirme sua senha" {...field} className="bg-zinc-100" />
+                <Input type="password" placeholder="Confirmar senha" {...field} className="rounded-xl" />
               </FormControl>
-              <FormMessage>{form.formState.errors.confirmPassword?.message}</FormMessage>
             </FormItem>
           )}
         />
 
-        <button type="submit" className="w-72 h-10 self-center text-zinc-100 bg-green-400 rounded-md hover:opacity-60">Registrar</button>
+        <Link href="/forgot-password" className="underline self-start hover:opacity-50 text-sm">Esqueceu sua senha?</Link>
 
-        <span>
-          Já possui uma conta? <Link href="/" className="text-blue-400 hover:opacity-50">Faça login</Link>
-        </span>
+        <Button className="bg-primary text-white rounded-full text-lg px-12 py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">Criar conta</Button>
+
+        <span className="w-full h-[1px] rounded-full bg-secondary" />
+
+        {
+          admin ? (
+            <div className="w-full flex flex-col gap-3">
+              <Link className="flex w-full" href={'/login'}>
+                <Button type="button" className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Retroceder à página do usuário</Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="w-full flex flex-col gap-3">
+              <span className="font-bold self-center">
+                Já possui conta?
+              </span>
+              <Link href={'/login'}>
+                <Button type="button" className="bg-secondary text-white rounded-full w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com e-mail ou CPF</Button>
+              </Link>
+              <Link className="flex w-full" href={'/login'}>
+                <Button type="button" className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gov.br</Button>
+              </Link>
+            </div>
+          )
+        }
       </form>
     </Form>
   )

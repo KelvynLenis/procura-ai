@@ -1,12 +1,12 @@
-import { Board } from "@/components/board";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import { account } from "@/lib/appwrite";
+import { MyDevices } from "@/components/MyDevices";
+
 
 export default async function Home() {
 
   return (
     <>
-      <Board />
+      {/* <Board /> */}
+      <MyDevices />
     </>
   )
 }

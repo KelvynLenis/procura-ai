@@ -1,12 +1,18 @@
 import { Map, MapStyle, Marker, Popup } from '@maptiler/sdk';
 import { useEffect, useState } from 'react';
 
-export function MapTiler2() {
+interface ChoroplethMapProps {
+  data: string
+  mapId: string
+  legendId: string
+}
+
+export function MapTiler2({ data, mapId, legendId }: ChoroplethMapProps) {
   const [isHover, setIsHover] = useState(false)
   const [hoverText, setHoverText] = useState('')
 
   useEffect(() => {
-    const mapContainer = document.getElementById('my-container-div');
+    const mapContainer = document.getElementById(mapId);
 
     if (mapContainer) {
       const map = new Map({
@@ -25,7 +31,7 @@ export function MapTiler2() {
 
         map.addSource('bairros', {
           'type': 'geojson',
-          'data': 'https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI'
+          'data': data
         })
 
         map.addLayer({
@@ -38,12 +44,13 @@ export function MapTiler2() {
               'interpolate',
               ['linear'],
               ['get', 'value'], // Pega o valor do atributo adicionado
-              0, '#ede9d0',    // Cor para valor 0
-              5, '#00bae2',    // Cor para valores baixos
-              10, '#3a001e',   // Cor intermediária
-              20, '#f03b20'    // Cor para valores altos
+              5, '#FEFF73',    // Cor para valor 0
+              9, '#F3B900',    // Cor para valores baixos
+              17, '#F47A01',   // Cor intermediária
+              24, '#E60000',   // Cor para valores altos
+              32, '#A80000'    // Cor para valores altos
             ],
-            'fill-opacity': 0.5
+            'fill-opacity': 0.65
           }
         })
 
@@ -88,12 +95,6 @@ export function MapTiler2() {
           setHoverText('')
         });
 
-        // map.addControl(new choroplethLegendControl({
-        //   layerId: 'countries',
-        //   limits: limits,
-        //   colorScale: colorScale,
-        // }), 'bottom-left');
-
         // map.on('click', 'polygons', (e) => {
         //   new Popup()
         //     .setLngLat(e.lngLat)
@@ -117,14 +118,15 @@ export function MapTiler2() {
           <span className='flex w-fit bg-white text-black rounded-xl absolute top-10 right-10 p-2 ring-2 ring-black'>{hoverText}</span>
         </div>
       }
-      <div id='my-container-div' className=' w-[100%] h-[450px] '>
+      <div id={mapId} className=' w-[100%] h-[444px] '>
       </div>
       <div id="state-legend" className="legend">
         <h4>Qtd de incidências por bairro</h4>
-        <div><span className='bg-[#ede9d0]'></span>0  - 5</div>
-        <div><span className='bg-[#00bae2]'></span>5  - 10</div>
-        <div><span className='bg-[#3a001e]'></span>10 - 20</div>
-        <div><span className='bg-[#f03b20]'></span>20+</div>
+        <div><span className='bg-[#FEFF73]'></span>0  - 8</div>
+        <div><span className='bg-[#F3B900]'></span>9  - 16</div>
+        <div><span className='bg-[#F47A01]'></span>17 - 23</div>
+        <div><span className='bg-[#E60000]'></span>24 - 31</div>
+        <div><span className='bg-[#A80000]'></span>32 - 39</div>
       </div>
     </>
   )

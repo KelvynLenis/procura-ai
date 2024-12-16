@@ -67,7 +67,7 @@ export function AppSidebar({ admin }: SidebarProps) {
   }
 
   return (
-    <Sidebar className="text-white bg-zinc-800">
+    <Sidebar className="text-white bg-zinc-800 z-[15]">
       <SidebarContent className="bg-zinc-800 flex flex-col">
         <CloseSidebarTrigger className="self-end rounded-xl hover:bg-zinc-500 mr-2 mt-2" />
         <SidebarGroup className="flex flex-col gap-5">

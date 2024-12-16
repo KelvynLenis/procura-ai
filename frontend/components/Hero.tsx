@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export function Hero() {
   return (
-    <section className="z-100 w-full flex items-center justify-end md:h-[400px] lg:h-[630px] xl:h-[800px] h-full text-lg md:text-xl lg:text-4xl text-white bg-landing-bg bg-cover bg-center px-2 md:px-5 lg:px-10 py-7">
+    <section className="z-100 w-full flex items-center justify-end md:h-[400px] lg:h-[630px] xl:h-[800px] h-full text-lg md:text-xl lg:text-4xl text-white bg-landing-bg bg-cover bg-center px-2 md:px-5 lg:px-10 py-7 z-10">
       {/* <Image src={landingBackground} alt="landing background" className="w-full" /> */}
       <div className="flex flex-col items-end gap-1 lg:gap-5">
         <span className="font-medium">

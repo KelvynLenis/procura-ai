@@ -27,7 +27,7 @@ const RechartChart = ({ data }: ChartProps) => {
         margin={{
           top: 5,
           right: 0,
-          left: 20,
+          left: 0,
           bottom: 0,
         }}
         className='text-xs'

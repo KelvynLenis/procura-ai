@@ -7,7 +7,9 @@ import { databases, ID } from "@/lib/appwrite"
 import { z } from "zod"
 import DeviceSchema from "@/utils/deviceSchema"
 import { DeviceProps } from "@/utils/types"
-import { twMerge } from "tailwind-merge"
+import Button from "./Button"
+import { cn } from "@/lib/utils"
+import Link from "next/link"
 
 
 type Device = z.infer<typeof DeviceSchema>;
@@ -85,79 +87,77 @@ export function AddDeviceForm({ device }: AddDeviceFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={twMerge(
-          "flex flex-col p-10 py-4 gap-4 text-zinc-900 self-center items-center justify-center rounded-lg",
-          !device && "shadow-form" // Adiciona "shadow-form" apenas se device estiver presente
+        className={cn(
+          "w-full flex flex-col p-10 py-4 gap-8 text-zinc-900 self-center items-center justify-center rounded-lg",
+          // !device && "shadow-form" // Adiciona "shadow-form" apenas se device estiver presente
         )}>
-        <div>
+        {/* <div>
           {
             device ? (
               <h1 className="text-2xl font-bold">Editar Dispositivo</h1>
 
             ) : (
-              <h1 className="text-2xl">Novo Dispositivo</h1>
+              <div className="w-full bg-tertiary">
+                <h1 className="text-2xl">Cadastrar Dispositivo</h1>
+
+              </div>
             )
           }
-        </div>
-        <div className="flex flex-col gap-4">
-          <div className="flex gap-4">
-            <FormField
-              control={form.control}
-              name="phone_model"
-              render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <label className="">Modelo do celular</label>
-                  <FormControl>
-                    <Input type="text" placeholder="Modelo do celular" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+        </div> */}
+        <FormField
+          control={form.control}
+          name="phone_model"
+          render={({ field }) => (
+            <FormItem className="flex flex-col w-full">
+              <label className="font-medium">Modelo do celular</label>
+              <FormControl>
+                <Input type="text" placeholder="Modelo do celular" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
-            <FormField
-              control={form.control}
-              name="phone_number"
-              render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <label className="">Número do celular</label>
-                  <FormControl>
-                    <Input type="text" placeholder="Número do celular" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </div>
+        <FormField
+          control={form.control}
+          name="brand"
+          render={({ field }) => (
+            <FormItem className="flex flex-col w-full">
+              <label className="font-medium">Marca</label>
+              <FormControl>
+                <Input type="text" placeholder="Marca" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
-          <div className="flex gap-4">
-            <FormField
-              control={form.control}
-              name="brand"
-              render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <label className="">Marca</label>
-                  <FormControl>
-                    <Input type="text" placeholder="Marca" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+        <FormField
+          control={form.control}
+          name="phone_number"
+          render={({ field }) => (
+            <FormItem className="flex flex-col w-full">
+              <label className="font-medium">Número do celular</label>
+              <FormControl>
+                <Input type="text" placeholder="Número do celular" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
-            <FormField
-              control={form.control}
-              name="imei"
-              render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <label className="">IMEI</label>
-                  <FormControl>
-                    <Input type="text" placeholder="IMEI" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </div>
+        <FormField
+          control={form.control}
+          name="imei"
+          render={({ field }) => (
+            <FormItem className="flex flex-col w-full">
+              <label className="font-medium">IMEI</label>
+              <FormControl>
+                <Input type="text" placeholder="IMEI" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
 
-          <FormField
+        {/* <FormField
             control={form.control}
             name="latitude"
             render={({ field }) => (
@@ -181,12 +181,17 @@ export function AddDeviceForm({ device }: AddDeviceFormProps) {
                 </FormControl>
               </FormItem>
             )}
-          />
-        </div>
+          /> */}
 
         {
           !device && (
-            <button type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl bg-primary  hover:opacity-60">Adicionar</button>
+            <div className="flex justify-between w-full">
+              <Link href={'/home'}>
+                <Button type="button" variant="white">Cancelar</Button>
+              </Link>
+              <Button type="submit" variant="orange" className="px-1">Cadastrar dispositivo</Button>
+            </div>
+            // <button type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl bg-primary  hover:opacity-60">Adicionar</button>
           )
         }
       </form>

@@ -12,6 +12,7 @@ export default {
 			colors: {
 				primary: '#F58701',
 				secondary: '#0F2498',
+				tertiary: '#96A6FF',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -25,12 +26,8 @@ export default {
 			},
 			backgroundImage: {
 				faq: "url('../assets/images/footer-bg.png')",
-				'landing-bg': "url('../assets/images/landing-bg.png')"
-			},
-			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				'landing-bg': "url('../assets/images/landing-bg.png')",
+				'device-bg': "url('../assets/images/devices-bg.png')",
 			},
 			keyframes: {
 				'accordion-down': {

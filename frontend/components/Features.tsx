@@ -12,8 +12,8 @@ import dollar from '../assets/icons/dollar.svg'
 export function Features() {
 
   return (
-    <section className="w-full h-screen relative flex flex-col items-center justify-center px-4">
-      {/* <Image src={shapesLeft} alt="formas esquerda" className="absolute -top-14 left-0 z-0" /> */}
+    <section className="w-full h-screen relative flex flex-col items-center justify-center px-4 z-0">
+      <Image src={shapesLeft} alt="formas esquerda" className="absolute -top-14 left-0 z-0" />
       <Image src={shapesRight} alt="formas direita" className="absolute -bottom-1/4 right-0 z-0" />
 
       <div className="flex md:flex-row flex-col lg:gap-10 z-10 gap-5 md:px-10">
@@ -27,19 +27,19 @@ export function Features() {
         <div className="w-full lg:w-[500px] xl:h-[400px] bg-primary/5 border border-primary rounded-xl mb-10 lg:mb-20">
           <ul className="font-medium text-lg flex flex-col items-center h-full pt-5">
             <li className="flex items-center w-full">
-              <Image src={block} alt="celular cortado" height={90} />
+              <Image src={block} alt="celular cortado" height={70} />
               <span>Bloqueio remoto do aparelho</span>
             </li>
             <li className="flex items-center w-full">
-              <Image src={notify} alt="celular notificando" height={90} />
+              <Image src={notify} alt="celular notificando" height={70} />
               <span>Notificação de alerta</span>
             </li>
             <li className="flex items-center w-full">
-              <Image src={location} alt="alfinete de mapa" height={90} />
+              <Image src={location} alt="alfinete de mapa" height={70} />
               <span>Rastreio do aparelho</span>
             </li>
             <li className="flex items-center w-full">
-              <Image src={dollar} alt="simbolo de dollar" height={90} />
+              <Image src={dollar} alt="simbolo de dollar" height={70} />
               <span>Bloqueio de aplicativos bancários</span>
             </li>
           </ul>
