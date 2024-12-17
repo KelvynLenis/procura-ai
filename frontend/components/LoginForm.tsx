@@ -6,6 +6,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
 import { Input } from "./Input"
@@ -17,16 +18,24 @@ import { useToast } from "@/hooks/use-toast"
 import logo from '../assets/icons/procura-ai-logo-header.svg'
 import Image from "next/image"
 import { Button } from "./ui/button"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 interface LoginFormProps {
   admin?: boolean
 }
 
+const formSchema = z.object({
+  email: z.string(),
+  password: z.string(),
+})
+
 export function LoginForm({ admin }: LoginFormProps) {
   const router = useRouter()
   const { toast } = useToast()
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
       password: ''
@@ -42,6 +51,9 @@ export function LoginForm({ admin }: LoginFormProps) {
       admin ? router.push('/dashboard') : router.push('/home')
 
     } catch (error) {
+      form.setError('email', { message: "Email ou senha incorretos" })
+      form.setError('password', { message: "Email ou senha incorretos" })
+
       toast({
         variant: 'destructive',
         title: "Falha no login",
@@ -89,6 +101,7 @@ export function LoginForm({ admin }: LoginFormProps) {
               <FormControl>
                 <Input type="text" placeholder="Email" {...field} className="rounded-md" />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -102,6 +115,7 @@ export function LoginForm({ admin }: LoginFormProps) {
               <FormControl>
                 <Input type="password" placeholder="Senha" {...field} className="rounded-md" />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />

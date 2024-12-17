@@ -1,9 +1,11 @@
 import Image from "next/image";
-import { Device } from "./Device";
 import DeviceBg from '../assets/images/devices-bg.png'
 import Button from "./Button";
+import Link from "next/link";
+import { DevicesList } from "./DevicesList";
+import { Device } from "./Device";
 
-export function MyDevices() {
+export async function MyDevices() {
 
   return (
     <>
@@ -13,9 +15,11 @@ export function MyDevices() {
             <div className="flex flex-col w-full h-screen items-center justify-center">
               <span className="text-center">Você ainda não possui dispositivos cadastrados</span>
 
-              <Button variant="white">
-                Cadastrar dispositivo
-              </Button>
+              <Link href={'/cadastrar-dispositivo'}>
+                <Button variant="white">
+                  Cadastrar dispositivo
+                </Button>
+              </Link>
             </div>
           ) : (
             <>
@@ -23,9 +27,9 @@ export function MyDevices() {
                 <Image src={DeviceBg} alt="dispositivos" className="w-screen left-0 top-0 h-full absolute z-0" />
                 <div className="z-10 flex flex-col h-full gap-4">
                   <span className="font-semibold text-xl">Meus dispositivos</span>
-
-                  <Device />
-                  <Device />
+                  <DevicesList />
+                  {/* <Device phone_model="Galaxy A55" phone_number="(11) 99999-9999" brand="Samsung" imei="2469875" latitude={-23.55} longitude={-46.65} />
+                  <Device phone_model="Galaxy A55" phone_number="(11) 99999-9999" brand="Samsung" imei="2469875" latitude={-23.55} longitude={-46.65} /> */}
                 </div>
               </div>
 

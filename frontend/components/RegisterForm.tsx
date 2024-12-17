@@ -6,6 +6,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form"
 import {
   InputOTP,
@@ -17,23 +18,54 @@ import {
 import { useForm } from "react-hook-form"
 import { Input } from "./Input"
 import Link from "next/link"
-import { account } from "@/lib/appwrite"
+import { account, databases, ID } from "@/lib/appwrite"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { useToast } from "@/hooks/use-toast"
 import logo from '../assets/icons/procura-ai-logo-header.svg'
 import Image from "next/image"
 import { Button } from "./ui/button"
+import { validateCPF } from "@/lib/utils"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 interface RegisterFormProps {
   admin?: boolean
 }
 
+const formSchema = z.object({
+  name: z.string(),
+  cpf: z.string().min(11, {
+    message: "O CPF deve conter exatamente 11 dígitos numéricos.",
+  }),
+  email: z.string().email({ message: "Email inválido" }),
+  confirmEmail: z.string().email({ message: "Email inválido" }),
+  password: z.string().min(8, {
+    message: "A senha deve conter pelo menos 8 caracteres.",
+  }),
+  confirmPassword: z.string().min(8, {
+    message: "A senha deve conter pelo menos 8 caracteres.",
+  }),
+})
+  .refine((data) => validateCPF(data.cpf), {
+    path: ["cpf"], // Indica onde mostrar o erro
+    message: "O CPF deve conter exatamente 11 dígitos numéricos.",
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"], // Indica onde mostrar o erro
+    message: "As senhas precisam ser iguais",
+  })
+  .refine((data) => data.email === data.confirmEmail, {
+    path: ["confirmEmail"], // Indica onde mostrar o erro
+    message: "Os e-mails precisam ser iguais",
+  });
+
 export function RegisterForm({ admin }: RegisterFormProps) {
   const router = useRouter()
   const { toast } = useToast()
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       cpf: '',
@@ -44,21 +76,68 @@ export function RegisterForm({ admin }: RegisterFormProps) {
     }
   })
 
-  async function onSubmit(values: { email: string, password: string }) {
+  async function onSubmit(values: { name: string, cpf: string, email: string, confirmEmail: string, password: string, confirmPassword: string }) {
     try {
-      const promise = await account.createEmailPasswordSession(values.email, values.password)
+      if (values.email !== values.confirmEmail) {
+        toast({
+          variant: 'destructive',
+          title: "Emails diferentes",
+          description: "Os emails devem ser iguais",
+        })
+        return
+      }
 
-      console.log(promise)
+      if (values.password !== values.confirmPassword) {
+        toast({
+          variant: 'destructive',
+          title: "Senhas diferentes",
+          description: "As senhas devem ser iguais",
+        })
+        return
+      }
 
-      admin ? router.push('/dashboard') : router.push('/home')
+      const cpf = values.cpf.trim();
+
+      // Regex para verificar se o CPF tem exatamente 11 dígitos numéricos
+      const isValidCPF = /^[0-9]{11}$/.test(cpf);
+
+      if (!isValidCPF) {
+        toast({
+          variant: 'destructive',
+          title: "CPF inválido",
+          description: "O CPF deve conter exatamente 11 dígitos numéricos.",
+        })
+        return
+      }
+
+      const createdUser = await account.create(ID.unique(), values.email, values.password)
+
+      console.log(createdUser.$id)
+
+      const insertData = await databases.createDocument(
+        '673f3e7f002ac721c7f6',
+        '67618a0800110fd75891',
+        ID.unique(),
+        {
+          userId: createdUser.$id,
+          name: values.name,
+          cpf: values.cpf,
+          email: values.email,
+        }
+      )
+
+      console.log(createdUser)
+      console.log(insertData)
+
+      admin ? router.push('/admin-login') : router.push('/login')
 
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: "Falha no login",
-        description: "Email ou senha incorretos",
+        title: "Falha no cadastro",
+        description: "Houve um erro no cadastro, tente novamente.",
       })
-      console.error("Erro ao logar: ", error)
+      console.error("Erro no cadastro: ", error)
     }
   }
 
@@ -68,7 +147,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
         const sessions = await account.get()
 
         if (sessions.status) {
-          router.push('/dashboard')
+          admin ? router.push('/dashboard') : router.push('/home')
         }
       } catch (error) {
         console.error("Erro: ", error)
@@ -80,14 +159,14 @@ export function RegisterForm({ admin }: RegisterFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-[400px] h-fit flex flex-col gap-6 bg-white items-center px-10 py-5 rounded-xl">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full lg:w-[400px] h-fit flex flex-col gap-6 bg-white items-center self-center pl-0 px-0 py-5 rounded-xl">
         <Image src={logo} alt="logo" width={200} height={100} />
 
         {
           admin ? (
             <h3 className="text-center text-secondary font-bold">Acesso do Admin</h3>
           ) : (
-            <h3 className="text-center">Para se cadastrar, preencha as informações a seguir:</h3>
+            <h3 className="text-center flex">Para se cadastrar, preencha as informações a seguir:</h3>
           )
         }
 
@@ -113,7 +192,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
               <FormControl>
                 <InputOTP maxLength={11} {...field} className="w-full flex justify-center items-center" >
                   <InputOTPGroup>
-                    <InputOTPSlot className="w-5 h-5 border-t-0 border-r-0 border-black  shadow-transparent" index={0} />
+                    <InputOTPSlot className="w-4 h-5 border-t-0 border-r-0 border-black  shadow-transparent" index={0} />
                     <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={1} />
                     <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={2} />
                   </InputOTPGroup>
@@ -138,6 +217,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
 
                 {/* <Input type="text" placeholder="cpf" {...field} className="rounded-xl" /> */}
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -151,6 +231,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
               <FormControl>
                 <Input type="text" placeholder="Email" {...field} className="rounded-xl" />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -159,11 +240,12 @@ export function RegisterForm({ admin }: RegisterFormProps) {
           control={form.control}
           name="confirmEmail"
           render={({ field }) => (
-            <FormItem className="flex flex-col w-full">
+            <FormItem className="flex flex-col w-full h-fit">
               <FormLabel className="text-zinc-900 ml-4 font-bold">Confirmar e-mail</FormLabel>
               <FormControl>
                 <Input type="text" placeholder="Confirmar e-mail" {...field} className="rounded-xl" />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -177,6 +259,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
               <FormControl>
                 <Input type="password" placeholder="Senha" {...field} className="rounded-xl" />
               </FormControl>
+              <FormMessage className="text-red-500" />
             </FormItem>
           )}
         />
@@ -190,6 +273,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
               <FormControl>
                 <Input type="password" placeholder="Confirmar senha" {...field} className="rounded-xl" />
               </FormControl>
+              <FormMessage className="text-red-500" />
             </FormItem>
           )}
         />

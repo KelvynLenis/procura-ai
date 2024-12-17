@@ -3,14 +3,13 @@
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
 import { Input } from "./Input"
-import { databases, ID } from "@/lib/appwrite"
+import { account, databases, ID } from "@/lib/appwrite"
 import { z } from "zod"
-import DeviceSchema from "@/utils/deviceSchema"
+import DeviceSchema from "@/schemas/deviceSchema"
 import { DeviceProps } from "@/utils/types"
 import Button from "./Button"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
-
 
 type Device = z.infer<typeof DeviceSchema>;
 
@@ -34,6 +33,9 @@ export function AddDeviceForm({ device }: AddDeviceFormProps) {
   async function onSubmit(values: DeviceProps) {
 
     try {
+      const { $id: userId } = await account.get()
+
+      console.log(userId)
 
       if (device) {
         const promise = await databases.updateDocument(
@@ -41,6 +43,7 @@ export function AddDeviceForm({ device }: AddDeviceFormProps) {
           '673f3e8a0001a6d9233f',
           device.$id,
           {
+            userId,
             phoneNumber: values.phone_number,
             phoneModel: values.phone_model,
             brand: values.brand,

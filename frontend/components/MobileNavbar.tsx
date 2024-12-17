@@ -10,7 +10,7 @@ export function MobileNavbar() {
 
   return (
     <>
-      <nav className="w-full flex h-28 bg-zinc-100 shadow text-sm pt-4 items-center justify-center lg:hidden">
+      <nav className="w-full flex h-28 bg-zinc-100 shadow text-sm pt-4 items-center justify-center">
         <ul className='grid grid-cols-4 grid-rows-2'>
           <li className='flex w-full h-full flex-col items-center justify-center text-center'>
             <Link href={'/perfil'}>

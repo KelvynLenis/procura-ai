@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form"
 import { Input } from "./Input"
 import { databases, ID } from "@/lib/appwrite"
 import { z } from "zod"
-import DeviceSchema from "@/utils/deviceSchema"
+import DeviceSchema from "@/schemas/deviceSchema"
 
 type Device = z.infer<typeof DeviceSchema>;
 interface EditPerfilProps {

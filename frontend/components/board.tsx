@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation"
 import { account, databases, functions } from "@/lib/appwrite"
 import { useEffect, useState } from "react"
 import { z } from "zod"
-import DeviceSchema from "@/utils/deviceSchema"
+import DeviceSchema from "@/schemas/deviceSchema"
 import { AddDeviceForm } from "./AddDeviceForm"
 
 type Device = z.infer<typeof DeviceSchema>;

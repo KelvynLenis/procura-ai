@@ -1,14 +1,16 @@
 import Button from "./Button";
+import { Device as DeviceProps } from "@/utils/types";
 
-export function Device() {
+
+export function Device({ phoneModel, brand, imei, latitude, longitude }: DeviceProps) {
 
   return (
     <>
       <div className="flex bg-zinc-100 rounded-3xl px-3 py-3 justify-between max-w-[700px]">
         <div className="flex flex-col gap-1.5 w-1/2 text-lg">
-          <span>Modelo: <span className="font-semibold">Galaxy A55</span></span>
-          <span>Marca:  <span className="font-semibold">Samsung</span></span>
-          <span>IMEI:  <span className="font-semibold">2469875</span></span>
+          <span>Modelo: <span className="font-semibold">{phoneModel}</span></span>
+          <span>Marca:  <span className="font-semibold">{brand}</span></span>
+          <span>IMEI:  <span className="font-semibold">{imei}</span></span>
           <span>Status:  <span className="font-semibold">ativo</span></span>
         </div>
 
