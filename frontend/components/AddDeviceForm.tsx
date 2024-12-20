@@ -10,6 +10,10 @@ import { DeviceProps } from "@/utils/types"
 import Button from "./Button"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { v4 as uuidv4 } from 'uuid';
+import { useRouter } from "next/navigation"
+
+
 
 type Device = z.infer<typeof DeviceSchema>;
 
@@ -30,56 +34,82 @@ export function AddDeviceForm({ device }: AddDeviceFormProps) {
     }
   })
 
-  async function onSubmit(values: DeviceProps) {
+  const router = useRouter()
 
+
+  async function onSubmit(values: DeviceProps) {
     try {
       const { $id: userId } = await account.get()
 
-      console.log(userId)
-
       if (device) {
-        const promise = await databases.updateDocument(
-          '673f3e7f002ac721c7f6',
-          '673f3e8a0001a6d9233f',
-          device.$id,
+        const promise = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${device.$id}`,
           {
-            userId,
-            phoneNumber: values.phone_number,
-            phoneModel: values.phone_model,
-            brand: values.brand,
-            imei: values.imei,
-            latitude: Number(values.latitude),
-            longitude: Number(values.longitude),
-            isStolen: false
-          }
-        );
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+            },
+            body: JSON.stringify({
+              data: {
+                auth_id: userId,
+                phoneNumber: values.phone_number,
+                phoneModel: values.phone_model,
+                brand: values.brand,
+                imei: values.imei,
+                isStolen: false
+              },
 
-        console.log(promise)
+            })
+          }).then(async (response) => {
+            if (!response.ok) {
+              const error = await response.text();
+              throw new Error(`Error: ${error}`);
+            }
+            return response.json();
+          }).catch((err) => {
+            console.log(`Fetch error: ${err.message}`);
+            return null;
+          });
+
         return
       }
 
-      const promise = await databases.createDocument(
-        '673f3e7f002ac721c7f6',
-        '673f3e8a0001a6d9233f',
-        ID.unique(),
+      const deviceId = uuidv4();
+      const promise = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents`,
         {
-          phoneNumber: values.phone_number,
-          phoneModel: values.phone_model,
-          brand: values.brand,
-          imei: values.imei,
-          latitude: Number(values.latitude),
-          longitude: Number(values.longitude),
-          isStolen: false
-        }
-      );
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          },
+          body: JSON.stringify({
+            documentId: deviceId,
+            data: {
+              phoneNumber: values.phone_number,
+              phoneModel: values.phone_model,
+              brand: values.brand,
+              imei: values.imei,
+              isStolen: false,
+              auth_id: userId
 
-      // if (newContact) {
-      //   form.reset()
-      // }
+            }
+          })
+        }).then(async (response) => {
+          if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`Error: ${error}`);
+          }
+          form.reset()
+          router.push('/home')
 
-      console.log(promise)
+          return response.json();
+        }).catch((err) => {
+          console.log(`Fetch error: ${err.message}`);
+          return null;
+        });
 
-      // setDevices((prev) => [...prev, promise])
 
     } catch (error) {
       console.error(error)

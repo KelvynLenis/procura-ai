@@ -28,7 +28,7 @@ import { Button } from "./ui/button"
 import { validateCPF } from "@/lib/utils"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-
+import { v4 as uuidv4 } from 'uuid';
 interface RegisterFormProps {
   admin?: boolean
 }
@@ -109,25 +109,64 @@ export function RegisterForm({ admin }: RegisterFormProps) {
         })
         return
       }
-
-      const createdUser = await account.create(ID.unique(), values.email, values.password)
-
-      console.log(createdUser.$id)
-
-      const insertData = await databases.createDocument(
-        '673f3e7f002ac721c7f6',
-        '67618a0800110fd75891',
-        ID.unique(),
+      const userId = uuidv4();
+      const createdUser = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/account`,
         {
-          userId: createdUser.$id,
-          name: values.name,
-          cpf: values.cpf,
-          email: values.email,
-        }
-      )
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          },
+          body: JSON.stringify({
+            userId,
+            email: values.email,
+            password: values.password,
+          })
+        }).then(async (response) => {
+          if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`Error: ${error}`);
+          }
+          return response.json();
+        }).catch((err) => {
+          console.log(`Fetch error: ${err.message}`);
+          return null;
+        });
 
-      console.log(createdUser)
-      console.log(insertData)
+      const documentId = uuidv4();
+      const insertData = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          },
+          body: JSON.stringify({
+            documentId,
+            data: {
+              userId: createdUser.$id,
+              name: values.name,
+              cpf: values.cpf,
+              email: values.email,
+            },
+            // permissions: [
+            //   `read(\"user:"${createdUser.$id}"\")`,
+            //   `update(\"user:"${createdUser.$id}"\")`,
+            //   `delete(\"user:"${createdUser.$id}"\")`
+            // ]
+          })
+        }).then(async (response) => {
+          if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`Error: ${error}`);
+          }
+          return response.json();
+        }).catch((err) => {
+          console.log(`Fetch error: ${err.message}`);
+          return null;
+        });
 
       admin ? router.push('/admin-login') : router.push('/login')
 
@@ -137,7 +176,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
         title: "Falha no cadastro",
         description: "Houve um erro no cadastro, tente novamente.",
       })
-      console.error("Erro no cadastro: ", error)
+      console.log("Erro no cadastro: ", error)
     }
   }
 
@@ -150,7 +189,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
           admin ? router.push('/dashboard') : router.push('/home')
         }
       } catch (error) {
-        console.error("Erro: ", error)
+        console.log("Erro: ", error)
       }
     }
 

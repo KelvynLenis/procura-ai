@@ -59,7 +59,7 @@ export function LoginForm({ admin }: LoginFormProps) {
         title: "Falha no login",
         description: "Email ou senha incorretos",
       })
-      console.error("Erro ao logar: ", error)
+      console.log("Erro ao logar: ", error)
     }
   }
 
@@ -72,7 +72,7 @@ export function LoginForm({ admin }: LoginFormProps) {
           admin ? router.push('/dashboard') : router.push('/home')
         }
       } catch (error) {
-        console.error("Erro: ", error)
+        console.log("Erro: ", error)
       }
     }
 

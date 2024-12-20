@@ -29,12 +29,24 @@ export function Board() {
   useEffect(() => {
 
     const getDevices = async () => {
-      let promise = await databases.listDocuments(
-        "673f3e7f002ac721c7f6",
-        "673f3e8a0001a6d9233f"
-      );
-
-      console.log(promise.documents)
+      const promise = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          },
+        }).then(async (response) => {
+          if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`Error: ${error}`);
+          }
+          return response.json();
+        }).catch((err) => {
+          console.log(`Fetch error: ${err.message}`);
+          return null;
+        });
 
       setDevices(promise.documents)
     }
@@ -55,39 +67,59 @@ export function Board() {
   }
 
   async function markAsStolen(device: Device) {
-    // const promise = await databases.updateDocument(
-    //   "673f3e7f002ac721c7f6",
-    //   "673f3e8a0001a6d9233f",
-    //   device.$id,
-    //   {
-    //     isStolen: !device.isStolen
-    //   }
-    // )
+
     try {
-      await functions.createExecution(
-        '673b86eb001411b8173d',
-        JSON.stringify({
-          deviceId: device.$id,
-          isStolen: !device.isStolen
-        })
-      )
+      const promise = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${device.$id}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          },
+          body: JSON.stringify({
+            data: {
+              isStolen: !device.isStolen
+            }
+          })
+        }).then(async (response) => {
+          if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`Error: ${error}`);
+          }
+          return response.json();
+        }).catch((err) => {
+          console.log(`Fetch error: ${err.message}`);
+          return null;
+        });
 
     } catch (error) {
       console.error(error)
     }
 
-    // console.log(promise)
   }
 
   async function handleDelete(deviceId: string) {
     try {
-      const promise = await databases.deleteDocument(
-        "673f3e7f002ac721c7f6",
-        "673f3e8a0001a6d9233f",
-        deviceId
-      )
+      const promise = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${deviceId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          },
+        }).then(async (response) => {
+          if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`Error: ${error}`);
+          }
+          return response.json();
+        }).catch((err) => {
+          console.log(`Fetch error: ${err.message}`);
+          return null;
+        });
 
-      // console.log(promise)
 
       setDevices((prev) => prev.filter(device => device.$id !== deviceId))
     } catch (error) {
