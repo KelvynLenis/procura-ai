@@ -1,7 +1,7 @@
 import { FAQ } from "@/components/FAQ";
 import loginImages from '../../assets/images/login-images.png'
 import Image from "next/image";
-import { LoginForm } from "@/components/LoginForm";
+import { LoginForm } from "@/components/Forms/LoginForm";
 
 export default function Login() {
   return (

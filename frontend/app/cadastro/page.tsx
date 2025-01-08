@@ -1,6 +1,6 @@
+import { RegisterForm } from '@/components/Forms/RegisterForm';
 import loginImages from '../../assets/images/login-images.png'
 import Image from "next/image";
-import { RegisterForm } from '@/components/RegisterForm';
 
 export default function Login() {
   return (

@@ -2,26 +2,25 @@
 
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
-import { Input } from "./Input"
-import { account, databases, ID } from "@/lib/appwrite"
+import { Input } from "../Input"
+import { account } from "@/lib/appwrite"
 import { z } from "zod"
-import DeviceSchema from "@/schemas/deviceSchema"
-import { DeviceProps } from "@/utils/types"
-import Button from "./Button"
+import { Device, DeviceProps } from "@/utils/types"
+import Button from "../Button"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from "next/navigation"
+import { DialogClose } from "../ui/dialog"
+import { useToast } from "@/hooks/use-toast"
 
-
-
-type Device = z.infer<typeof DeviceSchema>;
 
 interface AddDeviceFormProps {
   device?: Device;
 }
 
 export function AddDeviceForm({ device }: AddDeviceFormProps) {
+  const { toast } = useToast()
 
   const form = useForm({
     defaultValues: {
@@ -116,6 +115,21 @@ export function AddDeviceForm({ device }: AddDeviceFormProps) {
     }
   }
 
+
+  async function handleEditDevice(id: string) {
+
+    // @Glaymar TODO
+    // Lógica para editar o dispositivo
+
+    toast({
+      variant: 'warning',
+      title: 'TODO',
+      description: 'Lógica para editar o dispositivo',
+      duration: 3000
+    })
+
+  }
+
   return (
     <Form {...form}>
       <form
@@ -124,19 +138,6 @@ export function AddDeviceForm({ device }: AddDeviceFormProps) {
           "w-full flex flex-col p-10 py-4 gap-8 text-zinc-900 self-center items-center justify-center rounded-lg",
           // !device && "shadow-form" // Adiciona "shadow-form" apenas se device estiver presente
         )}>
-        {/* <div>
-          {
-            device ? (
-              <h1 className="text-2xl font-bold">Editar Dispositivo</h1>
-
-            ) : (
-              <div className="w-full bg-tertiary">
-                <h1 className="text-2xl">Cadastrar Dispositivo</h1>
-
-              </div>
-            )
-          }
-        </div> */}
         <FormField
           control={form.control}
           name="phone_model"
@@ -189,42 +190,19 @@ export function AddDeviceForm({ device }: AddDeviceFormProps) {
           )}
         />
 
-
-        {/* <FormField
-            control={form.control}
-            name="latitude"
-            render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
-                <label className="">Latidude</label>
-                <FormControl>
-                  <Input type="number" placeholder="Latitude" {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="longitude"
-            render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
-                <label className="">Longitude</label>
-                <FormControl>
-                  <Input type="number" placeholder="Longitude" {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          /> */}
-
         {
-          !device && (
+          device ? (
+            <div className="flex justify-between w-full">
+              <DialogClose className="bg-white border-[0.5px] border-primary text-primary hover:bg-primary hover:text-white rounded-full text-center items-center justify-center flex w-fit px-2 py-2 shadow transition-all duration-300" type="button">Cancelar</DialogClose>
+              <Button type="button" onClick={() => handleEditDevice(device.$id)} variant="orange" className="px-2">Editar dispositivo</Button>
+            </div>
+          ) : (
             <div className="flex justify-between w-full">
               <Link href={'/home'}>
-                <Button type="button" variant="white">Cancelar</Button>
+                <Button type="button" variant="white" isLoader>Cancelar</Button>
               </Link>
               <Button type="submit" variant="orange" className="px-1">Cadastrar dispositivo</Button>
             </div>
-            // <button type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl bg-primary  hover:opacity-60">Adicionar</button>
           )
         }
       </form>

@@ -5,12 +5,13 @@ import alertIcon from '../assets/icons/alert.svg'
 import phonePlusIcon from '../assets/icons/phone-plus.svg'
 import Image from 'next/image'
 import Link from 'next/link'
+import Button from './Button'
+import { LogoutButton } from './LogoutButton'
 
 export function MobileNavbar() {
-
   return (
     <>
-      <nav className="w-full flex h-28 bg-zinc-100 shadow text-sm pt-4 items-center justify-center">
+      <nav className="w-full flex h-28 bg-zinc-100 shadow text-sm pt-4 items-center justify-center gap-5">
         <ul className='grid grid-cols-4 grid-rows-2'>
           <li className='flex w-full h-full flex-col items-center justify-center text-center'>
             <Link href={'/perfil'}>
@@ -83,6 +84,7 @@ export function MobileNavbar() {
             </span>
           </li>
         </ul> */}
+        <LogoutButton />
       </nav>
     </>
   )

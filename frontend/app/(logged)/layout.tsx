@@ -8,14 +8,13 @@ import { MobileNavbar } from "@/components/MobileNavbar";
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ProtectedRoute>
-      <main className="min-h-screen h-full w-full flex pb-10">
-        {/* <MobileNavbar /> */}
-        <div className="flex flex-col h-full w-full">
-          <header className="flex items-center">
-            <Image src={logo} alt="logo" className="w-36 lg:w-44" />
-          </header>
-          {children}
-        </div>
+      <main className="min-h-screen h-full w-full flex flex-col">
+        {/* <div className="flex flex-col h-screen w-full">
+        </div> */}
+        <header className="flex items-center">
+          <Image src={logo} alt="logo" className="w-36 lg:w-44" />
+        </header>
+        {children}
       </main>
       <MobileNavbar />
     </ProtectedRoute>

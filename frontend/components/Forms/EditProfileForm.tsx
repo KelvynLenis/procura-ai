@@ -2,12 +2,10 @@
 
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
-import { Input } from "./Input"
-import { databases, ID } from "@/lib/appwrite"
+import { Input } from "../Input"
 import { z } from "zod"
-import DeviceSchema from "@/schemas/deviceSchema"
+import { useToast } from "@/hooks/use-toast"
 
-type Device = z.infer<typeof DeviceSchema>;
 interface EditPerfilProps {
   name: string;
   email: string;
@@ -17,7 +15,8 @@ interface EditPerfilProps {
   address: string;
 }
 
-export function EditPerfilForm() {
+export function EditProfileForm() {
+  const { toast } = useToast()
 
   const form = useForm({
     defaultValues: {
@@ -33,15 +32,17 @@ export function EditPerfilForm() {
   async function onSubmit(values: EditPerfilProps) {
 
     try {
+      // @Glaymar TODO
+      // Lógica para editar o perfil do usuário
 
-      // if (newContact) {
-      //   form.reset()
-      // }
+      toast({
+        variant: 'warning',
+        title: 'TODO',
+        description: 'Lógica para editar o perfil do usuário',
+        duration: 3000
+      })
 
       console.log(values)
-
-      // setDevices((prev) => [...prev, promise])
-
     } catch (error) {
       console.error(error)
     }
@@ -137,7 +138,7 @@ export function EditPerfilForm() {
             )}
           />
         </div>
-        <button type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl bg-primary  hover:opacity-60">Adicionar</button>
+        <button type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl bg-primary  hover:opacity-60">Salvar</button>
       </form>
     </Form>
   )
