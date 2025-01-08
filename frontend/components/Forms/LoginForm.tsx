@@ -9,7 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
-import { Input } from "./Input"
+import { Input } from "../Input"
 import Link from "next/link"
 import { account } from "@/lib/appwrite"
 import { useRouter } from "next/navigation"
@@ -17,7 +17,7 @@ import { useEffect } from "react"
 import { useToast } from "@/hooks/use-toast"
 import logo from '../assets/icons/procura-ai-logo-header.svg'
 import Image from "next/image"
-import { Button } from "./ui/button"
+import { Button } from "../ui/button"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 

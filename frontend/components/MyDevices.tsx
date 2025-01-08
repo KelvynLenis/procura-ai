@@ -9,7 +9,6 @@ import Button from "./Button";
 import Image from "next/image";
 import DeviceBg from '../assets/images/devices-bg.png'
 
-
 export function MyDevices() {
   const [devices, setDevices] = useState<DeviceProps[]>([])
 
@@ -29,6 +28,7 @@ export function MyDevices() {
     });
     return params;
   }
+
 
   useEffect(() => {
     const getDevices = async () => {
@@ -65,7 +65,7 @@ export function MyDevices() {
     <>
       {
 
-        devices.length !== 0 ? (
+        devices.length === 0 ? (
           <div className="flex flex-col w-full h-screen items-center justify-center">
             <span className="text-center">Você ainda não possui dispositivos cadastrados</span>
 
@@ -86,7 +86,7 @@ export function MyDevices() {
                     <Device key={device.$id} {...device} />
                   ))
                 }
-                <Device phoneModel="123" brand="123" imei="123" latitude={0} longitude={0} />
+                <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
               </div>
             </div>
 

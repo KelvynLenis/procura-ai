@@ -1,5 +1,5 @@
-import { AddDeviceForm } from "@/components/AddDeviceForm";
 import { Board } from "@/components/board";
+import { AddDeviceForm } from "@/components/Forms/AddDeviceForm";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { account } from "@/lib/appwrite";
 

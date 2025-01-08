@@ -14,11 +14,9 @@ import {
 import { useRouter } from "next/navigation"
 import { account, databases, functions } from "@/lib/appwrite"
 import { useEffect, useState } from "react"
-import { z } from "zod"
-import DeviceSchema from "@/schemas/deviceSchema"
-import { AddDeviceForm } from "./AddDeviceForm"
+import { AddDeviceForm } from "./Forms/AddDeviceForm"
+import { Device } from "@/utils/types"
 
-type Device = z.infer<typeof DeviceSchema>;
 
 export function Board() {
   const [isModalOpen, setIsModalOpen] = useState(false)

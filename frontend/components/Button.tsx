@@ -6,7 +6,7 @@ import React, { useState } from 'react'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode
-  variant: 'orange' | 'blue' | 'white'
+  variant: 'orange' | 'blue' | 'white' | 'red'
   isLoader?: boolean
   className?: string
 }
@@ -20,6 +20,7 @@ export default function Button({ children, variant, isLoader, className, ...prop
       variant === 'orange' && "bg-primary text-white hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary",
       variant === 'blue' && "bg-secondary text-white hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary",
       variant === 'white' && "bg-white border-[0.5px] border-primary text-primary hover:bg-primary hover:text-white",
+      variant === 'red' && "bg-red-500 border-[0.5px] border-red-500 text-white hover:bg-white hover:text-red-500",
       className
     )}
       onClick={() => setIsLoading(true)}
@@ -29,7 +30,7 @@ export default function Button({ children, variant, isLoader, className, ...prop
         isLoader && isLoading
           ? (
             <div className='flex w-20 items-center justify-center'>
-              <ClipLoader color='#FFF' size={25} />
+              <ClipLoader color='#000' size={25} />
             </div>
           )
           : children
