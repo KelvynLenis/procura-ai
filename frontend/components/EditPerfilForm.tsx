@@ -137,7 +137,7 @@ export function EditPerfilForm() {
             )}
           />
         </div>
-        <button type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl bg-primary  hover:opacity-60">Adicionar</button>
+        <button type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl bg-primary  hover:opacity-60">Salvar</button>
       </form>
     </Form>
   )

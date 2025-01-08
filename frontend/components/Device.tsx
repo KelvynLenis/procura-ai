@@ -15,7 +15,7 @@ export function Device({ phoneModel, brand, imei, latitude, longitude }: DeviceP
         </div>
 
         <div className="flex flex-col justify-between w-1/2">
-          <button className="self-end font-medium">Editar</button>
+          <button className="self-end font-medium hover:opacity-50">Editar</button>
           <Button variant="orange" className="self-end w-full py-1 max-w-52">Marcar como roubado</Button>
         </div>
       </div>

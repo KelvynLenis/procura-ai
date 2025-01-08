@@ -220,7 +220,7 @@ export function AddDeviceForm({ device }: AddDeviceFormProps) {
           !device && (
             <div className="flex justify-between w-full">
               <Link href={'/home'}>
-                <Button type="button" variant="white">Cancelar</Button>
+                <Button type="button" variant="white" isLoader>Cancelar</Button>
               </Link>
               <Button type="submit" variant="orange" className="px-1">Cadastrar dispositivo</Button>
             </div>
