@@ -74,7 +74,7 @@ export function AppSidebar({ admin }: SidebarProps) {
           <span className="w-14 h-14 rounded-full bg-zinc-400"></span>
 
           <div className="flex flex-col">
-            <span>Kelvyn lenis</span>
+            <span>Kelvyn Lenis</span>
             <span>status: <span className="text-emerald-400">Seguro</span></span>
           </div>
         </div>
@@ -101,7 +101,7 @@ export function AppSidebar({ admin }: SidebarProps) {
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
                         <Link href={item.url}>
-                          <item.icon />
+                          {/* <item.icon /> */}
                           <span>{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
@@ -120,7 +120,7 @@ export function AppSidebar({ admin }: SidebarProps) {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild >
                   <Link href={'/'}>
-                    <span data-sidebar="menu-active" className="menu-active w-1 h-full flex bg-yellow-300" />
+                    <span className="menu-active w-1 h-full flex bg-yellow-300" />
                     <span>Contatos de confiança</span>
                   </Link>
                 </SidebarMenuButton>
@@ -146,10 +146,10 @@ export function AppSidebar({ admin }: SidebarProps) {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link href={'/'}>
-                    <span className="text-red-500 flex gap-1 justify-center items-center">
+                    <button onClick={logout} className="text-red-500 flex gap-1 justify-center items-center">
                       <LogOut />
                       Sair
-                    </span>
+                    </button>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -159,15 +159,6 @@ export function AppSidebar({ admin }: SidebarProps) {
 
 
       </SidebarContent >
-      <SidebarFooter className="bg-white">
-        <SidebarMenu>
-          <SidebarMenuItem className="">
-            <SidebarMenuButton asChild>
-              <button onClick={logout} className="h-10 px-2 bg-red-500 text-white flex justify-center rounded-xl hover:bg-red-600 drop-shadow-md self-end">Log Out</button>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar >
   )
 }
