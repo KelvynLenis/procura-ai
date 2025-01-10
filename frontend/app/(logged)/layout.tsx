@@ -11,7 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <main className="min-h-screen h-full w-full flex flex-col">
         {/* <div className="flex flex-col h-screen w-full">
         </div> */}
-        <header className="flex items-center">
+        <header className="flex items-center drop-shadow-md bg-white">
           <Image src={logo} alt="logo" className="w-36 lg:w-44" />
         </header>
         {children}
