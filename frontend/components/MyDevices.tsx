@@ -62,22 +62,28 @@ export function MyDevices() {
 
 
   return (
-    <>
+    <div className="flex flex-col w-full h-96 items-center rounded-xl bg-white shadow">
       {
 
         devices.length === 0 ? (
-          <div className="flex flex-col w-full h-screen items-center justify-center">
-            <span className="text-center">Você ainda não possui dispositivos cadastrados</span>
+          <div className="flex flex-col gap-4 h-full w-full justify-between">
+            <div className="w-full self-start p-2 bg-blue-200/20 h-10 rounded-t-xl font-bold text-procura-ai-blue">
+              Seus dispositivos
+            </div>
 
-            <Link href={'/cadastrar-dispositivo'}>
-              <Button variant="white" isLoader>
-                Cadastrar dispositivo
-              </Button>
-            </Link>
+            <div className="p-4 flex flex-col">
+              <span className="text-center">Você ainda não possui dispositivos cadastrados</span>
+
+              <Link href={'/cadastrar-dispositivo'} className="self-end">
+                <Button variant="blue" isLoader>
+                  Cadastrar dispositivo
+                </Button>
+              </Link>
+            </div>
           </div>
         ) : (
           <>
-            <div className="h-fit w-full flex flex-col gap-4 px-4 pt-4 pb-8 relative">
+            <div className="h-fit w-full flex flex-col gap-4 px-4 pt-4 pb-8 relative overflow-y-scroll">
               <Image src={DeviceBg} alt="dispositivos" className="w-screen left-0 top-0 h-full absolute z-0" />
               <div className="z-10 flex flex-col h-full gap-4">
                 <span className="font-semibold text-xl">Meus dispositivos</span>
@@ -87,12 +93,13 @@ export function MyDevices() {
                   ))
                 }
                 <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
+                <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
               </div>
             </div>
 
-            <span className="text-center font-medium py-10 text-xl">Outras ações</span>
+            {/* <span className="text-center font-medium py-10 text-xl">Outras ações</span> */}
 
-            <div className="h-fit w-fit px-4 grid grid-cols-4 gap-4 text-xs self-center font-medium  items-center">
+            {/* <div className="h-fit w-fit px-4 grid grid-cols-4 gap-4 text-xs self-center font-medium  items-center">
               <button className="mx-auto pb-3 md:px-2 w-fit max-w-24 h-20 bg-zinc-200 rounded-lg flex items-end ">Cadastrar ocorrencia</button>
               <button className="mx-auto pb-3 w-fit max-w-24 h-20 bg-zinc-200 rounded-lg flex items-end">Bloquear apps bancários</button>
               <button className="mx-auto pb-3 md:px-2 w-fit max-w-24 h-20 bg-zinc-200 rounded-lg flex items-end">Alertar autoridades</button>
@@ -102,10 +109,10 @@ export function MyDevices() {
               <button className="mx-auto pb-3 md:px-2 w-fit max-w-24 h-20 bg-zinc-200 rounded-lg flex items-end">Bloquear apps bancários</button>
               <button className="mx-auto pb-3 md:px-2 w-fit max-w-24 h-20 bg-zinc-200 rounded-lg flex items-end">Alertar autoridades</button>
               <button className="mx-auto pb-3 md:px-2 w-fit max-w-24 h-20 bg-zinc-200 rounded-lg flex items-end">Contatos de confiança</button>
-            </div>
+            </div> */}
           </>
         )
       }
-    </>
+    </div>
   )
 }

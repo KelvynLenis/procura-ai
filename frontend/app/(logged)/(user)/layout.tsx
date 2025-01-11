@@ -7,7 +7,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <SidebarProvider>
-        <SidebarTrigger className="lg:hiddenz-10 top-16" />
+        <SidebarTrigger className="lg:hiddenz-10 top-16 z-[-2]" />
         <AppSidebar />
         {children}
       </SidebarProvider>

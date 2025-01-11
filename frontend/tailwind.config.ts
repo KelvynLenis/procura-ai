@@ -10,6 +10,11 @@ export default {
 	theme: {
 		extend: {
 			colors: {
+				'procura-ai-blue': "#002E72",
+				'procura-ai-white': "#F3F8FE",
+				'procura-ai-black': "#282828",
+				'procura-ai-red': "#CF4227",
+				'procura-ai-yellow': "#D8A913",
 				primary: '#F58701',
 				secondary: '#0F2498',
 				tertiary: '#96A6FF',
