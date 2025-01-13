@@ -24,8 +24,8 @@ export function AddDeviceForm({ device }: AddDeviceFormProps) {
 
   const form = useForm({
     defaultValues: {
-      phone_number: device?.phoneNumber || '',
-      phone_model: device?.phoneModel || '',
+      phone_number: device?.phone_number || '',
+      phone_model: device?.phone_model || '',
       brand: device?.brand || '',
       imei: device?.imei || '',
       latitude: device?.latitude || 0,
@@ -37,6 +37,7 @@ export function AddDeviceForm({ device }: AddDeviceFormProps) {
 
 
   async function onSubmit(values: DeviceProps) {
+    console.log(values)
     try {
       const { $id: userId } = await account.get()
 
@@ -52,8 +53,8 @@ export function AddDeviceForm({ device }: AddDeviceFormProps) {
             body: JSON.stringify({
               data: {
                 auth_id: userId,
-                phoneNumber: values.phone_number,
-                phoneModel: values.phone_model,
+                phone_number: values.phone_number,
+                phone_model: values.phone_model,
                 brand: values.brand,
                 imei: values.imei,
                 isStolen: false
@@ -86,8 +87,8 @@ export function AddDeviceForm({ device }: AddDeviceFormProps) {
           body: JSON.stringify({
             documentId: deviceId,
             data: {
-              phoneNumber: values.phone_number,
-              phoneModel: values.phone_model,
+              phone_number: values.phone_number,
+              phone_model: values.phone_model,
               brand: values.brand,
               imei: values.imei,
               isStolen: false,

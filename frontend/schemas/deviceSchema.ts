@@ -16,8 +16,8 @@ const DeviceSchema = z.object({
   isStolen: z.boolean(), // Indica se o dispositivo é roubado
   latitude: z.number(), // Latitude (número)
   longitude: z.number(), // Longitude (número)
-  phoneModel: z.string(), // Modelo do telefone
-  phoneNumber: z.string(), // Número de telefone
+  phone_model: z.string(), // Modelo do telefone
+  phone_number: z.string(), // Número de telefone
 });
 
 export default DeviceSchema;
