@@ -15,7 +15,7 @@ import { account } from "@/lib/appwrite"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { useToast } from "@/hooks/use-toast"
-import logo from '../assets/icons/procura-ai-logo-header.svg'
+import logo from '../../assets/icons/procura-ai-logo-header.svg'
 import Image from "next/image"
 import { Button } from "../ui/button"
 import { z } from "zod"

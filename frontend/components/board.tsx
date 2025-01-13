@@ -58,12 +58,6 @@ export function Board() {
     setContact(contact)
   }
 
-  async function logout() {
-    await account.deleteSession('current')
-
-    router.push('/')
-  }
-
   async function markAsStolen(device: Device) {
 
     try {
