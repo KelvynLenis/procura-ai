@@ -6,7 +6,7 @@ import { TrustfullContacts } from "@/components/TrustfullContacts";
 export default async function Home() {
 
   return (
-    <div className="flex flex-col w-full h-screen gap-10 my-20 mr-5 px-2 overflow-y-scroll md:overflow-y-visible">
+    <div className="flex flex-col w-full h-screen gap-10 my-5 md:mb-20 pb-10 mr-5 px-2 overflow-y-scroll md:overflow-y-visible">
       <MyDevices />
 
       <div className="flex flex-col gap-5 lg:flex-row">
