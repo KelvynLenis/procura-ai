@@ -6,10 +6,11 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <SidebarProvider>
-        <SidebarTrigger className="lg:hiddenz-10 top-16 z-[-2]" />
+      <SidebarProvider className="flex flex-col md:flex-row overflow-x-hidden">
+        <SidebarTrigger className="md:hidden absolute z-10 top-16" />
         <AppSidebar />
         {children}
+        {/* <MobileNavbar /> */}
       </SidebarProvider>
     </>
   )

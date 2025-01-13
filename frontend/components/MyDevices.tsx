@@ -62,10 +62,10 @@ export function MyDevices() {
 
 
   return (
-    <div className="flex flex-col w-full h-96 items-center rounded-xl bg-white shadow">
+    <div className="flex flex-col w-full items-center rounded-xl bg-white shadow pb-10">
       {
 
-        devices.length === 0 ? (
+        devices.length !== 0 ? (
           <div className="flex flex-col gap-4 h-full w-full justify-between">
             <div className="w-full self-start p-2 bg-blue-200/20 h-10 rounded-t-xl font-bold text-procura-ai-blue">
               Seus dispositivos
@@ -83,19 +83,24 @@ export function MyDevices() {
           </div>
         ) : (
           <>
-            <div className="h-fit w-full flex flex-col gap-4 px-4 pt-4 pb-8 relative overflow-y-scroll">
-              <Image src={DeviceBg} alt="dispositivos" className="w-screen left-0 top-0 h-full absolute z-0" />
-              <div className="z-10 flex flex-col h-full gap-4">
-                <span className="font-semibold text-xl">Meus dispositivos</span>
-                {
-                  devices.map((device: DeviceProps) => (
-                    <Device key={device.$id} {...device} />
-                  ))
-                }
-                <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
-                <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
-              </div>
+            {/* <div className="h-fit w-full flex flex-col gap-4 px-4 pt-4 relative"> */}
+            <div className="w-full self-start p-2 bg-blue-200/20 h-10 rounded-t-xl font-bold text-procura-ai-blue">
+              Seus dispositivos
             </div>
+            <div className="z-10 flex flex-col h-96 w-full gap-3 px-4 py-1 overflow-y-scroll">
+              {/* <Image src={DeviceBg} alt="dispositivos" className="w-screen left-0 top-0 h-full absolute z-0" /> */}
+              {
+                devices.map((device: DeviceProps) => (
+                  <Device key={device.$id} {...device} />
+                ))
+              }
+              <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
+              <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
+              <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
+              <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
+              <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
+            </div>
+            {/* </div> */}
 
             {/* <span className="text-center font-medium py-10 text-xl">Outras ações</span> */}
 

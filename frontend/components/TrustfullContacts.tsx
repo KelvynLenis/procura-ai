@@ -4,7 +4,7 @@ export function TrustfullContacts() {
 
   return (
     <>
-      <div className="flex flex-col w-1/3 h-64 gap-3 rounded-xl bg-white shadow">
+      <div className="flex flex-col  w-full lg:w-1/3 h-64 gap-3 rounded-xl bg-white shadow">
         <span className="w-full shadow-lg rounded-t-xl p-2 text-procura-ai-blue font-bold">Contatos de confiança</span>
 
         <div className="flex flex-col h-full p-3">

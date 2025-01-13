@@ -16,7 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </header>
         {children}
       </main>
-      <MobileNavbar />
+      {/* <MobileNavbar /> */}
     </ProtectedRoute>
   )
 }

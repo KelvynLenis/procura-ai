@@ -69,6 +69,7 @@ export function AppSidebar({ admin }: SidebarProps) {
 
   return (
     <Sidebar className="text-zinc-900 z-[1] shadow-md h-screen">
+      <CloseSidebarTrigger />
       <SidebarContent className="bg-white flex flex-col">
         <div className="h-32 w-full flex items-center justify-center gap-3 shadow-md">
           <span className="w-14 h-14 rounded-full bg-zinc-400"></span>
