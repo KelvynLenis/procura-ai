@@ -83,10 +83,9 @@ export function MyDevices() {
                 <span className="font-semibold text-xl">Meus dispositivos</span>
                 {
                   devices.map((device: DeviceProps) => (
-                    <Device key={device.$id} {...device} />
+                    <Device key={device.$id} {...device} setDevices={setDevices}/>
                   ))
                 }
-                <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
               </div>
             </div>
 

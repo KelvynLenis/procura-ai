@@ -10,21 +10,35 @@ import {
 import { AddDeviceForm } from "./Forms/AddDeviceForm";
 import { useToast } from "@/hooks/use-toast";
 import { Trash } from "lucide-react";
-
-export function Device({ phoneModel, phoneNumber, brand, imei, latitude, longitude }: DeviceProps) {
+export function Device({ phone_model, phone_number, brand, imei, latitude, longitude, $id, setDevices }: DeviceProps & { setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>> }) {
   const { toast } = useToast()
 
   async function handleDeleteDevice(id: string) {
-    // @Glaymar TODO
-    // Lógica para deletar o dispositivo
-
     console.log(id)
-    toast({
-      variant: 'warning',
-      title: 'TODO',
-      description: 'Lógica para deletar o dispositivo',
-      duration: 3000
-    })
+    try {
+      const promise = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          },
+        }).then(async (response) => {
+          if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`Error: ${error}`);
+          }
+          setDevices((prevDevices) => prevDevices.filter((device) => device.$id !== id));
+
+          return response;
+        }).catch((err) => {
+          console.log(`Fetch error: ${err}`);
+          return null;
+        });
+    } catch (error) {
+      console.error(error)
+    }
 
   }
 
@@ -32,7 +46,7 @@ export function Device({ phoneModel, phoneNumber, brand, imei, latitude, longitu
     <>
       <div className="flex bg-zinc-100 rounded-3xl px-3 py-3 justify-between max-w-[700px]">
         <div className="flex flex-col gap-1.5 w-1/2 text-lg">
-          <span>Modelo: <span className="font-semibold">{phoneModel}</span></span>
+          <span>Modelo: <span className="font-semibold">{phone_model}</span></span>
           <span>Marca:  <span className="font-semibold">{brand}</span></span>
           <span>IMEI:  <span className="font-semibold">{imei}</span></span>
           <span>Status:  <span className="font-semibold">ativo</span></span>
@@ -44,11 +58,11 @@ export function Device({ phoneModel, phoneNumber, brand, imei, latitude, longitu
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Editar contato</DialogTitle>
-                <AddDeviceForm device={{ phoneModel, phoneNumber, brand, imei, latitude, longitude }} />
+                <AddDeviceForm device={{ phone_model, phone_number, brand, imei, latitude, longitude }} />
               </DialogHeader>
             </DialogContent>
           </Dialog>
-          <Button variant="red" className="self-end w-fit py-2 max-w-52" onClick={() => handleDeleteDevice('id')}>
+          <Button variant="red" className="self-end w-fit py-2 max-w-52" onClick={() => handleDeleteDevice($id)}>
             <Trash className="w-5 h-5" />
           </Button>
           <Button variant="orange" className="self-end w-full py-1 max-w-52">Marcar como roubado</Button>
