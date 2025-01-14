@@ -87,7 +87,7 @@ export function MyDevices() {
             <div className="w-full self-start p-2 bg-blue-200/20 h-10 rounded-t-xl font-bold text-procura-ai-blue">
               Seus dispositivos
             </div>
-            <div className="z-10 flex flex-col h-96 w-full gap-3 px-4 py-1 overflow-y-scroll">
+            <div className="z-10 flex flex-col h-96 w-full gap-3 px-4 py-1 overflow-y-scroll custom-scroll">
               {/* <Image src={DeviceBg} alt="dispositivos" className="w-screen left-0 top-0 h-full absolute z-0" /> */}
               {
                 devices.map((device: DeviceProps) => (

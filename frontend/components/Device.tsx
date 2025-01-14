@@ -65,7 +65,7 @@ export function Device({ phone_model, phone_number, brand, imei, latitude, longi
           <Button variant="red" className="self-end w-fit py-2 max-w-52" onClick={() => handleDeleteDevice($id)}>
             <Trash className="w-5 h-5" />
           </Button>
-          <Button variant="orange" className="self-end w-full py-1 max-w-52">Marcar como roubado</Button>
+          <Button variant="orange" className="self-end w-full py-1 max-w-52 text-xs md:text-base">Marcar como roubado</Button>
         </div>
       </div>
     </>

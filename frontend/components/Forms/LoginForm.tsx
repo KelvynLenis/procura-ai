@@ -137,7 +137,7 @@ export function LoginForm({ admin }: LoginFormProps) {
               <span className="font-bold self-center">
                 Se preferir, acesse pela conta Gov.br
               </span>
-              <Button type="button" className="bg-secondary text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gob.br</Button>
+              <Button disabled type="button" className="bg-secondary text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gob.br</Button>
               <span className="font-bold self-center">
                 Não possui conta?
               </span>

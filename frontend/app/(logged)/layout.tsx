@@ -8,7 +8,7 @@ import { MobileNavbar } from "@/components/MobileNavbar";
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ProtectedRoute>
-      <main className="min-h-screen h-full w-full flex flex-col">
+      <main className="min-h-screen h-fit w-full flex flex-col">
         {/* <div className="flex flex-col h-screen w-full">
         </div> */}
         <header className="flex items-center drop-shadow-md bg-white z-[-1]">

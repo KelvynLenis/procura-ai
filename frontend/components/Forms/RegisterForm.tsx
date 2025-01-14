@@ -339,7 +339,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
                 <Button type="button" className="bg-secondary text-white rounded-full w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com e-mail ou CPF</Button>
               </Link>
               <Link className="flex w-full" href={'/login'}>
-                <Button type="button" className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gov.br</Button>
+                <Button type="button" disabled className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gov.br</Button>
               </Link>
             </div>
           )
