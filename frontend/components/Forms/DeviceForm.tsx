@@ -1,0 +1,411 @@
+"use client"
+
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import { useForm } from "react-hook-form"
+import { Input } from "../Input"
+import { account } from "@/lib/appwrite"
+import { z } from "zod"
+import { Device, DeviceProps } from "@/utils/types"
+import Button from "../Button"
+import { cn } from "@/lib/utils"
+import Link from "next/link"
+import { v4 as uuidv4 } from 'uuid';
+import { useRouter } from "next/navigation"
+// import { DialogClose } from "../ui/dialog"
+import { useToast } from "@/hooks/use-toast"
+import { Check, ChevronDown, ChevronsUpDown, Search } from "lucide-react"
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "../ui/input-otp"
+import { Button as ButtonShadcn } from "../ui/button"
+
+
+interface AddDeviceFormProps {
+  device?: Device;
+}
+
+export function DeviceForm({ device }: AddDeviceFormProps) {
+  const { toast } = useToast()
+
+  const models = [
+    { label: "English", value: "en" },
+    { label: "French", value: "fr" },
+    { label: "German", value: "de" },
+    { label: "Spanish", value: "es" },
+    { label: "Portuguese", value: "pt" },
+    { label: "Russian", value: "ru" },
+    { label: "Japanese", value: "ja" },
+    { label: "Korean", value: "ko" },
+    { label: "Chinese", value: "zh" },
+  ] as const
+
+  const brands = [
+    { label: "English", value: "en" },
+    { label: "French", value: "fr" },
+    { label: "German", value: "de" },
+    { label: "Spanish", value: "es" },
+    { label: "Portuguese", value: "pt" },
+    { label: "Russian", value: "ru" },
+    { label: "Japanese", value: "ja" },
+    { label: "Korean", value: "ko" },
+    { label: "Chinese", value: "zh" },
+  ] as const
+
+  const form = useForm({
+    defaultValues: {
+      phone_number: device?.phone_number || '',
+      phone_model: device?.phone_model || '',
+      brand: device?.brand || '',
+      imei: device?.imei || '',
+      latitude: device?.latitude || 0,
+      longitude: device?.longitude || 0
+    }
+  })
+
+  const router = useRouter()
+
+
+  async function onSubmit(values: DeviceProps) {
+    console.log(values)
+    try {
+      const { $id: userId } = await account.get()
+
+      if (device) {
+        const promise = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${device.$id}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+            },
+            body: JSON.stringify({
+              data: {
+                auth_id: userId,
+                phone_number: values.phone_number,
+                phone_model: values.phone_model,
+                brand: values.brand,
+                imei: values.imei,
+                isStolen: false
+              },
+
+            })
+          }).then(async (response) => {
+            if (!response.ok) {
+              const error = await response.text();
+              throw new Error(`Error: ${error}`);
+            }
+            return response.json();
+          }).catch((err) => {
+            console.log(`Fetch error: ${err.message}`);
+            return null;
+          });
+
+        return
+      }
+
+      const deviceId = uuidv4();
+      const promise = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          },
+          body: JSON.stringify({
+            documentId: deviceId,
+            data: {
+              phone_number: values.phone_number,
+              phone_model: values.phone_model,
+              brand: values.brand,
+              imei: values.imei,
+              isStolen: false,
+              auth_id: userId
+
+            }
+          })
+        }).then(async (response) => {
+          if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`Error: ${error}`);
+          }
+          form.reset()
+          router.push('/home')
+
+          return response.json();
+        }).catch((err) => {
+          console.log(`Fetch error: ${err.message}`);
+          return null;
+        });
+
+
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+
+  async function handleEditDevice(id: string) {
+
+    // @Glaymar TODO
+    // Lógica para editar o dispositivo
+
+    toast({
+      variant: 'warning',
+      title: 'TODO',
+      description: 'Lógica para editar o dispositivo',
+      duration: 3000
+    })
+
+  }
+
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={cn(
+          "w-full bg-white flex flex-col px-5 mr-5 my-5 xl:mr-14 md:px-10 py-4 gap-8 text-zinc-900 self-center items-center justify-center rounded-3xl shadow-md",
+          // !device && "shadow-form" // Adiciona "shadow-form" apenas se device estiver presente
+        )}>
+        <div className="flex flex-col w-full gap-8">
+          <span className="font-medium">Para cadastrar o seu celular, insira os dados abaixo:</span>
+          <span className="h-0.5 w-full bg-zinc-400" />
+        </div>
+
+
+        <FormField
+          control={form.control}
+          name="phone_model"
+          render={({ field }) => (
+            <FormItem className="flex flex-col w-full">
+              <FormLabel className="text-lg">Modelo do dispositivo</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <ButtonShadcn
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        "w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100",
+                        !field.value && "text-muted-foreground text-zinc-500"
+                      )}
+                    >
+                      <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
+                      {field.value
+                        ? models.find(
+                          (model) => model.value === field.value
+                        )?.label
+                        : "Pesquise o modelo do dispositivo"}
+                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </ButtonShadcn>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Digite o modelo." />
+                    <CommandList>
+                      <CommandEmpty>Nenhum modelo encontrado.</CommandEmpty>
+                      <CommandGroup>
+                        {models.map((model) => (
+                          <CommandItem
+                            value={model.label}
+                            key={model.value}
+                            onSelect={() => {
+                              form.setValue("phone_model", model.value)
+                            }}
+                          >
+                            {model.label}
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                model.value === field.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </FormItem>
+          )}
+        />
+
+
+
+        <FormField
+          control={form.control}
+          name="brand"
+          render={({ field }) => (
+            <FormItem className="flex flex-col w-full">
+              <FormLabel className="text-lg">Marca</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <ButtonShadcn
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        "w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100",
+                        !field.value && "text-muted-foreground text-zinc-500"
+                      )}
+                    >
+                      <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
+                      {field.value
+                        ? models.find(
+                          (model) => model.value === field.value
+                        )?.label
+                        : "Pesquise a marca do dispositivo"}
+                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </ButtonShadcn>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Digite a marca" />
+                    <CommandList>
+                      <CommandEmpty>Nenhuma marca encontrada.</CommandEmpty>
+                      <CommandGroup>
+                        {brands.map((brand) => (
+                          <CommandItem
+                            value={brand.label}
+                            key={brand.value}
+                            onSelect={() => {
+                              form.setValue("brand", brand.value)
+                            }}
+                          >
+                            {brand.label}
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                brand.value === field.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="imei"
+          render={({ field }) => (
+            <FormItem className="flex flex-col md:flex-row gap-5 w-full">
+              <div>
+                <FormLabel className="font-medium text-lg">IMEI</FormLabel>
+                <FormControl>
+                  <InputOTP maxLength={15} {...field} className="w-full flex justify-center items-center" >
+                    <InputOTPGroup >
+                      <InputOTPSlot className="w-3 md:w-4 h-5 border-t-0 border-r-0 border-black  shadow-transparent" index={0} />
+                      <InputOTPSlot className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={1} />
+                    </InputOTPGroup>
+                    <span />
+                    <InputOTPGroup>
+                      <InputOTPSlot className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={2} />
+                      <InputOTPSlot className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={3} />
+                      <InputOTPSlot className="w-3 md:w-4 h-5 border-t-0 border-r-0 border-black shadow-transparent" index={4} />
+                      <InputOTPSlot className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={5} />
+                      <InputOTPSlot className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={6} />
+                      <InputOTPSlot className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={7} />
+                    </InputOTPGroup>
+                    <InputOTPGroup>
+                      <InputOTPSlot className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={8} />
+                      <InputOTPSlot className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={9} />
+                      <InputOTPSlot className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={10} />
+                      <InputOTPSlot className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={11} />
+                      <InputOTPSlot className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={12} />
+                      <InputOTPSlot className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={13} />
+                    </InputOTPGroup>
+                    <InputOTPGroup>
+                      <InputOTPSlot className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={14} />
+                    </InputOTPGroup>
+                  </InputOTP>
+                </FormControl>
+              </div>
+              <span className="w-64 md:w-80 bg-[#D8A912]/30 text-procura-ai-black/60 font-medium py-2 px-4 rounded-xl">
+                🛈 O IMEI é composto por 15 números e pode ser encontrado na embalagem do aparelho ou digitando *#06# no teclado.
+              </span>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="phone_number"
+          render={({ field }) => (
+            <FormItem className="flex flex-col md:w-fit self-start">
+              <FormLabel className="text-lg">Número do celular</FormLabel>
+              <FormControl>
+                <InputOTP maxLength={11} {...field} className="w-full flex justify-center items-center" >
+                  <InputOTPGroup>
+                    <span>(</span>
+                    <InputOTPSlot className="w-4 md:w-5 h-5 border-t-0 border-r-0 border-black  shadow-transparent" index={0} />
+                    <InputOTPSlot className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={1} />
+                    <span>)</span>
+                  </InputOTPGroup>
+                  <span />
+                  <InputOTPGroup>
+                    <InputOTPSlot className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={2} />
+                    <InputOTPSlot className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={3} />
+                    <InputOTPSlot className="w-4 md:w-5 h-5 border-t-0 border-r-0 border-black shadow-transparent" index={4} />
+                    <InputOTPSlot className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={5} />
+                    <InputOTPSlot className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={6} />
+                  </InputOTPGroup>
+                  <InputOTPSeparator data-dash />
+                  <InputOTPGroup>
+                    <InputOTPSlot className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={7} />
+                    <InputOTPSlot className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={8} />
+                    <InputOTPSlot className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={9} />
+                    <InputOTPSlot className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={10} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+
+
+
+        {
+          device ? (
+            <div className="flex justify-between w-full">
+              {/* <DialogClose className="bg-white border-[0.5px] border-primary text-primary hover:bg-primary hover:text-white rounded-full text-center items-center justify-center flex w-fit px-2 py-2 shadow transition-all duration-300" type="button">Cancelar</DialogClose> */}
+              <Button type="button" onClick={() => handleEditDevice(device.$id)} variant="orange" className="px-2">Editar dispositivo</Button>
+            </div>
+          ) : (
+            <div className="flex justify-between w-full">
+              <Button type="submit" variant="blue" className="px-1">Cadastrar dispositivo</Button>
+              <Link href={'/home'}>
+                <Button type="button" variant="red" isLoader>Cancelar</Button>
+              </Link>
+            </div>
+          )
+        }
+      </form>
+    </Form>
+  )
+}

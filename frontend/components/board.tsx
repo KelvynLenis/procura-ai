@@ -14,7 +14,7 @@ import {
 import { useRouter } from "next/navigation"
 import { account, databases, functions } from "@/lib/appwrite"
 import { useEffect, useState } from "react"
-import { AddDeviceForm } from "./Forms/AddDeviceForm"
+import { AddDeviceForm } from "./Forms/DeviceForm"
 import { Device } from "@/utils/types"
 
 

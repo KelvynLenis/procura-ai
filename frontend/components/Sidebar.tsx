@@ -13,22 +13,42 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { account } from "@/lib/appwrite"
-import { ChartColumnBig, Home, LogOut, Pencil, Plus, Table } from "lucide-react"
+import { ChartColumnBig, FileWarning, Home, LogOut, Pencil, Plus, Siren, Smartphone, Table, Users } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { CloseSidebarTrigger } from "./CloseSidebarTrigger"
 import Link from "next/link"
+import { usePathname } from 'next/navigation'
 
-const items = [
+const devicesGroup = [
   {
     title: "Meus dispositivos",
-    url: "home",
-    icon: Home,
+    url: "meus-dispositivos",
+    icon: Smartphone,
   },
   {
     title: "Cadastrar novo dispositivo",
     url: "cadastrar-dispositivo",
     icon: Plus,
   },
+]
+
+const securityGroup = [
+  {
+    title: "Contatos de confiança",
+    url: "criar-alerta",
+    icon: Users,
+  },
+  {
+    title: "Alertar autoridades",
+    url: "meus-alertas",
+    icon: Siren,
+  },
+  {
+    title: "Criar boletim de ocorrência",
+    url: "perfil",
+    icon: FileWarning,
+  },
+
   {
     title: "Editar perfil",
     url: "perfil",
@@ -61,6 +81,8 @@ interface SidebarProps {
 export function AppSidebar({ admin }: SidebarProps) {
   const router = useRouter()
 
+  const pathname = usePathname().slice(1)
+
   async function logout() {
     await account.deleteSession('current')
 
@@ -68,7 +90,7 @@ export function AppSidebar({ admin }: SidebarProps) {
   }
 
   return (
-    <Sidebar className="text-zinc-900 z-[1] shadow-md h-screen">
+    <Sidebar className="text-zinc-900 z-[1] shadow-md h-full">
       <CloseSidebarTrigger />
       <SidebarContent className="bg-white flex flex-col">
         <div className="h-32 w-full flex items-center justify-center gap-3 shadow-md">
@@ -80,8 +102,20 @@ export function AppSidebar({ admin }: SidebarProps) {
           </div>
         </div>
 
+        <SidebarGroup className="flex">
+          <SidebarMenu className="flex flex-col gap-1 font-bold">
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === 'home'}>
+                <Link href={'/home'}>
+                  <span>Início</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
 
-        <SidebarGroup className="flex flex-col gap-2">
+
+        <SidebarGroup className="flex flex-col gap-2 p-0">
           <SidebarGroupLabel className="uppercase">Dispositivos</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="flex flex-col gap-1 font-bold">
@@ -89,7 +123,7 @@ export function AppSidebar({ admin }: SidebarProps) {
                 admin ? (
                   itemsForAdmins.map((item) => (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild >
+                      <SidebarMenuButton asChild>
                         <Link href={item.url}>
                           <item.icon />
                           <span>{item.title}</span>
@@ -98,9 +132,9 @@ export function AppSidebar({ admin }: SidebarProps) {
                     </SidebarMenuItem>
                   ))
                 ) : (
-                  items.map((item) => (
+                  devicesGroup.map((item) => (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild>
+                      <SidebarMenuButton asChild isActive={pathname === item.url}>
                         <Link href={item.url}>
                           {/* <item.icon /> */}
                           <span>{item.title}</span>
@@ -117,32 +151,18 @@ export function AppSidebar({ admin }: SidebarProps) {
           <SidebarGroupLabel className="uppercase">segurança</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="flex flex-col gap-1 font-bold">
-
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild >
-                  <Link href={'/'}>
-                    <span className="menu-active w-1 h-full flex bg-yellow-300" />
-                    <span>Contatos de confiança</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild >
-                  <Link href={'/'}>
-                    <span>Alertar autoridades</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href={'/'}>
-                    <span>Criar boletim de ocorrência</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
+              {
+                securityGroup.map((item) => (
+                  <SidebarMenuItem key={item.title} title="Em breve">
+                    <SidebarMenuButton asChild isActive={pathname === item.url}>
+                      <Link href={item.url} aria-disabled>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))
+              }
 
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
