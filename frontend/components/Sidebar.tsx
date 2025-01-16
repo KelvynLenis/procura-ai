@@ -19,6 +19,7 @@ import { CloseSidebarTrigger } from "./CloseSidebarTrigger"
 import Link from "next/link"
 import { usePathname } from 'next/navigation'
 import { IoMdAddCircle } from "react-icons/io";
+import { PiUsersThreeFill } from "react-icons/pi";
 
 const devicesGroup = [
   {
@@ -40,7 +41,7 @@ const securityGroup = [
   {
     title: "Contatos de confiança",
     url: "criar-alerta",
-    icon: <Users />,
+    icon: <PiUsersThreeFill />,
   },
   {
     title: "Alertar autoridades",
