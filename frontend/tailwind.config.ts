@@ -17,7 +17,7 @@ export default {
 				'procura-ai-red': "#CF4227",
 				'procura-ai-yellow': "#D8A913",
 				'procura-ai-dark-yellow': "#C89900",
-				primary: '#002E72',
+				primary: '#F58701',
 				secondary: '#0F2498',
 				tertiary: '#96A6FF',
 				sidebar: {

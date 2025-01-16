@@ -1,91 +1,88 @@
+'use client'
 
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Pencil, TriangleAlert } from "lucide-react"
-import Link from "next/link"
+import { DeviceRow } from "./DeviceRow"
+import { useEffect, useState } from "react"
+import { DeviceProps } from "@/utils/types"
+import { account } from "@/lib/appwrite"
 
-export async function DevicesTable() {
+export function DevicesTable() {
+  const [devices, setDevices] = useState<DeviceProps[]>([])
+
+  async function getUserId() {
+    const { $id: userId } = await account.get();
+    return userId;
+  }
+
+  async function buildParams() {
+    const userId = await getUserId();
+    const params = new URLSearchParams({
+      'queries[0]': JSON.stringify({
+        method: "equal",
+        attribute: "auth_id",
+        values: [userId],
+      }),
+    });
+    return params;
+  }
+
+
+  useEffect(() => {
+    const getDevices = async () => {
+      try {
+        const params = await buildParams(); // Aguarda os parâmetros serem construídos
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          const error = await response.text();
+          throw new Error(`Error: ${error}`);
+        }
+
+        const result = await response.json();
+        setDevices(result.documents || []);
+      } catch (err) {
+        console.error(`Fetch error: ${err}`);
+      }
+    };
+
+    getDevices();
+  }, []);
+
 
   return (
-    <Table className="bg-white shadow-lg rounded-lg">
+    <Table className="bg-white shadow-lg rounded-lg self-center">
       <TableHeader className="bg-zinc-200/60">
         <TableRow>
           <TableHead className="text-black/80">Modelo</TableHead>
           <TableHead className="text-black/80">Marca</TableHead>
           <TableHead className="text-black/80">IMEI</TableHead>
           <TableHead className="text-black/80">Status</TableHead>
-          <TableHead></TableHead>
+          <TableHead className="w-fit"></TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow>
-          <TableCell className="font-medium text-zinc-800">Galaxy A54</TableCell>
-          <TableCell>Samsung </TableCell>
-          <TableCell>2 242974 ****** **</TableCell>
-          <TableCell>
-            <span className="bg-lime-500/20 text-lime-700 p-1">Regular</span>
-          </TableCell>
-          <TableCell className="flex flex-col gap-2">
-            <Link href={'/meus-dispositivos/edit/1'}>
-              <button className="rounded-xl flex bg-blue-100 text-blue-700 py-1 px-2 gap-2 items-center w-fit">
-                <Pencil size={16} />
-                Editar
-              </button>
-            </Link>
-
-            <button className="rounded-xl flex bg-red-100 text-red-700 py-1 px-2 gap-2 items-center w-fit">
-              <TriangleAlert size={16} />
-              Marcar como roubado
-            </button>
-          </TableCell>
-        </TableRow>
-
-        <TableRow>
-          <TableCell className="font-medium text-zinc-800">Galaxy A54</TableCell>
-          <TableCell>Samsung </TableCell>
-          <TableCell>2 242974 ****** **</TableCell>
-          <TableCell>
-            <span className="bg-lime-500/20 text-lime-700 p-1">Regular</span>
-          </TableCell>
-          <TableCell className="flex flex-col gap-2">
-            <button className="rounded-xl flex bg-blue-100 text-blue-700 py-1 px-2 gap-2 items-center w-fit">
-              <Pencil size={16} />
-              Editar
-            </button>
-
-            <button className="rounded-xl flex bg-red-100 text-red-700 py-1 px-2 gap-2 items-center w-fit">
-              <TriangleAlert size={16} />
-              Marcar como roubado
-            </button>
-          </TableCell>
-        </TableRow>
-
-        <TableRow className="">
-          <TableCell className="font-medium text-zinc-800">Galaxy A54</TableCell>
-          <TableCell>Samsung </TableCell>
-          <TableCell>2 242974 ****** **</TableCell>
-          <TableCell>
-            <span className="bg-lime-500/20 text-lime-700 p-1">Regular</span>
-          </TableCell>
-
-          <TableCell className="flex flex-col gap-2">
-            <button className="rounded-xl flex bg-blue-100 text-blue-700 py-1 px-2 gap-2 items-center w-fit">
-              <Pencil size={16} />
-              Editar
-            </button>
-
-            <button className="rounded-xl flex bg-red-100 text-red-700 py-1 px-2 gap-2 items-center w-fit">
-              <TriangleAlert size={16} />
-              Marcar como roubado
-            </button>
-          </TableCell>
-        </TableRow>
+        {
+          devices.map(device =>
+            <DeviceRow id={device.$id} phone_number={device.phone_number} phone_model={device.phone_model} brand={device.brand} imei={device.imei} isStolen={device.isStolen} setDevices={setDevices} />
+          )
+        }
+        <DeviceRow id="ID2" phone_number="Telefone" phone_model="Redmi Note 7" brand="Xiaomi" imei="2 242974 222222 22" isStolen setDevices={setDevices} />
+        <DeviceRow id="ID3" phone_number="Telefone" phone_model="Redmi Note 7" brand="Xiaomi" imei="2 242974 222222 22" isStolen={false} setDevices={setDevices} />
       </TableBody>
     </Table>
   )

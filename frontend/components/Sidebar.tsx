@@ -13,22 +13,27 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { account } from "@/lib/appwrite"
-import { ChartColumnBig, FileWarning, Home, LogOut, Pencil, Plus, Siren, Smartphone, Table, Users } from "lucide-react"
+import { ChartColumnBig, CirclePlus, FileWarning, Home, LogOut, Pencil, Plus, Siren, Smartphone, Table, Users } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { CloseSidebarTrigger } from "./CloseSidebarTrigger"
 import Link from "next/link"
 import { usePathname } from 'next/navigation'
+import { IoMdAddCircle } from "react-icons/io";
+import { PiUsersThreeFill } from "react-icons/pi";
 
 const devicesGroup = [
   {
     title: "Meus dispositivos",
     url: "meus-dispositivos",
-    icon: Smartphone,
+    icon: <Smartphone />,
   },
   {
     title: "Cadastrar novo dispositivo",
     url: "cadastrar-dispositivo",
-    icon: Plus,
+    icon: <div className="relative">
+      <Smartphone className="size-4" />
+      <IoMdAddCircle className="absolute top-0.5 -right-0.5 bg-white rounded-full size-3" />
+    </div>,
   },
 ]
 
@@ -36,23 +41,23 @@ const securityGroup = [
   {
     title: "Contatos de confiança",
     url: "criar-alerta",
-    icon: Users,
+    icon: <PiUsersThreeFill />,
   },
   {
     title: "Alertar autoridades",
     url: "meus-alertas",
-    icon: Siren,
+    icon: <Siren />,
   },
   {
     title: "Criar boletim de ocorrência",
     url: "perfil",
-    icon: FileWarning,
+    icon: <FileWarning />,
   },
 
   {
     title: "Editar perfil",
     url: "perfil",
-    icon: Pencil,
+    icon: <Pencil />,
   },
 ]
 
@@ -60,17 +65,17 @@ const itemsForAdmins = [
   {
     title: "Dashboard",
     url: "dashboard",
-    icon: ChartColumnBig,
+    icon: <ChartColumnBig />,
   },
   {
     title: "Usuários cadastrados",
     url: "usuarios",
-    icon: Table,
+    icon: <Table />,
   },
   {
     title: "Editar perfil",
     url: "perfil-admin",
-    icon: Pencil,
+    icon: <Pencil />,
   },
 ]
 
@@ -102,11 +107,12 @@ export function AppSidebar({ admin }: SidebarProps) {
           </div>
         </div>
 
-        <SidebarGroup className="flex">
+        <SidebarGroup className="flex p-0">
           <SidebarMenu className="flex flex-col gap-1 font-bold">
             <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={pathname === 'home'}>
                 <Link href={'/home'}>
+                  <Home />
                   <span>Início</span>
                 </Link>
               </SidebarMenuButton>
@@ -125,7 +131,9 @@ export function AppSidebar({ admin }: SidebarProps) {
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
                         <Link href={item.url}>
-                          <item.icon />
+                          {
+                            item.icon
+                          }
                           <span>{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
@@ -135,10 +143,12 @@ export function AppSidebar({ admin }: SidebarProps) {
                   devicesGroup.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild isActive={pathname === item.url}>
-                        <Link href={item.url}>
-                          {/* <item.icon /> */}
+                        <button onClick={() => router.push(`http://localhost:3000/${item.url}`)}>
+                          {
+                            item.icon
+                          }
                           <span>{item.title}</span>
-                        </Link>
+                        </button>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   )))
@@ -156,7 +166,9 @@ export function AppSidebar({ admin }: SidebarProps) {
                   <SidebarMenuItem key={item.title} title="Em breve">
                     <SidebarMenuButton asChild isActive={pathname === item.url}>
                       <Link href={item.url} aria-disabled>
-                        <item.icon />
+                        {
+                          item.icon
+                        }
                         <span>{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
