@@ -9,11 +9,7 @@ export interface DeviceProps {
   phone_model: string; // Modelo do telefone
   brand: string; // Marca do telefone
   imei: string; // IMEI do telefone
-  latitude: number; // Latitude da localização do dispositivo
-  longitude: number; // Longitude da localização do dispositivo
   isStolen?: boolean; // Status de "roubado" (true/false)
-
-
 }
 
 export type Device = z.infer<typeof DeviceSchema>;

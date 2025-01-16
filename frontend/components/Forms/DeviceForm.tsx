@@ -15,25 +15,43 @@ import {
   CommandList,
 } from "@/components/ui/command"
 import { useForm } from "react-hook-form"
-import { Input } from "../Input"
 import { account } from "@/lib/appwrite"
 import { z } from "zod"
 import { Device, DeviceProps } from "@/utils/types"
 import Button from "../Button"
-import { cn } from "@/lib/utils"
+import { cn, validateIMEI, validatePhoneNumber } from "@/lib/utils"
 import Link from "next/link"
 import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from "next/navigation"
-// import { DialogClose } from "../ui/dialog"
 import { useToast } from "@/hooks/use-toast"
-import { Check, ChevronDown, ChevronsUpDown, Search } from "lucide-react"
+import { Check, ChevronDown, Search } from "lucide-react"
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "../ui/input-otp"
 import { Button as ButtonShadcn } from "../ui/button"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 
 interface AddDeviceFormProps {
   device?: Device;
 }
+
+const formSchema = z.object({
+  phone_model: z.string(),
+  phone_number: z.string().min(11, {
+    message: "O número de celular deve conter exatamente 11 dígitos numéricos.",
+  }),
+  brand: z.string(),
+  imei: z.string().min(15, {
+    message: "O IMEI deve conter exatamente 15 dígitos numéricos.",
+  })
+})
+  .refine((data) => validateIMEI(data.imei), {
+    path: ["imei"], // Indica onde mostrar o erro
+    message: "O IMEI deve conter exatamente 15 dígitos numéricos.",
+  })
+  .refine((data) => validatePhoneNumber(data.phone_number), {
+    path: ["phone_number"], // Indica onde mostrar o erro
+    message: "O número de celular deve conter exatamente 11 dígitos numéricos.",
+  })
 
 export function DeviceForm({ device }: AddDeviceFormProps) {
   const { toast } = useToast()
@@ -62,23 +80,45 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
     { label: "Chinese", value: "zh" },
   ] as const
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       phone_number: device?.phone_number || '',
       phone_model: device?.phone_model || '',
       brand: device?.brand || '',
       imei: device?.imei || '',
-      latitude: device?.latitude || 0,
-      longitude: device?.longitude || 0
     }
   })
 
   const router = useRouter()
 
-
   async function onSubmit(values: DeviceProps) {
     console.log(values)
     try {
+      const imei = values.imei.trim();
+      const number = values.phone_number.trim();
+
+      const isValidIMEI = /^[0-9]{15}$/.test(imei);
+      const isValidPhoneNumber = /^[0-9]{11}$/.test(number);
+
+      if (!isValidIMEI) {
+        toast({
+          variant: 'destructive',
+          title: "IMEI inválido",
+          description: "O IMEI deve conter exatamente 15 dígitos numéricos.",
+        })
+        return
+      }
+
+      if (!isValidPhoneNumber) {
+        toast({
+          variant: 'destructive',
+          title: "Número de telefone inválido",
+          description: "O número de telefone deve conter exatamente 11 dígitos numéricos.",
+        })
+        return
+      }
+
       const { $id: userId } = await account.get()
 
       if (device) {
@@ -192,25 +232,30 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
             <FormItem className="flex flex-col w-full">
               <FormLabel className="text-lg">Modelo do dispositivo</FormLabel>
               <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <ButtonShadcn
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        "w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100",
-                        !field.value && "text-muted-foreground text-zinc-500"
-                      )}
-                    >
-                      <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
-                      {field.value
-                        ? models.find(
-                          (model) => model.value === field.value
-                        )?.label
-                        : "Pesquise o modelo do dispositivo"}
-                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </ButtonShadcn>
-                  </FormControl>
+                <PopoverTrigger asChild type="button">
+                  <button type="button" className="self-start">
+
+                    <FormControl>
+                      <ButtonShadcn
+                        variant="outline"
+                        role="combobox"
+                        type="button"
+                        className={cn(
+                          "w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100",
+                          !field.value && "text-muted-foreground text-zinc-500"
+                        )}
+                      >
+                        <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
+                        {field.value
+                          ? models.find(
+                            (model) => model.value === field.value
+                          )?.label
+                          : "Pesquise o modelo do dispositivo"}
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </ButtonShadcn>
+                    </FormControl>
+                    <FormMessage />
+                  </button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[200px] p-0">
                   <Command>
@@ -252,28 +297,32 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
           control={form.control}
           name="brand"
           render={({ field }) => (
-            <FormItem className="flex flex-col w-full">
+            <FormItem className="flex flex-col w-fit self-start">
               <FormLabel className="text-lg">Marca</FormLabel>
               <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <ButtonShadcn
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        "w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100",
-                        !field.value && "text-muted-foreground text-zinc-500"
-                      )}
-                    >
-                      <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
-                      {field.value
-                        ? models.find(
-                          (model) => model.value === field.value
-                        )?.label
-                        : "Pesquise a marca do dispositivo"}
-                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </ButtonShadcn>
-                  </FormControl>
+                <PopoverTrigger asChild type="button">
+                  <button type="button" className="self-start">
+                    <FormControl>
+                      <ButtonShadcn
+                        variant="outline"
+                        role="combobox"
+                        type="button"
+                        className={cn(
+                          "w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100",
+                          !field.value && "text-muted-foreground text-zinc-500"
+                        )}
+                      >
+                        <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
+                        {field.value
+                          ? models.find(
+                            (model) => model.value === field.value
+                          )?.label
+                          : "Pesquise a marca do dispositivo"}
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </ButtonShadcn>
+                    </FormControl>
+                    <FormMessage />
+                  </button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[200px] p-0">
                   <Command>
@@ -344,6 +393,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                     </InputOTPGroup>
                   </InputOTP>
                 </FormControl>
+                <FormMessage />
               </div>
               <span className="w-64 md:w-80 bg-[#D8A912]/30 text-procura-ai-black/60 font-medium py-2 px-4 rounded-xl">
                 🛈 O IMEI é composto por 15 números e pode ser encontrado na embalagem do aparelho ou digitando *#06# no teclado.
@@ -383,18 +433,17 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                   </InputOTPGroup>
                 </InputOTP>
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
-
-
 
 
         {
           device ? (
             <div className="flex justify-between w-full">
               {/* <DialogClose className="bg-white border-[0.5px] border-primary text-primary hover:bg-primary hover:text-white rounded-full text-center items-center justify-center flex w-fit px-2 py-2 shadow transition-all duration-300" type="button">Cancelar</DialogClose> */}
-              <Button type="button" onClick={() => handleEditDevice(device.$id)} variant="orange" className="px-2">Editar dispositivo</Button>
+              <Button type="submit" onClick={() => handleEditDevice(device.$id)} variant="orange" className="px-2">Editar dispositivo</Button>
             </div>
           ) : (
             <div className="flex justify-between w-full">
