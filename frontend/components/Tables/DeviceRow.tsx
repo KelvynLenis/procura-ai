@@ -4,9 +4,10 @@ import { ImPencil } from "react-icons/im";
 import Link from "next/link";
 import { DeviceProps } from "@/utils/types";
 import { cn } from "@/lib/utils";
+import { Trash } from "lucide-react";
 
 interface DeviceRowProps {
-  $id?: string; // ID do dispositivo
+  $id: string; // ID do dispositivo
   phone_number: string; // Número de telefone
   phone_model: string; // Modelo do telefone
   brand: string; // Marca do telefone
@@ -61,6 +62,10 @@ export function DeviceRow({ $id, phone_number, phone_model, brand, imei, isStole
             Editar
           </button>
         </Link>
+
+        <button className="self-start bg-red-500 rounded-full p-1 text-white hover:opacity-50" onClick={() => handleDeleteDevice($id)}>
+          <Trash size={20} />
+        </button>
 
         <button className={cn("rounded-xl flex  py-1 px-2 gap-2 items-center w-fit hover:opacity-70", isStolen ? 'bg-yellow-200 text-yellow-600' : 'bg-red-200 text-red-600')}>
           <IoIosWarning size={20} />
