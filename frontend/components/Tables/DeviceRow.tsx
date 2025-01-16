@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Trash } from "lucide-react";
 
 interface DeviceRowProps {
-  $id: string; // ID do dispositivo
+  id: string; // ID do dispositivo
   phone_number: string; // Número de telefone
   phone_model: string; // Modelo do telefone
   brand: string; // Marca do telefone
@@ -16,7 +16,7 @@ interface DeviceRowProps {
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
 }
 
-export function DeviceRow({ $id, phone_number, phone_model, brand, imei, isStolen, setDevices }: DeviceRowProps) {
+export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen, setDevices }: DeviceRowProps) {
 
   async function handleDeleteDevice(id: string) {
     console.log(id)
@@ -63,7 +63,7 @@ export function DeviceRow({ $id, phone_number, phone_model, brand, imei, isStole
           </button>
         </Link>
 
-        <button className="self-start bg-red-500 rounded-full p-1 text-white hover:opacity-50" onClick={() => handleDeleteDevice($id)}>
+        <button className="self-start bg-red-500 rounded-full p-1 text-white hover:opacity-50" onClick={() => handleDeleteDevice(id)}>
           <Trash size={20} />
         </button>
 
