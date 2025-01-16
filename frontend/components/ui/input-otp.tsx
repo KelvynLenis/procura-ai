@@ -13,7 +13,7 @@ const InputOTP = React.forwardRef<
   <OTPInput
     ref={ref}
     containerClassName={cn(
-      "flex items-center gap-2 has-[:disabled]:opacity-50 ring-1 ring-secondary/60 px-3 py-3 rounded-xl",
+      "flex items-center gap-2 has-[:disabled]:opacity-50 px-3 py-3 rounded-xl bg-zinc-100",
       containerClassName
     )}
     className={cn("disabled:cursor-not-allowed", className)}
@@ -36,11 +36,6 @@ const InputOTPSlot = React.forwardRef<
 >(({ index, className, ...props }, ref) => {
   const inputOTPContext = React.useContext(OTPInputContext)
   const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index]
-
-  // if (!/[0-9]/.test(char)) {
-  //   char?.replace(/[^0-9]/g, '')
-  //   return
-  // }
 
   return (
     <div

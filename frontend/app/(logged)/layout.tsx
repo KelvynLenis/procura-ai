@@ -1,19 +1,10 @@
-import { OpenSidebarTrigger } from "@/components/OpenSidebarTrigger"
 import ProtectedRoute from "@/components/ProtectedRoute"
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import logo from '../../assets/icons/procura-ai-logo-header.svg'
-import Image from "next/image";
-import { MobileNavbar } from "@/components/MobileNavbar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ProtectedRoute>
-      <main className="min-h-screen h-full w-full flex flex-col">
-        {/* <div className="flex flex-col h-screen w-full">
-        </div> */}
-        <header className="flex items-center drop-shadow-md bg-white z-[-1]">
-          <Image src={logo} alt="logo" className="w-36 lg:w-44" />
-        </header>
+      <main className="min-h-screen h-fit w-full flex flex-col bg-[#F2F8FD]">
+        <header className="flex items-center drop-shadow-md bg-procura-ai-blue self-end w-full h-16"></header>
         {children}
       </main>
       {/* <MobileNavbar /> */}

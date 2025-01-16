@@ -13,9 +13,11 @@ export default {
 				'procura-ai-blue': "#002E72",
 				'procura-ai-white': "#F3F8FE",
 				'procura-ai-black': "#282828",
+				'procura-ai-zinc': "#232323",
 				'procura-ai-red': "#CF4227",
 				'procura-ai-yellow': "#D8A913",
-				primary: '#F58701',
+				'procura-ai-dark-yellow': "#C89900",
+				primary: '#002E72',
 				secondary: '#0F2498',
 				tertiary: '#96A6FF',
 				sidebar: {

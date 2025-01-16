@@ -229,7 +229,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
             <FormItem className="flex flex-col w-full">
               <FormLabel className="text-zinc-900 ml-4 font-bold">CPF</FormLabel>
               <FormControl>
-                <InputOTP maxLength={11} {...field} className="w-full flex justify-center items-center" >
+                <InputOTP maxLength={11} {...field} containerClassName="ring-1 ring-secondary/60" className="w-full flex justify-center items-center" >
                   <InputOTPGroup>
                     <InputOTPSlot className="w-4 h-5 border-t-0 border-r-0 border-black  shadow-transparent" index={0} />
                     <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={1} />
@@ -339,7 +339,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
                 <Button type="button" className="bg-secondary text-white rounded-full w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com e-mail ou CPF</Button>
               </Link>
               <Link className="flex w-full" href={'/login'}>
-                <Button type="button" className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gov.br</Button>
+                <Button type="button" disabled className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gov.br</Button>
               </Link>
             </div>
           )

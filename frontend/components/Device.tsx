@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { AddDeviceForm } from "./Forms/AddDeviceForm";
+import { DeviceForm } from "./Forms/DeviceForm";
 import { useToast } from "@/hooks/use-toast";
 import { Trash } from "lucide-react";
 export function Device({ phone_model, phone_number, brand, imei, latitude, longitude, $id, setDevices }: DeviceProps & { setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>> }) {
@@ -52,20 +52,20 @@ export function Device({ phone_model, phone_number, brand, imei, latitude, longi
           <span>Status:  <span className="font-semibold">ativo</span></span>
         </div>
 
-        <div className="flex flex-col justify-between w-1/2">
+        <div className="flex flex-col justify-between w-1/2 ">
           <Dialog>
             <DialogTrigger className="self-end font-medium hover:opacity-50">Editar</DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Editar contato</DialogTitle>
-                <AddDeviceForm device={{ phone_model, phone_number, brand, imei, latitude, longitude }} />
+                <DeviceForm device={{ phone_model, phone_number, brand, imei, latitude, longitude }} />
               </DialogHeader>
             </DialogContent>
           </Dialog>
           <Button variant="red" className="self-end w-fit py-2 max-w-52" onClick={() => handleDeleteDevice($id)}>
             <Trash className="w-5 h-5" />
           </Button>
-          <Button variant="orange" className="self-end w-full py-1 max-w-52">Marcar como roubado</Button>
+          <Button variant="orange" className="self-end w-full py-1 max-w-52 text-xs md:text-base">Marcar como roubado</Button>
         </div>
       </div>
     </>

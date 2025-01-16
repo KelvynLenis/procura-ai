@@ -6,7 +6,7 @@ interface CloseSidebarTriggerProps extends React.HTMLAttributes<HTMLButtonElemen
 export function CloseSidebarTrigger({ ...props }: CloseSidebarTriggerProps) {
   const { toggleSidebar } = useSidebar()
 
-  return <button className="absolute top-4 right-4 md:hidden" onClick={toggleSidebar} {...props}>
+  return <button className="absolute top-4 right-4 lg:hidden" onClick={toggleSidebar} {...props}>
     <X />
   </button>
 }

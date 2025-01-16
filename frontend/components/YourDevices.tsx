@@ -7,9 +7,9 @@ import { account } from "@/lib/appwrite"
 import Link from "next/link";
 import Button from "./Button";
 import Image from "next/image";
-import DeviceBg from '../assets/images/devices-bg.png'
+import woman from '../assets/images/woman-coffe.png'
 
-export function MyDevices() {
+export function YourDevices() {
   const [devices, setDevices] = useState<DeviceProps[]>([])
 
   async function getUserId() {
@@ -65,13 +65,14 @@ export function MyDevices() {
     <div className="flex flex-col w-full items-center rounded-xl bg-white shadow pb-10">
       {
 
-        devices.length !== 0 ? (
+        devices.length === 0 ? (
           <div className="flex flex-col gap-4 h-full w-full justify-between">
             <div className="w-full self-start p-2 bg-blue-200/20 h-10 rounded-t-xl font-bold text-procura-ai-blue">
               Seus dispositivos
             </div>
 
-            <div className="p-4 flex flex-col">
+            <div className="p-4 flex flex-col gap-4">
+              <Image src={woman} alt="woman" className="w-56 self-center" />
               <span className="text-center">Você ainda não possui dispositivos cadastrados</span>
 
               <Link href={'/cadastrar-dispositivo'} className="self-end">
@@ -87,7 +88,7 @@ export function MyDevices() {
             <div className="w-full self-start p-2 bg-blue-200/20 h-10 rounded-t-xl font-bold text-procura-ai-blue">
               Seus dispositivos
             </div>
-            <div className="z-10 flex flex-col h-96 w-full gap-3 px-4 py-1 overflow-y-scroll">
+            <div className="z-10 flex flex-col h-96 w-full gap-3 px-4 py-1 overflow-y-scroll custom-scroll">
               {/* <Image src={DeviceBg} alt="dispositivos" className="w-screen left-0 top-0 h-full absolute z-0" /> */}
               {
                 devices.map((device: DeviceProps) => (
