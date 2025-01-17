@@ -5,6 +5,19 @@ import Link from "next/link";
 import { DeviceProps } from "@/utils/types";
 import { cn } from "@/lib/utils";
 import { Trash } from "lucide-react";
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { MarkAsStolenForm } from "../Forms/MarkAsStolenForm";
 
 interface DeviceRowProps {
   id: string; // ID do dispositivo
@@ -66,14 +79,26 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
           <Trash size={20} />
         </button>
 
-        <button className={cn("rounded-xl flex  py-1 px-2 gap-2 items-center w-fit hover:opacity-70", isStolen ? 'bg-yellow-200 text-yellow-600' : 'bg-red-200 text-red-600')}>
-          <IoIosWarning size={20} />
-          {
-            isStolen
-              ? 'Desmarcar como roubado'
-              : 'Marcar como roubado'
-          }
-        </button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button className={cn("rounded-xl flex  py-1 px-2 gap-2 items-center w-fit hover:opacity-70", isStolen ? 'bg-yellow-200 text-yellow-600' : 'bg-red-200 text-red-600')}>
+              <IoIosWarning size={20} />
+              {
+                isStolen
+                  ? 'Desmarcar como roubado'
+                  : 'Marcar como roubado'
+              }
+            </button>
+          </DialogTrigger>
+          <DialogContent className="flex flex-col w-fit">
+            <DialogHeader>
+              <DialogTitle>Preencha as informações</DialogTitle>
+            </DialogHeader>
+            <MarkAsStolenForm />
+          </DialogContent>
+        </Dialog>
+
+
       </TableCell>
     </TableRow>
   )
