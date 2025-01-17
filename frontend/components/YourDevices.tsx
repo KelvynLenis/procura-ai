@@ -30,35 +30,35 @@ export function YourDevices() {
   }
 
 
-  useEffect(() => {
-    const getDevices = async () => {
-      try {
-        const params = await buildParams(); // Aguarda os parâmetros serem construídos
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-            },
-          }
-        );
+  // useEffect(() => {
+  //   const getDevices = async () => {
+  //     try {
+  //       const params = await buildParams(); // Aguarda os parâmetros serem construídos
+  //       const response = await fetch(
+  //         `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
+  //         {
+  //           method: "GET",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+  //           },
+  //         }
+  //       );
 
-        if (!response.ok) {
-          const error = await response.text();
-          throw new Error(`Error: ${error}`);
-        }
+  //       if (!response.ok) {
+  //         const error = await response.text();
+  //         throw new Error(`Error: ${error}`);
+  //       }
 
-        const result = await response.json();
-        setDevices(result.documents || []);
-      } catch (err) {
-        console.error(`Fetch error: ${err}`);
-      }
-    };
+  //       const result = await response.json();
+  //       setDevices(result.documents || []);
+  //     } catch (err) {
+  //       console.error(`Fetch error: ${err}`);
+  //     }
+  //   };
 
-    getDevices();
-  }, []);
+  //   getDevices();
+  // }, []);
 
 
   return (
