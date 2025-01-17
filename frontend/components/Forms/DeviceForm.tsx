@@ -31,7 +31,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 
 interface AddDeviceFormProps {
-  device?: Device;
+  device?: DeviceProps;
 }
 
 const formSchema = z.object({
@@ -54,6 +54,7 @@ const formSchema = z.object({
   })
 
 export function DeviceForm({ device }: AddDeviceFormProps) {
+  console.log(device)
   const { toast } = useToast()
 
   const models = [
@@ -197,19 +198,52 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
   }
 
 
-  async function handleEditDevice(id: string) {
+  async function handleEditDevice(id: string, values: DeviceProps) {
+    console.log({ id, values })
+    try {
+      const { $id: userId } = await account.get();
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          },
+          body: JSON.stringify({
+            data: {
+              auth_id: userId,
+              phone_number: values.phone_number,
+              phone_model: values.phone_model,
+              brand: values.brand,
+              imei: values.imei,
+              isStolen: false
+            }
+          })
+        }
+      );
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`Error: ${error}`);
+      }
+      const updatedDevice = await response.json();
 
-    // @Glaymar TODO
-    // Lógica para editar o dispositivo
+      // setDevices((prevDevices) =>
+      //   prevDevices.map((device) =>
+      //     device.$id === id ? { ...device, ...updatedDevice } : device
+      //   )
+      // );
+      console.log("Device updated successfully");
+      console.log(updatedDevice);
 
-    toast({
-      variant: 'warning',
-      title: 'TODO',
-      description: 'Lógica para editar o dispositivo',
-      duration: 3000
-    })
-
+      return updatedDevice;
+    } catch (err) {
+      console.log(`Fetch error: ${err}`);
+      return null;
+    }
   }
+
+
 
   return (
     <Form {...form}>
@@ -232,8 +266,8 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
             <FormItem className="flex flex-col w-full">
               <FormLabel className="text-lg">Modelo do dispositivo</FormLabel>
               <Popover>
-                <PopoverTrigger asChild type="button">
-                  <button type="button" className="self-start">
+                <PopoverTrigger asChild>
+                  <div className="self-start">
 
                     <FormControl>
                       <ButtonShadcn
@@ -255,7 +289,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                       </ButtonShadcn>
                     </FormControl>
                     <FormMessage />
-                  </button>
+                  </div>
                 </PopoverTrigger>
                 <PopoverContent className="w-[200px] p-0">
                   <Command>
@@ -300,8 +334,8 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
             <FormItem className="flex flex-col w-fit self-start">
               <FormLabel className="text-lg">Marca</FormLabel>
               <Popover>
-                <PopoverTrigger asChild type="button">
-                  <button type="button" className="self-start">
+                <PopoverTrigger asChild>
+                  <div className="self-start">
                     <FormControl>
                       <ButtonShadcn
                         variant="outline"
@@ -322,7 +356,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                       </ButtonShadcn>
                     </FormControl>
                     <FormMessage />
-                  </button>
+                  </div>
                 </PopoverTrigger>
                 <PopoverContent className="w-[200px] p-0">
                   <Command>
@@ -443,7 +477,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
           device ? (
             <div className="flex justify-between w-full">
               {/* <DialogClose className="bg-white border-[0.5px] border-primary text-primary hover:bg-primary hover:text-white rounded-full text-center items-center justify-center flex w-fit px-2 py-2 shadow transition-all duration-300" type="button">Cancelar</DialogClose> */}
-              <Button type="submit" onClick={() => handleEditDevice(device.$id)} variant="orange" className="px-2">Editar dispositivo</Button>
+              <Button type="submit" onClick={() => handleEditDevice(device.$id, form.getValues())} variant="orange" className="px-2">Editar dispositivo</Button>
             </div>
           ) : (
             <div className="flex justify-between w-full">

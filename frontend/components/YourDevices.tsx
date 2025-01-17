@@ -30,35 +30,35 @@ export function YourDevices() {
   }
 
 
-  useEffect(() => {
-    const getDevices = async () => {
-      try {
-        const params = await buildParams(); // Aguarda os parâmetros serem construídos
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-            },
-          }
-        );
+  // useEffect(() => {
+  //   const getDevices = async () => {
+  //     try {
+  //       const params = await buildParams(); // Aguarda os parâmetros serem construídos
+  //       const response = await fetch(
+  //         `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
+  //         {
+  //           method: "GET",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+  //           },
+  //         }
+  //       );
 
-        if (!response.ok) {
-          const error = await response.text();
-          throw new Error(`Error: ${error}`);
-        }
+  //       if (!response.ok) {
+  //         const error = await response.text();
+  //         throw new Error(`Error: ${error}`);
+  //       }
 
-        const result = await response.json();
-        setDevices(result.documents || []);
-      } catch (err) {
-        console.error(`Fetch error: ${err}`);
-      }
-    };
+  //       const result = await response.json();
+  //       setDevices(result.documents || []);
+  //     } catch (err) {
+  //       console.error(`Fetch error: ${err}`);
+  //     }
+  //   };
 
-    getDevices();
-  }, []);
+  //   getDevices();
+  // }, []);
 
 
   return (
@@ -95,27 +95,7 @@ export function YourDevices() {
                   <Device key={device.$id} {...device} />
                 ))
               }
-              <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
-              <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
-              <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
-              <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
-              <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
             </div>
-            {/* </div> */}
-
-            {/* <span className="text-center font-medium py-10 text-xl">Outras ações</span> */}
-
-            {/* <div className="h-fit w-fit px-4 grid grid-cols-4 gap-4 text-xs self-center font-medium  items-center">
-              <button className="mx-auto pb-3 md:px-2 w-fit max-w-24 h-20 bg-zinc-200 rounded-lg flex items-end ">Cadastrar ocorrencia</button>
-              <button className="mx-auto pb-3 w-fit max-w-24 h-20 bg-zinc-200 rounded-lg flex items-end">Bloquear apps bancários</button>
-              <button className="mx-auto pb-3 md:px-2 w-fit max-w-24 h-20 bg-zinc-200 rounded-lg flex items-end">Alertar autoridades</button>
-              <button className="mx-auto pb-3 md:px-2 w-fit max-w-24 h-20 bg-zinc-200 rounded-lg flex items-end">Contatos de confiança</button>
-
-              <button className="mx-auto pb-3 md:px-2 w-fit max-w-24 h-20 bg-zinc-200 rounded-lg flex items-end">Cadastrar ocorrencia</button>
-              <button className="mx-auto pb-3 md:px-2 w-fit max-w-24 h-20 bg-zinc-200 rounded-lg flex items-end">Bloquear apps bancários</button>
-              <button className="mx-auto pb-3 md:px-2 w-fit max-w-24 h-20 bg-zinc-200 rounded-lg flex items-end">Alertar autoridades</button>
-              <button className="mx-auto pb-3 md:px-2 w-fit max-w-24 h-20 bg-zinc-200 rounded-lg flex items-end">Contatos de confiança</button>
-            </div> */}
           </>
         )
       }
