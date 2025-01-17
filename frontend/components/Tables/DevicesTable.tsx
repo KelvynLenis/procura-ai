@@ -78,11 +78,9 @@ export function DevicesTable() {
       <TableBody>
         {
           devices.map(device =>
-            <DeviceRow id={device.$id} phone_number={device.phone_number} phone_model={device.phone_model} brand={device.brand} imei={device.imei} isStolen={device.isStolen} setDevices={setDevices} />
+            <DeviceRow key={device.$id} id={device.$id} phone_number={device.phone_number} phone_model={device.phone_model} brand={device.brand} imei={device.imei} isStolen={device.isStolen} setDevices={setDevices} />
           )
         }
-        <DeviceRow id="ID2" phone_number="Telefone" phone_model="Redmi Note 7" brand="Xiaomi" imei="2 242974 222222 22" isStolen setDevices={setDevices} />
-        <DeviceRow id="ID3" phone_number="Telefone" phone_model="Redmi Note 7" brand="Xiaomi" imei="2 242974 222222 22" isStolen={false} setDevices={setDevices} />
       </TableBody>
     </Table>
   )

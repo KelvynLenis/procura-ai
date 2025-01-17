@@ -95,11 +95,6 @@ export function YourDevices() {
                   <Device key={device.$id} {...device} />
                 ))
               }
-              <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
-              <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
-              <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
-              <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
-              <Device phoneModel="123" phoneNumber="123" brand="123" imei="123" latitude={0} longitude={0} />
             </div>
             {/* </div> */}
 

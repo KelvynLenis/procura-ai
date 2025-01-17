@@ -19,7 +19,6 @@ interface DeviceRowProps {
 export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen, setDevices }: DeviceRowProps) {
 
   async function handleDeleteDevice(id: string) {
-    console.log(id)
     try {
       const promise = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
@@ -56,7 +55,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
         <span className={cn(isStolen ? "bg-red-500/20 text-red-700 p-1" : "bg-lime-500/20 text-lime-700 p-1")}>{isStolen ? 'Roubado' : 'Regular'}</span>
       </TableCell>
       <TableCell className="flex flex-col gap-2">
-        <Link href={`meus-dispositivos/edit/1`}>
+        <Link href={`meus-dispositivos/edit/${id}`}>
           <button className="rounded-xl flex bg-sky-100/70 text-blue-900 py-1 px-2 gap-2 items-center w-fit hover:opacity-70">
             <ImPencil size={16} />
             Editar
