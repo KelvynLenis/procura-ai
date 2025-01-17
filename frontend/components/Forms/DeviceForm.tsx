@@ -56,6 +56,7 @@ const formSchema = z.object({
 export function DeviceForm({ device }: AddDeviceFormProps) {
   console.log(device)
   const { toast } = useToast()
+  const route = useRouter()
 
   const models = [
     { label: "English", value: "en" },
@@ -198,6 +199,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
   }
 
 
+
   async function handleEditDevice(id: string, values: DeviceProps) {
     console.log({ id, values })
     try {
@@ -236,6 +238,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
       console.log("Device updated successfully");
       console.log(updatedDevice);
 
+      route.push('/meus-dispositivos')
       return updatedDevice;
     } catch (err) {
       console.log(`Fetch error: ${err}`);
