@@ -50,7 +50,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
     <TableRow>
       <TableCell className="font-medium text-zinc-800">{phone_model}</TableCell>
       <TableCell>{brand}</TableCell>
-      <TableCell>{imei.slice(0, 8) + ' ****** **'}</TableCell>
+      <TableCell>{imei.slice(0, 1) + ' ' + imei.slice(1, 8) + ' ****** **'}</TableCell>
       <TableCell>
         <span className={cn(isStolen ? "bg-red-500/20 text-red-700 p-1" : "bg-lime-500/20 text-lime-700 p-1")}>{isStolen ? 'Roubado' : 'Regular'}</span>
       </TableCell>

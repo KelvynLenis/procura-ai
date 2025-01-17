@@ -11,11 +11,10 @@ const DeviceSchema = z.object({
   $id: z.string(), // ID único do documento
   $permissions: PermissionsSchema, // Lista de permissões no formato especificado
   $updatedAt: z.string().datetime(), // Data de atualização (ISO 8601)
+  auth_id: z.string(),
   brand: z.string(), // Marca do dispositivo
   imei: z.string(), // IMEI do dispositivo
   isStolen: z.boolean(), // Indica se o dispositivo é roubado
-  latitude: z.number(), // Latitude (número)
-  longitude: z.number(), // Longitude (número)
   phone_model: z.string(), // Modelo do telefone
   phone_number: z.string(), // Número de telefone
 });

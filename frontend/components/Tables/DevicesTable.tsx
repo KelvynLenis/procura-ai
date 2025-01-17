@@ -3,10 +3,12 @@
 import {
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Skeleton } from "@/components/ui/skeleton"
 import { DeviceRow } from "./DeviceRow"
 import { useEffect, useState } from "react"
 import { DeviceProps } from "@/utils/types"
@@ -14,6 +16,7 @@ import { account } from "@/lib/appwrite"
 
 export function DevicesTable() {
   const [devices, setDevices] = useState<DeviceProps[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   async function getUserId() {
     const { $id: userId } = await account.get();
@@ -32,11 +35,11 @@ export function DevicesTable() {
     return params;
   }
 
-
   useEffect(() => {
     const getDevices = async () => {
+      setIsLoading(true)
       try {
-        const params = await buildParams(); // Aguarda os parâmetros serem construídos
+        const params = await buildParams();
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
           {
@@ -57,12 +60,13 @@ export function DevicesTable() {
         setDevices(result.documents || []);
       } catch (err) {
         console.error(`Fetch error: ${err}`);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     getDevices();
   }, []);
-
 
   return (
     <Table className="bg-white shadow-lg rounded-lg self-center">
@@ -76,11 +80,44 @@ export function DevicesTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {
-          devices.map(device =>
-            <DeviceRow key={device.$id} id={device.$id} phone_number={device.phone_number} phone_model={device.phone_model} brand={device.brand} imei={device.imei} isStolen={device.isStolen} setDevices={setDevices} />
-          )
-        }
+        {isLoading ? (
+          <TableRow>
+            <TableCell>
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+
+            <TableCell>
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+
+            <TableCell>
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+
+            <TableCell>
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+
+            <TableCell className="w-24 flex flex-col gap-0.5">
+              <Skeleton className="h-7 w-24" />
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <Skeleton className="h-7 w-52" />
+            </TableCell>
+          </TableRow>
+        ) : (
+          devices.map(device => (
+            <DeviceRow
+              key={device.$id}
+              id={device.$id}
+              phone_number={device.phone_number}
+              phone_model={device.phone_model}
+              brand={device.brand}
+              imei={device.imei}
+              isStolen={device.isStolen}
+              setDevices={setDevices}
+            />
+          ))
+        )}
       </TableBody>
     </Table>
   )

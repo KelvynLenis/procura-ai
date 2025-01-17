@@ -31,7 +31,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 
 interface AddDeviceFormProps {
-  device?: Device;
+  device?: DeviceProps;
 }
 
 const formSchema = z.object({
@@ -199,7 +199,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
 
 
   async function handleEditDevice(id: string, values: DeviceProps) {
-    console.log({id, values})
+    console.log({ id, values })
     try {
       const { $id: userId } = await account.get();
       const response = await fetch(
@@ -266,8 +266,8 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
             <FormItem className="flex flex-col w-full">
               <FormLabel className="text-lg">Modelo do dispositivo</FormLabel>
               <Popover>
-                <PopoverTrigger asChild type="button">
-                  <button type="button" className="self-start">
+                <PopoverTrigger asChild>
+                  <div className="self-start">
 
                     <FormControl>
                       <ButtonShadcn
@@ -289,7 +289,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                       </ButtonShadcn>
                     </FormControl>
                     <FormMessage />
-                  </button>
+                  </div>
                 </PopoverTrigger>
                 <PopoverContent className="w-[200px] p-0">
                   <Command>
@@ -334,8 +334,8 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
             <FormItem className="flex flex-col w-fit self-start">
               <FormLabel className="text-lg">Marca</FormLabel>
               <Popover>
-                <PopoverTrigger asChild type="button">
-                  <button type="button" className="self-start">
+                <PopoverTrigger asChild>
+                  <div className="self-start">
                     <FormControl>
                       <ButtonShadcn
                         variant="outline"
@@ -356,7 +356,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                       </ButtonShadcn>
                     </FormControl>
                     <FormMessage />
-                  </button>
+                  </div>
                 </PopoverTrigger>
                 <PopoverContent className="w-[200px] p-0">
                   <Command>
