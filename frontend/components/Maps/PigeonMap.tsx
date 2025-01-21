@@ -13,7 +13,7 @@ export function MyMap() {
   }
 
   return (
-    <Map height={450} defaultCenter={[-7.1509317, -34.8446769]} defaultZoom={11}>
+    <Map width={450} defaultCenter={[-7.1509317, -34.8446769]} defaultZoom={11}>
       <Marker width={50} anchor={[-7.1786937, -34.8754069]} color={'#FF0000'} onClick={() => handleOpenPopup('Ernesto Geisel')} />
       <Marker width={50} anchor={[-7.1683911, -34.8366125]} color={'#FF0000'} />
       <Marker width={50} anchor={[-7.1323427, -34.8829599]} color={'#FF0000'} />
