@@ -1,4 +1,3 @@
-import { ChartBoard } from "@/components/ChartBoard";
 import { OccurrencesMap } from "@/components/Maps/OccurrencesMap";
 import Link from "next/link";
 import { TbArrowsMinimize } from "react-icons/tb";

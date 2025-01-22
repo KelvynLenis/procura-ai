@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Map, Marker, GeoJson, Overlay } from "pigeon-maps"
 import { geoJsonSample } from "@/utils/ChartData"
 import { EventProps } from "@/utils/types";
 import { set } from "zod";
+import { usePathname } from 'next/navigation'
 
 interface OccurrencesMapProps {
   width?: number;
@@ -17,10 +18,54 @@ interface OccurrencesMapProps {
 export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, events }: OccurrencesMapProps) {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false)
   const [event, setEvent] = useState<EventProps>({} as EventProps)
+  const pathname = usePathname().slice(1)
 
   function handleOpenPopup(event: EventProps) {
     setIsOverlayOpen(!isOverlayOpen)
     setEvent(event)
+  }
+
+  const size = useWindowSize();
+
+  function useWindowSize() {
+    const [windowSize, setWindowSize] = useState({
+      width: 0,
+      height: 0,
+    });
+
+    useEffect(() => {
+      function handleResize() {
+        setWindowSize({
+          width: window.innerWidth,
+          height: window.innerHeight,
+        });
+      }
+
+      window.addEventListener("resize", handleResize);
+
+      handleResize();
+
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    return windowSize;
+  }
+
+  function setWidth() {
+    console.log(pathname)
+    if (pathname === 'map/ocorrencias') {
+      return window.innerWidth
+    } else {
+      return 650
+    }
+  }
+
+  function setHeight() {
+    if (pathname === 'map/ocorrencias') {
+      return window.innerHeight
+    } else {
+      return 400
+    }
   }
 
   const eventData: EventProps = {
@@ -33,7 +78,7 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, even
   }
 
   return (
-    <Map width={650} height={300} defaultCenter={[-7.1509317, -34.8446769]} defaultZoom={11}>
+    <Map width={setWidth()} height={setHeight()} defaultCenter={[-7.1509317, -34.8446769]} defaultZoom={11}>
       {
         events && events.map((event, index) => (
           <Marker key={index} width={50} anchor={event.lastLocation} color={'#FF0000'} onClick={() => handleOpenPopup(event)} />

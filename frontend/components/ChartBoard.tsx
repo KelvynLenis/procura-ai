@@ -17,6 +17,7 @@ import { IoIosExpand } from "react-icons/io";
 
 import { topBrandsStolen, topDangerousDistricts } from "@/utils/ChartData"
 import { EventProps } from "@/utils/types";
+import Link from "next/link";
 
 const Map = dynamic(() => import('./Maps/MapTiler'), {
   ssr: false,
@@ -28,17 +29,15 @@ export function ChartBoard() {
   const [numberOfDevicesRegistered, setNumberOfDevicesRegistered] = useState(0)
   const [numberOfDevicesRecovered, setNumberOfDevicesRecovered] = useState(0)
   const [occurrencesMapSize, setOccurrencesMapSize] = useState({ width: 650, height: 300 })
-  // const { toggleSidebar } = useSidebar()
 
-  function handleExpandOccurrencesMap() {
-    // toggleSidebar()
-
-    setOccurrencesMapSize({
-      width: window.innerWidth,
-      height: window.innerHeight
-    })
-
-    console.log(occurrencesMapSize)
+  // exemplo de um evento
+  const eventData: EventProps = {
+    id: '1',
+    lastLocation: [-7.1786937, -34.8754069],
+    type: 'Roubo',
+    description: 'Descrição do roubo',
+    datetime: '2023-06-18T00:00:00.000Z',
+    isAlertOn: true
   }
 
   useEffect(() => {
@@ -68,13 +67,13 @@ export function ChartBoard() {
       <div className="lg:flex-row flex flex-col gap-5 mb-5 self-start">
         <div className="relative flex flex-col w-[250px] md:w-[700px] lg:w-full bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center">
           <h2 className="text-3xxl font-black text-procura-ai-blue">Localização de ocorrências</h2>
-          {/* <button onClick={handleExpandOccurrencesMap} type="button" title="Clique para expandir" className="group flex items-center justify-center hover:cursor-pointer z-10 hover:bg-black/40 w-[95%] h-[82%] absolute top-11 right-">
+          <Link href={'/map/ocorrencias'} title="Clique para expandir" className="group flex items-center justify-center hover:cursor-pointer z-10 hover:bg-black/40 w-[95%] h-[86%] absolute top-11 right-">
             <IoIosExpand size={50} className="text-white hidden group-hover:flex group-hover:animate-ping" />
-          </button>
+          </Link>
           <div className="z-1">
             <OccurrencesMap events={occurrences} />
-          </div> */}
-          <Map />
+          </div>
+          {/* <Map /> */}
         </div>
 
         {/* <div className="relative flex flex-col w-[250px] md:w-[700px] lg:w-[450px] xl:w-[700px] h-[500px]">

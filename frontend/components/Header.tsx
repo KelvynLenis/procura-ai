@@ -1,12 +1,14 @@
-import Image from "next/image";
-import logo from '../assets/icons/procura-ai-logo-header.svg'
+'use client'
+
+import { usePathname } from "next/navigation"
 
 export function Header() {
+  const pathname = usePathname().slice(1)
 
   return (
-    <header className="shadow-xl flex items-center">
-      <Image src={logo} alt="logo" className="w-28 lg:w-44" />
-      <span className='lg:h-12 h-7 w-0.5 bg-secondary rounded-full' />
-    </header>
+    pathname !== 'map/ocorrencias' &&
+    (
+      <header className="flex items-center drop-shadow-md bg-procura-ai-blue self-end w-full h-16"></header>
+    )
   )
 }
