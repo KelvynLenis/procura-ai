@@ -6,9 +6,11 @@ import { Input } from "../Input"
 import { z } from "zod"
 import { useToast } from "@/hooks/use-toast"
 import { MarkAsStolenMap } from "../Maps/MarkAsStolenMap"
+import { v4 as uuidv4 } from 'uuid';
 
 
-export function MarkAsStolenForm() {
+
+export function MarkAsStolenForm({id}) {
   const { toast } = useToast()
 
   const form = useForm({
@@ -24,19 +26,41 @@ export function MarkAsStolenForm() {
   }
 
   async function onSubmit(values: any) {
+    console.log(values.coordinates)
 
     try {
-      // @Glaymar TODO
-      // Lógica para marcar como roubado
+      const eventId = uuidv4();
 
-      toast({
-        variant: 'warning',
-        title: 'TODO',
-        description: 'Lógica para marcar como roubado',
-        duration: 3000
-      })
+      const promise = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents/`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          },
+          body: JSON.stringify({
+            documentId: eventId,
+            data: {
+              id_device: id,
+              date_time: values.datetime,
+              last_location: values.coordinates,
+              description: values.description,
+              type: "stolen",
+              is_alert_on: false
+            }
+          })
+        }).then(async (response) => {
+          if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`Error: ${error}`);
+          }
+          return response.json();
+        }).catch((err) => {
+          console.log(`Fetch error: ${err.message}`);
+          return null;
+        });
 
-      console.log(values)
     } catch (error) {
       console.error(error)
     }
