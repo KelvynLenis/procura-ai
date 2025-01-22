@@ -70,12 +70,7 @@ const itemsForAdmins = [
   {
     title: "Usuários cadastrados",
     url: "usuarios",
-    icon: <Table />,
-  },
-  {
-    title: "Editar perfil",
-    url: "perfil-admin",
-    icon: <Pencil />,
+    icon: <PiUsersThreeFill />,
   },
 ]
 
@@ -98,27 +93,26 @@ export function AppSidebar({ admin }: SidebarProps) {
     <Sidebar className="text-zinc-900 z-[1] shadow-md h-full">
       <CloseSidebarTrigger />
       <SidebarContent className="bg-white flex flex-col">
-        <div className="h-32 w-full flex items-center justify-center gap-3 shadow-md">
-          <span className="w-14 h-14 rounded-full bg-zinc-400"></span>
-
-          <div className="flex flex-col">
-            <span>Kelvyn Lenis</span>
-            <span>status: <span className="text-emerald-400">Seguro</span></span>
-          </div>
+        <div className="h-32 w-full flex items-end justify-center gap-3">
+          <span className="w-[90%] rounded-lg h-0.5 bg-zinc-300" />
         </div>
 
-        <SidebarGroup className="flex p-0">
-          <SidebarMenu className="flex flex-col gap-1 font-bold">
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === 'home'}>
-                <Link href={'/home'}>
-                  <Home />
-                  <span>Início</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroup>
+        {
+          !admin && (
+            <SidebarGroup className="flex p-0">
+              <SidebarMenu className="flex flex-col gap-1 font-bold">
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={pathname === 'home'}>
+                    <Link href={'/home'}>
+                      <Home />
+                      <span>Início</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroup>
+          )
+        }
 
 
         <SidebarGroup className="flex flex-col gap-2 p-0">

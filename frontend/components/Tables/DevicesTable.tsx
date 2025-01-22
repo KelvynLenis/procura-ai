@@ -104,7 +104,7 @@ export function DevicesTable() {
               <Skeleton className="h-7 w-52" />
             </TableCell>
           </TableRow>
-        ) : (
+        ) : devices.length > 0 ? (
           devices.map(device => (
             <DeviceRow
               key={device.$id}
@@ -117,6 +117,12 @@ export function DevicesTable() {
               setDevices={setDevices}
             />
           ))
+        ) : (
+          <TableRow>
+            <TableCell colSpan={4} className="text-center">
+              Nenhum dispositivo cadastrado.
+            </TableCell>
+          </TableRow>
         )}
       </TableBody>
     </Table>

@@ -49,8 +49,18 @@ export function MarkAsStolenMap({ setPosition }: MarkAsStolenMapProps) {
     setPosition(latLng)
   }
 
+  function setWidth(width: number) {
+    if (width < 768) {
+      return 230
+    } else if (width < 1024) {
+      return 400
+    } else {
+      return 600
+    }
+  }
+
   return (
-    <Map width={size.width / 2.5} height={size.height / 1.5} defaultCenter={[-7.1509317, -34.8446769]} defaultZoom={11} onClick={({ event, latLng, pixel }) => handleGetPosition({ event, latLng, pixel })}>
+    <Map width={setWidth(size.width)} height={size.width < 768 ? size.height / 2.5 : size.height / 1.5} defaultCenter={[-7.1509317, -34.8446769]} defaultZoom={11} onClick={({ event, latLng, pixel }) => handleGetPosition({ event, latLng, pixel })}>
       <ZoomControl />
       {isMarkerOn && (
         <Marker width={50} anchor={coordinates} color={'#FF0000'} />
