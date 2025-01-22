@@ -13,7 +13,6 @@ export default function Login() {
             <LoginForm />
           </div>
         </div>
-        {/* <FAQ /> */}
       </main>
     </>
   );

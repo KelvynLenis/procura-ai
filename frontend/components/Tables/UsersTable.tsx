@@ -10,6 +10,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
+import { UserRow } from "./UserRow";
+import { Skeleton } from "../ui/skeleton";
 
 interface User {
   $id: string;
@@ -68,22 +70,26 @@ export function UsersTable() {
       <TableBody>
         {loading ? (
           <TableRow>
-            <TableCell colSpan={4} className="text-center">
-              Carregando...
+            <TableCell>
+              <Skeleton className="h-8 w-full" />
             </TableCell>
+
+            <TableCell>
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+
+            <TableCell>
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+
+            <TableCell>
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+
           </TableRow>
         ) : users.length > 0 ? (
           users.map((user) => (
-            <TableRow key={user.$id}>
-              <TableCell className="// Pode ser opcional dependendo da APIfont-medium">{user.$id}</TableCell>
-              <TableCell>{user.name || "N/A"}</TableCell>
-              <TableCell>{user.email || "N/A"}</TableCell>
-              <TableCell className="text-center">
-                <button className="w-20 bg-white rounded-xl hover:bg-primary hover:text-white shadow">
-                  Testar
-                </button>
-              </TableCell>
-            </TableRow>
+            <UserRow key={user.$id} user={user} />
           ))
         ) : (
           <TableRow>

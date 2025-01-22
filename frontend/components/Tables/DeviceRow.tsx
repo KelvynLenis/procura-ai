@@ -75,13 +75,13 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
           </button>
         </Link>
 
-        <button className="self-start bg-red-500 rounded-full p-1 text-white hover:opacity-50" onClick={() => handleDeleteDevice(id)}>
+        <button className="flex self-start w-20 items-center justify-center bg-red-500 rounded-xl p-1 text-white hover:opacity-50" onClick={() => handleDeleteDevice(id)}>
           <Trash size={20} />
         </button>
 
         <Dialog>
           <DialogTrigger asChild>
-            <button className={cn("rounded-xl flex  py-1 px-2 gap-2 items-center w-fit hover:opacity-70", isStolen ? 'bg-yellow-200 text-yellow-600' : 'bg-red-200 text-red-600')}>
+            <button className={cn("rounded-xl flex flex-col md:flex-row  py-1 px-2 gap-2 items-center w-fit hover:opacity-70", isStolen ? 'bg-yellow-200 text-yellow-600' : 'bg-red-200 text-red-600')}>
               <IoIosWarning size={20} />
               {
                 isStolen
@@ -90,7 +90,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
               }
             </button>
           </DialogTrigger>
-          <DialogContent className="flex flex-col w-fit">
+          <DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-fit py-8">
             <DialogHeader>
               <DialogTitle>Preencha as informações</DialogTitle>
             </DialogHeader>
