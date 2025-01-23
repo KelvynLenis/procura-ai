@@ -26,7 +26,7 @@ interface DeviceRowProps {
   phone_model: string; // Modelo do telefone
   brand: string; // Marca do telefone
   imei: string; // IMEI do telefone
-  isStolen?: boolean; // Status de "roubado" (true/false)
+  isStolen: boolean; // Status de "roubado" (true/false)
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
 }
 
@@ -103,7 +103,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
             <DialogHeader>
               <DialogTitle>Preencha as informações</DialogTitle>
             </DialogHeader>
-            <MarkAsStolenForm />
+            <MarkAsStolenForm id={id} isStolen={isStolen}/>
           </DialogContent>
         </Dialog>
 
