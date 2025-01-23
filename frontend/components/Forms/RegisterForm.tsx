@@ -21,7 +21,6 @@ import Link from "next/link"
 import { account, databases, ID } from "@/lib/appwrite"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
-import { useToast } from "@/hooks/use-toast"
 import logo from '../../assets/icons/procura-ai-logo-header.svg'
 import Image from "next/image"
 import { Button } from "../ui/button"
@@ -29,6 +28,8 @@ import { validateCPF } from "@/lib/utils"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { v4 as uuidv4 } from 'uuid';
+import { toast } from "react-toastify"
+
 interface RegisterFormProps {
   admin?: boolean
 }
@@ -62,7 +63,6 @@ const formSchema = z.object({
 
 export function RegisterForm({ admin }: RegisterFormProps) {
   const router = useRouter()
-  const { toast } = useToast()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -79,20 +79,12 @@ export function RegisterForm({ admin }: RegisterFormProps) {
   async function onSubmit(values: { name: string, cpf: string, email: string, confirmEmail: string, password: string, confirmPassword: string }) {
     try {
       if (values.email !== values.confirmEmail) {
-        toast({
-          variant: 'destructive',
-          title: "Emails diferentes",
-          description: "Os emails devem ser iguais",
-        })
+        toast.error("Os e-mails precisam ser iguais.");
         return
       }
 
       if (values.password !== values.confirmPassword) {
-        toast({
-          variant: 'destructive',
-          title: "Senhas diferentes",
-          description: "As senhas devem ser iguais",
-        })
+        toast.error("As senhas precisam ser iguais.");
         return
       }
 
@@ -102,80 +94,83 @@ export function RegisterForm({ admin }: RegisterFormProps) {
       const isValidCPF = /^[0-9]{11}$/.test(cpf);
 
       if (!isValidCPF) {
-        toast({
-          variant: 'destructive',
-          title: "CPF inválido",
-          description: "O CPF deve conter exatamente 11 dígitos numéricos.",
-        })
+        toast.error("O CPF deve conter exatamente 11 dígitos numéricos.");
+
         return
       }
       const userId = uuidv4();
-      const createdUser = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/account`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
-          },
-          body: JSON.stringify({
-            userId,
-            email: values.email,
-            password: values.password,
-          })
-        }).then(async (response) => {
-          if (!response.ok) {
-            const error = await response.text();
-            throw new Error(`Error: ${error}`);
-          }
-          return response.json();
-        }).catch((err) => {
-          console.log(`Fetch error: ${err.message}`);
-          return null;
-        });
 
-      const documentId = uuidv4();
-      const insertData = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
-          },
-          body: JSON.stringify({
-            documentId,
-            data: {
-              userId: createdUser.$id,
-              name: values.name,
-              cpf: values.cpf,
-              email: values.email,
+      const callFunction = async () => {
+
+        const createdUser = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/account`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
             },
-            // permissions: [
-            //   `read(\"user:"${createdUser.$id}"\")`,
-            //   `update(\"user:"${createdUser.$id}"\")`,
-            //   `delete(\"user:"${createdUser.$id}"\")`
-            // ]
-          })
-        }).then(async (response) => {
-          if (!response.ok) {
-            const error = await response.text();
-            throw new Error(`Error: ${error}`);
-          }
-          return response.json();
-        }).catch((err) => {
-          console.log(`Fetch error: ${err.message}`);
-          return null;
-        });
+            body: JSON.stringify({
+              userId,
+              email: values.email,
+              password: values.password,
+            })
+          }).then(async (response) => {
+            if (!response.ok) {
+              const error = await response.text();
+              throw new Error(`Error: ${error}`);
+            }
+            return response.json();
+          }).catch((err) => {
+            console.log(`Fetch error: ${err.message}`);
+            return null;
+          });
+
+        const documentId = uuidv4();
+        const insertData = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+            },
+            body: JSON.stringify({
+              documentId,
+              data: {
+                userId: createdUser.$id,
+                name: values.name,
+                cpf: values.cpf,
+                email: values.email,
+              },
+              // permissions: [
+              //   `read(\"user:"${createdUser.$id}"\")`,
+              //   `update(\"user:"${createdUser.$id}"\")`,
+              //   `delete(\"user:"${createdUser.$id}"\")`
+              // ]
+            })
+          }).then(async (response) => {
+            if (!response.ok) {
+              const error = await response.text();
+              throw new Error(`Error: ${error}`);
+            }
+            return response.json();
+          }).catch((err) => {
+            console.log(`Fetch error: ${err.message}`);
+            return null;
+          });
+      }
+
+      toast.promise(callFunction(), {
+        pending: 'Cadastrando...',
+        success: 'Cadastro realizado com sucesso.',
+        error: 'Erro no cadastro.',
+      })
 
       admin ? router.push('/admin-login') : router.push('/login')
 
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: "Falha no cadastro",
-        description: "Houve um erro no cadastro, tente novamente.",
-      })
+      toast.error("Erro no cadastro.");
       console.log("Erro no cadastro: ", error)
     }
   }

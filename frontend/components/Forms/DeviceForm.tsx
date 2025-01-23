@@ -1,34 +1,30 @@
 "use client"
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command"
-import { useForm } from "react-hook-form"
-import { account } from "@/lib/appwrite"
-import { z } from "zod"
-import { Device, DeviceProps } from "@/utils/types"
-import Button from "../Button"
-import { cn, validateIMEI, validatePhoneNumber } from "@/lib/utils"
+import { useState } from "react"
 import Link from "next/link"
-import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from "next/navigation"
-import { useToast } from "@/hooks/use-toast"
-import { Check, ChevronDown, Search } from "lucide-react"
-import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "../ui/input-otp"
-import { Button as ButtonShadcn } from "../ui/button"
+import { toast } from 'react-toastify';
+
+import { z } from "zod"
+import { v4 as uuidv4 } from 'uuid';
+
+import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
+
+import Button from "../Button"
+import { Button as ButtonShadcn } from "../ui/button"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "../ui/input-otp"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+
+import { account } from "@/lib/appwrite"
+import { phoneBrands } from "@/utils/ChartData"
+import { Device, DeviceProps } from "@/utils/types"
+import { cn, validateIMEI, validatePhoneNumber } from "@/lib/utils"
+
+import { Check, ChevronDown, Search } from "lucide-react"
 
 interface AddDeviceFormProps {
   device?: DeviceProps;
@@ -54,32 +50,22 @@ const formSchema = z.object({
   })
 
 export function DeviceForm({ device }: AddDeviceFormProps) {
-  console.log(device)
-  const { toast } = useToast()
+  const [open, setOpen] = useState(false)
+  const [isBrandsPopoverOpen, setIsBrandsPopoverOpen] = useState(false)
+
   const route = useRouter()
 
-  const models = [
-    { label: "English", value: "en" },
-    { label: "French", value: "fr" },
-    { label: "German", value: "de" },
-    { label: "Spanish", value: "es" },
-    { label: "Portuguese", value: "pt" },
-    { label: "Russian", value: "ru" },
-    { label: "Japanese", value: "ja" },
-    { label: "Korean", value: "ko" },
-    { label: "Chinese", value: "zh" },
-  ] as const
-
   const brands = [
-    { label: "English", value: "en" },
-    { label: "French", value: "fr" },
-    { label: "German", value: "de" },
-    { label: "Spanish", value: "es" },
-    { label: "Portuguese", value: "pt" },
-    { label: "Russian", value: "ru" },
-    { label: "Japanese", value: "ja" },
-    { label: "Korean", value: "ko" },
-    { label: "Chinese", value: "zh" },
+    { label: "Apple", value: "apple" },
+    { label: "Samsung", value: "samsung" },
+    { label: "Xiaomi", value: "xiaomi" },
+    { label: "Oppo", value: "oppo" },
+    { label: "Vivo", value: "vivo" },
+    { label: "Motorola", value: "motorola" },
+    { label: "Realme", value: "realme" },
+    { label: "Asus", value: "asus" },
+    { label: "Huawei", value: "huawei" },
+    { label: "Sony", value: "sony" },
   ] as const
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -103,108 +89,121 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
       const isValidPhoneNumber = /^[0-9]{11}$/.test(number);
 
       if (!isValidIMEI) {
-        toast({
-          variant: 'destructive',
-          title: "IMEI inválido",
-          description: "O IMEI deve conter exatamente 15 dígitos numéricos.",
-        })
+        toast.error("O IMEI deve conter exatamente 15 dígitos numéricos.")
         return
       }
 
       if (!isValidPhoneNumber) {
-        toast({
-          variant: 'destructive',
-          title: "Número de telefone inválido",
-          description: "O número de telefone deve conter exatamente 11 dígitos numéricos.",
-        })
+        toast.error("O número de telefone deve conter exatamente 11 dígitos numéricos.")
         return
       }
 
       const { $id: userId } = await account.get()
 
       const deviceId = uuidv4();
-      const promise = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
-          },
-          body: JSON.stringify({
-            documentId: deviceId,
-            data: {
-              phone_number: values.phone_number,
-              phone_model: values.phone_model,
-              brand: values.brand,
-              imei: values.imei,
-              isStolen: false,
-              auth_id: userId
 
+      const callFunction = async () => {
+
+        const promise = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+            },
+            body: JSON.stringify({
+              documentId: deviceId,
+              data: {
+                phone_number: values.phone_number,
+                phone_model: values.phone_model,
+                brand: values.brand,
+                imei: values.imei,
+                isStolen: false,
+                auth_id: userId
+
+              }
+            })
+          }).then(async (response) => {
+            if (!response.ok) {
+              const error = await response.text();
+              throw new Error(`Error: ${error}`);
             }
-          })
-        }).then(async (response) => {
-          if (!response.ok) {
-            const error = await response.text();
-            throw new Error(`Error: ${error}`);
-          }
-          form.reset()
-          router.push('/home')
+            form.reset()
 
-          return response.json();
-        }).catch((err) => {
-          console.log(`Fetch error: ${err.message}`);
-          return null;
-        });
+            return response.json();
+          }).catch((err) => {
+            console.log(`Fetch error: ${err.message}`);
+            return null;
+          });
+
+        return
+      }
+
+      toast.promise(callFunction(), {
+        pending: 'Criando dispositivo...',
+        success: 'Dispositivo criado com sucesso!',
+        error: "Erro ao atualizar dispositivo.",
+      })
 
 
+      router.push('/meus-dispositivos')
     } catch (error) {
       console.error(error)
     }
   }
 
 
-
   async function handleEditDevice(id: string, values: DeviceProps) {
     console.log({ id, values })
     try {
       const { $id: userId } = await account.get();
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
-          },
-          body: JSON.stringify({
-            data: {
-              auth_id: userId,
-              phone_number: values.phone_number,
-              phone_model: values.phone_model,
-              brand: values.brand,
-              imei: values.imei,
-              isStolen: false
-            }
-          })
-        }
-      );
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(`Error: ${error}`);
-      }
-      const updatedDevice = await response.json();
 
-      // setDevices((prevDevices) =>
-      //   prevDevices.map((device) =>
-      //     device.$id === id ? { ...device, ...updatedDevice } : device
-      //   )
-      // );
-      console.log("Device updated successfully");
-      console.log(updatedDevice);
+      const callFunction = async () => {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+            },
+            body: JSON.stringify({
+              data: {
+                auth_id: userId,
+                phone_number: values.phone_number,
+                phone_model: values.phone_model,
+                brand: values.brand,
+                imei: values.imei,
+                isStolen: false
+              }
+            })
+          }
+        );
+
+        if (!response.ok) {
+          const error = await response.text();
+          throw new Error(`Error: ${error}`);
+        }
+        const updatedDevice = await response.json();
+
+        console.log("Device updated successfully");
+        console.log(updatedDevice);
+
+        return response
+      }
+
+
+      toast.promise(
+        callFunction,
+        {
+          pending: 'Atualizando dispositivo...',
+          success: 'Dispositivo atualizado com sucesso!',
+          error: 'Erro ao atualizar dispositivo.'
+        }
+      )
 
       route.push('/meus-dispositivos')
-      return updatedDevice;
     } catch (err) {
       console.log(`Fetch error: ${err}`);
       return null;
@@ -226,82 +225,13 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
           <span className="h-0.5 w-full bg-zinc-400" />
         </div>
 
-
-        <FormField
-          control={form.control}
-          name="phone_model"
-          render={({ field }) => (
-            <FormItem className="flex flex-col w-full">
-              <FormLabel className="text-lg">Modelo do dispositivo</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <div className="self-start">
-
-                    <FormControl>
-                      <ButtonShadcn
-                        variant="outline"
-                        role="combobox"
-                        type="button"
-                        className={cn(
-                          "w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100",
-                          !field.value && "text-muted-foreground text-zinc-500"
-                        )}
-                      >
-                        <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
-                        {field.value
-                          ? models.find(
-                            (model) => model.value === field.value
-                          )?.label
-                          : "Pesquise o modelo do dispositivo"}
-                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </ButtonShadcn>
-                    </FormControl>
-                    <FormMessage />
-                  </div>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                  <Command>
-                    <CommandInput placeholder="Digite o modelo." />
-                    <CommandList>
-                      <CommandEmpty>Nenhum modelo encontrado.</CommandEmpty>
-                      <CommandGroup>
-                        {models.map((model) => (
-                          <CommandItem
-                            value={model.label}
-                            key={model.value}
-                            onSelect={() => {
-                              form.setValue("phone_model", model.value)
-                            }}
-                          >
-                            {model.label}
-                            <Check
-                              className={cn(
-                                "ml-auto",
-                                model.value === field.value
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            </FormItem>
-          )}
-        />
-
-
-
         <FormField
           control={form.control}
           name="brand"
           render={({ field }) => (
             <FormItem className="flex flex-col w-fit self-start">
-              <FormLabel className="text-lg">Marca</FormLabel>
-              <Popover>
+              <FormLabel className="text-lg w-fit">Marca</FormLabel>
+              <Popover open={isBrandsPopoverOpen} onOpenChange={setIsBrandsPopoverOpen}>
                 <PopoverTrigger asChild>
                   <div className="self-start">
                     <FormControl>
@@ -316,8 +246,8 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                       >
                         <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
                         {field.value
-                          ? models.find(
-                            (model) => model.value === field.value
+                          ? brands.find(
+                            (brand) => brand.value === field.value
                           )?.label
                           : "Pesquise a marca do dispositivo"}
                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -338,6 +268,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                             key={brand.value}
                             onSelect={() => {
                               form.setValue("brand", brand.value)
+                              setIsBrandsPopoverOpen(false)
                             }}
                           >
                             {brand.label}
@@ -359,6 +290,74 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="phone_model"
+          render={({ field }) => (
+            <FormItem className="flex flex-col w-fit self-start">
+              <FormLabel className="text-lg w-fit">Modelo do dispositivo</FormLabel>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <div className="self-start">
+
+                    <FormControl>
+                      <ButtonShadcn
+                        variant="outline"
+                        role="combobox"
+                        type="button"
+                        className={cn(
+                          "w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100",
+                          !field.value && "text-muted-foreground text-zinc-500"
+                        )}
+                      >
+                        <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
+                        {field.value
+                          ? phoneBrands.find(
+                            (model) => model.brand === form.control._formValues.brand
+                          )?.models.find((model) => model === field.value)
+                          : "Pesquise o modelo do dispositivo"}
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </ButtonShadcn>
+                    </FormControl>
+                    <FormMessage />
+                  </div>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Digite o modelo." />
+                    <CommandList>
+                      <CommandEmpty>Nenhum modelo encontrado.</CommandEmpty>
+                      <CommandGroup>
+                        {phoneBrands.find((brand) => brand.brand === form.control._formValues.brand) && phoneBrands.find((brand) => brand.brand === form.control._formValues.brand).models.map((model: string) => (
+                          <CommandItem
+                            value={model}
+                            key={model}
+                            onSelect={() => {
+                              form.setValue("phone_model", model)
+                              setOpen(false)
+                            }}
+                          >
+                            {model}
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                model === field.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </FormItem>
+          )}
+        />
+
 
         <FormField
           control={form.control}
@@ -445,11 +444,11 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
           device ? (
             <div className="flex justify-between w-full">
               {/* <DialogClose className="bg-white border-[0.5px] border-primary text-primary hover:bg-primary hover:text-white rounded-full text-center items-center justify-center flex w-fit px-2 py-2 shadow transition-all duration-300" type="button">Cancelar</DialogClose> */}
-              <Button type="submit" onClick={() => handleEditDevice(device.$id, form.getValues())} variant="orange" className="px-2">Editar dispositivo</Button>
+              <Button isLoader type="submit" onClick={() => handleEditDevice(device.$id, form.getValues())} variant="blue" className="px-2">Salvar alterações</Button>
             </div>
           ) : (
             <div className="flex justify-between w-full">
-              <Button type="submit" variant="blue" className="px-1">Cadastrar dispositivo</Button>
+              <Button isLoader type="submit" variant="blue" className="px-1">Cadastrar dispositivo</Button>
               <Link href={'/home'}>
                 <Button type="button" variant="red" isLoader>Cancelar</Button>
               </Link>
