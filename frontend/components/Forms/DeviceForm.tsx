@@ -81,6 +81,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
   const router = useRouter()
 
   async function onSubmit(values: DeviceProps) {
+    console.log(values)
     try {
       const imei = values.imei.trim();
       const number = values.phone_number.trim();
@@ -99,6 +100,40 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
       }
 
       const { $id: userId } = await account.get()
+
+      if (device) {
+        const promise = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${device.$id}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+            },
+            body: JSON.stringify({
+              data: {
+                auth_id: userId,
+                phone_number: values.phone_number,
+                phone_model: values.phone_model,
+                brand: values.brand,
+                imei: values.imei,
+                isStolen: false
+              },
+
+            })
+          }).then(async (response) => {
+            if (!response.ok) {
+              const error = await response.text();
+              throw new Error(`Error: ${error}`);
+            }
+            return response.json();
+          }).catch((err) => {
+            console.log(`Fetch error: ${err.message}`);
+            return null;
+          });
+
+        return
+      }
 
       const deviceId = uuidv4();
 
