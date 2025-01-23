@@ -103,7 +103,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
             <DialogHeader>
               <DialogTitle>Preencha as informações</DialogTitle>
             </DialogHeader>
-            <MarkAsStolenForm id={id} isStolen />
+            <MarkAsStolenForm />
           </DialogContent>
         </Dialog>
 
