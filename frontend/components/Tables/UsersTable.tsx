@@ -1,17 +1,10 @@
 'use client';
 
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import { useEffect, useState } from "react";
-import { UserRow } from "./UserRow";
 import { Skeleton } from "../ui/skeleton";
+import { UserRow } from "./UserRow";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "../ui/pagination";
 
 interface User {
   $id: string;
@@ -56,49 +49,69 @@ export function UsersTable() {
     fetchUsers();
   }, []);
 
+  const user = users[0];
+
   return (
-    <Table>
-      <TableCaption>Lista de usuários cadastrados no sistema.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[100px]">ID</TableHead>
-          <TableHead>Nome</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead className="text-center">Ações</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
+    <div className="bg-white shadow-lg rounded-lg self-center w-full">
+      <div className="bg-zinc-200/60 flex w-full py-4">
+        <div className="flex w-full justify-around">
+          <span className="w-[40%] text-center">ID</span>
+          <span className="w-[25%] text-center">Nome</span>
+          <span className="w-[25%] text-center">Email</span>
+          <span className="text-center w-[25%]">Ações</span>
+        </div>
+      </div>
+      <div>
         {loading ? (
-          <TableRow>
-            <TableCell>
+          <div>
+            <div>
               <Skeleton className="h-8 w-full" />
-            </TableCell>
+            </div>
 
-            <TableCell>
+            <div>
               <Skeleton className="h-8 w-full" />
-            </TableCell>
+            </div>
 
-            <TableCell>
+            <div>
               <Skeleton className="h-8 w-full" />
-            </TableCell>
+            </div>
 
-            <TableCell>
+            <div>
               <Skeleton className="h-8 w-full" />
-            </TableCell>
+            </div>
 
-          </TableRow>
+          </div>
         ) : users.length > 0 ? (
           users.map((user) => (
             <UserRow key={user.$id} user={user} />
           ))
         ) : (
-          <TableRow>
-            <TableCell colSpan={4} className="text-center">
+          <div>
+            <span className="text-center">
               Nenhum usuário encontrado.
-            </TableCell>
-          </TableRow>
+            </span>
+          </div>
         )}
-      </TableBody>
-    </Table>
+
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious href="#" />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink href="#">1</PaginationLink>
+            </PaginationItem>
+            {/* <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem> */}
+            <PaginationItem>
+              <PaginationNext href="#" />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+
+
+      </div>
+    </div>
   );
 }

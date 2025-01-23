@@ -11,6 +11,109 @@ export const topBrandsStolen = [
   { item: "Sony", value: 10 },
 ];
 
+export const phoneBrands = [
+  {
+    brand: "apple",
+    models: [
+      "iPhone 15 Pro Max",
+      "iPhone 14 Plus",
+      "iPhone SE (2022)",
+      "iPhone 13 Mini",
+      "iPhone 12 Pro",
+    ],
+  },
+  {
+    brand: "samsung",
+    models: [
+      "Galaxy S23 Ultra",
+      "Galaxy Z Fold 5",
+      "Galaxy A54 5G",
+      "Galaxy M14",
+      "Galaxy Tab S9",
+    ],
+  },
+  {
+    brand: "xiaomi",
+    models: [
+      "Xiaomi 13 Pro",
+      "Xiaomi Redmi Note 12",
+      "Xiaomi Poco X5 Pro",
+      "Xiaomi Mi 12T",
+      "Xiaomi Black Shark 5",
+    ],
+  },
+  {
+    brand: "oppo",
+    models: [
+      "Oppo Find X6 Pro",
+      "Oppo Reno 10 Pro+",
+      "Oppo A98 5G",
+      "Oppo Find N2 Flip",
+      "Oppo K11",
+    ],
+  },
+  {
+    brand: "vivo",
+    models: [
+      "Vivo X90 Pro+",
+      "Vivo Y100",
+      "Vivo V29 Pro",
+      "Vivo T2 5G",
+      "Vivo X Fold 2",
+    ],
+  },
+  {
+    brand: "motorola",
+    models: [
+      "Motorola Edge 40 Pro",
+      "Motorola Razr 2023",
+      "Motorola Moto G73 5G",
+      "Motorola Moto G Power 2023",
+      "Motorola Defy 2",
+    ],
+  },
+  {
+    brand: "realme",
+    models: [
+      "Realme GT 5",
+      "Realme 11 Pro+",
+      "Realme Narzo 60",
+      "Realme C55",
+      "Realme GT Neo 5 SE",
+    ],
+  },
+  {
+    brand: "asus",
+    models: [
+      "Asus ROG Phone 7 Ultimate",
+      "Asus Zenfone 10",
+      "Asus ROG Phone 6D",
+      "Asus ExpertBook B9",
+      "Asus VivoBook Pro 16X",
+    ],
+  },
+  {
+    brand: "huawei",
+    models: [
+      "Huawei P60 Pro",
+      "Huawei Mate X3",
+      "Huawei Nova 11 Ultra",
+      "Huawei Mate 50",
+      "Huawei Watch GT 4",
+    ],
+  },
+  {
+    brand: "sony",
+    models: [
+      "Sony Xperia 1 V",
+      "Sony Xperia 5 IV",
+      "Sony Xperia 10 V",
+      "Sony Xperia PRO-I",
+      "Sony Xperia Ace III",
+    ],
+  },
+];
+
 export const topDangerousDistricts = [
   { item: "Mangabeira", value: 19 },
   { item: "Gramame", value: 21 },
