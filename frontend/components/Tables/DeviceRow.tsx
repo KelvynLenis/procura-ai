@@ -5,18 +5,13 @@ import Link from "next/link";
 import { DeviceProps } from "@/utils/types";
 import { cn } from "@/lib/utils";
 import { Trash } from "lucide-react";
-import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { MarkAsStolenForm } from "../Forms/MarkAsStolenForm";
 import { toast } from "react-toastify";
 
@@ -94,8 +89,8 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
               <IoIosWarning size={20} />
               {
                 isStolen
-                  ? 'Desmarcar como roubado'
-                  : 'Marcar como roubado'
+                  ? 'Desativar alerta'
+                  : 'Acionar alerta'
               }
             </button>
           </DialogTrigger>
