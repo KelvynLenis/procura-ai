@@ -3,7 +3,6 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
 import { Input } from "../Input"
-import { useToast } from "@/hooks/use-toast"
 import { MarkAsStolenMap } from "../Maps/MarkAsStolenMap"
 import Button from "../Button"
 import {
@@ -15,10 +14,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ChevronDown } from "lucide-react"
+import { toast } from "react-toastify"
 
 
 export function MarkAsStolenForm() {
-  const { toast } = useToast()
 
   const occurrenceTypes = [
     { label: "Roubo", value: "Roubo" },
@@ -44,12 +43,16 @@ export function MarkAsStolenForm() {
     try {
       // @Glaymar TODO
       // Lógica para marcar como roubado
+      // Coloca a função aqui dentro dessa função, faz normalmente do jeito que tu faria.
+      // esse formato é apenas para usar o toast para melhora a UX
+      const callFunction = async () => {
 
-      toast({
-        variant: 'warning',
-        title: 'TODO',
-        description: 'Lógica para marcar como roubado',
-        duration: 3000
+      }
+
+      toast.promise(callFunction, {
+        pending: 'Marcando como roubado...',
+        success: 'Marcado como roubado',
+        error: 'Erro ao marcar como roubado'
       })
 
       console.log(values)

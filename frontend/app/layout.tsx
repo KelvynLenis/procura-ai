@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster"
 import { Roboto } from 'next/font/google';
 import "./globals.css";
-import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { ToastContainer } from 'react-toastify';
 
 const roboto = Roboto({
   subsets: ['latin'], // Escolha o conjunto de caracteres necessário
@@ -30,6 +30,7 @@ export default function RootLayout({
         {children}
         <Footer />
         <Toaster />
+        <ToastContainer />
       </body>
     </html>
   );

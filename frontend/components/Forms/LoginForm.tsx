@@ -14,12 +14,12 @@ import Link from "next/link"
 import { account } from "@/lib/appwrite"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
-import { useToast } from "@/hooks/use-toast"
 import logo from '../../assets/icons/procura-ai-logo-header.svg'
 import Image from "next/image"
 import { Button } from "../ui/button"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { toast } from "react-toastify"
 
 interface LoginFormProps {
   admin?: boolean
@@ -32,7 +32,6 @@ const formSchema = z.object({
 
 export function LoginForm({ admin }: LoginFormProps) {
   const router = useRouter()
-  const { toast } = useToast()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,9 +43,17 @@ export function LoginForm({ admin }: LoginFormProps) {
 
   async function onSubmit(values: { email: string, password: string }) {
     try {
-      const promise = await account.createEmailPasswordSession(values.email, values.password)
+      const callFunction = async () => {
+        const promise = await account.createEmailPasswordSession(values.email, values.password)
 
-      console.log(promise)
+        return promise
+      }
+
+      toast.promise(callFunction, {
+        pending: 'Logando...',
+        success: 'Logado com sucesso',
+        error: 'Erro ao logar'
+      })
 
       admin ? router.push('/dashboard') : router.push('/home')
 
@@ -54,11 +61,7 @@ export function LoginForm({ admin }: LoginFormProps) {
       form.setError('email', { message: "Email ou senha incorretos" })
       form.setError('password', { message: "Email ou senha incorretos" })
 
-      toast({
-        variant: 'destructive',
-        title: "Falha no login",
-        description: "Email ou senha incorretos",
-      })
+
       console.log("Erro ao logar: ", error)
     }
   }
@@ -66,11 +69,19 @@ export function LoginForm({ admin }: LoginFormProps) {
   useEffect(() => {
     const getSession = async () => {
       try {
-        const sessions = await account.get()
-
-        if (sessions.status) {
-          admin ? router.push('/dashboard') : router.push('/home')
+        const callFunction = async () => {
+          const sessions = await account.get()
+          if (sessions.status) {
+            admin ? router.push('/dashboard') : router.push('/home')
+          }
         }
+
+        toast.promise(callFunction, {
+          pending: 'Verificando sessão ativa...',
+          success: 'Sessão encontrada',
+          error: 'Sem sessão ativa. Faça login para continuar.'
+        })
+
       } catch (error) {
         console.log("Erro: ", error)
       }

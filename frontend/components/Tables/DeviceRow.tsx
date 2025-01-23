@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { MarkAsStolenForm } from "../Forms/MarkAsStolenForm";
+import { toast } from "react-toastify";
 
 interface DeviceRowProps {
   id: string; // ID do dispositivo
@@ -33,26 +34,34 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
 
   async function handleDeleteDevice(id: string) {
     try {
-      const promise = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
-          },
-        }).then(async (response) => {
-          if (!response.ok) {
-            const error = await response.text();
-            throw new Error(`Error: ${error}`);
-          }
-          setDevices((prevDevices) => prevDevices.filter((device) => device.$id !== id));
+      const callFunction = async () => {
+        const promise = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
+          {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+            },
+          }).then(async (response) => {
+            if (!response.ok) {
+              const error = await response.text();
+              throw new Error(`Error: ${error}`);
+            }
+            setDevices((prevDevices) => prevDevices.filter((device) => device.$id !== id));
 
-          return response;
-        }).catch((err) => {
-          console.log(`Fetch error: ${err}`);
-          return null;
-        });
+            return response;
+          }).catch((err) => {
+            console.log(`Fetch error: ${err}`);
+            return null;
+          });
+      }
+
+      toast.promise(callFunction(), {
+        pending: 'Deletando dispositivo...',
+        success: 'Dispositivo deletado com sucesso',
+        error: 'Erro ao deletar dispositivo'
+      })
     } catch (error) {
       console.error(error)
     }
