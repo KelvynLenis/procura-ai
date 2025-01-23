@@ -58,39 +58,6 @@ export function Board() {
     setContact(contact)
   }
 
-  async function markAsStolen(device: Device) {
-
-    try {
-      const promise = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${device.$id}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
-          },
-          body: JSON.stringify({
-            data: {
-              isStolen: !device.isStolen
-            }
-          })
-        }).then(async (response) => {
-          if (!response.ok) {
-            const error = await response.text();
-            throw new Error(`Error: ${error}`);
-          }
-          return response.json();
-        }).catch((err) => {
-          console.log(`Fetch error: ${err.message}`);
-          return null;
-        });
-
-    } catch (error) {
-      console.error(error)
-    }
-
-  }
-
   async function handleDelete(deviceId: string) {
     try {
       const promise = await fetch(
@@ -129,14 +96,14 @@ export function Board() {
               devices.map((device) => (
                 <div key={device.$id} className="flex flex-row gap-2 p-4 shadow-form bg-zinc-100 rounded-xl justify-between text-zinc-900">
                   <div className="flex flex-col gap-2">
-                    <span className="text-lg">Modelo: {device.phoneModel}</span>
+                    <span className="text-lg">Modelo: {device.phone_model}</span>
                     <span className="text-lg">Marca: {device.brand}</span>
                     <span className="text-lg">IMEI: {device.imei}</span>
-                    <span className="text-lg">Telefone: {device.phoneNumber}</span>
+                    <span className="text-lg">Telefone: {device.phone_number}</span>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <span className="text-lg">Latitude: {device.latitude}</span>
-                    <span className="text-lg">Longitude: {device.longitude}</span>
+                    {/* <span className="text-lg">Latitude: {device.latitude}</span>
+                    <span className="text-lg">Longitude: {device.longitude}</span> */}
                     <span className="text-lg">Roubado: {device.isStolen ? 'Sim' : 'Não'}</span>
                   </div>
 

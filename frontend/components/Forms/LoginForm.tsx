@@ -43,20 +43,25 @@ export function LoginForm({ admin }: LoginFormProps) {
 
   async function onSubmit(values: { email: string, password: string }) {
     try {
-      const callFunction = async () => {
-        const promise = await account.createEmailPasswordSession(values.email, values.password)
+      await account.createEmailPasswordSession(values.email, values.password)
+      const user = await account.get()
+      const isAdmin = user.labels[0] === 'admin';
 
-        return promise
+      if (admin && !isAdmin) {
+        toast({
+          variant: 'destructive',
+          title: "Falha no login",
+          description: "Acesso restrito para administradores.",
+        })
+        router.push('/')
+        return
       }
 
-      toast.promise(callFunction, {
-        pending: 'Logando...',
-        success: 'Logado com sucesso',
-        error: 'Erro ao logar'
-      })
-
-      admin ? router.push('/dashboard') : router.push('/home')
-
+      if (isAdmin && admin) {
+        router.push('/dashboard');
+      } else if (!admin) {
+        router.push('/home');
+      }
     } catch (error) {
       form.setError('email', { message: "Email ou senha incorretos" })
       form.setError('password', { message: "Email ou senha incorretos" })
@@ -69,11 +74,10 @@ export function LoginForm({ admin }: LoginFormProps) {
   useEffect(() => {
     const getSession = async () => {
       try {
-        const callFunction = async () => {
-          const sessions = await account.get()
-          if (sessions.status) {
-            admin ? router.push('/dashboard') : router.push('/home')
-          }
+        const sessions = await account.get()
+
+        if (sessions.status) {
+          sessions.labels[0] == "admin" ? router.push('/dashboard') : router.push('/home')
         }
 
         toast.promise(callFunction, {
