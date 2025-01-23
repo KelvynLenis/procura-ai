@@ -45,9 +45,25 @@ export function LoginForm({ admin }: LoginFormProps) {
     try {
       const callFunction = async () => {
         const promise = await account.createEmailPasswordSession(values.email, values.password)
+        const user = await account.get()
+        const isAdmin = user.labels[0] === 'admin';
 
+        if (admin && !isAdmin) {
+          await account.deleteSession('current')
+          router.push('/login')
+          return promise
+        }
+
+        if (isAdmin && admin) {
+          router.push('/dashboard');
+        } else if (!admin) {
+          router.push('/home');
+        }
         return promise
       }
+
+      // @kel
+      
 
       toast.promise(callFunction, {
         pending: 'Logando...',
@@ -55,7 +71,6 @@ export function LoginForm({ admin }: LoginFormProps) {
         error: 'Erro ao logar'
       })
 
-      admin ? router.push('/dashboard') : router.push('/home')
 
     } catch (error) {
       form.setError('email', { message: "Email ou senha incorretos" })
@@ -72,7 +87,7 @@ export function LoginForm({ admin }: LoginFormProps) {
         const callFunction = async () => {
           const sessions = await account.get()
           if (sessions.status) {
-            admin ? router.push('/dashboard') : router.push('/home')
+            sessions.labels[0] == "admin" ? router.push('/dashboard') : router.push('/home')
           }
         }
 
