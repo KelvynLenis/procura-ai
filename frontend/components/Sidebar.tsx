@@ -11,6 +11,7 @@ import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import { account } from "@/lib/appwrite"
 import { ChartColumnBig, CirclePlus, FileWarning, Home, LogOut, Pencil, Plus, Siren, Smartphone, Table, Users } from "lucide-react"
@@ -84,6 +85,7 @@ interface SidebarProps {
 export function AppSidebar({ admin }: SidebarProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
+  const { isMobile, toggleSidebar } = useSidebar()
 
   const pathname = usePathname().slice(1)
 
@@ -103,6 +105,7 @@ export function AppSidebar({ admin }: SidebarProps) {
 
   function showLoadingToast(url: string) {
     setIsLoading(true)
+    isMobile && toggleSidebar()
     toast(<LoadingToast isReactToastifyComponent />, {
       autoClose: 1000,
       hideProgressBar: true,
