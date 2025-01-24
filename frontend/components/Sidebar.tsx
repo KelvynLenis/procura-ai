@@ -11,11 +11,12 @@ import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import { account } from "@/lib/appwrite"
 import { ChartColumnBig, CirclePlus, FileWarning, Home, LogOut, Pencil, Plus, Siren, Smartphone, Table, Users } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { CloseSidebarTrigger } from "./CloseSidebarTrigger"
+import { CustomSidebarTrigger } from "./CustomSidebarTrigger"
 import Link from "next/link"
 import { usePathname } from 'next/navigation'
 import { IoMdAddCircle } from "react-icons/io";
@@ -84,6 +85,7 @@ interface SidebarProps {
 export function AppSidebar({ admin }: SidebarProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
+  const { isMobile, toggleSidebar } = useSidebar()
 
   const pathname = usePathname().slice(1)
 
@@ -103,6 +105,7 @@ export function AppSidebar({ admin }: SidebarProps) {
 
   function showLoadingToast(url: string) {
     setIsLoading(true)
+    isMobile && toggleSidebar()
     toast(<LoadingToast isReactToastifyComponent />, {
       autoClose: 1000,
       hideProgressBar: true,
@@ -114,8 +117,8 @@ export function AppSidebar({ admin }: SidebarProps) {
 
   return (
     <>
-      <Sidebar className="text-zinc-900 z-[1] shadow-md h-full">
-        <CloseSidebarTrigger />
+      <Sidebar collapsible="icon" className="text-zinc-900 z-[1] shadow-md h-full">
+        <CustomSidebarTrigger />
         <SidebarContent className="bg-white flex flex-col">
           <div className="h-32 w-full flex items-end justify-center gap-3">
             <span className="w-[90%] rounded-lg h-0.5 bg-zinc-300" />
@@ -123,7 +126,7 @@ export function AppSidebar({ admin }: SidebarProps) {
 
           {
             !admin && (
-              <SidebarGroup className="flex p-0">
+              <SidebarGroup className="flex px-2">
                 <SidebarMenu className="flex flex-col gap-1 font-bold">
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild isActive={pathname === 'home'}>
@@ -139,7 +142,7 @@ export function AppSidebar({ admin }: SidebarProps) {
           }
 
 
-          <SidebarGroup className="flex flex-col gap-2 p-0">
+          <SidebarGroup className="flex flex-col gap-2 px-2">
             <SidebarGroupLabel className="uppercase">Dispositivos</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="flex flex-col gap-1 font-bold">
@@ -147,7 +150,7 @@ export function AppSidebar({ admin }: SidebarProps) {
                   admin ? (
                     itemsForAdmins.map((item) => (
                       <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild>
+                        <SidebarMenuButton asChild isActive={pathname === item.url}>
                           <button onClick={() => showLoadingToast(item.url)}>
                             {
                               item.icon

@@ -6,10 +6,11 @@ import { ReactNode, useEffect, useState } from 'react';
 import ClipLoader from 'react-spinners/ClipLoader';
 
 interface ProtectedRouteProps {
+  admin?: boolean;
   children: ReactNode;
 }
 
-export default function ProtectedRoute({ children }: ProtectedRouteProps) {
+export default function ProtectedRoute({ admin, children }: ProtectedRouteProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -17,10 +18,16 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   useEffect(() => {
     const checkUserAuthentication = async () => {
       try {
-        await account.get(); // Verifica se o usuário está autenticado
+        const user = await account.get(); // Verifica se o usuário está autenticado
+        const isAdmin = user.labels[0] === 'admin';
+
+        if (admin && !isAdmin) {
+          throw new Error('Acesso negado');
+        }
+
         setIsAuthenticated(true);
       } catch (error) {
-        router.push('/'); // Redireciona para a página de login se não autenticado
+        router.back();
       } finally {
         setIsLoading(false);
       }
