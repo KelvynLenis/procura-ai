@@ -5,10 +5,38 @@ import { usePathname } from "next/navigation"
 export function Header() {
   const pathname = usePathname().slice(1)
 
+  const routes = [
+    {
+      name: 'home',
+      value: 'Início',
+    },
+    {
+      name: 'meus-dispositivos',
+      value: 'Meus dispositivos',
+    },
+    {
+      name: 'cadastrar-dispositivo',
+      value: 'Cadastrar dispositivo',
+    },
+    {
+      name: 'dashboard',
+      value: 'Dashboard',
+    },
+    {
+      name: 'usuarios',
+      value: 'Usuários',
+    }
+  ]
+
   return (
     pathname !== 'map/ocorrencias' &&
     (
-      <header className="flex items-center drop-shadow-md bg-procura-ai-blue self-end w-full h-16"></header>
+      <header className="flex items-center drop-shadow-md bg-procura-ai-blue self-end w-full h-16">
+        <div className="w-1/5 md:w-1/2 lg:w-1/4 xl:w-1/5 h-1" />
+        <span className="text-xl text-white">
+          {routes.find(route => route.name === pathname)?.value}
+        </span>
+      </header>
     )
   )
 }

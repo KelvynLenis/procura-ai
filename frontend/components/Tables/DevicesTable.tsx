@@ -23,6 +23,8 @@ export function DevicesTable() {
     return userId;
   }
 
+  // @glaymar help!
+
   async function buildParams() {
     const userId = await getUserId();
     const params = new URLSearchParams({

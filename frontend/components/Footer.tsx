@@ -13,8 +13,8 @@ export function Footer() {
   return (
     pathname !== 'map/ocorrencias' &&
     (
-      <footer className="w-full sticky bg-procura-ai-blue flex items-center justify-center px-2 py-3 z-[20]">
-        <div className='w-full lg:w-1/3 flex items-center justify-center'>
+      <footer className="w-full sticky bg-procura-ai-blue flex items-center justify-start px-2 py-3 z-[20]">
+        <div className='w-full lg:w-1/3 flex items-center justify-start'>
           <Image src={secties} alt="logo" className='w-32 md:w-44' />
           <Image src={gov} alt="logo" className='w-28 md:w-32' />
         </div>
