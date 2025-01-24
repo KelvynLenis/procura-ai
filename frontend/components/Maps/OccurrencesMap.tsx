@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react"
 import { Map, Marker, GeoJson, Overlay } from "pigeon-maps"
 import { geoJsonSample } from "@/utils/ChartData"
 import { EventProps } from "@/utils/types";
-import { set } from "zod";
 import { usePathname } from 'next/navigation'
 
 interface OccurrencesMapProps {

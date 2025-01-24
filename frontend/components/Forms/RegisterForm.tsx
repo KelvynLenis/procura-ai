@@ -20,7 +20,7 @@ import { Input } from "../Input"
 import Link from "next/link"
 import { account, databases, ID } from "@/lib/appwrite"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import logo from '../../assets/icons/procura-ai-logo-header.svg'
 import Image from "next/image"
 import { Button } from "../ui/button"
@@ -29,6 +29,8 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "react-toastify"
+import ClipLoader from 'react-spinners/ClipLoader';
+import { LoadingToast } from "../LoadingToast"
 
 interface RegisterFormProps {
   admin?: boolean
@@ -63,6 +65,7 @@ const formSchema = z.object({
 
 export function RegisterForm({ admin }: RegisterFormProps) {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -167,6 +170,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
         error: 'Erro no cadastro.',
       })
 
+      setIsLoading(true)
       admin ? router.push('/admin-login') : router.push('/login')
 
     } catch (error) {
@@ -175,12 +179,17 @@ export function RegisterForm({ admin }: RegisterFormProps) {
     }
   }
 
+  function showLoadingToast() {
+    setIsLoading(true)
+  }
+
   useEffect(() => {
     const getSession = async () => {
       try {
         const sessions = await account.get()
 
         if (sessions.status) {
+          setIsLoading(true)
           admin ? router.push('/dashboard') : router.push('/home')
         }
       } catch (error) {
@@ -192,154 +201,161 @@ export function RegisterForm({ admin }: RegisterFormProps) {
   }, [])
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full lg:w-[400px] h-fit flex flex-col gap-6 bg-white items-center self-center pl-0 px-0 py-5 rounded-xl">
-        <Image src={logo} alt="logo" width={200} height={100} />
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full lg:w-[400px] h-fit flex flex-col gap-6 bg-white items-center self-center pl-0 px-0 py-5 rounded-xl">
+          <Image src={logo} alt="logo" width={200} height={100} />
 
-        {
-          admin ? (
-            <h3 className="text-center text-secondary font-bold">Acesso do Admin</h3>
-          ) : (
-            <h3 className="text-center flex">Para se cadastrar, preencha as informações a seguir:</h3>
-          )
-        }
+          {
+            admin ? (
+              <h3 className="text-center text-secondary font-bold">Acesso do Admin</h3>
+            ) : (
+              <h3 className="text-center flex">Para se cadastrar, preencha as informações a seguir:</h3>
+            )
+          }
 
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="flex flex-col w-full">
-              <FormLabel className="text-zinc-900 ml-4 font-bold">Nome completo</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="Nome completo" {...field} className="rounded-xl" />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full">
+                <FormLabel className="text-zinc-900 ml-4 font-bold">Nome completo</FormLabel>
+                <FormControl>
+                  <Input type="text" placeholder="Nome completo" {...field} className="rounded-xl" />
+                </FormControl>
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="cpf"
-          render={({ field }) => (
-            <FormItem className="flex flex-col w-full">
-              <FormLabel className="text-zinc-900 ml-4 font-bold">CPF</FormLabel>
-              <FormControl>
-                <InputOTP maxLength={11} {...field} containerClassName="ring-1 ring-secondary/60" className="w-full flex justify-center items-center" >
-                  <InputOTPGroup>
-                    <InputOTPSlot className="w-4 h-5 border-t-0 border-r-0 border-black  shadow-transparent" index={0} />
-                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={1} />
-                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={2} />
-                  </InputOTPGroup>
-                  <InputOTPSeparator className="relative -bottom-2" />
-                  <InputOTPGroup>
-                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={3} />
-                    <InputOTPSlot className="w-4 h-5 border-t-0 border-r-0 border-black shadow-transparent" index={4} />
-                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={5} />
-                  </InputOTPGroup>
-                  <InputOTPSeparator className="relative -bottom-2" />
-                  <InputOTPGroup>
-                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={6} />
-                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={7} />
-                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={8} />
-                  </InputOTPGroup>
-                  <InputOTPSeparator data-dash />
-                  <InputOTPGroup>
-                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={9} />
-                    <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={10} />
-                  </InputOTPGroup>
-                </InputOTP>
+          <FormField
+            control={form.control}
+            name="cpf"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full">
+                <FormLabel className="text-zinc-900 ml-4 font-bold">CPF</FormLabel>
+                <FormControl>
+                  <InputOTP maxLength={11} {...field} containerClassName="ring-1 ring-secondary/60" className="w-full flex justify-center items-center" >
+                    <InputOTPGroup>
+                      <InputOTPSlot className="w-4 h-5 border-t-0 border-r-0 border-black  shadow-transparent" index={0} />
+                      <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={1} />
+                      <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={2} />
+                    </InputOTPGroup>
+                    <InputOTPSeparator className="relative -bottom-2" />
+                    <InputOTPGroup>
+                      <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={3} />
+                      <InputOTPSlot className="w-4 h-5 border-t-0 border-r-0 border-black shadow-transparent" index={4} />
+                      <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={5} />
+                    </InputOTPGroup>
+                    <InputOTPSeparator className="relative -bottom-2" />
+                    <InputOTPGroup>
+                      <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={6} />
+                      <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={7} />
+                      <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={8} />
+                    </InputOTPGroup>
+                    <InputOTPSeparator data-dash />
+                    <InputOTPGroup>
+                      <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={9} />
+                      <InputOTPSlot className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={10} />
+                    </InputOTPGroup>
+                  </InputOTP>
 
-                {/* <Input type="text" placeholder="cpf" {...field} className="rounded-xl" /> */}
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  {/* <Input type="text" placeholder="cpf" {...field} className="rounded-xl" /> */}
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem className="flex flex-col w-full">
-              <FormLabel className="text-zinc-900 ml-4 font-bold">e-mail</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="Email" {...field} className="rounded-xl" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full">
+                <FormLabel className="text-zinc-900 ml-4 font-bold">e-mail</FormLabel>
+                <FormControl>
+                  <Input type="text" placeholder="Email" {...field} className="rounded-xl" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="confirmEmail"
-          render={({ field }) => (
-            <FormItem className="flex flex-col w-full h-fit">
-              <FormLabel className="text-zinc-900 ml-4 font-bold">Confirmar e-mail</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="Confirmar e-mail" {...field} className="rounded-xl" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="confirmEmail"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full h-fit">
+                <FormLabel className="text-zinc-900 ml-4 font-bold">Confirmar e-mail</FormLabel>
+                <FormControl>
+                  <Input type="text" placeholder="Confirmar e-mail" {...field} className="rounded-xl" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem className="flex flex-col w-full">
-              <FormLabel className="text-zinc-900 ml-4 font-bold">Senha</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="Senha" {...field} className="rounded-xl" />
-              </FormControl>
-              <FormMessage className="text-red-500" />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full">
+                <FormLabel className="text-zinc-900 ml-4 font-bold">Senha</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="Senha" {...field} className="rounded-xl" />
+                </FormControl>
+                <FormMessage className="text-red-500" />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem className="flex flex-col w-full">
-              <FormLabel className="text-zinc-900 ml-4 font-bold">Confirmar senha</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="Confirmar senha" {...field} className="rounded-xl" />
-              </FormControl>
-              <FormMessage className="text-red-500" />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full">
+                <FormLabel className="text-zinc-900 ml-4 font-bold">Confirmar senha</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="Confirmar senha" {...field} className="rounded-xl" />
+                </FormControl>
+                <FormMessage className="text-red-500" />
+              </FormItem>
+            )}
+          />
 
-        <Link href="/forgot-password" className="underline self-start hover:opacity-50 text-sm">Esqueceu sua senha?</Link>
+          <Link href="/forgot-password" className="underline self-start hover:opacity-50 text-sm">Esqueceu sua senha?</Link>
 
-        <Button className="bg-primary text-white rounded-full text-lg px-12 py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">Criar conta</Button>
+          <Button className="bg-primary text-white rounded-full text-lg px-12 py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">Criar conta</Button>
 
-        <span className="w-full h-[1px] rounded-full bg-secondary" />
+          <span className="w-full h-[1px] rounded-full bg-secondary" />
 
-        {
-          admin ? (
-            <div className="w-full flex flex-col gap-3">
-              <Link className="flex w-full" href={'/login'}>
-                <Button type="button" className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Retroceder à página do usuário</Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="w-full flex flex-col gap-3">
-              <span className="font-bold self-center">
-                Já possui conta?
-              </span>
-              <Link href={'/login'}>
-                <Button type="button" className="bg-secondary text-white rounded-full w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com e-mail ou CPF</Button>
-              </Link>
-              <Link className="flex w-full" href={'/login'}>
-                <Button type="button" disabled className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gov.br</Button>
-              </Link>
-            </div>
-          )
-        }
-      </form>
-    </Form>
+          {
+            admin ? (
+              <div className="w-full flex flex-col gap-3">
+                <Link className="flex w-full" href={'/login'}>
+                  <Button onClick={showLoadingToast} type="button" className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Retroceder à página do usuário</Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="w-full flex flex-col gap-3">
+                <span className="font-bold self-center">
+                  Já possui conta?
+                </span>
+                <Link href={'/login'}>
+                  <Button onClick={showLoadingToast} type="button" className="bg-secondary text-white rounded-full w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com e-mail ou CPF</Button>
+                </Link>
+                <Link className="flex w-full" href={'/login'}>
+                  <Button onClick={showLoadingToast} type="button" disabled className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gov.br</Button>
+                </Link>
+              </div>
+            )
+          }
+        </form>
+      </Form>
+      {
+        isLoading && (
+          <LoadingToast />
+        )
+      }
+    </>
   )
 }

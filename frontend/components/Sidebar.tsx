@@ -20,6 +20,9 @@ import Link from "next/link"
 import { usePathname } from 'next/navigation'
 import { IoMdAddCircle } from "react-icons/io";
 import { PiUsersThreeFill } from "react-icons/pi";
+import { useState } from "react"
+import { LoadingToast } from "./LoadingToast"
+import { toast } from "react-toastify"
 
 const devicesGroup = [
   {
@@ -80,64 +83,107 @@ interface SidebarProps {
 
 export function AppSidebar({ admin }: SidebarProps) {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
 
   const pathname = usePathname().slice(1)
 
   async function logout() {
     await account.deleteSession('current')
 
+    setIsLoading(true)
+    toast(<LoadingToast isReactToastifyComponent />, {
+      autoClose: 1000,
+      hideProgressBar: true,
+      position: "top-center",
+      closeOnClick: true,
+    })
+
     router.push('/')
   }
 
+  function showLoadingToast(url: string) {
+    setIsLoading(true)
+    toast(<LoadingToast isReactToastifyComponent />, {
+      autoClose: 1000,
+      hideProgressBar: true,
+      position: "top-center",
+      closeOnClick: true,
+    })
+    router.push(`http://localhost:3000/${url}`)
+  }
+
   return (
-    <Sidebar className="text-zinc-900 z-[1] shadow-md h-full">
-      <CloseSidebarTrigger />
-      <SidebarContent className="bg-white flex flex-col">
-        <div className="h-32 w-full flex items-end justify-center gap-3">
-          <span className="w-[90%] rounded-lg h-0.5 bg-zinc-300" />
-        </div>
+    <>
+      <Sidebar className="text-zinc-900 z-[1] shadow-md h-full">
+        <CloseSidebarTrigger />
+        <SidebarContent className="bg-white flex flex-col">
+          <div className="h-32 w-full flex items-end justify-center gap-3">
+            <span className="w-[90%] rounded-lg h-0.5 bg-zinc-300" />
+          </div>
 
-        {
-          !admin && (
-            <SidebarGroup className="flex p-0">
+          {
+            !admin && (
+              <SidebarGroup className="flex p-0">
+                <SidebarMenu className="flex flex-col gap-1 font-bold">
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={pathname === 'home'}>
+                      <button onClick={() => showLoadingToast('/home')}>
+                        <Home />
+                        <span>Início</span>
+                      </button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroup>
+            )
+          }
+
+
+          <SidebarGroup className="flex flex-col gap-2 p-0">
+            <SidebarGroupLabel className="uppercase">Dispositivos</SidebarGroupLabel>
+            <SidebarGroupContent>
               <SidebarMenu className="flex flex-col gap-1 font-bold">
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={pathname === 'home'}>
-                    <Link href={'/home'}>
-                      <Home />
-                      <span>Início</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                {
+                  admin ? (
+                    itemsForAdmins.map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild>
+                          <button onClick={() => showLoadingToast(item.url)}>
+                            {
+                              item.icon
+                            }
+                            <span>{item.title}</span>
+                          </button>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))
+                  ) : (
+                    devicesGroup.map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild isActive={pathname === item.url}>
+                          <button onClick={() => showLoadingToast(item.url)}>
+                            {
+                              item.icon
+                            }
+                            <span>{item.title}</span>
+                          </button>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )))
+                }
               </SidebarMenu>
-            </SidebarGroup>
-          )
-        }
+            </SidebarGroupContent>
+          </SidebarGroup>
 
-
-        <SidebarGroup className="flex flex-col gap-2 p-0">
-          <SidebarGroupLabel className="uppercase">Dispositivos</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className="flex flex-col gap-1 font-bold">
-              {
-                admin ? (
-                  itemsForAdmins.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild>
-                        <Link href={item.url}>
-                          {
-                            item.icon
-                          }
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))
-                ) : (
-                  devicesGroup.map((item) => (
-                    <SidebarMenuItem key={item.title}>
+          <SidebarGroup className="flex flex-col gap-2">
+            <SidebarGroupLabel className="uppercase">segurança</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu className="flex flex-col gap-1 font-bold">
+                {
+                  securityGroup.map((item) => (
+                    <SidebarMenuItem key={item.title} title="Em breve">
                       <SidebarMenuButton asChild isActive={pathname === item.url}>
-                        <button onClick={() => router.push(`http://localhost:3000/${item.url}`)}>
+                        <button onClick={() => showLoadingToast(item.url)} disabled>
                           {
                             item.icon
                           }
@@ -145,47 +191,25 @@ export function AppSidebar({ admin }: SidebarProps) {
                         </button>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  )))
-              }
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+                  ))
+                }
 
-        <SidebarGroup className="flex flex-col gap-2">
-          <SidebarGroupLabel className="uppercase">segurança</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className="flex flex-col gap-1 font-bold">
-              {
-                securityGroup.map((item) => (
-                  <SidebarMenuItem key={item.title} title="Em breve">
-                    <SidebarMenuButton asChild isActive={pathname === item.url}>
-                      <Link href={item.url} aria-disabled>
-                        {
-                          item.icon
-                        }
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))
-              }
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <Link href={'/'}>
+                      <button onClick={logout} className="text-red-500 flex gap-1 justify-center items-center">
+                        <LogOut />
+                        Sair
+                      </button>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent >
+      </Sidebar >
 
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href={'/'}>
-                    <button onClick={logout} className="text-red-500 flex gap-1 justify-center items-center">
-                      <LogOut />
-                      Sair
-                    </button>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-
-      </SidebarContent >
-    </Sidebar >
+    </>
   )
 }

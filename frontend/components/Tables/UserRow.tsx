@@ -23,7 +23,7 @@ export function UserRow({ user }: { user: UserRowProps }) {
   const [devices, setDevices] = useState<DeviceProps[]>([] as DeviceProps[]);
   const [isLoading, setIsLoading] = useState(true)
 
-  console.log(user)
+  // console.log(user)
 
 
   async function buildParams() {
@@ -61,7 +61,7 @@ export function UserRow({ user }: { user: UserRowProps }) {
 
         const result = await response.json();
 
-        console.log(result.documents)
+        // console.log(result.documents)
         setDevices(result.documents || []);
       } catch (err) {
         console.error(`Fetch error: ${err}`);
@@ -78,10 +78,10 @@ export function UserRow({ user }: { user: UserRowProps }) {
       <Accordion type="single" collapsible>
         <AccordionItem value="item-1">
           <AccordionTrigger isChevronUpDown>
-            <div className="flex w-full justify-around items-center font-normal">
-              <span className="w-[40%] text-center">{user.$id}</span>
-              <span className="text-center w-[25%]">{user.name || "N/A"}</span>
-              <span className="text-center w-[25%]">{user.email || "N/A"}</span>
+            <div className="flex w-full gap-10 pl-4 lg:pl-0 lg:justify-around items-center font-normal">
+              <span className="w-[20%] lg:w-[40%] text-center">{user.$id}</span>
+              <span className="text-center w-[25%] break-words">{user.name || "N/A"}</span>
+              <span className="w-[25%] text-center break-words">{user.email || "N/A"}</span>
             </div>
           </AccordionTrigger>
           <AccordionContent className="gap-4 flex flex-col">

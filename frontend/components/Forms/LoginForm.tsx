@@ -13,13 +13,14 @@ import { Input } from "../Input"
 import Link from "next/link"
 import { account } from "@/lib/appwrite"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import logo from '../../assets/icons/procura-ai-logo-header.svg'
 import Image from "next/image"
 import { Button } from "../ui/button"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "react-toastify"
+import { LoadingToast } from "../LoadingToast"
 
 interface LoginFormProps {
   admin?: boolean
@@ -32,6 +33,7 @@ const formSchema = z.object({
 
 export function LoginForm({ admin }: LoginFormProps) {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,20 +52,20 @@ export function LoginForm({ admin }: LoginFormProps) {
 
         if (admin && !isAdmin) {
           await account.deleteSession('current')
+          setIsLoading(true)
           router.push('/login')
-          return promise
+          throw new Error('Acesso negado')
         }
 
         if (isAdmin && admin) {
+          setIsLoading(true)
           router.push('/dashboard');
         } else if (!admin) {
+          setIsLoading(true)
           router.push('/home');
         }
         return promise
       }
-
-      // @kel
-      
 
       toast.promise(callFunction, {
         pending: 'Logando...',
@@ -81,12 +83,17 @@ export function LoginForm({ admin }: LoginFormProps) {
     }
   }
 
+  function showLoadingToast() {
+    setIsLoading(true)
+  }
+
   useEffect(() => {
     const getSession = async () => {
       try {
         const callFunction = async () => {
           const sessions = await account.get()
           if (sessions.status) {
+            setIsLoading(true)
             sessions.labels[0] == "admin" ? router.push('/dashboard') : router.push('/home')
           }
         }
@@ -106,80 +113,89 @@ export function LoginForm({ admin }: LoginFormProps) {
   }, [])
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-[400px] h-fit flex flex-col gap-4 bg-white items-center px-10 py-5 rounded-xl">
-        <Image src={logo} alt="logo" width={200} height={100} />
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-[400px] h-fit flex flex-col gap-4 bg-white items-center px-10 py-5 rounded-xl">
+          <Image src={logo} alt="logo" width={200} height={100} />
 
-        {
-          admin ? (
-            <h3 className="text-center text-secondary font-bold">Acesso do Admin</h3>
-          ) : (
-            <h3 className="text-center">Para acessar o Procura.Aí faça login  abaixo:</h3>
-          )
-        }
+          {
+            admin ? (
+              <h3 className="text-center text-secondary font-bold">Acesso do Admin</h3>
+            ) : (
+              <h3 className="text-center">Para acessar o Procura.Aí faça login  abaixo:</h3>
+            )
+          }
 
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem className="flex flex-col w-full">
-              <FormLabel className="text-zinc-700 ml-4 font-bold">Usuário</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="Email" {...field} className="rounded-md" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full">
+                <FormLabel className="text-zinc-700 ml-4 font-bold">Usuário</FormLabel>
+                <FormControl>
+                  <Input type="text" placeholder="Email" {...field} className="rounded-md" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem className="flex flex-col w-full">
-              <FormLabel className="text-zinc-700 ml-4 font-bold">Senha</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="Senha" {...field} className="rounded-md" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Link href="/forgot-password" className="underline self-start hover:opacity-50 text-sm">Esqueceu sua senha?</Link>
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full">
+                <FormLabel className="text-zinc-700 ml-4 font-bold">Senha</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="Senha" {...field} className="rounded-md" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Link href="/forgot-password" className="underline self-start hover:opacity-50 text-sm">Esqueceu sua senha?</Link>
 
-        <Button className="bg-primary text-white rounded-full text-lg px-12 py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">Entrar</Button>
+          <Button className="bg-primary text-white rounded-full text-lg px-12 py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">Entrar</Button>
 
-        <span className="w-full h-[1px] rounded-full bg-secondary" />
+          <span className="w-full h-[1px] rounded-full bg-secondary" />
 
-        {
-          admin ? (
-            <div className="w-full flex flex-col gap-3">
-              <Link className="flex w-full" href={'/login'}>
-                <Button type="button" className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Retroceder à página do usuário</Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="w-full flex flex-col gap-3">
-              <span className="font-bold self-center">
-                Se preferir, acesse pela conta Gov.br
-              </span>
-              <Button disabled type="button" className="bg-secondary text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gob.br</Button>
-              <span className="font-bold self-center">
-                Não possui conta?
-              </span>
-              <Link href={'/cadastro'}>
-                <Button type="button" className="bg-secondary w-full text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Cadastre-se</Button>
-              </Link>
-              <span className="font-bold self-center">
-                Acesso do administrador
-              </span>
-              <Link className="flex w-full" href={'/admin-login'}>
-                <Button type="button" className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entre como Administrador</Button>
-              </Link>
-            </div>
-          )
-        }
-      </form>
-    </Form>
+          {
+            admin ? (
+              <div className="w-full flex flex-col gap-3">
+                <Link className="flex w-full" href={'/login'}>
+                  <Button onClick={showLoadingToast} type="button" className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Retroceder à página do usuário</Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="w-full flex flex-col gap-3">
+                <span className="font-bold self-center">
+                  Se preferir, acesse pela conta Gov.br
+                </span>
+                <Button disabled type="button" className="bg-secondary text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gob.br</Button>
+                <span className="font-bold self-center">
+                  Não possui conta?
+                </span>
+                <Link href={'/cadastro'}>
+                  <Button onClick={showLoadingToast} type="button" className="bg-secondary w-full text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Cadastre-se</Button>
+                </Link>
+                <span className="font-bold self-center">
+                  Acesso do administrador
+                </span>
+                <Link className="flex w-full" href={'/admin-login'}>
+                  <Button onClick={showLoadingToast} type="button" className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entre como Administrador</Button>
+                </Link>
+              </div>
+            )
+          }
+        </form>
+      </Form>
+
+      {
+        isLoading && (
+          <LoadingToast />
+        )
+      }
+    </>
+
   )
 }

@@ -18,6 +18,8 @@ import { IoIosExpand } from "react-icons/io";
 import { topBrandsStolen, topDangerousDistricts } from "@/utils/ChartData"
 import { EventProps } from "@/utils/types";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { LoadingToast } from "./LoadingToast";
 
 const Map = dynamic(() => import('./Maps/MapTiler'), {
   ssr: false,
@@ -29,15 +31,23 @@ export function ChartBoard() {
   const [numberOfDevicesRegistered, setNumberOfDevicesRegistered] = useState(0)
   const [numberOfDevicesRecovered, setNumberOfDevicesRecovered] = useState(0)
   const [occurrencesMapSize, setOccurrencesMapSize] = useState({ width: 650, height: 300 })
+  const [isLoading, setIsLoading] = useState(false)
+
+  const router = useRouter()
 
   // exemplo de um evento
-  const eventData: EventProps = {
+  const eventData: EventProps[] = [{
     id: '1',
     lastLocation: [-7.1786937, -34.8754069],
     type: 'Roubo',
     description: 'Descrição do roubo',
     datetime: '2023-06-18T00:00:00.000Z',
     isAlertOn: true
+  }]
+
+  function showLoadingToast() {
+    setIsLoading(true)
+    router.push(`/map/ocorrencias`)
   }
 
   useEffect(() => {
@@ -62,48 +72,54 @@ export function ChartBoard() {
   }, [])
 
   return (
-    <div className="w-full h-full flex flex-col py-5 text-xl justify-start items-center">
+    <>
+      <div className="w-full h-full flex flex-col py-5 text-xl justify-start items-center">
 
-      <div className="lg:flex-row flex flex-col gap-5 mb-5 self-start">
-        <div className="relative flex flex-col w-[250px] md:w-[700px] lg:w-full bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center">
-          <h2 className="text-3xxl font-black text-procura-ai-blue">Localização de ocorrências</h2>
-          <Link href={'/map/ocorrencias'} title="Clique para expandir" className="group flex items-center justify-center hover:cursor-pointer z-10 hover:bg-black/40 w-[95%] h-[86%] absolute top-11 right-">
-            <IoIosExpand size={50} className="text-white hidden group-hover:flex group-hover:animate-ping" />
-          </Link>
-          <div className="z-1">
-            <OccurrencesMap events={occurrences} />
+        <div className="lg:flex-row flex flex-col gap-5 mb-5 self-start">
+          <div className="relative flex flex-col w-[250px] md:w-[700px] lg:w-full bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center">
+            <h2 className="text-3xxl font-black text-procura-ai-blue">Localização de ocorrências</h2>
+            <button onClick={showLoadingToast} title="Clique para expandir" className="group flex items-center justify-center hover:cursor-pointer z-10 hover:bg-black/40 w-[95%] h-[86%] absolute top-11 right-">
+              <IoIosExpand size={50} className="text-white hidden group-hover:flex group-hover:animate-ping" />
+            </button>
+            <div className="z-1">
+              <OccurrencesMap events={occurrences} />
+            </div>
+            {/* <Map /> */}
           </div>
-          {/* <Map /> */}
+
+          {/* <div className="relative flex flex-col w-[250px] md:w-[700px] lg:w-[450px] xl:w-[700px] h-[500px]">
+            <h2 className="text-3xxl font-black">Cidades paraibanas</h2>
+            <MapTiler2 mapId='cities-map' legendId="cities-legend" data="https://api.maptiler.com/data/ae6f0872-48f3-4212-85af-bffed956043e/features.json?key=QKbTJZdA6lXljsicnOEI" />
+            </div> */}
+
+          {/* <div className="relative flex flex-col w-[250px] md:w-[700px] lg:w-[450px] h-[500px]">
+            <h2 className="text-3xxl font-black">Bairros de João Pessoa</h2>
+            <MapTiler2 mapId='districts-map' legendId="districts-legend" data="https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI" />
+            <PigeonMapLoader />
+          </div> */}
         </div>
 
-        {/* <div className="relative flex flex-col w-[250px] md:w-[700px] lg:w-[450px] xl:w-[700px] h-[500px]">
-          <h2 className="text-3xxl font-black">Cidades paraibanas</h2>
-          <MapTiler2 mapId='cities-map' legendId="cities-legend" data="https://api.maptiler.com/data/ae6f0872-48f3-4212-85af-bffed956043e/features.json?key=QKbTJZdA6lXljsicnOEI" />
-          </div> */}
+        <div className="flex gap-5">
+          <CardChart variant="blue" Icon={TiDeviceTablet} number={numberOfDevicesRegistered} title="Dispositivos cadastrados" />
+          <CardChart variant="green" Icon={TiDeviceTablet} number={numberOfDevicesRecovered} title="Dispositivos recuperados" />
+        </div>
 
-        {/* <div className="relative flex flex-col w-[250px] md:w-[700px] lg:w-[450px] h-[500px]">
-          <h2 className="text-3xxl font-black">Bairros de João Pessoa</h2>
-          <MapTiler2 mapId='districts-map' legendId="districts-legend" data="https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI" />
-          <PigeonMapLoader />
+        {/* <div className="flex w-[250px] md:w-full h-[300px] md:px-5 lg:px-20 self-center">
+          <div className="flex flex-col w-full">
+            <h2 className="font-bold">Marcas mais roubadas</h2>
+            <RechartChart data={topBrandsStolen} />
+          </div>
+
+          <div className="flex flex-col w-full">
+            <h2 className="font-bold">Bairros com maiores indices de roubo</h2>
+            <RechartChart data={topDangerousDistricts} />
+          </div>
         </div> */}
       </div>
 
-      <div className="flex gap-5">
-        <CardChart variant="blue" Icon={TiDeviceTablet} number={numberOfDevicesRegistered} title="Dispositivos cadastrados" />
-        <CardChart variant="green" Icon={TiDeviceTablet} number={numberOfDevicesRecovered} title="Dispositivos recuperados" />
-      </div>
-
-      {/* <div className="flex w-[250px] md:w-full h-[300px] md:px-5 lg:px-20 self-center">
-        <div className="flex flex-col w-full">
-          <h2 className="font-bold">Marcas mais roubadas</h2>
-          <RechartChart data={topBrandsStolen} />
-        </div>
-
-        <div className="flex flex-col w-full">
-          <h2 className="font-bold">Bairros com maiores indices de roubo</h2>
-          <RechartChart data={topDangerousDistricts} />
-        </div>
-      </div> */}
-    </div>
+      {
+        isLoading && <LoadingToast />
+      }
+    </>
   )
 }
