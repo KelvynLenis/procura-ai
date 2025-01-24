@@ -84,50 +84,54 @@ export function UserRow({ user }: { user: UserRowProps }) {
               <span className="text-center w-[25%]">{user.email || "N/A"}</span>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="gap-4 flex flex-col">
-            <div className="flex w-full bg-zinc-300 px-10 py-2 font-medium">
-              Dados pessoais
-            </div>
+          <AccordionContent className="gap-4 flex bg-zinc-100 px-7 py-3">
+            <span className="w-1 h-56 rounded-md bg-zinc-300" />
+            <div className="gap-4 flex flex-col bg-zinc-100 w-full px-2 py-4">
 
-            <div className="flex px-10 w-full justify-around">
-              <div className="flex flex-col gap-2">
-                <span className="font-medium uppercase">cpf</span>
-                <span>{user.cpf}</span>
+              <div className="flex w-full bg-zinc-300 px-10 py-2 font-medium">
+                Dados pessoais
               </div>
 
-              {/* <div className="flex flex-col gap-2">
+              <div className="flex px-10 w-full gap-20">
+                <div className="flex flex-col gap-2">
+                  <span className="font-medium uppercase">cpf</span>
+                  <span>{user.cpf}</span>
+                </div>
+
+                {/* <div className="flex flex-col gap-2">
                 <span className="font-medium">Endereço</span>
                 <span>endereço</span>
               </div> */}
 
-              <div className="flex flex-col gap-2">
-                <span className="font-medium">Email</span>
-                <span>{user.email}</span>
+                <div className="flex flex-col gap-2">
+                  <span className="font-medium">Email</span>
+                  <span>{user.email}</span>
+                </div>
               </div>
-            </div>
 
-            <div className="flex w-full bg-zinc-300 px-10 py-2 font-medium">
-              Dispositivos
-            </div>
+              <div className="flex w-full bg-zinc-300 px-10 py-2 font-medium">
+                Dispositivos
+              </div>
 
-            <div className="grid grid-cols-3 px-10 w-full">
-              {
-                isLoading ? (
-                  <ClipLoader />
-                ) : (
-                  devices.length > 0 ? (
-                    devices.map((device) => (
-                      <div key={device.$id} className="flex flex-col text-center">
-                        <span>{device.phone_model}</span>
-                        <span>{device.brand}</span>
-                      </div>
-                    ))
-
+              <div className="grid grid-cols-3 px-10 w-full">
+                {
+                  isLoading ? (
+                    <ClipLoader />
                   ) : (
-                    <span className="col-span-3 text-center">Nenhum dispositivo cadastrado</span>
+                    devices.length > 0 ? (
+                      devices.map((device) => (
+                        <div key={device.$id} className="flex flex-col text-center">
+                          <span>{device.phone_model}</span>
+                          <span>{device.brand}</span>
+                        </div>
+                      ))
+
+                    ) : (
+                      <span className="col-span-3">Nenhum dispositivo cadastrado</span>
+                    )
                   )
-                )
-              }
+                }
+              </div>
             </div>
           </AccordionContent>
         </AccordionItem>

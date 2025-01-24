@@ -38,7 +38,7 @@ const AccordionTrigger = React.forwardRef<
         isChevronUpDown ? (
           <div className="justify-center flex items-center py-8 w-[25%] text-procura-ai-blue">
             Ver detalhes
-            <ChevronsUpDown />
+            <ChevronDown />
           </div>
         ) : (
           <ChevronDown className="h-10 w-10 shrink-0 text-secondary transition-transform duration-200 dark:text-neutral-400" />
