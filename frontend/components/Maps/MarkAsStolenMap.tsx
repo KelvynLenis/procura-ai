@@ -9,7 +9,7 @@ interface MarkAsStolenMapProps {
 
 export function MarkAsStolenMap({ setPosition }: MarkAsStolenMapProps) {
   const [isMarkerOn, setIsMarkerOn] = useState(false)
-  const [coordinates, setCoordinates] = useState<number[]>([])
+  const [coordinates, setCoordinates] = useState<[number, number]>([0,0])
 
   const size = useWindowSize();
 

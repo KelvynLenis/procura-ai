@@ -15,9 +15,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ChevronDown } from "lucide-react"
 import { toast } from "react-toastify"
+import { v4 as uuidv4 } from 'uuid'
 
 
-export function MarkAsStolenForm() {
+export function MarkAsStolenForm({ id, isStolen }: { id: string, isStolen: boolean }) {
 
   const occurrenceTypes = [
     { label: "Roubo", value: "Roubo" },
@@ -41,12 +42,42 @@ export function MarkAsStolenForm() {
   async function onSubmit(values: any) {
 
     try {
-      // @Glaymar TODO
-      // Lógica para marcar como roubado
-      // Coloca a função aqui dentro dessa função, faz normalmente do jeito que tu faria.
-      // esse formato é apenas para usar o toast para melhora a UX
+      const eventId = uuidv4();
       const callFunction = async () => {
+        const promise = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents/`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+            },
+            body: JSON.stringify({
+              documentId: eventId,
+              data: {
+                id_device: id,
+                time_event: values.datetime,
+                last_location: values.coordinates,
+                description: values.description,
+                type: values.type,
+                is_alert_on: true
+              }
+            })
+          })
 
+      const updateDeviceStatus = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          },
+          body: JSON.stringify({
+            data: { isStolen: !isStolen },
+          }),
+        }
+      );
       }
 
       toast.promise(callFunction, {
