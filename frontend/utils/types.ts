@@ -8,6 +8,7 @@ export interface DeviceProps {
   brand: string; // Marca do telefone
   imei: string; // IMEI do telefone
   isStolen?: boolean; // Status de "roubado" (true/false)
+  auth_id?: string
 }
 
 export interface EventProps {
@@ -16,7 +17,8 @@ export interface EventProps {
   type: string
   description: string
   datetime: string
-  isAlertOn: boolean
+  is_alert_on: boolean
+  id_device?: string
 }
 
 export type Device = z.infer<typeof DeviceSchema>;
