@@ -137,7 +137,7 @@ export function UsersTable({ pageNumberParam }: UsersTableProps) {
           </div>
         )}
 
-        <Pagination>
+        {/* <Pagination>
           <PaginationContent className="py-1">
             <PaginationItem>
               <button className="flex items-center gap-1 hover:bg-zinc-100 rounded-md p-2" onClick={handleGoToPreviousPage}>
@@ -159,7 +159,7 @@ export function UsersTable({ pageNumberParam }: UsersTableProps) {
               </button>
             </PaginationItem>
           </PaginationContent>
-        </Pagination>
+        </Pagination> */}
 
       </div>
     </div>

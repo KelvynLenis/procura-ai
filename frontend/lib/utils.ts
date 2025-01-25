@@ -3,6 +3,8 @@ import { imeiSchema } from "@/schemas/imeiSchema";
 import { phoneNumberSchema } from "@/schemas/phoneNumberSchema";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -38,3 +40,11 @@ export function validatePhoneNumber(phoneNumber: string) {
     return false; // Número de celular inválido
   }
 };
+
+
+export function formatDateTime(isoString: string) {
+  const date = new Date(isoString);
+
+  // Formatar para "10:30 terça 28/01/2025"
+  return format(date, "HH:mm EEEE dd/MM/yyyy", { locale: ptBR });
+}

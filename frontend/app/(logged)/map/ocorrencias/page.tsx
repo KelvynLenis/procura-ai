@@ -1,5 +1,5 @@
 import { OccurrencesMap } from "@/components/Maps/OccurrencesMap";
-import { DeviceProps, EventProps } from "@/utils/types";
+import { Device, DeviceProps, Event, EventProps } from "@/utils/types";
 import Link from "next/link";
 import { TbArrowsMinimize } from "react-icons/tb";
 
@@ -89,13 +89,13 @@ async function getDashboardData() {
   try {
     const [devicesData, eventsData] = await Promise.all([fetchStolenDevices(), fetchEvents()]);
 
-    const devices = devicesData.documents;
-    const events = eventsData.documents;
+    const devices: Device[] = devicesData.documents;
+    const events: Event[] = eventsData.documents;
 
     const enrichedDevices = await Promise.all(
-      devices.map(async (device: DeviceProps) => {
+      devices.map(async (device: Device) => {
         const deviceEvents = await events.filter(
-          (event: EventProps) => event.id_device === device.$id && event.is_alert_on
+          (event: Event) => event.id_device === device.$id && event.is_alert_on
         );
 
         const recentEvent = await deviceEvents.sort(
@@ -103,8 +103,7 @@ async function getDashboardData() {
         ).at(-1);
 
 
-
-        const ownerResponse = await fetchOwnerInfo(device.auth_id);
+        const ownerResponse = await fetchOwnerInfo(device.auth_id!);
         const ownerInfo = ownerResponse?.documents?.[0];
 
         return {
@@ -131,17 +130,20 @@ async function getDashboardData() {
 
 export default async function Dashboard() {
 
+  let occurencesData;
 
   try {
     const dashboardData = await getDashboardData();
     console.log(dashboardData);
+
+    occurencesData = dashboardData
   } catch (error) {
     console.log(error)
   }
 
   return (
     <div className="flex flex-col">
-      <OccurrencesMap />
+      <OccurrencesMap occurences={occurencesData} />
       <Link href={'/dashboard'}>
         <TbArrowsMinimize size={38} className="absolute top-4 right-5 z-10 hover:animate-pulse bg-white rounded-xl p-1 shadow" />
       </Link>
