@@ -16,7 +16,7 @@ import { TiDeviceTablet } from "react-icons/ti";
 import { IoIosExpand } from "react-icons/io";
 
 import { topBrandsStolen, topDangerousDistricts } from "@/utils/ChartData"
-import { EventProps } from "@/utils/types";
+import { Device, Event, EventProps } from "@/utils/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LoadingToast } from "./LoadingToast";
@@ -35,15 +35,128 @@ export function ChartBoard() {
 
   const router = useRouter()
 
-  // exemplo de um evento
-  const eventData: EventProps[] = [{
-    id: '1',
-    lastLocation: [-7.1786937, -34.8754069],
-    type: 'Roubo',
-    description: 'Descrição do roubo',
-    datetime: '2023-06-18T00:00:00.000Z',
-    isAlertOn: true
-  }]
+  async function fetchStolenDevices() {
+    const params = new URLSearchParams({
+      "queries[0]": JSON.stringify({
+        method: "equal",
+        attribute: "isStolen",
+        values: [true],
+      }),
+    });
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Failed to fetch stolen devices: ${error}`);
+    }
+    return response.json();
+  }
+
+
+  async function fetchEvents() {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Failed to fetch events: ${error}`);
+    }
+
+    return response.json();
+  }
+
+  async function fetchOwnerInfo(auth_id: string) {
+
+    const params = new URLSearchParams({
+      "queries[0]": JSON.stringify({
+        method: "equal",
+        attribute: "userId",
+        values: [auth_id],
+      }),
+    });
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Failed to fetch user info: ${error}`);
+    }
+
+    return response.json();
+  }
+
+
+  async function getDashboardData() {
+    try {
+      const [devicesData, eventsData] = await Promise.all([fetchStolenDevices(), fetchEvents()]);
+
+      const devices: Device[] = devicesData.documents;
+      const events: Event[] = eventsData.documents;
+
+      const enrichedDevices = await Promise.all(
+        devices.map(async (device: Device) => {
+          const deviceEvents = await events.filter(
+            (event: Event) => event.id_device === device.$id && event.is_alert_on
+          );
+
+          const recentEvent = await deviceEvents.sort(
+            (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+          ).at(-1);
+
+
+          const ownerResponse = await fetchOwnerInfo(device.auth_id!);
+          const ownerInfo = ownerResponse?.documents?.[0];
+
+          return {
+            device: {
+              ...device,
+            },
+            event: recentEvent,
+            user: {
+              name: ownerInfo?.name || "N/A",
+              email: ownerInfo?.email || "N/A",
+            },
+          };
+        })
+      );
+
+
+      return enrichedDevices;
+    } catch (error) {
+      console.error("Erro ao carregar dados do dashboard:", error);
+      throw error;
+    }
+  }
 
   function showLoadingToast() {
     setIsLoading(true)
@@ -55,11 +168,16 @@ export function ChartBoard() {
     // Puxa as ocorrencias do banco de dados
     const fetchOccurrences = async () => {
       try {
+        const dashboardData = await getDashboardData();
+        console.log(dashboardData);
 
+        setOccurrences(dashboardData)
       } catch (error) {
-
+        console.log(error)
       }
     }
+
+    fetchOccurrences()
 
     // @glaymar
     // seta o total de dispositivos cadastrados
@@ -78,11 +196,11 @@ export function ChartBoard() {
         <div className="lg:flex-row flex flex-col gap-5 mb-5 self-start">
           <div className="relative flex flex-col w-[250px] md:w-[700px] lg:w-full bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center">
             <h2 className="text-3xxl font-black text-procura-ai-blue">Localização de ocorrências</h2>
-            <button onClick={showLoadingToast} title="Clique para expandir" className="group flex items-center justify-center hover:cursor-pointer z-10 hover:bg-black/40 w-[95%] h-[86%] absolute top-11 right-">
+            <button onClick={showLoadingToast} title="Clique para expandir" className="group flex items-center justify-center hover:cursor-pointer z-10 hover:bg-black/40 w-[95%] h-[86%] absolute top-11 right-4">
               <IoIosExpand size={50} className="text-white hidden group-hover:flex group-hover:animate-ping" />
             </button>
             <div className="z-1">
-              <OccurrencesMap events={occurrences} />
+              <OccurrencesMap occurences={occurrences} />
             </div>
             {/* <Map /> */}
           </div>

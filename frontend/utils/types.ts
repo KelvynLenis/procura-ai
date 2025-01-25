@@ -1,4 +1,5 @@
 import DeviceSchema from "@/schemas/deviceSchema"
+import EventSchema from "@/schemas/eventSchema";
 import { z } from "zod"
 
 export interface DeviceProps {
@@ -12,13 +13,13 @@ export interface DeviceProps {
 }
 
 export interface EventProps {
-  id: string
-  lastLocation: [number, number]
-  type: string
-  description: string
-  datetime: string
-  is_alert_on: boolean
-  id_device?: string
+  device: Device;
+  event: Event;
+  user: {
+    name: string;
+    email: string;
+  }
 }
 
 export type Device = z.infer<typeof DeviceSchema>;
+export type Event = z.infer<typeof EventSchema>;
