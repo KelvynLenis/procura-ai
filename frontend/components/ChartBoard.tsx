@@ -63,6 +63,26 @@ export function ChartBoard() {
     return response.json();
   }
 
+  async function fetchAllDevices() {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Failed to fetch stolen devices: ${error}`);
+    }
+    return response.json().then((res) => res.documents.length);
+  }
+
 
   async function fetchEvents() {
     const response = await fetch(
@@ -76,6 +96,35 @@ export function ChartBoard() {
         cache: "no-store",
       }
     );
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Failed to fetch events: ${error}`);
+    }
+
+    return response.json();
+  }
+
+  async function fetchRecoveredDevices() {
+    const params = new URLSearchParams({
+      "queries[0]": JSON.stringify({
+        method: "equal",
+        attribute: "is_alert_on",
+        values: [false],
+      }),
+    });
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+        },
+        cache: "no-store",
+      }
+    )
 
     if (!response.ok) {
       const error = await response.text();
@@ -164,8 +213,6 @@ export function ChartBoard() {
   }
 
   useEffect(() => {
-    // @glaymar
-    // Puxa as ocorrencias do banco de dados
     const fetchOccurrences = async () => {
       try {
         const dashboardData = await getDashboardData();
@@ -177,15 +224,19 @@ export function ChartBoard() {
       }
     }
 
+    const fetchRecovered = async () => {
+      try {
+        fetchRecoveredDevices().then((res) => setNumberOfDevicesRecovered(res.documents.length))
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    fetchRecovered()
+
     fetchOccurrences()
 
-    // @glaymar
-    // seta o total de dispositivos cadastrados
-    setNumberOfDevicesRegistered(0)
-
-    // @glaymar
-    // seta o total de dispositivos recuperados
-    setNumberOfDevicesRecovered(0)
+    fetchAllDevices().then((res) => setNumberOfDevicesRegistered(res))
 
   }, [])
 
@@ -202,37 +253,14 @@ export function ChartBoard() {
             <div className="z-1">
               <OccurrencesMap occurences={occurrences} />
             </div>
-            {/* <Map /> */}
+          </div>
+          <div className="flex flex-col gap-5">
+            <CardChart variant="blue" Icon={TiDeviceTablet} number={numberOfDevicesRegistered} title="Dispositivos cadastrados" />
+            <CardChart variant="green" Icon={TiDeviceTablet} number={numberOfDevicesRecovered} title="Dispositivos recuperados" />
           </div>
 
-          {/* <div className="relative flex flex-col w-[250px] md:w-[700px] lg:w-[450px] xl:w-[700px] h-[500px]">
-            <h2 className="text-3xxl font-black">Cidades paraibanas</h2>
-            <MapTiler2 mapId='cities-map' legendId="cities-legend" data="https://api.maptiler.com/data/ae6f0872-48f3-4212-85af-bffed956043e/features.json?key=QKbTJZdA6lXljsicnOEI" />
-            </div> */}
-
-          {/* <div className="relative flex flex-col w-[250px] md:w-[700px] lg:w-[450px] h-[500px]">
-            <h2 className="text-3xxl font-black">Bairros de João Pessoa</h2>
-            <MapTiler2 mapId='districts-map' legendId="districts-legend" data="https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI" />
-            <PigeonMapLoader />
-          </div> */}
         </div>
 
-        <div className="flex gap-5">
-          <CardChart variant="blue" Icon={TiDeviceTablet} number={numberOfDevicesRegistered} title="Dispositivos cadastrados" />
-          <CardChart variant="green" Icon={TiDeviceTablet} number={numberOfDevicesRecovered} title="Dispositivos recuperados" />
-        </div>
-
-        {/* <div className="flex w-[250px] md:w-full h-[300px] md:px-5 lg:px-20 self-center">
-          <div className="flex flex-col w-full">
-            <h2 className="font-bold">Marcas mais roubadas</h2>
-            <RechartChart data={topBrandsStolen} />
-          </div>
-
-          <div className="flex flex-col w-full">
-            <h2 className="font-bold">Bairros com maiores indices de roubo</h2>
-            <RechartChart data={topDangerousDistricts} />
-          </div>
-        </div> */}
       </div>
 
       {
