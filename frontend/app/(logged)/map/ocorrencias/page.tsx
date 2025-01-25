@@ -1,8 +1,143 @@
 import { OccurrencesMap } from "@/components/Maps/OccurrencesMap";
+import { DeviceProps, EventProps } from "@/utils/types";
 import Link from "next/link";
 import { TbArrowsMinimize } from "react-icons/tb";
 
+
+async function fetchStolenDevices() {
+  const params = new URLSearchParams({
+    "queries[0]": JSON.stringify({
+      method: "equal",
+      attribute: "isStolen",
+      values: [true],
+    }),
+  });
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Failed to fetch stolen devices: ${error}`);
+  }
+  return response.json();
+}
+
+
+async function fetchEvents() {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Failed to fetch events: ${error}`);
+  }
+
+  return response.json();
+}
+
+async function fetchOwnerInfo(auth_id: string) {
+
+  const params = new URLSearchParams({
+    "queries[0]": JSON.stringify({
+      method: "equal",
+      attribute: "userId",
+      values: [auth_id],
+    }),
+  });
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Failed to fetch user info: ${error}`);
+  }
+
+  return response.json();
+}
+
+
+async function getDashboardData() {
+  try {
+    const [devicesData, eventsData] = await Promise.all([fetchStolenDevices(), fetchEvents()]);
+
+    const devices = devicesData.documents;
+    const events = eventsData.documents;
+
+    const enrichedDevices = await Promise.all(
+      devices.map(async (device: DeviceProps) => {
+        const deviceEvents = await events.filter(
+          (event: EventProps) => event.id_device === device.$id && event.is_alert_on
+        );
+
+        const recentEvent = await deviceEvents.sort(
+          (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        ).at(-1);
+
+
+
+        const ownerResponse = await fetchOwnerInfo(device.auth_id);
+        const ownerInfo = ownerResponse?.documents?.[0];
+
+        return {
+          device: {
+            ...device,
+          },
+          event: recentEvent,
+          user: {
+            name: ownerInfo?.name || "N/A",
+            email: ownerInfo?.email || "N/A",
+          },
+        };
+      })
+    );
+
+
+    return enrichedDevices;
+  } catch (error) {
+    console.error("Erro ao carregar dados do dashboard:", error);
+    throw error;
+  }
+}
+
+
 export default async function Dashboard() {
+
+
+  try {
+    const dashboardData = await getDashboardData();
+    console.log(dashboardData);
+  } catch (error) {
+    console.log(error)
+  }
 
   return (
     <div className="flex flex-col">
