@@ -6,6 +6,8 @@ import { geoJsonSample } from "@/utils/ChartData"
 import { EventProps } from "@/utils/types";
 import { usePathname } from 'next/navigation'
 import { CopyToClipBoardButton } from "../CopyToClipBoardButton";
+import { formatDateTime } from "@/lib/utils";
+
 
 interface OccurrencesMapProps {
   width?: number;
@@ -21,7 +23,7 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
   const pathname = usePathname().slice(1)
 
   function handleOpenPopup(event: EventProps) {
-    setIsOverlayOpen(!isOverlayOpen)
+    setIsOverlayOpen(true)
     setOccurence(event)
   }
 
@@ -70,7 +72,7 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
 
 
   return (
-    <Map width={setWidth()} height={setHeight()} defaultCenter={[-7.1509317, -34.8446769]} defaultZoom={11}>
+    <Map onClick={() => setIsOverlayOpen(false)} width={setWidth()} height={setHeight()} defaultCenter={[-7.1509317, -34.8446769]} defaultZoom={11}>
       {
         occurences && occurences.map((occurence, index) => (
           <Marker key={index} width={50} anchor={occurence.event.last_location} color={'#FF0000'} onClick={() => handleOpenPopup(occurence)} />
@@ -98,8 +100,8 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
                 <CopyToClipBoardButton text={occurence.user.name} />
               </span>
               <span className="text-sm text-zinc-500 flex items-center justify-between">
-                {occurence.event.time_event}
-                <CopyToClipBoardButton text={occurence.event.time_event} />
+                {formatDateTime(occurence.event.time_event)}
+                <CopyToClipBoardButton text={formatDateTime(occurence.event.time_event)} />
               </span>
             </div>
           </Overlay>
