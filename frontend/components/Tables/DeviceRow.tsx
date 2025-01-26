@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/dialog"
 import { MarkAsStolenForm } from "../Forms/MarkAsStolenForm";
 import { toast } from "react-toastify";
+import { v4 as uuidv4 } from 'uuid'
+
 
 interface DeviceRowProps {
   id: string; // ID do dispositivo
@@ -62,6 +64,76 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
     }
   }
 
+  async function handleDeviceRecovery(id: string) {
+
+    try {
+      const eventId = uuidv4();
+      const x = new Date().toISOString()
+
+
+      console.log(x)
+      const callFunction = async () => {
+
+        const promise = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents/`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+            },
+            body: JSON.stringify({
+              documentId: eventId,
+              data: {
+                id_device: id,
+                time_event: new Date().toISOString(),
+                last_location: [0, 0],
+                description: "Recuperado",
+                type: "Recuperado",
+                is_alert_on: false
+              }
+            })
+          }).then(async (response) => {
+
+            if (!response.ok) {
+              const error = await response.text();
+              throw new Error(`Error: ${error}`);
+            }
+            return response.json();
+          }).catch((err) => {
+            console.log(`Fetch error: ${err.message}`);
+            return null;
+          });
+
+        const updateDeviceStatus = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
+          {
+            method: "PATCH",
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+            },
+            body: JSON.stringify({
+              data: { isStolen: false },
+            }),
+          }
+        );
+      }
+
+      setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, isStolen: false } : device));
+
+
+      toast.promise(callFunction, {
+        pending: 'Recuperando Dispositivo...',
+        success: 'Recuperado',
+        error: 'Erro ao recuperar'
+      })
+
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
 
   return (
     <TableRow>
@@ -83,27 +155,37 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
           <Trash size={20} />
         </button>
 
-        <Dialog>
-          <DialogTrigger asChild>
-            <button className={cn("rounded-xl flex flex-col md:flex-row  py-1 px-2 gap-2 items-center w-fit hover:opacity-70", isStolen ? 'bg-yellow-200 text-yellow-600' : 'bg-red-200 text-red-600')}>
+        {
+          isStolen
+            ? <button className={cn("rounded-xl flex flex-col md:flex-row  py-1 px-2 gap-2 items-center w-fit hover:opacity-70", 'bg-yellow-200 text-yellow-600')} onClick={() => handleDeviceRecovery(id)}>
               <IoIosWarning size={20} />
-              {
-                isStolen
-                  ? 'Desativar alerta'
-                  : 'Acionar alerta'
-              }
+              Desativar alerta
             </button>
-          </DialogTrigger>
-          <DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-fit py-8">
-            <DialogHeader>
-              <DialogTitle>Preencha as informações</DialogTitle>
-            </DialogHeader>
-            <MarkAsStolenForm id={id} isStolen={isStolen}/>
-          </DialogContent>
-        </Dialog>
+
+            :
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className={cn("rounded-xl flex flex-col md:flex-row  py-1 px-2 gap-2 items-center w-fit hover:opacity-70", 'bg-red-200 text-red-600')}>
+                  <IoIosWarning size={20} />
+                  Acionar alerta
+
+                </button>
+              </DialogTrigger>
+              < DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-fit py-8">
+
+                <DialogHeader>
+                  <DialogTitle>Preencha as informações</DialogTitle>
+                </DialogHeader>
+                <MarkAsStolenForm id={id} isStolen={isStolen} setDevices={setDevices} />
+              </DialogContent>
+            </Dialog>
+
+        }
+
+
 
 
       </TableCell>
-    </TableRow>
+    </TableRow >
   )
 }
