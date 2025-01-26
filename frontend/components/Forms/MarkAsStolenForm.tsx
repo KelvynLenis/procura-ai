@@ -16,9 +16,10 @@ import {
 import { ChevronDown } from "lucide-react"
 import { toast } from "react-toastify"
 import { v4 as uuidv4 } from 'uuid'
+import { DeviceProps } from "@/utils/types"
 
 
-export function MarkAsStolenForm({ id, isStolen }: { id: string, isStolen: boolean }) {
+export function MarkAsStolenForm({ id, isStolen, setDevices }: { id: string, isStolen: boolean, setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>> }) {
 
   const occurrenceTypes = [
     { label: "Roubo", value: "Roubo" },
@@ -65,20 +66,21 @@ export function MarkAsStolenForm({ id, isStolen }: { id: string, isStolen: boole
             })
           })
 
-      const updateDeviceStatus = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
-        {
-          method: "PATCH",
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
-          },
-          body: JSON.stringify({
-            data: { isStolen: !isStolen },
-          }),
-        }
-      );
+        const updateDeviceStatus = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
+          {
+            method: "PATCH",
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+            },
+            body: JSON.stringify({
+              data: { isStolen: true },
+            }),
+          }
+        );
       }
+      setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, isStolen: true } : device));
 
       toast.promise(callFunction, {
         pending: 'Marcando como roubado...',
