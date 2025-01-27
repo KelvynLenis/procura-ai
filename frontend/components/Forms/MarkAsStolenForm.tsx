@@ -16,6 +16,7 @@ import {
 import { ChevronDown } from "lucide-react"
 import { toast } from "react-toastify"
 import { v4 as uuidv4 } from 'uuid'
+import { DialogClose } from "../ui/dialog"
 import { DeviceProps } from "@/utils/types"
 
 
@@ -175,7 +176,10 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: { id: string, isS
           </div>
         </div>
 
-        <Button variant="blue" type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl">Salvar</Button>
+        <DialogClose asChild>
+
+          <Button variant="blue" type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl">Salvar</Button>
+        </DialogClose>
       </form>
     </Form>
   )
