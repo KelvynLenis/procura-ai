@@ -17,9 +17,10 @@ import { ChevronDown } from "lucide-react"
 import { toast } from "react-toastify"
 import { v4 as uuidv4 } from 'uuid'
 import { DialogClose } from "../ui/dialog"
+import { DeviceProps } from "@/utils/types"
 
 
-export function MarkAsStolenForm({ id, isStolen }: { id: string, isStolen: boolean }) {
+export function MarkAsStolenForm({ id, isStolen, setDevices }: { id: string, isStolen: boolean, setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>> }) {
 
   const occurrenceTypes = [
     { label: "Roubo", value: "Roubo" },
@@ -75,11 +76,12 @@ export function MarkAsStolenForm({ id, isStolen }: { id: string, isStolen: boole
               'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
             },
             body: JSON.stringify({
-              data: { isStolen: !isStolen },
+              data: { isStolen: true },
             }),
           }
         );
       }
+      setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, isStolen: true } : device));
 
       toast.promise(callFunction, {
         pending: 'Marcando como roubado...',

@@ -68,7 +68,7 @@ export function DevicesTable() {
     };
 
     getDevices();
-  }, []);
+  }, [setDevices]);
 
   return (
     <Table className="bg-white shadow-lg rounded-lg self-center">
