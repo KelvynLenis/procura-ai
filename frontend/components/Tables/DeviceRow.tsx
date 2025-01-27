@@ -161,16 +161,6 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
               <IoIosWarning size={20} />
               Desativar alerta
             </button>
-<<<<<<< HEAD
-          </DialogTrigger>
-          <DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-fit py-8">
-            <DialogHeader>
-              <DialogTitle>Preencha as informações</DialogTitle>
-            </DialogHeader>
-            <MarkAsStolenForm id={id} isStolen={isStolen} />
-          </DialogContent>
-        </Dialog>
-=======
 
             :
             <Dialog>
@@ -193,7 +183,6 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
         }
 
 
->>>>>>> develop
 
 
       </TableCell>
