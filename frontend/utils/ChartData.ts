@@ -13,7 +13,7 @@ export const topBrandsStolen = [
 
 export const phoneBrands = [
   {
-    brand: "apple",
+    brand: "Apple",
     models: [
       "iPhone 15 Pro Max",
       "iPhone 14 Plus",
@@ -23,7 +23,7 @@ export const phoneBrands = [
     ],
   },
   {
-    brand: "samsung",
+    brand: "Samsung",
     models: [
       "Galaxy S23 Ultra",
       "Galaxy Z Fold 5",
@@ -33,7 +33,7 @@ export const phoneBrands = [
     ],
   },
   {
-    brand: "xiaomi",
+    brand: "Xiaomi",
     models: [
       "Xiaomi 13 Pro",
       "Xiaomi Redmi Note 12",
@@ -43,7 +43,7 @@ export const phoneBrands = [
     ],
   },
   {
-    brand: "oppo",
+    brand: "Oppo",
     models: [
       "Oppo Find X6 Pro",
       "Oppo Reno 10 Pro+",
@@ -53,7 +53,7 @@ export const phoneBrands = [
     ],
   },
   {
-    brand: "vivo",
+    brand: "Vivo",
     models: [
       "Vivo X90 Pro+",
       "Vivo Y100",
@@ -63,7 +63,7 @@ export const phoneBrands = [
     ],
   },
   {
-    brand: "motorola",
+    brand: "Motorola",
     models: [
       "Motorola Edge 40 Pro",
       "Motorola Razr 2023",
@@ -73,7 +73,7 @@ export const phoneBrands = [
     ],
   },
   {
-    brand: "realme",
+    brand: "Realme",
     models: [
       "Realme GT 5",
       "Realme 11 Pro+",
@@ -83,7 +83,7 @@ export const phoneBrands = [
     ],
   },
   {
-    brand: "asus",
+    brand: "Asus",
     models: [
       "Asus ROG Phone 7 Ultimate",
       "Asus Zenfone 10",
@@ -93,7 +93,7 @@ export const phoneBrands = [
     ],
   },
   {
-    brand: "huawei",
+    brand: "Huawei",
     models: [
       "Huawei P60 Pro",
       "Huawei Mate X3",
@@ -103,7 +103,7 @@ export const phoneBrands = [
     ],
   },
   {
-    brand: "sony",
+    brand: "Sony",
     models: [
       "Sony Xperia 1 V",
       "Sony Xperia 5 IV",

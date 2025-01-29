@@ -31,7 +31,7 @@ const formSchema = z.object({
   password: z.string(),
 })
 
-export function LoginForm({ admin }: LoginFormProps) {
+export function LoginForm() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -50,20 +50,14 @@ export function LoginForm({ admin }: LoginFormProps) {
         const user = await account.get()
         const isAdmin = user.labels[0] === 'admin';
 
-        if (admin && !isAdmin) {
-          await account.deleteSession('current')
-          setIsLoading(true)
-          router.push('/login')
-          throw new Error('Acesso negado')
-        }
-
-        if (isAdmin && admin) {
+        if (isAdmin) {
           setIsLoading(true)
           router.push('/dashboard');
-        } else if (!admin) {
+        } else {
           setIsLoading(true)
           router.push('/home');
         }
+
         return promise
       }
 
@@ -117,14 +111,7 @@ export function LoginForm({ admin }: LoginFormProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-[400px] h-fit flex flex-col gap-4 bg-white items-center px-10 py-5 rounded-xl">
           <Image src={logo} alt="logo" width={200} height={100} />
-
-          {
-            admin ? (
-              <h3 className="text-center text-secondary font-bold">Acesso do Admin</h3>
-            ) : (
-              <h3 className="text-center">Para acessar o Procura.Aí faça login  abaixo:</h3>
-            )
-          }
+          <h3 className="text-center">Para acessar o Procura.Aí faça login  abaixo:</h3>
 
           <FormField
             control={form.control}
@@ -153,40 +140,25 @@ export function LoginForm({ admin }: LoginFormProps) {
               </FormItem>
             )}
           />
-          <Link href="/forgot-password" className="underline self-start hover:opacity-50 text-sm">Esqueceu sua senha?</Link>
+          <Link href="/forgot-password" aria-disabled className="underline self-start hover:opacity-50 text-sm">Esqueceu sua senha?</Link>
 
           <Button className="bg-primary text-white rounded-full text-lg px-12 py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">Entrar</Button>
 
           <span className="w-full h-[1px] rounded-full bg-secondary" />
 
-          {
-            admin ? (
-              <div className="w-full flex flex-col gap-3">
-                <Link className="flex w-full" href={'/login'}>
-                  <Button onClick={showLoadingToast} type="button" className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Retroceder à página do usuário</Button>
-                </Link>
-              </div>
-            ) : (
-              <div className="w-full flex flex-col gap-3">
-                <span className="font-bold self-center">
-                  Se preferir, acesse pela conta Gov.br
-                </span>
-                <Button disabled type="button" className="bg-secondary text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gob.br</Button>
-                <span className="font-bold self-center">
-                  Não possui conta?
-                </span>
-                <Link href={'/cadastro'}>
-                  <Button onClick={showLoadingToast} type="button" className="bg-secondary w-full text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Cadastre-se</Button>
-                </Link>
-                <span className="font-bold self-center">
-                  Acesso do administrador
-                </span>
-                <Link className="flex w-full" href={'/admin-login'}>
-                  <Button onClick={showLoadingToast} type="button" className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entre como Administrador</Button>
-                </Link>
-              </div>
-            )
-          }
+          <div className="w-full flex flex-col gap-3">
+            <span className="font-bold self-center">
+              Não possui conta?
+              {/* <Link className="text-blue-600 hover:opacity-60 underline" href={'/cadastro'}>Crie uma conta</Link> */}
+            </span>
+            <Link href={'/cadastro'}>
+              <Button onClick={showLoadingToast} type="button" className="bg-secondary w-full text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Cadastre-se</Button>
+            </Link>
+            <span className="font-bold self-center">
+              Se preferir, acesse pela conta Gov.br
+            </span>
+            <Button disabled type="button" className="bg-secondary text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gov.br</Button>
+          </div>
         </form>
       </Form>
 
