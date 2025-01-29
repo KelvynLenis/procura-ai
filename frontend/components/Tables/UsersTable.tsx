@@ -7,6 +7,7 @@ import { UserRow } from "./UserRow";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "../ui/pagination";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 
 interface User {
   $id: string;
@@ -96,45 +97,45 @@ export function UsersTable({ pageNumberParam }: UsersTableProps) {
   const user = users[0];
 
   return (
-    <div className="bg-white shadow-lg rounded-lg self-center w-full">
-      <div className="bg-zinc-200/60 flex w-full py-4">
-        <div className="flex w-full gap-10 pl-4 lg:pl-0 lg:justify-around">
-          <span className="w-[20%] lg:w-[40%] text-center">ID</span>
-          <span className="w-[25%] text-center">Nome</span>
-          <span className="w-[25%] text-center">Email</span>
-          <span className="text-center w-[25%]">Ações</span>
-        </div>
-      </div>
-      <div>
+    <Table className="bg-white shadow-lg rounded-lg self-center">
+      <TableHeader className="bg-zinc-200/60">
+        <TableRow>
+          <TableHead className="text-center">ID</TableHead>
+          <TableHead className="">Nome</TableHead>
+          <TableHead className="">Email</TableHead>
+          <TableHead className="">Ações</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
         {loading ? (
-          <div className="w-full flex gap-5 px-7 pt-7">
-            <div className="w-1/4">
+          <TableRow className="w-full  gap-5 px-7 pt-7">
+            <TableCell className="w-1/4">
               <Skeleton className="h-8 w-full" />
-            </div>
+            </TableCell>
 
-            <div className="w-1/4">
+            <TableCell className="w-1/4">
               <Skeleton className="h-8 w-full" />
-            </div>
+            </TableCell>
 
-            <div className="w-1/4">
+            <TableCell className="w-1/4">
               <Skeleton className="h-8 w-full" />
-            </div>
+            </TableCell>
 
-            <div className="w-1/4">
+            <TableCell className="w-1/4">
               <Skeleton className="h-8 w-full" />
-            </div>
+            </TableCell>
 
-          </div>
+          </TableRow>
         ) : users.length > 0 ? (
-          users.map((user) => (
-            <UserRow key={user.$id} user={user} />
+          users.map((user, index) => (
+            <UserRow key={user.$id} user={user} index={index} />
           ))
         ) : (
-          <div>
-            <span className="text-center">
+          <TableRow>
+            <TableCell className="text-center">
               Nenhum usuário encontrado.
-            </span>
-          </div>
+            </TableCell>
+          </TableRow>
         )}
 
         {/* <Pagination>
@@ -161,7 +162,7 @@ export function UsersTable({ pageNumberParam }: UsersTableProps) {
           </PaginationContent>
         </Pagination> */}
 
-      </div>
-    </div>
+      </TableBody>
+    </Table>
   );
 }

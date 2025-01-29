@@ -1,3 +1,5 @@
+'use client'
+
 import { TableCell, TableRow } from "../ui/table";
 import { IoIosWarning } from "react-icons/io";
 import { ImPencil } from "react-icons/im";
@@ -15,7 +17,7 @@ import {
 import { MarkAsStolenForm } from "../Forms/MarkAsStolenForm";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from 'uuid'
-
+import { useState } from "react";
 
 interface DeviceRowProps {
   id: string; // ID do dispositivo
@@ -25,9 +27,12 @@ interface DeviceRowProps {
   imei: string; // IMEI do telefone
   isStolen: boolean; // Status de "roubado" (true/false)
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
+  index: number
 }
 
-export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen, setDevices }: DeviceRowProps) {
+export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen, setDevices, index }: DeviceRowProps) {
+  const [isLoading, setIsLoading] = useState(false)
+
 
   async function handleDeleteDevice(id: string) {
     try {
@@ -134,41 +139,42 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
     }
   }
 
+  function showLoadingToast() {
+    setIsLoading(true)
+  }
+
 
   return (
     <TableRow>
+      <TableCell className="font-medium text-zinc-800 pl-5">{index}</TableCell>
       <TableCell className="font-medium text-zinc-800">{phone_model}</TableCell>
-      <TableCell>{brand}</TableCell>
+      <TableCell className="capitalize">{brand}</TableCell>
       <TableCell>{imei.slice(0, 1) + ' ' + imei.slice(1, 8) + ' ****** **'}</TableCell>
       <TableCell>
-        <span className={cn(isStolen ? "bg-red-500/20 text-red-700 p-1" : "bg-lime-500/20 text-lime-700 p-1")}>{isStolen ? 'Roubado' : 'Regular'}</span>
+        <span className={cn("rounded-md", isStolen ? "bg-red-500/20 text-red-700 p-1" : "bg-lime-500/20 text-lime-700 p-1")}>{isStolen ? 'Roubado' : 'Regular'}</span>
       </TableCell>
-      <TableCell className="flex flex-col gap-2">
+      <TableCell className="flex gap-2 items-center h-20">
         <Link href={`meus-dispositivos/edit/${id}`}>
-          <button className="rounded-xl flex bg-sky-100/70 text-blue-900 py-1 px-2 gap-2 items-center w-fit hover:opacity-70">
+          <button onClick={showLoadingToast} className="rounded-xl shadow-md flex bg-sky-100/70 text-blue-900 py-1 px-2 gap-2 items-center justify-center hover:opacity-70">
             <ImPencil size={16} />
-            Editar
           </button>
         </Link>
 
-        <button className="flex self-start w-20 items-center justify-center bg-red-500 rounded-xl p-1 text-white hover:opacity-50" onClick={() => handleDeleteDevice(id)}>
+        <button className="flex shadow-md items-center justify-center gap-2 bg-red-500 rounded-xl py-1 px-2 text-white hover:opacity-50" onClick={() => handleDeleteDevice(id)}>
           <Trash size={20} />
         </button>
 
         {
           isStolen
-            ? <button className={cn("rounded-xl flex flex-col md:flex-row  py-1 px-2 gap-2 items-center w-fit hover:opacity-70", 'bg-yellow-200 text-yellow-600')} onClick={() => handleDeviceRecovery(id)}>
+            ? <button title="Desativar alerta" className={cn("w-fit relative rounded-xl shadow-md flex flex-col md:flex-row  py-1 px-2 gap-2 items-center justify-center hover:opacity-70", 'bg-red-200 text-red-600')} onClick={() => handleDeviceRecovery(id)}>
               <IoIosWarning size={20} />
-              Desativar alerta
             </button>
 
             :
             <Dialog>
               <DialogTrigger asChild>
-                <button className={cn("rounded-xl flex flex-col md:flex-row  py-1 px-2 gap-2 items-center w-fit hover:opacity-70", 'bg-red-200 text-red-600')}>
+                <button title="Acionar alerta" className={cn("rounded-xl shadow-md flex flex-col md:flex-row  py-1 px-2 gap-2 items-center justify-center hover:opacity-70 bg-zinc-200 text-zinc-500")}>
                   <IoIosWarning size={20} />
-                  Acionar alerta
-
                 </button>
               </DialogTrigger>
               < DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-fit py-8">
@@ -181,9 +187,6 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
             </Dialog>
 
         }
-
-
-
 
       </TableCell>
     </TableRow >

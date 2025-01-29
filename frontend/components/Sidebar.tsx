@@ -199,12 +199,10 @@ export function AppSidebar({ admin }: SidebarProps) {
 
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link href={'/'}>
-                      <button onClick={logout} className="text-red-500 flex gap-1 justify-center items-center">
-                        <LogOut />
-                        Sair
-                      </button>
-                    </Link>
+                    <button onClick={logout} className="text-red-500 flex gap-1 self-start">
+                      <LogOut />
+                      Sair
+                    </button>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>

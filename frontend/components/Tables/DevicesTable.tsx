@@ -74,11 +74,12 @@ export function DevicesTable() {
     <Table className="bg-white shadow-lg rounded-lg self-center">
       <TableHeader className="bg-zinc-200/60">
         <TableRow>
-          <TableHead className="text-black/80">Modelo</TableHead>
+          <TableHead className="text-black/80 pl-5 w-20">ID</TableHead>
+          <TableHead className="text-black/80 w-56">Modelo</TableHead>
           <TableHead className="text-black/80">Marca</TableHead>
           <TableHead className="text-black/80">IMEI</TableHead>
           <TableHead className="text-black/80">Status</TableHead>
-          <TableHead className="w-fit"></TableHead>
+          <TableHead className="w-20"></TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -100,22 +101,27 @@ export function DevicesTable() {
               <Skeleton className="h-8 w-full" />
             </TableCell>
 
-            <TableCell className="w-24 flex flex-col gap-0.5">
+            <TableCell>
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+
+            <TableCell className=" flex flex-col gap-0.5">
               <Skeleton className="h-7 w-24" />
               <Skeleton className="h-10 w-10 rounded-full" />
               <Skeleton className="h-7 w-52" />
             </TableCell>
           </TableRow>
         ) : devices.length > 0 ? (
-          devices.map(device => (
+          devices.map((device, index) => (
             <DeviceRow
               key={device.$id}
+              index={index}
               id={device.$id}
               phone_number={device.phone_number}
               phone_model={device.phone_model}
               brand={device.brand}
               imei={device.imei}
-              isStolen={device.isStolen}
+              isStolen={device.isStolen!}
               setDevices={setDevices}
             />
           ))

@@ -282,7 +282,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                         <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
                         {field.value
                           ? brands.find(
-                            (brand) => brand.value === field.value
+                            (brand) => brand.label === field.value
                           )?.label
                           : "Pesquise a marca do dispositivo"}
                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -302,7 +302,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                             value={brand.label}
                             key={brand.value}
                             onSelect={() => {
-                              form.setValue("brand", brand.value)
+                              form.setValue("brand", brand.label)
                               setIsBrandsPopoverOpen(false)
                             }}
                           >
@@ -364,7 +364,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                     <CommandList>
                       <CommandEmpty>Nenhum modelo encontrado.</CommandEmpty>
                       <CommandGroup>
-                        {phoneBrands.find((brand) => brand.brand === form.control._formValues.brand) && phoneBrands.find((brand) => brand.brand === form.control._formValues.brand).models.map((model: string) => (
+                        {phoneBrands.find((brand) => brand.brand === form.control._formValues.brand) && phoneBrands.find((brand) => brand.brand === form.control._formValues.brand)!.models.map((model: string) => (
                           <CommandItem
                             value={model}
                             key={model}
@@ -483,7 +483,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
             </div>
           ) : (
             <div className="flex justify-between w-full">
-              <Button isLoader type="submit" variant="blue" className="px-1">Cadastrar dispositivo</Button>
+              <Button isLoader type="submit" variant="blue" className="px-3">Cadastrar dispositivo</Button>
               <Link href={'/home'}>
                 <Button type="button" variant="red" isLoader>Cancelar</Button>
               </Link>

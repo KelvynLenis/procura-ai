@@ -1,14 +1,25 @@
 'use client'
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
 import { useEffect, useState } from "react";
 import { DeviceProps } from "@/utils/types";
-import ClipLoader from 'react-spinners/ClipLoader';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Info } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { cn } from "@/lib/utils";
 
 
 interface UserRowProps {
@@ -19,9 +30,10 @@ interface UserRowProps {
   userId?: string
 }
 
-export function UserRow({ user }: { user: UserRowProps }) {
+export function UserRow({ user, index }: { user: UserRowProps, index: number }) {
   const [devices, setDevices] = useState<DeviceProps[]>([] as DeviceProps[]);
   const [isLoading, setIsLoading] = useState(true)
+  const [color, setColor] = useState('')
 
   // console.log(user)
 
@@ -71,71 +83,99 @@ export function UserRow({ user }: { user: UserRowProps }) {
     };
 
     getDevices();
+
+    getRandomProfileColor()
   }, []);
+
+  function getRandomProfileColor() {
+    const colors = [
+      "#FF5733", "#33FF57", "#3357FF", "#FF33A8", "#FFC300",
+      "#A833FF", "#33FFF6", "#FF8C33", "#57FF33", "#33A8FF"
+    ];
+
+    setColor(colors[Math.floor(Math.random() * colors.length)])
+  }
 
   return (
     <>
-      <Accordion type="single" collapsible>
-        <AccordionItem value="item-1">
-          <AccordionTrigger isChevronUpDown>
-            <div className="flex w-full gap-10 pl-4 lg:pl-0 lg:justify-around items-center font-normal">
-              <span className="w-[20%] lg:w-[40%] text-center">{user.$id}</span>
-              <span className="text-center w-[25%] break-words">{user.name || "N/A"}</span>
-              <span className="w-[25%] text-center break-words">{user.email || "N/A"}</span>
-            </div>
-          </AccordionTrigger>
-          <AccordionContent className="gap-4 flex bg-zinc-100 px-7 py-3">
-            <span className="w-1 h-56 rounded-md bg-zinc-300" />
-            <div className="gap-4 flex flex-col bg-zinc-100 w-full px-2 py-4">
+      <TableRow>
+        <TableCell className="text-center py-8">{index}</TableCell>
+        <TableCell className="break-words">
+          <div className="flex items-center">
 
-              <div className="flex w-full bg-zinc-300 px-10 py-2 font-medium">
-                Dados pessoais
-              </div>
+            <span className={cn("text-xl text-white capitalize font-bold rounded-full w-10 h-10 px-1 flex items-center justify-center mr-3 bg-procura-ai-blue")}>
+              {user.name!.split(" ").length > 1 ? user.name!.split(" ")[0][0] + user.name!.split(" ")[1][0] : user.name!.split(" ")[0][0]}
+            </span>
+            {user.name || "N/A"}
+          </div>
+        </TableCell>
+        <TableCell className="break-words">{user.email || "N/A"}</TableCell>
+        <TableCell>
+          <Dialog>
+            <DialogTrigger asChild>
+              <button className="shadow-lg rounded-lg p-1 hover:bg-zinc-200 ring-1 ring-zinc-200">
+                <Info size={26} />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="flex flex-col py-10 gap-10">
+              <DialogHeader>
+                <DialogTitle>Detalhes do usuários</DialogTitle>
+              </DialogHeader>
 
-              <div className="flex px-10 w-full gap-20">
-                <div className="flex flex-col gap-2">
-                  <span className="font-medium uppercase">cpf</span>
+              <div className="flex gap-8">
+                <span className={cn("text-3xl text-white capitalize font-bold rounded-full w-14 h-14 px-1 flex items-center justify-center mr-3 bg-procura-ai-blue")}>
+                  {user.name!.split(" ").length > 1 ? user.name!.split(" ")[0][0] + user.name!.split(" ")[1][0] : user.name!.split(" ")[0][0]}
+                </span>
+
+                <div className="flex flex-col items-start justify-center">
+                  <span className="font-bold">Nome completo</span>
+                  <span className="break-words">{user.name}</span>
+                </div>
+
+                <div className="flex flex-col items-start justify-center">
+                  <span className="font-bold">Email</span>
+                  <span>{user.email}</span>
+                </div>
+
+                <div className="flex flex-col gap-2 items-center justify-start">
+                  <span className="font-bold">CPF</span>
                   <span>{user.cpf}</span>
                 </div>
 
-                {/* <div className="flex flex-col gap-2">
-                <span className="font-medium">Endereço</span>
-                <span>endereço</span>
-              </div> */}
-
-                <div className="flex flex-col gap-2">
-                  <span className="font-medium">Email</span>
-                  <span>{user.email}</span>
-                </div>
               </div>
 
-              <div className="flex w-full bg-zinc-300 px-10 py-2 font-medium">
-                Dispositivos
-              </div>
+              <div className="flex flex-col">
+                <span className="font-bold">Dispositivos</span>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[100px]">IMEI</TableHead>
+                      <TableHead>Marca</TableHead>
+                      <TableHead>Modelo</TableHead>
+                      <TableHead className="text-right">Número</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {
+                      devices.map((device, index) => (
 
-              <div className="grid grid-cols-3 px-10 w-full">
-                {
-                  isLoading ? (
-                    <ClipLoader />
-                  ) : (
-                    devices.length > 0 ? (
-                      devices.map((device) => (
-                        <div key={device.$id} className="flex flex-col text-center">
-                          <span>{device.phone_model}</span>
-                          <span>{device.brand}</span>
-                        </div>
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">{device.imei}</TableCell>
+                          <TableCell className="capitalize">{device.brand}</TableCell>
+                          <TableCell className="capitalize">{device.phone_model}</TableCell>
+                          <TableCell className="text-right">{device.phone_number}</TableCell>
+                        </TableRow>
                       ))
-
-                    ) : (
-                      <span className="col-span-3">Nenhum dispositivo cadastrado</span>
-                    )
-                  )
-                }
+                    }
+                  </TableBody>
+                </Table>
               </div>
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+
+            </DialogContent>
+          </Dialog>
+        </TableCell>
+      </TableRow >
+
     </>
   )
 }
