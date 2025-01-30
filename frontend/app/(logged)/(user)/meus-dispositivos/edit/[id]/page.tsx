@@ -1,8 +1,12 @@
 import { DeviceForm } from "@/components/Forms/DeviceForm";
 import { Device } from "@/utils/types";
-import { PageProps } from "next";
+interface EditDeviceProps {
+  params: {
+    id: string;
+  };
+}
 
-export default async function EditDevice({ params }: PageProps) {
+export default async function EditDevice({ params }: EditDeviceProps) {
   const { id } = params;
 
   if (!process.env.NEXT_PUBLIC_API_URL || !process.env.NEXT_PUBLIC_DATABASE_ID) {
