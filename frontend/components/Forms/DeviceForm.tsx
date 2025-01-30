@@ -80,6 +80,10 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
 
   const router = useRouter()
 
+  function goBack() {
+    router.back()
+  }
+
   async function onSubmit(values: DeviceProps) {
     console.log(values)
     try {
@@ -256,8 +260,11 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
           // !device && "shadow-form" // Adiciona "shadow-form" apenas se device estiver presente
         )}>
         <div className="flex flex-col w-full gap-8">
-          <span className="font-medium">Para cadastrar o seu celular, insira os dados abaixo:</span>
-          <span className="h-0.5 w-full bg-zinc-400" />
+          <span className="font-medium">Insira os dados abaixo:</span>
+          <div className="flex flex-col w-full gap-1">
+            <span className="h-0.5 w-full bg-zinc-400" />
+            <span className="text-red-500 text-sm">* Campos obrigatórios</span>
+          </div>
         </div>
 
         <FormField
@@ -265,7 +272,10 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
           name="brand"
           render={({ field }) => (
             <FormItem className="flex flex-col w-fit self-start">
-              <FormLabel className="text-lg w-fit">Marca</FormLabel>
+              <FormLabel className="text-lg w-fit">
+                <span className="text-red-500 text-sm">*</span>
+                Marca
+              </FormLabel>
               <Popover open={isBrandsPopoverOpen} onOpenChange={setIsBrandsPopoverOpen}>
                 <PopoverTrigger asChild>
                   <div className="self-start">
@@ -322,6 +332,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                   </Command>
                 </PopoverContent>
               </Popover>
+
             </FormItem>
           )}
         />
@@ -331,7 +342,10 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
           name="phone_model"
           render={({ field }) => (
             <FormItem className="flex flex-col w-fit self-start">
-              <FormLabel className="text-lg w-fit">Modelo do dispositivo</FormLabel>
+              <FormLabel className="text-lg w-fit">
+                <span className="text-red-500 text-sm">*</span>
+                Modelo do dispositivo
+              </FormLabel>
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                   <div className="self-start">
@@ -400,7 +414,10 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
           render={({ field }) => (
             <FormItem className="flex flex-col md:flex-row gap-5 w-full">
               <div>
-                <FormLabel className="font-medium text-lg">IMEI</FormLabel>
+                <FormLabel className="font-medium text-lg">
+                  <span className="text-red-500 text-sm">*</span>
+                  IMEI
+                </FormLabel>
                 <FormControl>
                   <InputOTP maxLength={15} {...field} className="w-full flex justify-center items-center" >
                     <InputOTPGroup >
@@ -432,7 +449,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                 <FormMessage />
               </div>
               <span className="w-64 md:w-80 bg-[#D8A912]/30 text-procura-ai-black/60 font-medium py-2 px-4 rounded-xl">
-                🛈 O IMEI é composto por 15 números e pode ser encontrado na embalagem do aparelho ou digitando *#06# no teclado.
+                🛈 O IMEI é composto por 15 números e pode ser encontrado na embalagem do aparelho ou digitando *#06# no teclado do aparelho.
               </span>
             </FormItem>
           )}
@@ -443,7 +460,10 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
           name="phone_number"
           render={({ field }) => (
             <FormItem className="flex flex-col md:w-fit self-start">
-              <FormLabel className="text-lg">Número do celular</FormLabel>
+              <FormLabel className="text-lg">
+                <span className="text-red-500 text-sm">*</span>
+                Número do celular
+              </FormLabel>
               <FormControl>
                 <InputOTP maxLength={11} {...field} className="w-full flex justify-center items-center" >
                   <InputOTPGroup>
@@ -480,12 +500,13 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
             <div className="flex justify-between w-full">
               {/* <DialogClose className="bg-white border-[0.5px] border-primary text-primary hover:bg-primary hover:text-white rounded-full text-center items-center justify-center flex w-fit px-2 py-2 shadow transition-all duration-300" type="button">Cancelar</DialogClose> */}
               <Button isLoader type="submit" onClick={() => handleEditDevice(device.$id, form.getValues())} variant="blue" className="px-2">Salvar alterações</Button>
+              <Button isLoader onClick={() => goBack()} type="button" variant="red" >Cancelar</Button>
             </div>
           ) : (
             <div className="flex justify-between w-full">
               <Button isLoader type="submit" variant="blue" className="px-3">Cadastrar dispositivo</Button>
               <Link href={'/home'}>
-                <Button type="button" variant="red" isLoader>Cancelar</Button>
+                <Button isLoader onClick={() => goBack()} type="button" variant="red">Cancelar</Button>
               </Link>
             </div>
           )

@@ -153,6 +153,12 @@ export function AppSidebar({ admin }: SidebarProps) {
                         <SidebarMenuButton asChild isActive={pathname === item.url}>
                           <button onClick={() => showLoadingToast(item.url)}>
                             {
+                              pathname === item.url && (
+                                <span className="w-0.5 h-full absolute left-0 rounded-xl bg-procura-ai-dark-yellow"></span>
+
+                              )
+                            }
+                            {
                               item.icon
                             }
                             <span>{item.title}</span>
@@ -165,6 +171,12 @@ export function AppSidebar({ admin }: SidebarProps) {
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton asChild isActive={pathname === item.url}>
                           <button onClick={() => showLoadingToast(item.url)}>
+                            {
+                              pathname === item.url && (
+                                <span className="w-0.5 h-full absolute left-0 rounded-xl bg-procura-ai-dark-yellow"></span>
+
+                              )
+                            }
                             {
                               item.icon
                             }

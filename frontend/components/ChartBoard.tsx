@@ -242,23 +242,31 @@ export function ChartBoard() {
 
   return (
     <>
-      <div className="w-full h-full flex flex-col py-5 text-xl justify-start items-center">
+      <div className="w-full h-full flex flex-col py-5 text-xl justify-start items-center gap-5">
 
-        <div className="lg:flex-row flex flex-col gap-5 mb-5 self-start">
-          <div className="relative flex flex-col w-[250px] md:w-[700px] lg:w-full bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center">
+        <div className="relative flex flex-col w-[250px] md:w-[700px] lg:w-full bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center">
+          <div className="flex justify-between">
             <h2 className="text-3xxl font-black text-procura-ai-blue">Localização de ocorrências</h2>
-            <button onClick={showLoadingToast} title="Clique para expandir" className="group flex items-center justify-center hover:cursor-pointer z-10 hover:bg-black/40 w-[95%] h-[86%] absolute top-11 right-4">
-              <IoIosExpand size={50} className="text-white hidden group-hover:flex group-hover:animate-ping" />
+            <button onClick={showLoadingToast} title="Clique para expandir" className="flex text-procura-ai-blue items-center gap-1 text-sm">
+              Expandir
+              <IoIosExpand size={18} />
             </button>
-            <div className="z-1">
-              <OccurrencesMap occurences={occurrences} />
+          </div>
+
+          <div className="flex gap-4">
+            <OccurrencesMap occurences={occurrences} />
+
+            <div className="w-96 h-90 flex ring-1 ring-zinc-200 rounded-md">
+              <span className="w-1 h-full bg-procura-ai-blue" />
             </div>
           </div>
-          <div className="flex flex-col gap-5">
-            <CardChart variant="blue" Icon={TiDeviceTablet} number={numberOfDevicesRegistered} title="Dispositivos cadastrados" />
-            <CardChart variant="green" Icon={TiDeviceTablet} number={numberOfDevicesRecovered} title="Dispositivos recuperados" />
-          </div>
 
+        </div>
+
+
+        <div className="flex  gap-5">
+          <CardChart variant="blue" Icon={TiDeviceTablet} number={numberOfDevicesRegistered} title="Dispositivos cadastrados" />
+          <CardChart variant="green" Icon={TiDeviceTablet} number={numberOfDevicesRecovered} title="Dispositivos recuperados" />
         </div>
 
       </div>
