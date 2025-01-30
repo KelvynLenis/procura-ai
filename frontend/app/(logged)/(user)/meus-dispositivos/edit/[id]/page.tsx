@@ -1,8 +1,11 @@
 import { DeviceForm } from "@/components/Forms/DeviceForm";
 import { Device } from "@/utils/types";
 
+interface Params {
+  id: string;
+}
 
-export default async function EditDevice({ params }: { params: { id: string } }) {
+export default async function EditDevice({ params }: { params: Params }) {
   const { id } = params;
 
   if (!process.env.NEXT_PUBLIC_API_URL || !process.env.NEXT_PUBLIC_DATABASE_ID) {
