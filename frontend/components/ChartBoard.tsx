@@ -242,7 +242,7 @@ export function ChartBoard() {
 
   return (
     <>
-      <div className="w-full h-full flex flex-col py-5 text-xl justify-start items-center gap-5">
+      <div className="w-full h-full flex flex-col py-5 justify-start items-center gap-5">
 
         <div className="relative flex flex-col w-[250px] md:w-[700px] lg:w-full bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center">
           <div className="flex justify-between">
@@ -256,8 +256,32 @@ export function ChartBoard() {
           <div className="flex gap-4">
             <OccurrencesMap occurences={occurrences} />
 
-            <div className="w-96 h-90 flex ring-1 ring-zinc-200 rounded-md">
+            <div className="w-96 h-90 flex ring-1 ring-zinc-200 rounded-md gap-5">
               <span className="w-1 h-full bg-procura-ai-blue" />
+
+              <div className="flex flex-col p-6 gap-6 h-fit w-full">
+                <div className="flex flex-col gap-4 items-end justify-end">
+                  <span className="w-full h-full flex flex-col">178 Ocorrências registradas</span>
+                  <span className="w-full h-0.5 bg-zinc-300" />
+
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <span>120 Ocorrências pendentes</span>
+                  <span className="w-full h-1 bg-red-700 rounded-md"></span>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <span>30 Ocorrências em andamento</span>
+                  <span className="w-full h-1 bg-blue-700 rounded-md"></span>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <span>28 Ocorrências finalizadas</span>
+                  <span className="w-full h-1 bg-green-700 rounded-md"></span>
+                </div>
+
+              </div>
             </div>
           </div>
 

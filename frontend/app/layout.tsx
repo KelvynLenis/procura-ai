@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster"
-import { Roboto } from 'next/font/google';
+import { Roboto, Raleway } from 'next/font/google';
 import "./globals.css";
 import { Footer } from "@/components/Footer";
 import { ToastContainer } from 'react-toastify';
 
-const roboto = Roboto({
+const roboto = Raleway({
   subsets: ['latin'], // Escolha o conjunto de caracteres necessário
   weight: ['100', '300', '400', '500', '700', '900'], // Escolha os pesos necessários
   style: ['normal', 'italic'], // (Opcional) Para incluir estilos como itálico
