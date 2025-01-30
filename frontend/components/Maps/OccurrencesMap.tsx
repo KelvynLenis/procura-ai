@@ -58,7 +58,7 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
     if (pathname === 'map/ocorrencias') {
       return window.innerWidth
     } else {
-      return 650
+      return 600
     }
   }
 
@@ -66,7 +66,7 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
     if (pathname === 'map/ocorrencias') {
       return window.innerHeight
     } else {
-      return 400
+      return 300
     }
   }
 

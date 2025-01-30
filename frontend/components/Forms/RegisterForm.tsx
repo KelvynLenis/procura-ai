@@ -336,16 +336,21 @@ export function RegisterForm({ admin }: RegisterFormProps) {
                 </Link>
               </div>
             ) : (
-              <div className="w-full flex flex-col gap-3">
+              <div className=" flex gap-3">
                 <span className="font-bold self-center">
-                  Já possui conta?
+                  Já possui conta?{" "}
+                  <Link href={'/login'}>
+                    <button onClick={showLoadingToast} type="button" className="text-blue-500 underline w-fit hover:opacity-70">
+                      Entre com e-mail ou CPF
+                    </button>
+                  </Link>
+                  {" "}
+                  ou
+                  {" "}
+                  <Link href={'/login'}>
+                    <button onClick={showLoadingToast} type="button" disabled className="text-zinc-400 underline w-fit">entre com a conta Gov.br</button>
+                  </Link>
                 </span>
-                <Link href={'/login'}>
-                  <Button onClick={showLoadingToast} type="button" className="bg-secondary text-white rounded-full w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com e-mail ou CPF</Button>
-                </Link>
-                <Link className="flex w-full" href={'/login'}>
-                  <Button onClick={showLoadingToast} type="button" disabled className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gov.br</Button>
-                </Link>
               </div>
             )
           }

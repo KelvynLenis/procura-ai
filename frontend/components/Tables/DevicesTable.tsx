@@ -13,6 +13,8 @@ import { DeviceRow } from "./DeviceRow"
 import { useEffect, useState } from "react"
 import { DeviceProps } from "@/utils/types"
 import { account } from "@/lib/appwrite"
+import Button from "../Button"
+import Link from "next/link"
 
 export function DevicesTable() {
   const [devices, setDevices] = useState<DeviceProps[]>([])
@@ -23,7 +25,10 @@ export function DevicesTable() {
     return userId;
   }
 
-  // @glaymar help!
+  function showLoadingToast() {
+    setIsLoading(true)
+  }
+
 
   async function buildParams() {
     const userId = await getUserId();
@@ -132,6 +137,18 @@ export function DevicesTable() {
             </TableCell>
           </TableRow>
         )}
+        <TableRow>
+          <TableCell></TableCell>
+          <TableCell></TableCell>
+          <TableCell></TableCell>
+          <TableCell></TableCell>
+          <TableCell></TableCell>
+          <TableCell className="flex w-full">
+            <Link href={'/cadastrar-dispositivo'}>
+              <Button onClick={showLoadingToast} variant="blue" className="self-end w-44 my-3">Cadastrar dispositivo</Button>
+            </Link>
+          </TableCell>
+        </TableRow>
       </TableBody>
     </Table>
   )

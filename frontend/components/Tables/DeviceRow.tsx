@@ -6,7 +6,7 @@ import { ImPencil } from "react-icons/im";
 import Link from "next/link";
 import { DeviceProps } from "@/utils/types";
 import { cn } from "@/lib/utils";
-import { Trash } from "lucide-react";
+import { Trash, Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -151,30 +151,42 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
       <TableCell className="capitalize">{brand}</TableCell>
       <TableCell>{imei.slice(0, 1) + ' ' + imei.slice(1, 8) + ' ****** **'}</TableCell>
       <TableCell>
-        <span className={cn("rounded-md", isStolen ? "bg-red-500/20 text-red-700 p-1" : "bg-lime-500/20 text-lime-700 p-1")}>{isStolen ? 'Roubado' : 'Regular'}</span>
+        <span className={cn("rounded-md w-20 flex items-center justify-center", isStolen ? "bg-red-500/20 text-red-700 p-1" : "bg-lime-500/20 text-lime-700 p-1")}>{isStolen ? 'Roubado' : 'Regular'}</span>
       </TableCell>
       <TableCell className="flex gap-2 items-center h-20">
         <Link href={`meus-dispositivos/edit/${id}`}>
-          <button onClick={showLoadingToast} className="rounded-xl shadow-md flex bg-sky-100/70 text-blue-900 py-1 px-2 gap-2 items-center justify-center hover:opacity-70">
+          <button onClick={showLoadingToast} className="rounded-lg w-10 h-10 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90">
             <ImPencil size={16} />
+            <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+              Editar dispositivo
+            </span>
           </button>
         </Link>
 
-        <button className="flex shadow-md items-center justify-center gap-2 bg-red-500 rounded-xl py-1 px-2 text-white hover:opacity-50" onClick={() => handleDeleteDevice(id)}>
-          <Trash size={20} />
+        <button className="rounded-lg w-10 h-10 flex group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90" onClick={() => handleDeleteDevice(id)}>
+          <Trash2 size={20} />
+          <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+            Deletar dispositivo
+          </span>
         </button>
 
         {
           isStolen
-            ? <button title="Desativar alerta" className={cn("w-fit relative rounded-xl shadow-md flex flex-col md:flex-row  py-1 px-2 gap-2 items-center justify-center hover:opacity-70", 'bg-red-200 text-red-600')} onClick={() => handleDeviceRecovery(id)}>
-              <IoIosWarning size={20} />
+            ? <button title="Desativar alerta" className={cn("w-10 h-10 group relative rounded-lg ring-1 ring-red-500 flex flex-col md:flex-row items-center justify-center bg-red-200 hover:bg-white text-red-600")} onClick={() => handleDeviceRecovery(id)}>
+              <IoIosWarning size={28} />
+              <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-28 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                Desativar alerta
+              </span>
             </button>
 
             :
             <Dialog>
               <DialogTrigger asChild>
-                <button title="Acionar alerta" className={cn("rounded-xl shadow-md flex flex-col md:flex-row  py-1 px-2 gap-2 items-center justify-center hover:opacity-70 bg-zinc-200 text-zinc-500")}>
-                  <IoIosWarning size={20} />
+                <button className={cn("rounded-lg group relative w-10 h-10 ring-1 ring-zinc-300 flex flex-col md:flex-row items-center justify-center text-red-600 hover:bg-red-300 hover:ring-red-500")}>
+                  <IoIosWarning size={28} />
+                  <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-28 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                    Acionar alerta
+                  </span>
                 </button>
               </DialogTrigger>
               < DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-fit py-8">
@@ -185,9 +197,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
                 <MarkAsStolenForm id={id} isStolen={isStolen} setDevices={setDevices} />
               </DialogContent>
             </Dialog>
-
         }
-
       </TableCell>
     </TableRow >
   )
