@@ -6,7 +6,7 @@ import { ImPencil } from "react-icons/im";
 import Link from "next/link";
 import { DeviceProps } from "@/utils/types";
 import { cn } from "@/lib/utils";
-import { Trash, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
