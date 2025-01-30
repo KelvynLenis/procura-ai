@@ -1,13 +1,8 @@
 import { DeviceForm } from "@/components/Forms/DeviceForm";
 import { Device } from "@/utils/types";
-interface EditDeviceProps {
-  params: {
-    id: string;
-  };
-}
 
-export default async function EditDevice({ params }: EditDeviceProps) {
-  const { id } = params;
+export default async function EditDevice({params}: {params: Promise<{ id: string }>}) {
+  const { id } = await params;
 
   if (!process.env.NEXT_PUBLIC_API_URL || !process.env.NEXT_PUBLIC_DATABASE_ID) {
     throw new Error('Configuração incompleta: verifique as variáveis de ambiente.');
