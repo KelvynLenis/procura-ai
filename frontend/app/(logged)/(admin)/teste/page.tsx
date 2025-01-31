@@ -1,4 +1,4 @@
-import Chart from "@/components/Chart";
+import Chart from "@/components/Charts/Chart";
 import { TestPageComponent } from "@/components/TestPageComponent";
 import { topBrandsStolen } from "@/utils/ChartData";
 

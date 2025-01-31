@@ -84,7 +84,7 @@ export function DevicesTable() {
           <TableHead className="text-black/80 font-semibold">Marca</TableHead>
           <TableHead className="text-black/80 font-semibold">IMEI</TableHead>
           <TableHead className="text-black/80 font-semibold">Status</TableHead>
-          <TableHead className="w-20">Ações</TableHead>
+          <TableHead className="w-20 font-semibold">Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -132,7 +132,7 @@ export function DevicesTable() {
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan={4} className="text-center">
+            <TableCell colSpan={5} className="text-center">
               Nenhum dispositivo cadastrado.
             </TableCell>
           </TableRow>
