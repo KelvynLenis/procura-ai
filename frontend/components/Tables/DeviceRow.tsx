@@ -145,11 +145,11 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
 
 
   return (
-    <TableRow>
-      <TableCell className="font-medium text-zinc-800 pl-5">{index}</TableCell>
-      <TableCell className="font-medium text-zinc-800">{phone_model}</TableCell>
-      <TableCell className="capitalize">{brand}</TableCell>
-      <TableCell>{imei.slice(0, 1) + ' ' + imei.slice(1, 8) + ' ****** **'}</TableCell>
+    <TableRow className="text-base">
+      <TableCell className="font-bold text-zinc-800 pl-5">{index}</TableCell>
+      <TableCell className="font-bold text-zinc-800">{phone_model}</TableCell>
+      <TableCell className="font-bold capitalize">{brand}</TableCell>
+      <TableCell className="font-bold">{imei.slice(0, 1) + ' ' + imei.slice(1, 8) + ' ****** **'}</TableCell>
       <TableCell>
         <span className={cn("rounded-md w-20 flex items-center justify-center", isStolen ? "bg-red-500/20 text-red-700 p-1" : "bg-lime-500/20 text-lime-700 p-1")}>{isStolen ? 'Roubado' : 'Regular'}</span>
       </TableCell>

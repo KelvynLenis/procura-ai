@@ -21,6 +21,7 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
   const [isOverlayOpen, setIsOverlayOpen] = useState(false)
   const [occurence, setOccurence] = useState<EventProps>({} as EventProps)
   const pathname = usePathname().slice(1)
+  const [mapWidth, setMapWidth] = useState(0)
 
   function handleOpenPopup(event: EventProps) {
     setIsOverlayOpen(true)
@@ -53,12 +54,18 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
     return windowSize;
   }
 
+  useEffect(() => {
+    if (window.innerWidth > 1000) {
+      setMapWidth(800)
+    }
+  }, [window.innerWidth])
+
   function setWidth() {
     // console.log(pathname)
     if (pathname === 'map/ocorrencias') {
       return window.innerWidth
     } else {
-      return 600
+      return 830
     }
   }
 
