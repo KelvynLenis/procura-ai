@@ -112,7 +112,7 @@ export function AppSidebar({ admin }: SidebarProps) {
       position: "top-center",
       closeOnClick: true,
     })
-    router.push(`http://localhost:3000/${url}`)
+    router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/${url}`)
   }
 
   return (
