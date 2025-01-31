@@ -21,6 +21,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LoadingToast } from "../LoadingToast";
 import PieChartRechart from "./PieChartRechart";
+import { Skeleton } from "../ui/skeleton";
 
 const Map = dynamic(() => import('../Maps/MapTiler'), {
   ssr: false,
@@ -347,7 +348,14 @@ export function ChartBoard() {
             <PieChartRechart numberOfDevicesRegistered={numberOfDevicesRegistered} numberOfDevicesLost={numberOfDevicesLost} numberOfDevicesRecovered={numberOfDevicesRecovered} numberOfDevicesStolen={numberOfDevicesStolen} />
           </div>
 
-          <div className="flex w-[540px] text-sm bg-white items-center justify-center h-80 ring-1 ring-zinc-300 rounded-lg self-start">
+          <div className="flex flex-col gap-2 w-[540px] p-3 text-sm bg-white items-center justify-center h-80 ring-1 ring-zinc-300 rounded-lg self-start">
+            <span className="flex flex-col w-full items-start self-start font-semibold text-procura-ai-blue">
+              Ocorrências distribuídas nos bairros de João Pessoa
+            </span>
+
+            <div className="w-full h-full flex items-center justify-center bg-zinc-200 rounded-sm" >
+              <span className="text-zinc-400 text-xl">Em breve</span>
+            </div>
           </div>
         </div>
 
