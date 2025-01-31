@@ -112,7 +112,7 @@ export function AppSidebar({ admin }: SidebarProps) {
       position: "top-center",
       closeOnClick: true,
     })
-    router.push(`http://localhost:3000/${url}`)
+    router.push(`https://procura-ai.vercel.app/${url}`)
   }
 
   return (
