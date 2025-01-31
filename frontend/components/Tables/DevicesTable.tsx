@@ -62,12 +62,8 @@ export function DevicesTable() {
           const error = await response.text();
           throw new Error(`Error: ${error}`);
         }
-
-        console.log(response)
         
         const result = await response.json();
-
-        console.log(result)
         setDevices(result.documents || []);
       } catch (err) {
         console.error(`Fetch error: ${err}`);
