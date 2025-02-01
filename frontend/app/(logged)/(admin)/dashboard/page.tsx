@@ -1,4 +1,4 @@
-import { ChartBoard } from "@/components/ChartBoard";
+import { ChartBoard } from "@/components/Charts/ChartBoard";
 import { NotificationButton } from "@/components/NotificationButton";
 
 export default async function Dashboard() {
