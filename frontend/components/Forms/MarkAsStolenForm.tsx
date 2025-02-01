@@ -23,9 +23,8 @@ import { DeviceProps } from "@/utils/types"
 export function MarkAsStolenForm({ id, isStolen, setDevices }: { id: string, isStolen: boolean, setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>> }) {
 
   const occurrenceTypes = [
-    { label: "Roubo", value: "Roubo" },
-    { label: "Furto", value: "Furto" },
-    { label: "Perda", value: "Perda" },
+    { label: "Furto simples", value: "Furto simples" },
+    { label: "Extravio ou Perda", value: "Extravio ou Perda" },
   ] as const
 
   const form = useForm({
