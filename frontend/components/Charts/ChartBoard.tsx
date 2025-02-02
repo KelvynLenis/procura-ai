@@ -151,7 +151,7 @@ export function ChartBoard() {
       "queries[0]": JSON.stringify({
         method: "equal",
         attribute: "type",
-        values: ["Extravio ou Perda"],
+        values: ["Extravio ou Perda", "Perda"],
       }),
     });
 
@@ -214,7 +214,7 @@ export function ChartBoard() {
       "queries[0]": JSON.stringify({
         method: "equal",
         attribute: "type",
-        values: ["Furto simples"],
+        values: ["Furto simples", "Roubo", "Furto"],
       }),
     });
     const response = await fetch(

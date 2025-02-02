@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from "react"
-import { Map, Marker, GeoJson, Overlay } from "pigeon-maps"
+import { Map, Marker, GeoJson, Overlay, ZoomControl } from "pigeon-maps"
 import { geoJsonSample } from "@/utils/ChartData"
 import { EventProps } from "@/utils/types";
 import { usePathname } from 'next/navigation'
@@ -21,7 +21,6 @@ interface OccurrencesMapProps {
 export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occurences }: OccurrencesMapProps) {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false)
   const [occurence, setOccurence] = useState<EventProps>({} as EventProps)
-  const [mapWidth, setMapWidth] = useState(0)
   const [isInfoCardOpen, setIsInfoCardOpen] = useState(false)
 
   const pathname = usePathname().slice(1)
@@ -62,20 +61,37 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
     return windowSize;
   }
 
-  useEffect(() => {
-    if (window.innerWidth > 1000) {
-      setMapWidth(800)
-    }
-  }, [window.innerWidth])
-
   function setWidth() {
-    // console.log(pathname)
     if (pathname === 'map/ocorrencias') {
       return window.innerWidth
     } else {
 
+      console.log(window.innerWidth)
+
       if (!isInfoCardOpen) {
-        return 1240
+        if (window.innerWidth >= 1700) {
+          return 1380
+        }
+        if (window.innerWidth >= 1600) {
+          return 1230
+        }
+        else if (window.innerWidth > 1400) {
+          return 1100
+        }
+        else if (window.innerWidth > 1200) {
+          return 900
+        }
+        else if (window.innerWidth > 1024) {
+          return 800
+        }
+        else if (window.innerWidth > 768) {
+          return 650
+        }
+        else if (window.innerWidth > 475) {
+          return 400
+        }
+
+        return 780
       }
 
       return 780
