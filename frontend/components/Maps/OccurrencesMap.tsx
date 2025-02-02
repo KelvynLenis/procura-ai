@@ -65,36 +65,20 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
     if (pathname === 'map/ocorrencias') {
       return window.innerWidth
     } else {
-
-      console.log(window.innerWidth)
-
       if (!isInfoCardOpen) {
-        if (window.innerWidth >= 1700) {
-          return 1380
+        if (window.innerWidth >= 2560) {
+          return window.innerWidth * 0.85
         }
-        if (window.innerWidth >= 1600) {
-          return 1230
+        else if (window.innerWidth < 1200) {
+          return window.innerWidth * 0.6
         }
-        else if (window.innerWidth > 1400) {
-          return 1100
+        else if (window.innerWidth < 1700) {
+          return window.innerWidth * 0.75
         }
-        else if (window.innerWidth > 1200) {
-          return 900
+        else if (window.innerWidth < 2560) {
+          return window.innerWidth * 0.8
         }
-        else if (window.innerWidth > 1024) {
-          return 800
-        }
-        else if (window.innerWidth > 768) {
-          return 650
-        }
-        else if (window.innerWidth > 475) {
-          return 400
-        }
-
-        return 780
       }
-
-      return 780
     }
   }
 

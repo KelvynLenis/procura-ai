@@ -315,7 +315,7 @@ export function ChartBoard() {
     <>
       <div className="w-full h-full flex flex-col py-5 justify-start items-center gap-5">
 
-        <div className="relative flex flex-col w-[250px] md:w-[700px] lg:w-full bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center gap-3">
+        <div className="relative flex flex-col md:mr-2 self-start md:w-3/5 lg:w-8/12 xl:w-full bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center gap-3">
           <div className="flex justify-between">
             <h2 className="text-3xxl font-black text-procura-ai-blue">Localização de ocorrências</h2>
             <button onClick={showLoadingToast} title="Clique para expandir" className="flex text-procura-ai-blue items-center gap-1 text-sm">

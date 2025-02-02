@@ -40,6 +40,10 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: { id: string, isS
     form.setValue('coordinates', coordinates)
   }
 
+  function handleSetDistrict(cdDistrict: number) {
+    // form.setValue('district', cdDistrict)
+  }
+
   async function onSubmit(values: any) {
 
     try {
@@ -167,7 +171,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: { id: string, isS
                 <FormItem className="flex flex-col w-full">
                   <FormLabel className="">Clique no mapa o local da ocorrência</FormLabel>
                   <FormControl>
-                    <MarkAsStolenMap setPosition={handleSetPosition} />
+                    <MarkAsStolenMap setPosition={handleSetPosition} setDistrict={handleSetDistrict} />
                   </FormControl>
                 </FormItem>
               )}

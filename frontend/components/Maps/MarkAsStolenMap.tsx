@@ -6,11 +6,12 @@ import * as turf from "@turf/turf"
 
 interface MarkAsStolenMapProps {
   setPosition: (coordinates: [number, number]) => void
+  setDistrict: (cdDistrict: number) => void
 }
 
 const geoJsonLink = "https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI"
 
-export function MarkAsStolenMap({ setPosition }: MarkAsStolenMapProps) {
+export function MarkAsStolenMap({ setPosition, setDistrict }: MarkAsStolenMapProps) {
   const [isMarkerOn, setIsMarkerOn] = useState(false)
   const [coordinates, setCoordinates] = useState<[number, number]>([0, 0])
   const [geoJsonData, setGeoJsonData] = useState<any>(null)
@@ -62,6 +63,7 @@ export function MarkAsStolenMap({ setPosition }: MarkAsStolenMapProps) {
 
     if (foundFeature) {
       console.log("O ponto pertence a:", foundFeature.properties)
+      // setDistrict(foundFeature.properties.cd_distrito)
     } else {
       console.log("O ponto não pertence a nenhuma área do GeoJSON.")
     }
@@ -71,19 +73,37 @@ export function MarkAsStolenMap({ setPosition }: MarkAsStolenMapProps) {
     setPosition(latLng)
   }
 
-  function setWidth(width: number) {
-    if (width < 768) {
-      return 230
-    } else if (width < 1024) {
-      return 400
-    } else {
-      return 600
+  function setWidth() {
+
+    if (window.innerWidth >= 1700) {
+      return 1380
+    }
+    if (window.innerWidth >= 1600) {
+      return 1230
+    }
+    else if (window.innerWidth > 1400) {
+      return 1100
+    }
+    else if (window.innerWidth > 1200) {
+      return 900
+    }
+    else if (window.innerWidth >= 1024) {
+      return 700
+    }
+    else if (window.innerWidth >= 768) {
+      return 450
+    }
+    else if (window.innerWidth >= 425) {
+      return 300
+    }
+    else {
+      return 240
     }
   }
 
   return (
     <Map
-      width={setWidth(size.width)}
+      width={setWidth()}
       height={size.width < 768 ? size.height / 2.5 : size.height / 1.5}
       defaultCenter={[-7.1509317, -34.8446769]}
       defaultZoom={11}
