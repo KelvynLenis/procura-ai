@@ -10,7 +10,7 @@ export function DeviceInfoCard({ occurence, closePopup }: DeviceInfoCardProps) {
 
   console.log(occurence)
   return (
-    <div className="w-[440px] h-90 flex ring-1 ring-zinc-200 rounded-md gap-2">
+    <div className="w-2/5 h-90 flex ring-1 ring-zinc-200 rounded-md gap-2">
       <span className="w-1 h-full bg-procura-ai-blue" />
 
       <div className="flex flex-col py-6 px-4 gap-6 h-fit w-full">

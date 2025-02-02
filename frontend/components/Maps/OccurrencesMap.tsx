@@ -79,6 +79,7 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
           return window.innerWidth * 0.8
         }
       }
+      return 700
     }
   }
 
