@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
 import RechartChart from "./RechartChart"
-import { CardChart } from "./Charts/CardChart";
+import { CardChart } from "./CardChart";
 
 // import Map from "./Map/Map";
-import { OccurrencesMap } from "./Maps/OccurrencesMap";
-import { PigeonMapLoader } from "./Maps/PigeonMapLoader";
-import { MapTiler2 } from "./Maps/MapTiler2";
+import { OccurrencesMap } from "../Maps/OccurrencesMap";
+import { PigeonMapLoader } from "../Maps/PigeonMapLoader";
+import { MapTiler2 } from "../Maps/MapTiler2";
 import { GoogleMapsEmbed } from '@next/third-parties/google'
 
 import { TiDeviceTablet } from "react-icons/ti";
@@ -19,9 +19,11 @@ import { topBrandsStolen, topDangerousDistricts } from "@/utils/ChartData"
 import { Device, Event, EventProps } from "@/utils/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LoadingToast } from "./LoadingToast";
+import { LoadingToast } from "../LoadingToast";
+import PieChartRechart from "./PieChartRechart";
+import { Skeleton } from "../ui/skeleton";
 
-const Map = dynamic(() => import('./Maps/MapTiler'), {
+const Map = dynamic(() => import('../Maps/MapTiler'), {
   ssr: false,
 });
 
@@ -30,6 +32,8 @@ export function ChartBoard() {
   const [occurrences, setOccurrences] = useState<EventProps[]>([])
   const [numberOfDevicesRegistered, setNumberOfDevicesRegistered] = useState(0)
   const [numberOfDevicesRecovered, setNumberOfDevicesRecovered] = useState(0)
+  const [numberOfDevicesStolen, setNumberOfDevicesStolen] = useState(0)
+  const [numberOfDevicesLost, setNumberOfDevicesLost] = useState(0)
   const [occurrencesMapSize, setOccurrencesMapSize] = useState({ width: 650, height: 300 })
   const [isLoading, setIsLoading] = useState(false)
 
@@ -60,6 +64,10 @@ export function ChartBoard() {
       const error = await response.text();
       throw new Error(`Failed to fetch stolen devices: ${error}`);
     }
+
+
+    // setNumberOfDevicesStolen(await response.json().then((res) => res.documents.length))
+
     return response.json();
   }
 
@@ -105,12 +113,12 @@ export function ChartBoard() {
     return response.json();
   }
 
-  async function fetchRecoveredDevices() {
+  async function getNumberOfRecoveredDevices() {
     const params = new URLSearchParams({
       "queries[0]": JSON.stringify({
         method: "equal",
-        attribute: "is_alert_on",
-        values: [false],
+        attribute: "type",
+        values: ["recuperado"],
       }),
     });
 
@@ -131,7 +139,44 @@ export function ChartBoard() {
       throw new Error(`Failed to fetch events: ${error}`);
     }
 
-    return response.json();
+    const result = await response.json();
+
+    const documents = result.documents;
+
+    setNumberOfDevicesRecovered(documents.length);
+  }
+
+  async function getNumberOfLostDevices() {
+    const params = new URLSearchParams({
+      "queries[0]": JSON.stringify({
+        method: "equal",
+        attribute: "type",
+        values: ["Extravio ou Perda", "Perda"],
+      }),
+    });
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+        },
+        cache: "no-store",
+      }
+    )
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Failed to fetch events: ${error}`);
+    }
+
+    const result = await response.json();
+
+    const documents = result.documents;
+
+    setNumberOfDevicesLost(documents.length);
   }
 
   async function fetchOwnerInfo(auth_id: string) {
@@ -164,6 +209,37 @@ export function ChartBoard() {
     return response.json();
   }
 
+  async function getNumberOfAllStolenDevices() {
+    const params = new URLSearchParams({
+      "queries[0]": JSON.stringify({
+        method: "equal",
+        attribute: "type",
+        values: ["Furto simples", "Roubo", "Furto"],
+      }),
+    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Failed to fetch events: ${error}`);
+    }
+
+    const result = await response.json();
+
+    const documents = result.documents;
+
+    setNumberOfDevicesStolen(documents.length);
+  }
 
   async function getDashboardData() {
     try {
@@ -181,7 +257,6 @@ export function ChartBoard() {
           const recentEvent = await deviceEvents.sort(
             (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
           ).at(-1);
-
 
           const ownerResponse = await fetchOwnerInfo(device.auth_id!);
           const ownerInfo = ownerResponse?.documents?.[0];
@@ -207,6 +282,7 @@ export function ChartBoard() {
     }
   }
 
+
   function showLoadingToast() {
     setIsLoading(true)
     router.push(`/map/ocorrencias`)
@@ -224,17 +300,12 @@ export function ChartBoard() {
       }
     }
 
-    const fetchRecovered = async () => {
-      try {
-        fetchRecoveredDevices().then((res) => setNumberOfDevicesRecovered(res.documents.length))
-      } catch (error) {
-        console.log(error)
-      }
-    }
-
-    fetchRecovered()
 
     fetchOccurrences()
+
+    getNumberOfRecoveredDevices()
+    getNumberOfAllStolenDevices()
+    getNumberOfLostDevices()
 
     fetchAllDevices().then((res) => setNumberOfDevicesRegistered(res))
 
@@ -244,7 +315,7 @@ export function ChartBoard() {
     <>
       <div className="w-full h-full flex flex-col py-5 justify-start items-center gap-5">
 
-        <div className="relative flex flex-col w-[250px] md:w-[700px] lg:w-full bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center">
+        <div className="relative flex flex-col md:mr-2 self-start md:w-3/5 lg:w-8/12 xl:w-full bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center gap-3">
           <div className="flex justify-between">
             <h2 className="text-3xxl font-black text-procura-ai-blue">Localização de ocorrências</h2>
             <button onClick={showLoadingToast} title="Clique para expandir" className="flex text-procura-ai-blue items-center gap-1 text-sm">
@@ -255,42 +326,37 @@ export function ChartBoard() {
 
           <div className="flex gap-4">
             <OccurrencesMap occurences={occurrences} />
-
-            <div className="w-96 h-90 flex ring-1 ring-zinc-200 rounded-md gap-5">
-              <span className="w-1 h-full bg-procura-ai-blue" />
-
-              <div className="flex flex-col p-6 gap-6 h-fit w-full">
-                <div className="flex flex-col gap-4 items-end justify-end">
-                  <span className="w-full h-full flex flex-col">178 Ocorrências registradas</span>
-                  <span className="w-full h-0.5 bg-zinc-300" />
-
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <span>120 Ocorrências pendentes</span>
-                  <span className="w-full h-1 bg-red-700 rounded-md"></span>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <span>30 Ocorrências em andamento</span>
-                  <span className="w-full h-1 bg-blue-700 rounded-md"></span>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <span>28 Ocorrências finalizadas</span>
-                  <span className="w-full h-1 bg-green-700 rounded-md"></span>
-                </div>
-
-              </div>
-            </div>
           </div>
 
         </div>
 
-
-        <div className="flex  gap-5">
+        <div className="flex self-start gap-5">
           <CardChart variant="blue" Icon={TiDeviceTablet} number={numberOfDevicesRegistered} title="Dispositivos cadastrados" />
           <CardChart variant="green" Icon={TiDeviceTablet} number={numberOfDevicesRecovered} title="Dispositivos recuperados" />
+          <CardChart variant="red" Icon={TiDeviceTablet} number={numberOfDevicesStolen} title="Dispositivos Roubados" />
+          <CardChart variant="yellow" Icon={TiDeviceTablet} number={numberOfDevicesLost} title="Dispositivos Perdidos" />
+        </div>
+
+        <div className="flex w-full justify-around">
+          <div className="flex flex-col gap-2 w-[540px] text-sm bg-white items-center justify-center h-80 ring-1 ring-zinc-300 rounded-lg self-start">
+            <span className="flex flex-col w-full items-start px-4 font-semibold text-procura-ai-blue">
+              Dispositivos cadastrados
+              <span className="font-medium">
+                Status
+              </span>
+            </span>
+            <PieChartRechart numberOfDevicesRegistered={numberOfDevicesRegistered} numberOfDevicesLost={numberOfDevicesLost} numberOfDevicesRecovered={numberOfDevicesRecovered} numberOfDevicesStolen={numberOfDevicesStolen} />
+          </div>
+
+          <div className="flex flex-col gap-2 w-[540px] p-3 text-sm bg-white items-center justify-center h-80 ring-1 ring-zinc-300 rounded-lg self-start">
+            <span className="flex flex-col w-full items-start self-start font-semibold text-procura-ai-blue">
+              Ocorrências distribuídas nos bairros de João Pessoa
+            </span>
+
+            <div className="w-full h-full flex items-center justify-center bg-zinc-200 rounded-sm" >
+              <span className="text-zinc-400 text-xl">Em breve</span>
+            </div>
+          </div>
         </div>
 
       </div>
