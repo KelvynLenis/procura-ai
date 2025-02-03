@@ -5,7 +5,14 @@ import { Map, Marker, GeoJson, Overlay, ZoomControl } from "pigeon-maps"
 import { EventProps } from "@/utils/types";
 import { usePathname } from 'next/navigation'
 import { DeviceInfoCard } from "../DeviceInfoCard";
-import { Triangle } from "lucide-react";
+import { Home, Triangle } from "lucide-react";
+import Image from "next/image";
+import theft from '../../assets/icons/theft.svg'
+import warning from '../../assets/icons/warning.png'
+import alarm from '../../assets/icons/alarm.png'
+import robbery from '../../assets/icons/robbery.png'
+import interrogation from '../../assets/icons/interrogation.png'
+import lost from '../../assets/icons/lost.svg'
 
 
 interface OccurrencesMapProps {
@@ -89,6 +96,14 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
     }
   }
 
+  function getIcon(type: string) {
+
+    if (type === 'Furto' || type === 'Furto simples' || type === 'Roubo') {
+      return <Image src={alarm} style={{ pointerEvents: "auto", cursor: "pointer" }} alt="furto" className="w-12 h-12 relative top-2 left-4" />
+    } else if (type === 'Perda' || type === 'Extravio ou Perda') {
+      return <Image src={interrogation} style={{ pointerEvents: "auto", cursor: "pointer" }} alt="perda" className="w-10 h-10 relative top-2.5 left-4" />
+    }
+  }
 
   return (
     <>
@@ -96,7 +111,11 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
         {
           occurences && occurences.map((occurence, index) => (
             occurence.event?.last_location &&
-            <Marker key={index} width={50} anchor={occurence.event?.last_location} color={'#FF0000'} onClick={() => handleOpenPopup(occurence)} />
+            <Marker key={index} width={50} anchor={occurence.event?.last_location} color={'#FF0000'} onClick={() => handleOpenPopup(occurence)}>
+              {
+                getIcon(occurence.event?.type)
+              }
+            </Marker>
           ))
         }
         {
