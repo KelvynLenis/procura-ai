@@ -62,7 +62,7 @@ export function DevicesTable() {
           const error = await response.text();
           throw new Error(`Error: ${error}`);
         }
-
+        
         const result = await response.json();
         setDevices(result.documents || []);
       } catch (err) {
