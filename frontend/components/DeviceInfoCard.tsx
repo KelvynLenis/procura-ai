@@ -24,9 +24,13 @@ export function DeviceInfoCard({ occurence, closePopup, styles }: DeviceInfoCard
     switch (type) {
       case 'Furto':
         return 'Furto simples'
+      case 'Furto simples':
+        return 'Furto simples'
       case 'Roubo':
         return 'Furto simples'
       case 'Perda':
+        return 'Extravio ou Perda'
+      case 'Extravio ou Perda':
         return 'Extravio ou Perda'
       default:
         return 'Tipo não identificado'
