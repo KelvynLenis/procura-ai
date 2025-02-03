@@ -1,5 +1,5 @@
 import { OccurrencesMap } from "@/components/Maps/OccurrencesMap";
-import { Device, DeviceProps, Event, EventProps } from "@/utils/types";
+import { Device, Event } from "@/utils/types";
 import Link from "next/link";
 import { TbArrowsMinimize } from "react-icons/tb";
 
@@ -33,25 +33,61 @@ async function fetchStolenDevices() {
 }
 
 
-async function fetchEvents() {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-      },
-      cache: "no-store",
-    }
-  );
+async function fetchEvents(deviceIds: string[]): Promise<Event[]> {
+  let allEvents: Event[] = [];
+  let offset = 0;
+  const limit = 100;
 
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Failed to fetch events: ${error}`);
+  while (true) {
+    const params = new URLSearchParams({
+      "queries[0]": JSON.stringify({
+        method: "equal",
+        attribute: "is_alert_on",
+        values: [true],
+      }),
+      "queries[1]": JSON.stringify({
+        method: "contains",
+        attribute: "id_device",
+        values: deviceIds,
+      }),
+      "queries[2]": JSON.stringify({
+        method: "limit",
+        values: [limit],
+      }),
+      "queries[3]": JSON.stringify({
+        method: "offset",
+        values: [offset],
+      }),
+    });
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Failed to fetch stolen devices: ${error}`);
+    }
+
+    const data = await response.json();
+    allEvents = allEvents.concat(data.documents);
+
+    if (data.documents.length < limit) {
+      break; // Não há mais eventos para buscar
+    }
+
+    offset += limit;
   }
 
-  return response.json();
+  return allEvents;
 }
 
 async function fetchOwnerInfo(auth_id: string) {
@@ -87,29 +123,25 @@ async function fetchOwnerInfo(auth_id: string) {
 
 async function getDashboardData() {
   try {
-    const [devicesData, eventsData] = await Promise.all([fetchStolenDevices(), fetchEvents()]);
-
+    const devicesData = await fetchStolenDevices();
     const devices: Device[] = devicesData.documents;
-    const events: Event[] = eventsData.documents;
 
+    if (devices.length === 0) return []; // Nenhum dispositivo roubado encontrado
+
+    const deviceIds = devices.map((device) => device.$id);
+    const events = await fetchEvents(deviceIds);
+    
     const enrichedDevices = await Promise.all(
-      devices.map(async (device: Device) => {
-        const deviceEvents = await events.filter(
-          (event: Event) => event.id_device === device.$id && event.is_alert_on
-        );
-
-        const recentEvent = await deviceEvents.sort(
-          (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-        ).at(-1);
-
+      devices.map(async (device) => {
+        const recentEvent = events
+          .filter((event) => event.id_device === device.$id)
+          .sort((a, b) => new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime())[0];
 
         const ownerResponse = await fetchOwnerInfo(device.auth_id!);
         const ownerInfo = ownerResponse?.documents?.[0];
 
         return {
-          device: {
-            ...device,
-          },
+          device: { ...device },
           event: recentEvent,
           user: {
             name: ownerInfo?.name || "N/A",
@@ -118,7 +150,6 @@ async function getDashboardData() {
         };
       })
     );
-
 
     return enrichedDevices;
   } catch (error) {

@@ -11,7 +11,7 @@ export function NotificationButton() {
   const handleNewNotification = useCallback((response) => {
     const { payload } = response;
 
-    if (payload?.type === "Roubo" || payload?.type === "Furto") {
+    if (payload?.type === "Furto simples" || payload?.type === "Extravio ou Perda") {
       setNotifications((prevNotifications) => {
         const exists = prevNotifications.some((n) => n.$id === payload.$id);
         return exists ? prevNotifications : [...prevNotifications, payload];
