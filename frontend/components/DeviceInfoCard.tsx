@@ -29,7 +29,7 @@ export function DeviceInfoCard({ occurence, closePopup, styles }: DeviceInfoCard
       case 'Perda':
         return 'Extravio ou Perda'
       default:
-        break;
+        return 'Tipo não identificado'
     }
   }
 
