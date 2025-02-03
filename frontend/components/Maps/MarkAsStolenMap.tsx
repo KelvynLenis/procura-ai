@@ -6,12 +6,12 @@ import * as turf from "@turf/turf"
 
 interface MarkAsStolenMapProps {
   setPosition: (coordinates: [number, number]) => void
-  setDistrict: (cdDistrict: number) => void
+  setBairro: (codBairro: number) => void
 }
 
 const geoJsonLink = "https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI"
 
-export function MarkAsStolenMap({ setPosition, setDistrict }: MarkAsStolenMapProps) {
+export function MarkAsStolenMap({ setPosition, setBairro }: MarkAsStolenMapProps) {
   const [isMarkerOn, setIsMarkerOn] = useState(false)
   const [coordinates, setCoordinates] = useState<[number, number]>([0, 0])
   const [geoJsonData, setGeoJsonData] = useState<any>(null)
@@ -63,7 +63,7 @@ export function MarkAsStolenMap({ setPosition, setDistrict }: MarkAsStolenMapPro
 
     if (foundFeature) {
       console.log("O ponto pertence a:", foundFeature.properties)
-      // setDistrict(foundFeature.properties.cd_distrito)
+      setBairro(foundFeature.properties.cod_bairro)
     } else {
       console.log("O ponto não pertence a nenhuma área do GeoJSON.")
     }
