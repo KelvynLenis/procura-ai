@@ -9,8 +9,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ChevronDown } from "lucide-react"
@@ -19,8 +17,13 @@ import { v4 as uuidv4 } from 'uuid'
 import { DialogClose } from "../ui/dialog"
 import { DeviceProps } from "@/utils/types"
 
+interface MarkAsStolenFormProps {
+  id: string
+  isStolen: boolean
+  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
+}
 
-export function MarkAsStolenForm({ id, isStolen, setDevices }: { id: string, isStolen: boolean, setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>> }) {
+export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormProps) {
 
   const occurrenceTypes = [
     { label: "Furto simples", value: "Furto simples" },
@@ -32,12 +35,17 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: { id: string, isS
       datetime: '',
       description: '',
       type: '',
-      coordinates: [0, 0]
+      coordinates: [0, 0],
+      cod_bairro: 0
     }
   })
 
   function handleSetPosition(coordinates: [number, number]) {
     form.setValue('coordinates', coordinates)
+  }
+
+  function handleSetBairro(codBairro: number) {
+    form.setValue('cod_bairro', codBairro)
   }
 
   async function onSubmit(values: any) {
@@ -167,7 +175,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: { id: string, isS
                 <FormItem className="flex flex-col w-full">
                   <FormLabel className="">Clique no mapa o local da ocorrência</FormLabel>
                   <FormControl>
-                    <MarkAsStolenMap setPosition={handleSetPosition} />
+                    <MarkAsStolenMap setPosition={handleSetPosition} setBairro={handleSetBairro} />
                   </FormControl>
                 </FormItem>
               )}

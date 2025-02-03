@@ -32,7 +32,7 @@ export function Header() {
     pathname !== 'map/ocorrencias' &&
     (
       <header className="flex items-center drop-shadow-md bg-procura-ai-blue self-end w-full h-16">
-        <div className="w-1/5 md:w-1/2 lg:w-[28%] xl:w-1/4 h-1" />
+        <div className="w-1/5 md:w-[35%] lg:w-[26%] xl:w-1/5 h-1" />
         <span className="text-xl text-white">
           {routes.find(route => route.name === pathname)?.value}
         </span>
