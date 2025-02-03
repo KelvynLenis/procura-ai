@@ -21,24 +21,15 @@ export function DeviceInfoCard({ occurence, closePopup, styles }: DeviceInfoCard
   console.log(occurence)
 
   function formatType(type: string) {
-    switch (type) {
-      case 'Furto':
-        return 'Furto simples'
-      case 'Furto simples':
-        return 'Furto simples'
-      case 'Roubo':
-        return 'Furto simples'
-      case 'Perda':
-        return 'Extravio ou Perda'
-      case 'Extravio ou Perda':
-        return 'Extravio ou Perda'
-      default:
-        return 'Tipo não identificado'
+    if (type === 'Furto' || type === 'Furto simples' || type === 'Roubo') {
+      return 'Furto simples'
+    } else if (type === 'Perda' || type === 'Extravio ou Perda') {
+      return 'Extravio ou Perda'
     }
   }
 
   return (
-    <div className={cn("w-2/5 h-90 flex ring-1 ring-zinc-200 rounded-md gap-2", styles)}>
+    <div className={cn("w-2/5 h-90 flex ring-1 ring-zinc-200 rounded-md gap-2", styles)} >
       <span className="w-1 h-full bg-procura-ai-blue" />
 
       <div className={cn("flex flex-col py-6 px-4 gap-6 h-fit w-full", fullScreenMap && "gap-2 py-4 px-1")}>
@@ -46,9 +37,11 @@ export function DeviceInfoCard({ occurence, closePopup, styles }: DeviceInfoCard
           <div className="flex w-full justify-between items-center">
             {
               fullScreenMap ? (
-                <Link href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="underline text-blue-500 flex w-full justify-center">
-                  Veja no google maps
-                </Link>
+                <div className="flex w-full justify-center">
+                  <Link href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="underline text-blue-500">
+                    Veja no google maps
+                  </Link>
+                </div>
               ) : (
                 <span className="w-full h-full flex flex-col text-3xl text-procura-ai-blue font-semibold">#{occurence.event.$id.slice(0, 5)}</span>
               )
