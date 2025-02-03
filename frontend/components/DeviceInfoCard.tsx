@@ -21,12 +21,6 @@ export function DeviceInfoCard({ occurence, closePopup, styles }: DeviceInfoCard
   console.log(occurence)
 
   function formatType(type: string) {
-    // if (type === 'Furto') {
-    //   return 'Furto simples'
-    // } else if (type === 'Roubo') {
-    //   return 'Furto simples'
-    // } else if ()
-
     switch (type) {
       case 'Furto':
         return 'Furto simples'
