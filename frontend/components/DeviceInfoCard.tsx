@@ -15,7 +15,7 @@ export function DeviceInfoCard({ occurence, closePopup, styles }: DeviceInfoCard
 
   const fullScreenMap = pathname === 'map/ocorrencias'
 
-  const lastLocation = occurence.event.last_location;
+  const lastLocation = occurence.event?.last_location;
   const googleMapsUrl = `https://www.google.com/maps?q=${lastLocation[0]},${lastLocation[1]}`;
 
   console.log(occurence)

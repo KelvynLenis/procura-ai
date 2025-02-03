@@ -95,13 +95,14 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
       <Map onClick={() => closePopup()} width={setWidth()} height={setHeight()} defaultCenter={[-7.1509317, -34.8446769]} defaultZoom={11}>
         {
           occurences && occurences.map((occurence, index) => (
-            <Marker key={index} width={50} anchor={occurence.event.last_location} color={'#FF0000'} onClick={() => handleOpenPopup(occurence)} />
+            occurence.event?.last_location &&
+            <Marker key={index} width={50} anchor={occurence.event?.last_location} color={'#FF0000'} onClick={() => handleOpenPopup(occurence)} />
           ))
         }
         {
           isOverlayOpen && (
             <Overlay
-              anchor={occurence.event.last_location}
+              anchor={occurence.event?.last_location}
               offset={[0, 0]}
             >
               <div className="flex flex-col relative -translate-x-1/2 rounded-lg ring-1 ring-procura-ai-blue bg-white px-4 py-2" >
