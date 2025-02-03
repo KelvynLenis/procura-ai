@@ -2,62 +2,63 @@
 
 import { client } from "@/lib/appwrite";
 import { Bell } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export function NotificationButton() {
   const [notifications, setNotifications] = useState([]);
-  const [notificationsCount, setNotificationsCount] = useState(0)
-  const [toggleNotificationsList, setToggleNotificationsList] = useState(false)
-  const [filteredNotifications, setFilteredNotifications] = useState([])
+  const [isListVisible, setIsListVisible] = useState(false);
 
-  client.subscribe("documents", response => {
-    if (response.payload.isStolen === true) {
-      notifications.map(notification => {
-        if (notification.$id === response.payload.$id) {
-          return
-        }
-      })
-      setNotifications(prevNotifications => [...prevNotifications, response.payload])
-      setNotificationsCount(notificationsCount + 1)
-      console.log(response.payload);
+  const handleNewNotification = useCallback((response) => {
+    const { payload } = response;
+
+    if (payload?.type === "Roubo" || payload?.type === "Furto") {
+      setNotifications((prevNotifications) => {
+        const exists = prevNotifications.some((n) => n.$id === payload.$id);
+        return exists ? prevNotifications : [...prevNotifications, payload];
+      });
     }
-  });
-
-  function handleToggle() {
-    // setNotifications([... new Set(notifications)])
-    setToggleNotificationsList(!toggleNotificationsList)
-  }
+  }, []);
 
   useEffect(() => {
-    setFilteredNotifications([... new Set(notifications)])
-  }, [notifications])
+    const unsubscribe = client.subscribe(
+      `databases.${process.env.NEXT_PUBLIC_DATABASE_ID}.collections.${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}.documents`,
+      handleNewNotification
+    );
+
+    return () => unsubscribe();
+  }, [handleNewNotification]);
+
+  const toggleList = () => setIsListVisible((prev) => !prev);
 
   return (
     <>
-      <button className="absolute right-10 top-5" onClick={handleToggle}>
+
+      <button className="absolute right-10 top-5" onClick={toggleList}>
         <Bell className="size-7" />
-        {
-          filteredNotifications.length > 0 ? (
-            <span className="bg-red-500 text-white rounded-full w-6 font-bold flex items-center justify-center absolute -top-1 right-3">
-              {notificationsCount}
-            </span>
-          ) : null
-        }
-        {
-          toggleNotificationsList ? (
-            <div className="absolute right-1 top-9 bg-white shadow-lg rounded-md">
-              {
-                filteredNotifications.map(notification => (
-                  <div key={notification.$id} className="p-2 border-b">
-                    <h1>{notification.brand}</h1>
+        {notifications.length > 0 && (
+          <span className="bg-red-500 text-white rounded-full w-6 h-6 font-bold flex items-center justify-center absolute -top-1 right-3">
+            {notifications.length}
+          </span>
+        )}
+
+        {isListVisible && (
+          <div className="absolute right-0 top-12 bg-white shadow-lg rounded-md w-64 border">
+            <div className="p-2 text-gray-700 font-semibold border-b">Notificações</div>
+            <div className="max-h-60 overflow-y-auto">
+              {notifications.length > 0 ? (
+                notifications.map((notification) => (
+                  <div key={notification.$id} className="p-3 border-b">
+                    <h1 className="font-bold">Novo {notification.type}</h1>
+                    <p className="text-sm text-gray-600">descrição: {notification.description}</p>
                   </div>
                 ))
-              }
+              ) : (
+                <p className="p-3 text-gray-500 text-sm">Nenhuma notificação</p>
+              )}
             </div>
-          ) : null
-        }
-      </button>
-
+          </div>
+        )}
+      </button >
     </>
-  )
+  );
 }
