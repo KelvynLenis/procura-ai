@@ -15,7 +15,7 @@ export function DeviceInfoCard({ occurence, closePopup, styles }: DeviceInfoCard
 
   const fullScreenMap = pathname === 'map/ocorrencias'
 
-  const lastLocation = occurence.event.last_location;
+  const lastLocation = occurence.event?.last_location;
   const googleMapsUrl = `https://www.google.com/maps?q=${lastLocation[0]},${lastLocation[1]}`;
 
   console.log(occurence)
@@ -24,12 +24,16 @@ export function DeviceInfoCard({ occurence, closePopup, styles }: DeviceInfoCard
     switch (type) {
       case 'Furto':
         return 'Furto simples'
+      case 'Furto simples':
+        return 'Furto simples'
       case 'Roubo':
         return 'Furto simples'
       case 'Perda':
         return 'Extravio ou Perda'
+      case 'Extravio ou Perda':
+        return 'Extravio ou Perda'
       default:
-        break;
+        return 'Tipo não identificado'
     }
   }
 
