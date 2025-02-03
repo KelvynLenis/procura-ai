@@ -146,58 +146,61 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
 
   return (
     <TableRow className="text-base">
-      <TableCell className="font-bold text-zinc-800 pl-5">{index}</TableCell>
-      <TableCell className="font-bold text-zinc-800">{phone_model}</TableCell>
-      <TableCell className="font-bold capitalize">{brand}</TableCell>
-      <TableCell className="font-bold">{imei.slice(0, 1) + ' ' + imei.slice(1, 8) + ' ****** **'}</TableCell>
-      <TableCell>
+      <TableCell className="font-bold text-zinc-800 pl-5 hidden lg:table-cell">{index}</TableCell>
+      <TableCell className="font-bold text-zinc-800 w-28 lg:flex">{phone_model}</TableCell>
+      <TableCell className="font-bold capitalize hidden md:table-cell">{brand}</TableCell>
+      <TableCell className="font-bold hidden md:table-cell">{imei.slice(0, 1) + ' ' + imei.slice(1, 8) + ' ****** **'}</TableCell>
+      <TableCell className="w-24">
         <span className={cn("rounded-md w-20 flex items-center justify-center", isStolen ? "bg-red-500/20 text-red-700 p-1" : "bg-lime-500/20 text-lime-700 p-1")}>{isStolen ? 'Roubado' : 'Regular'}</span>
       </TableCell>
-      <TableCell className="flex gap-2 items-center h-20">
-        <Link href={`meus-dispositivos/edit/${id}`}>
-          <button onClick={showLoadingToast} className="rounded-lg w-10 h-10 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90">
-            <ImPencil size={16} />
-            <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
-              Editar dispositivo
-            </span>
-          </button>
-        </Link>
+      <TableCell className="flex gap-2 items-center h-20 my-10 md:my-3">
+        <div className="flex flex-col md:flex-row items-center w-full gap-2">
 
-        <button className="rounded-lg w-10 h-10 flex group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90" onClick={() => handleDeleteDevice(id)}>
-          <Trash2 size={20} />
-          <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
-            Deletar dispositivo
-          </span>
-        </button>
-
-        {
-          isStolen
-            ? <button title="Desativar alerta" className={cn("w-10 h-10 group relative rounded-lg ring-1 ring-red-500 flex flex-col md:flex-row items-center justify-center bg-red-200 hover:bg-white text-red-600")} onClick={() => handleDeviceRecovery(id)}>
-              <IoIosWarning size={28} />
-              <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-28 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
-                Desativar alerta
+          <Link href={`meus-dispositivos/edit/${id}`}>
+            <button onClick={showLoadingToast} className="rounded-lg w-10 h-10 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90">
+              <ImPencil size={16} />
+              <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                Editar dispositivo
               </span>
             </button>
+          </Link>
 
-            :
-            <Dialog>
-              <DialogTrigger asChild>
-                <button className={cn("rounded-lg group relative w-10 h-10 ring-1 ring-zinc-300 flex flex-col md:flex-row items-center justify-center text-red-600 hover:bg-red-300 hover:ring-red-500")}>
-                  <IoIosWarning size={28} />
-                  <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-28 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
-                    Acionar alerta
-                  </span>
-                </button>
-              </DialogTrigger>
-              < DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-fit py-8">
+          <button className="rounded-lg w-10 h-10 flex group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90" onClick={() => handleDeleteDevice(id)}>
+            <Trash2 size={20} />
+            <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+              Deletar dispositivo
+            </span>
+          </button>
 
-                <DialogHeader>
-                  <DialogTitle>Preencha as informações</DialogTitle>
-                </DialogHeader>
-                <MarkAsStolenForm id={id} isStolen={isStolen} setDevices={setDevices} />
-              </DialogContent>
-            </Dialog>
-        }
+          {
+            isStolen
+              ? <button title="Desativar alerta" className={cn("w-10 h-10 group relative rounded-lg ring-1 ring-red-500 flex flex-col md:flex-row items-center justify-center bg-red-200 hover:bg-white text-red-600")} onClick={() => handleDeviceRecovery(id)}>
+                <IoIosWarning size={28} />
+                <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-28 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                  Desativar alerta
+                </span>
+              </button>
+
+              :
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className={cn("rounded-lg group relative w-10 h-10 ring-1 ring-zinc-300 flex flex-col md:flex-row items-center justify-center text-red-600 hover:bg-red-300 hover:ring-red-500")}>
+                    <IoIosWarning size={28} />
+                    <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-28 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                      Acionar alerta
+                    </span>
+                  </button>
+                </DialogTrigger>
+                < DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-fit py-8">
+
+                  <DialogHeader>
+                    <DialogTitle>Preencha as informações</DialogTitle>
+                  </DialogHeader>
+                  <MarkAsStolenForm id={id} isStolen={isStolen} setDevices={setDevices} />
+                </DialogContent>
+              </Dialog>
+          }
+        </div>
       </TableCell>
     </TableRow >
   )
