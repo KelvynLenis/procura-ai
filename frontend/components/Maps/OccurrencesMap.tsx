@@ -2,12 +2,10 @@
 
 import React, { useEffect, useState } from "react"
 import { Map, Marker, GeoJson, Overlay, ZoomControl } from "pigeon-maps"
-import { geoJsonSample } from "@/utils/ChartData"
 import { EventProps } from "@/utils/types";
 import { usePathname } from 'next/navigation'
-import { CopyToClipBoardButton } from "../CopyToClipBoardButton";
-import { formatDateTime } from "@/lib/utils";
 import { DeviceInfoCard } from "../DeviceInfoCard";
+import { Triangle } from "lucide-react";
 
 
 interface OccurrencesMapProps {
@@ -106,25 +104,9 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
               anchor={occurence.event.last_location}
               offset={[0, 0]}
             >
-              <div className="flex flex-col rounded-lg ring-1 ring-procura-ai-blue bg-white px-4 py-2" >
-                <strong className="self-center font-medium">{occurence.event.type}</strong>
-                <span className="text-sm flex items-center justify-between">{occurence.event.description}</span>
-                <span className="text-sm flex items-center justify-between">
-                  Imei: {occurence.device.imei}
-                  <CopyToClipBoardButton text={occurence.device.imei} />
-                </span>
-                <span className="text-sm flex items-center justify-between">
-                  Modelo: {occurence.device.phone_model}
-                  <CopyToClipBoardButton text={occurence.device.phone_model} />
-                </span>
-                <span className="text-sm flex items-center justify-between">
-                  Usuário: {occurence.user.name}
-                  <CopyToClipBoardButton text={occurence.user.name} />
-                </span>
-                <span className="text-sm text-zinc-500 flex items-center justify-between">
-                  {formatDateTime(occurence.event.time_event)}
-                  <CopyToClipBoardButton text={formatDateTime(occurence.event.time_event)} />
-                </span>
+              <div className="flex flex-col relative -translate-x-1/2 rounded-lg ring-1 ring-procura-ai-blue bg-white px-4 py-2" >
+                <Triangle className="text-white absolute fill-white -top-3 left-[46%]" />
+                <DeviceInfoCard occurence={occurence} closePopup={closePopup} styles="w-full ring-0 h-fit" />
               </div>
             </Overlay>
           )
