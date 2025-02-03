@@ -90,7 +90,15 @@ export function DevicesTable() {
       <TableBody>
         {isLoading ? (
           <TableRow>
-            <TableCell>
+            <TableCell className="hidden md:table-cell">
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+
+            <TableCell className="hidden md:table-cell">
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+
+            <TableCell className="hidden lg:table-cell">
               <Skeleton className="h-8 w-full" />
             </TableCell>
 
@@ -99,21 +107,13 @@ export function DevicesTable() {
             </TableCell>
 
             <TableCell>
-              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-20" />
             </TableCell>
 
-            <TableCell>
-              <Skeleton className="h-8 w-full" />
-            </TableCell>
-
-            <TableCell>
-              <Skeleton className="h-8 w-full" />
-            </TableCell>
-
-            <TableCell className=" flex flex-col gap-0.5">
-              <Skeleton className="h-7 w-24" />
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <Skeleton className="h-7 w-52" />
+            <TableCell className=" flex flex-col items-center gap-0.5">
+              <Skeleton className="h-10 w-10" />
+              <Skeleton className="h-10 w-10" />
+              <Skeleton className="h-10 w-10" />
             </TableCell>
           </TableRow>
         ) : devices.length > 0 ? (
@@ -145,6 +145,6 @@ export function DevicesTable() {
           </TableCell>
         </TableRow>
       </TableBody>
-    </Table>
+    </Table >
   )
 }

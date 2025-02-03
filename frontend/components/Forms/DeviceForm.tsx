@@ -256,7 +256,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className={cn(
-          "w-full bg-white flex flex-col px-5 mr-5 my-5 xl:mr-14 md:px-10 py-4 gap-8 text-zinc-900 self-center items-center justify-center rounded-3xl shadow-md",
+          "w-fit md:w-10/12 lg:w-full bg-white flex flex-col px-5 mr-20 md:mr-7 xl:mr-14 my-5 md:px-10 py-4 gap-8 text-zinc-900 self-center items-center justify-center rounded-3xl shadow-md",
           // !device && "shadow-form" // Adiciona "shadow-form" apenas se device estiver presente
         )}>
         <div className="flex flex-col w-full gap-8">
