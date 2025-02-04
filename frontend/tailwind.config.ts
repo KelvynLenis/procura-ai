@@ -17,7 +17,7 @@ export default {
 				'procura-ai-red': "#CF4227",
 				'procura-ai-yellow': "#D8A913",
 				'procura-ai-dark-yellow': "#C89900",
-				primary: '#F58701',
+				primary: '#002E72',
 				secondary: '#0F2498',
 				tertiary: '#96A6FF',
 				sidebar: {
@@ -32,8 +32,9 @@ export default {
 				}
 			},
 			backgroundImage: {
-				faq: "url('../assets/images/footer-bg.png')",
+				faq: "url('../assets/images/faq-bg.png')",
 				'landing-bg': "url('../assets/images/landing-bg.png')",
+				'login-bg': "url('../assets/images/login-banner.png')",
 				'device-bg': "url('../assets/images/devices-bg.png')",
 			},
 			keyframes: {

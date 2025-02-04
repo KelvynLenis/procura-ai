@@ -9,6 +9,7 @@ import { Home, Triangle } from "lucide-react";
 import Image from "next/image";
 import theft from '../../assets/icons/theft.svg'
 import warning from '../../assets/icons/warning.png'
+import steal from '../../assets/icons/steal.png'
 import alarm from '../../assets/icons/alarm.png'
 import robbery from '../../assets/icons/robbery.png'
 import interrogation from '../../assets/icons/interrogation.png'
@@ -99,7 +100,7 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
   function getIcon(type: string) {
 
     if (type === 'Furto' || type === 'Furto simples' || type === 'Roubo') {
-      return <Image src={alarm} style={{ pointerEvents: "auto", cursor: "pointer" }} alt="furto" className="w-12 h-12 relative top-2 left-4" />
+      return <Image src={steal} style={{ pointerEvents: "auto", cursor: "pointer" }} alt="furto" className="w-12 h-12 relative top-2 left-4" />
     } else if (type === 'Perda' || type === 'Extravio ou Perda') {
       return <Image src={interrogation} style={{ pointerEvents: "auto", cursor: "pointer" }} alt="perda" className="w-10 h-10 relative top-2.5 left-4" />
     }
