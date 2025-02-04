@@ -16,6 +16,7 @@ import { toast } from "react-toastify"
 import { v4 as uuidv4 } from 'uuid'
 import { DialogClose } from "../ui/dialog"
 import { DeviceProps } from "@/utils/types"
+import { Textarea } from "../ui/textarea"
 
 interface MarkAsStolenFormProps {
   id: string
@@ -114,7 +115,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
                 <FormItem className="flex flex-col w-full">
                   <FormLabel className="">Data e hora do furto</FormLabel>
                   <FormControl>
-                    <Input type="datetime-local" {...field} />
+                    <Input type="datetime-local" {...field} className="ring-1 ring-zinc-300" />
                   </FormControl>
                 </FormItem>
               )}
@@ -127,7 +128,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
                 <FormItem className="flex flex-col w-full">
                   <FormLabel className="">Descrição</FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="Uma descrição breve" {...field} className="text-sm" />
+                    <Textarea placeholder="Uma descrição breve" {...field} className="resize-none h-36 ring-1 ring-zinc-300" />
                   </FormControl>
                 </FormItem>
               )}

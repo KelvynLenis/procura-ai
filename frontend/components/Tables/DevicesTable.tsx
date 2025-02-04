@@ -62,7 +62,7 @@ export function DevicesTable() {
           const error = await response.text();
           throw new Error(`Error: ${error}`);
         }
-        
+
         const result = await response.json();
         setDevices(result.documents || []);
       } catch (err) {
@@ -79,18 +79,26 @@ export function DevicesTable() {
     <Table className="bg-white shadow-lg rounded-lg self-center">
       <TableHeader className="bg-zinc-200/60">
         <TableRow>
-          <TableHead className="text-black/80 pl-5 w-20 font-semibold">ID</TableHead>
-          <TableHead className="text-black/80 w-56 font-semibold">Modelo</TableHead>
-          <TableHead className="text-black/80 font-semibold">Marca</TableHead>
-          <TableHead className="text-black/80 font-semibold">IMEI</TableHead>
-          <TableHead className="text-black/80 font-semibold">Status</TableHead>
-          <TableHead className="w-20 font-semibold">Ações</TableHead>
+          <TableHead className="text-black/80 pl-5 font-semibold hidden lg:table-cell w-20">ID</TableHead>
+          <TableHead className="text-black/80 font-semibold flex w-28 sm:justify-center md:flex items-center">Modelo</TableHead>
+          <TableHead className="text-black/80 font-semibold hidden md:table-cell w-1/3">Marca</TableHead>
+          <TableHead className="text-black/80 font-semibold hidden md:table-cell lg:w-full">IMEI</TableHead>
+          <TableHead className="text-black/80 font-semibold w-24 text-center">Status</TableHead>
+          <TableHead className="text-black/80 w-20 font-semibold text-center">Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {isLoading ? (
           <TableRow>
-            <TableCell>
+            <TableCell className="hidden md:table-cell">
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+
+            <TableCell className="hidden md:table-cell">
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+
+            <TableCell className="hidden lg:table-cell">
               <Skeleton className="h-8 w-full" />
             </TableCell>
 
@@ -99,21 +107,13 @@ export function DevicesTable() {
             </TableCell>
 
             <TableCell>
-              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-20" />
             </TableCell>
 
-            <TableCell>
-              <Skeleton className="h-8 w-full" />
-            </TableCell>
-
-            <TableCell>
-              <Skeleton className="h-8 w-full" />
-            </TableCell>
-
-            <TableCell className=" flex flex-col gap-0.5">
-              <Skeleton className="h-7 w-24" />
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <Skeleton className="h-7 w-52" />
+            <TableCell className=" flex flex-col items-center gap-0.5">
+              <Skeleton className="h-10 w-10" />
+              <Skeleton className="h-10 w-10" />
+              <Skeleton className="h-10 w-10" />
             </TableCell>
           </TableRow>
         ) : devices.length > 0 ? (
@@ -138,18 +138,13 @@ export function DevicesTable() {
           </TableRow>
         )}
         <TableRow>
-          <TableCell></TableCell>
-          <TableCell></TableCell>
-          <TableCell></TableCell>
-          <TableCell></TableCell>
-          <TableCell></TableCell>
-          <TableCell className="flex w-full">
+          <TableCell className="w-2/5" colSpan={2}>
             <Link href={'/cadastrar-dispositivo'}>
               <Button onClick={showLoadingToast} variant="blue" className="self-end w-44 my-3">Cadastrar dispositivo</Button>
             </Link>
           </TableCell>
         </TableRow>
       </TableBody>
-    </Table>
+    </Table >
   )
 }
