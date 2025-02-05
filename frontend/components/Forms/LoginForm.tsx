@@ -120,7 +120,7 @@ export function LoginForm() {
               <FormItem className="flex flex-col w-full">
                 <FormLabel className="text-zinc-700 ml-4 font-bold">Usuário</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="Email" {...field} className="rounded-md" />
+                  <Input type="text" placeholder="Email" {...field} className="rounded-full" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -134,7 +134,7 @@ export function LoginForm() {
               <FormItem className="flex flex-col w-full">
                 <FormLabel className="text-zinc-700 ml-4 font-bold">Senha</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="Senha" {...field} className="rounded-md" />
+                  <Input type="password" placeholder="Senha" {...field} className="rounded-full" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -142,7 +142,7 @@ export function LoginForm() {
           />
           <Link href="/forgot-password" aria-disabled className="underline self-start hover:opacity-50 text-sm">Esqueceu sua senha?</Link>
 
-          <Button className="bg-primary text-white rounded-full text-lg px-12 py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">Entrar</Button>
+          <Button className="bg-primary text-white rounded-full w-44 text-lg py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">Entrar</Button>
 
 
           <div className="w-full flex flex-col gap-9">
@@ -164,8 +164,8 @@ export function LoginForm() {
               <span className="font-bold self-center">
                 Não possui conta?
               </span>
-              <Link href={'/cadastro'}>
-                <Button onClick={showLoadingToast} type="button" className="bg-white w-full text-primary rounded-full text-lg py-3 hover:bg-white shadow-lg hover:text-secondary ring-1 ring-primary transition-all duration-300">Cadastre-se</Button>
+              <Link href={'/cadastro'} className="flex items-center justify-center">
+                <Button onClick={showLoadingToast} type="button" className="bg-white text-primary rounded-full text-lg w-44 py-4 shadow-lg hover:bg-white hover:text-primary ring-1 ring-primary transition-all duration-300">Cadastre-se</Button>
               </Link>
             </div>
           </div>

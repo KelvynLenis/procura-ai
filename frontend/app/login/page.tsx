@@ -8,7 +8,7 @@ import logoLogin from '../../assets/icons/logo-login.svg'
 export default function Login() {
   return (
     <>
-      <header className="shadow-xl flex items-center h-15 pt-2">
+      <header className="shadow-lg flex items-center h-15 pt-2 z-10 sticky">
         <Image src={logo} alt="logo" className="h-16 -left-8 relative" />
       </header>
       <main className="flex flex-col row-start-2 items-center sm:items-start min-h-fit h-full w-full">
@@ -21,7 +21,7 @@ export default function Login() {
             <LoginForm />
           </div>
         </div>
-        <FAQ />
+        <FAQ position="absolute" />
       </main>
     </>
   );

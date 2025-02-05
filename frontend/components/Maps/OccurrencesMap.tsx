@@ -106,17 +106,24 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
     }
   }
 
+  function getColor(type: string) {
+    if (type === 'Furto' || type === 'Furto simples') {
+      return '#D8A913' // yellow color
+    } else if (type === 'Roubo') {
+      return '#CF4227' // red color
+    }
+    else if (type === 'Perda' || type === 'Extravio ou Perda') {
+      return '#0F2498' // blue color
+    }
+  }
+
   return (
     <>
       <Map onClick={() => closePopup()} width={setWidth()} height={setHeight()} defaultCenter={[-7.1509317, -34.8446769]} defaultZoom={11}>
         {
           occurences && occurences.map((occurence, index) => (
             occurence.event?.last_location &&
-            <Marker key={index} width={50} anchor={occurence.event?.last_location} color={'#FF0000'} onClick={() => handleOpenPopup(occurence)}>
-              {
-                getIcon(occurence.event?.type)
-              }
-            </Marker>
+            <Marker key={index} width={50} anchor={occurence.event?.last_location} color={getColor(occurence.event?.type)} onClick={() => handleOpenPopup(occurence)} />
           ))
         }
         {
