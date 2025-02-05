@@ -24,6 +24,8 @@ import { PiUsersThreeFill } from "react-icons/pi";
 import { useState } from "react"
 import { LoadingToast } from "./LoadingToast"
 import { toast } from "react-toastify"
+import logo from '../assets/icons/logo.svg'
+import Image from "next/image"
 
 const devicesGroup = [
   {
@@ -120,7 +122,8 @@ export function AppSidebar({ admin }: SidebarProps) {
       <Sidebar collapsible="icon" className="text-zinc-900 z-[1] shadow-md h-full">
         <CustomSidebarTrigger />
         <SidebarContent className="bg-white flex flex-col">
-          <div className="h-32 w-full flex items-end justify-center gap-3">
+          <div className="h-40 w-full flex flex-col items-center justify-center gap-1">
+            <Image src={logo} alt="logo" className="" />
             <span className="w-[90%] rounded-lg h-0.5 bg-zinc-300" />
           </div>
 

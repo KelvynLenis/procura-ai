@@ -21,10 +21,13 @@ export function DeviceInfoCard({ occurence, closePopup, styles }: DeviceInfoCard
   console.log(occurence)
 
   function formatType(type: string) {
-    if (type === 'Furto' || type === 'Furto simples' || type === 'Roubo') {
+    if (type === 'Furto' || type === 'Furto simples') {
       return 'Furto simples'
     } else if (type === 'Perda' || type === 'Extravio ou Perda') {
       return 'Extravio ou Perda'
+    }
+    else {
+      return type
     }
   }
 

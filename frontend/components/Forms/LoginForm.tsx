@@ -14,7 +14,7 @@ import Link from "next/link"
 import { account } from "@/lib/appwrite"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import logo from '../../assets/icons/procura-ai-logo-header.svg'
+import logo from '../../assets/icons/logo-login.svg'
 import Image from "next/image"
 import { Button } from "../ui/button"
 import { z } from "zod"
@@ -109,8 +109,8 @@ export function LoginForm() {
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-[400px] h-fit flex flex-col gap-4 bg-white items-center px-10 py-5 rounded-xl">
-          <Image src={logo} alt="logo" width={200} height={100} />
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full md:w-[500px] h-[700px] flex flex-col gap-4 bg-zinc-50 items-center px-10 py-5">
+          {/* <Image src={logo} alt="logo" width={200} height={100} /> */}
           <h3 className="text-center">Para acessar o Procura.Aí faça login  abaixo:</h3>
 
           <FormField
@@ -120,7 +120,7 @@ export function LoginForm() {
               <FormItem className="flex flex-col w-full">
                 <FormLabel className="text-zinc-700 ml-4 font-bold">Usuário</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="Email" {...field} className="rounded-md" />
+                  <Input type="text" placeholder="Email" {...field} className="rounded-full" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -134,7 +134,7 @@ export function LoginForm() {
               <FormItem className="flex flex-col w-full">
                 <FormLabel className="text-zinc-700 ml-4 font-bold">Senha</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="Senha" {...field} className="rounded-md" />
+                  <Input type="password" placeholder="Senha" {...field} className="rounded-full" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -142,22 +142,32 @@ export function LoginForm() {
           />
           <Link href="/forgot-password" aria-disabled className="underline self-start hover:opacity-50 text-sm">Esqueceu sua senha?</Link>
 
-          <Button className="bg-primary text-white rounded-full text-lg px-12 py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">Entrar</Button>
+          <Button className="bg-primary text-white rounded-full w-44 text-lg py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">Entrar</Button>
 
-          <span className="w-full h-[1px] rounded-full bg-secondary" />
 
-          <div className="w-full flex flex-col gap-3">
-            <span className="font-bold self-center">
-              Não possui conta?
-              {/* <Link className="text-blue-600 hover:opacity-60 underline" href={'/cadastro'}>Crie uma conta</Link> */}
-            </span>
-            <Link href={'/cadastro'}>
-              <Button onClick={showLoadingToast} type="button" className="bg-secondary w-full text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Cadastre-se</Button>
-            </Link>
-            <span className="font-bold self-center">
-              Se preferir, acesse pela conta Gov.br
-            </span>
-            <Button disabled type="button" className="bg-secondary text-white rounded-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300">Entrar com Gov.br</Button>
+          <div className="w-full flex flex-col gap-9">
+
+            <span className="w-full h-[1px] rounded-full bg-secondary" />
+
+            <div className="flex flex-col gap-3">
+              <span className="font-bold self-center">
+                Se preferir, acesse pela conta Gov.br
+              </span>
+              <Link href={'/login-gov'} aria-disabled className="underline self-center text-primary font-semibold aria-disabled: hover:opacity-50">
+                Entrar com Gov.br
+              </Link>
+            </div>
+
+            <span className="w-full h-[1px] rounded-full bg-secondary" />
+
+            <div className="w-full flex flex-col gap-3">
+              <span className="font-bold self-center">
+                Não possui conta?
+              </span>
+              <Link href={'/cadastro'} className="flex items-center justify-center">
+                <Button onClick={showLoadingToast} type="button" className="bg-white text-primary rounded-full text-lg w-44 py-4 shadow-lg hover:bg-white hover:text-primary ring-1 ring-primary transition-all duration-300">Cadastre-se</Button>
+              </Link>
+            </div>
           </div>
         </form>
       </Form>

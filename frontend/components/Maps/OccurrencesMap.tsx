@@ -9,6 +9,7 @@ import { Home, Triangle } from "lucide-react";
 import Image from "next/image";
 import theft from '../../assets/icons/theft.svg'
 import warning from '../../assets/icons/warning.png'
+import steal from '../../assets/icons/steal.png'
 import alarm from '../../assets/icons/alarm.png'
 import robbery from '../../assets/icons/robbery.png'
 import interrogation from '../../assets/icons/interrogation.png'
@@ -99,9 +100,20 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
   function getIcon(type: string) {
 
     if (type === 'Furto' || type === 'Furto simples' || type === 'Roubo') {
-      return <Image src={alarm} style={{ pointerEvents: "auto", cursor: "pointer" }} alt="furto" className="w-12 h-12 relative top-2 left-4" />
+      return <Image src={steal} style={{ pointerEvents: "auto", cursor: "pointer" }} alt="furto" className="w-12 h-12 relative top-2 left-4" />
     } else if (type === 'Perda' || type === 'Extravio ou Perda') {
       return <Image src={interrogation} style={{ pointerEvents: "auto", cursor: "pointer" }} alt="perda" className="w-10 h-10 relative top-2.5 left-4" />
+    }
+  }
+
+  function getColor(type: string) {
+    if (type === 'Furto' || type === 'Furto simples') {
+      return '#D8A913' // yellow color
+    } else if (type === 'Roubo') {
+      return '#CF4227' // red color
+    }
+    else if (type === 'Perda' || type === 'Extravio ou Perda') {
+      return '#0F2498' // blue color
     }
   }
 
@@ -111,11 +123,7 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
         {
           occurences && occurences.map((occurence, index) => (
             occurence.event?.last_location &&
-            <Marker key={index} width={50} anchor={occurence.event?.last_location} color={'#FF0000'} onClick={() => handleOpenPopup(occurence)}>
-              {
-                getIcon(occurence.event?.type)
-              }
-            </Marker>
+            <Marker key={index} width={50} anchor={occurence.event?.last_location} color={getColor(occurence.event?.type)} onClick={() => handleOpenPopup(occurence)} />
           ))
         }
         {
