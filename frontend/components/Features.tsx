@@ -24,7 +24,7 @@ export function Features() {
           </div>
         </div>
 
-        <div className="w-full bg-primary/5 border border-primary rounded-xl mb-10 lg:mb-20 p-6">
+        <div className="w-full bg-primary/5 border border-primary bg-white rounded-xl mb-10 lg:mb-20 p-6">
           <ul className="font-medium text-lg flex flex-col items-center h-full gap-6">
             <li className="flex items-center w-full">
               <Image src={block} alt="celular cortado" height={70} />
