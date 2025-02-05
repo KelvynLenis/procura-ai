@@ -1,6 +1,7 @@
 import { RegisterForm } from '@/components/Forms/RegisterForm';
 import loginImages from '../../assets/images/login-images.png'
 import Image from "next/image";
+import { Footer } from '@/components/Footer';
 
 export default function Login() {
   return (
@@ -13,6 +14,7 @@ export default function Login() {
           </div>
         </div>
       </main>
+      <Footer />
     </>
   );
 }
