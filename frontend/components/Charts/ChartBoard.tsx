@@ -40,231 +40,182 @@ export function ChartBoard() {
   const router = useRouter()
 
   async function fetchStolenDevices() {
-    const params = new URLSearchParams({
-      "queries[0]": JSON.stringify({
-        method: "equal",
-        attribute: "isStolen",
-        values: [true],
-      }),
-    });
+    const allDevices: Device[] = [];
+    let offset = 0;
+    const limit = 25;
+    let total = Infinity;
+    while (offset < total) {
+      const params = new URLSearchParams({
+        "queries[0]": JSON.stringify({
+          method: "equal",
+          attribute: "isStolen",
+          values: [true],
+        }),
+        "queries[1]": JSON.stringify({
+          method: "limit",
+          values: [limit],
+        }),
+        "queries[2]": JSON.stringify({
+          method: "offset",
+          values: [offset],
+        }),
+      });
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+            },
+            cache: "no-store",
+          }
+        );
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-        },
-        cache: "no-store",
+        if (!response.ok) {
+          throw new Error(`Failed to fetch stolen devices: ${await response.text()}`);
+        }
+
+        const { documents, total: fetchedTotal } = await response.json();
+
+        allDevices.push(...documents);
+        total = fetchedTotal;
+        offset += limit;
+      } catch (error) {
+        console.error(error);
+        break;
       }
-    );
 
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Failed to fetch stolen devices: ${error}`);
     }
-
-
-    // setNumberOfDevicesStolen(await response.json().then((res) => res.documents.length))
-
-    return response.json();
+    return allDevices
   }
+  async function fetchEvents(): Promise<Event[]> {
+    const allEvents: Event[] = [];
+    let offset = 0;
+    const limit = 25;
+    let total = Infinity;
 
-  async function fetchAllDevices() {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-        },
-        cache: "no-store",
+    while (offset < total) {
+      const params = new URLSearchParams({
+        "queries[0]": JSON.stringify({
+          method: "equal",
+          attribute: "is_alert_on",
+          values: [true],
+        }),
+        "queries[1]": JSON.stringify({
+          method: "limit",
+          values: [limit],
+        }),
+        "queries[2]": JSON.stringify({
+          method: "offset",
+          values: [offset],
+        }),
+      });
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents?${params.toString()}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Appwrite-Project": process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || "",
+            },
+            cache: "no-store",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch events: ${await response.text()}`);
+        }
+
+        const { documents, total: fetchedTotal } = await response.json();
+        allEvents.push(...documents);
+        total = fetchedTotal;
+        offset += limit;
+
+      } catch (error) {
+        console.error(error);
+        break;
       }
-    );
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Failed to fetch stolen devices: ${error}`);
     }
-    return response.json().then((res) => res.documents.length);
-  }
-
-
-  async function fetchEvents() {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-        },
-        cache: "no-store",
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Failed to fetch events: ${error}`);
-    }
-
-    return response.json();
-  }
-
-  async function getNumberOfRecoveredDevices() {
-    const params = new URLSearchParams({
-      "queries[0]": JSON.stringify({
-        method: "equal",
-        attribute: "type",
-        values: ["recuperado"],
-      }),
-    });
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents?${params.toString()}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-        },
-        cache: "no-store",
-      }
-    )
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Failed to fetch events: ${error}`);
-    }
-
-    const result = await response.json();
-
-    const documents = result.documents;
-
-    setNumberOfDevicesRecovered(documents.length);
-  }
-
-  async function getNumberOfLostDevices() {
-    const params = new URLSearchParams({
-      "queries[0]": JSON.stringify({
-        method: "equal",
-        attribute: "type",
-        values: ["Extravio ou Perda", "Perda"],
-      }),
-    });
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents?${params.toString()}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-        },
-        cache: "no-store",
-      }
-    )
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Failed to fetch events: ${error}`);
-    }
-
-    const result = await response.json();
-
-    const documents = result.documents;
-
-    setNumberOfDevicesLost(documents.length);
+    return allEvents;
   }
 
   async function fetchOwnerInfo(auth_id: string) {
+    const allUsers = [];
+    let offset = 0;
+    const limit = 25;
+    let total = Infinity;
 
-    const params = new URLSearchParams({
-      "queries[0]": JSON.stringify({
-        method: "equal",
-        attribute: "userId",
-        values: [auth_id],
-      }),
-    });
+    while (offset < total) {
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-        },
-        cache: "no-store",
+      const params = new URLSearchParams({
+        "queries[0]": JSON.stringify({
+          method: "equal",
+          attribute: "userId",
+          values: [auth_id],
+        }),
+        "queries[1]": JSON.stringify({
+          method: "limit",
+          values: [limit],
+        }),
+        "queries[2]": JSON.stringify({
+          method: "offset",
+          values: [offset],
+        }),
+      });
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+            },
+            cache: "no-store",
+          }
+        );
+
+        if (!response.ok) {
+          const error = await response.text();
+          throw new Error(`Failed to fetch user info: ${error}`);
+        }
+        const { documents, total: fetchedTotal } = await response.json();
+        allUsers.push(...documents);
+        total = fetchedTotal;
+        offset += limit;
+
+      } catch (error) {
+        console.error(error);
+        break;
       }
-    );
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Failed to fetch user info: ${error}`);
     }
-
-    return response.json();
-  }
-
-  async function getNumberOfAllStolenDevices() {
-    const params = new URLSearchParams({
-      "queries[0]": JSON.stringify({
-        method: "equal",
-        attribute: "type",
-        values: ["Furto simples", "Roubo", "Furto"],
-      }),
-    });
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents?${params.toString()}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-        },
-        cache: "no-store",
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Failed to fetch events: ${error}`);
-    }
-
-    const result = await response.json();
-
-    const documents = result.documents;
-
-    setNumberOfDevicesStolen(documents.length);
+    return allUsers;
   }
 
   async function getDashboardData() {
     try {
-      const [devicesData, eventsData] = await Promise.all([fetchStolenDevices(), fetchEvents()]);
+      const devicesData = await fetchStolenDevices();
 
-      const devices: Device[] = devicesData.documents;
-      const events: Event[] = eventsData.documents;
+      if (devicesData.length === 0) return [];
+
+      const events = await fetchEvents();
+
 
       const enrichedDevices = await Promise.all(
-        devices.map(async (device: Device) => {
-          const deviceEvents = await events.filter(
-            (event: Event) => event.id_device === device.$id && event.is_alert_on
-          );
-
-          const recentEvent = await deviceEvents.sort(
-            (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-          ).at(-1);
+        devicesData.map(async (device) => {
+          const recentEvent = events
+            .filter((event) => event.id_device === device.$id)
+            .sort((a, b) => new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime())[0];
+          console.log(recentEvent)
 
           const ownerResponse = await fetchOwnerInfo(device.auth_id!);
-          const ownerInfo = ownerResponse?.documents?.[0];
-
+          const ownerInfo = ownerResponse?.[0];
           return {
-            device: {
-              ...device,
-            },
+            device: { ...device },
             event: recentEvent,
             user: {
               name: ownerInfo?.name || "N/A",
@@ -274,13 +225,222 @@ export function ChartBoard() {
         })
       );
 
-
       return enrichedDevices;
     } catch (error) {
       console.error("Erro ao carregar dados do dashboard:", error);
       throw error;
     }
   }
+
+  async function fetchAllDevices() {
+    const allDevices: Device[] = [];
+    let offset = 0;
+    const limit = 25;
+    let total = Infinity;
+    while (offset < total) {
+      const params = new URLSearchParams({
+        "queries[0]": JSON.stringify({
+          method: "limit",
+          values: [limit],
+        }),
+        "queries[1]": JSON.stringify({
+          method: "offset",
+          values: [offset],
+        }),
+      });
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+            },
+            cache: "no-store",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch stolen devices: ${await response.text()}`);
+        }
+
+        const { documents, total: fetchedTotal } = await response.json();
+
+        allDevices.push(...documents);
+        total = fetchedTotal;
+        offset += limit;
+        setNumberOfDevicesRegistered(fetchedTotal)
+
+
+      } catch (error) {
+        console.error(error);
+        break;
+      }
+
+    }
+    return allDevices
+  }
+  async function getNumberOfRecoveredDevices() {
+    const allEvents: Event[] = [];
+    let offset = 0;
+    const limit = 25;
+    let total = Infinity;
+    while (offset < total) {
+
+      const params = new URLSearchParams({
+        "queries[0]": JSON.stringify({
+          method: "equal",
+          attribute: "type",
+          values: ["recuperado"],
+        }),
+        "queries[1]": JSON.stringify({
+          method: "limit",
+          values: [limit],
+        }),
+        "queries[2]": JSON.stringify({
+          method: "offset",
+          values: [offset],
+        }),
+      });
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents?${params.toString()}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+            },
+            cache: "no-store",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch events: ${await response.text()}`);
+        }
+
+        const { documents, total: fetchedTotal } = await response.json();
+        allEvents.push(...documents);
+        total = fetchedTotal;
+        offset += limit;
+
+        setNumberOfDevicesRecovered(fetchedTotal);
+      } catch (error) {
+        console.error(error);
+        break;
+      }
+    }
+    return allEvents;
+  }
+  async function getNumberOfLostDevices() {
+    const allDevices: Device[] = [];
+    let offset = 0;
+    const limit = 25;
+    let total = Infinity;
+    while (offset < total) {
+      const params = new URLSearchParams({
+        "queries[0]": JSON.stringify({
+          method: "equal",
+          attribute: "type",
+          values: ["Extravio ou Perda", "Perda"],
+        }),
+        "queries[1]": JSON.stringify({
+          method: "limit",
+          values: [limit],
+        }),
+        "queries[2]": JSON.stringify({
+          method: "offset",
+          values: [offset],
+        }),
+      });
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents?${params.toString()}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+            },
+            cache: "no-store",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch stolen devices: ${await response.text()}`);
+        }
+
+        const { documents, total: fetchedTotal } = await response.json();
+
+        allDevices.push(...documents);
+        total = fetchedTotal;
+        offset += limit;
+        setNumberOfDevicesLost(fetchedTotal)
+      } catch (error) {
+        console.error(error);
+        break;
+      }
+
+    }
+    return allDevices
+  }
+
+  async function getNumberOfAllStolenDevices() {
+    const allEvents: Event[] = [];
+    let offset = 0;
+    const limit = 25;
+    let total = Infinity;
+
+    while (offset < total) {
+      const params = new URLSearchParams({
+        "queries[0]": JSON.stringify({
+          method: "equal",
+          attribute: "type",
+          values: ["Furto simples", "Roubo", "Furto"],
+        }),
+        "queries[1]": JSON.stringify({
+          method: "limit",
+          values: [limit],
+        }),
+        "queries[2]": JSON.stringify({
+          method: "offset",
+          values: [offset],
+        }),
+      });
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents?${params.toString()}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+            },
+            cache: "no-store",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch events: ${await response.text()}`);
+        }
+
+
+        const { documents, total: fetchedTotal } = await response.json();
+        allEvents.push(...documents);
+        total = fetchedTotal;
+        offset += limit;
+        setNumberOfDevicesStolen(fetchedTotal);
+      } catch (error) {
+        console.error(error);
+        break;
+      }
+    }
+    return allEvents;
+  }
+
 
 
   function showLoadingToast() {
@@ -302,12 +462,11 @@ export function ChartBoard() {
 
 
     fetchOccurrences()
-
+    fetchStolenDevices()
     getNumberOfRecoveredDevices()
-    getNumberOfAllStolenDevices()
     getNumberOfLostDevices()
-
-    fetchAllDevices().then((res) => setNumberOfDevicesRegistered(res))
+    getNumberOfAllStolenDevices()
+    fetchAllDevices()
 
   }, [])
 
