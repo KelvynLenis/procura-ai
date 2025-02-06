@@ -33,7 +33,7 @@ export function NotificationButton() {
   return (
     <>
 
-      <button className="absolute right-10 top-5" onClick={toggleList}>
+      <button className="absolute right-10 top-3 bg-procura-ai-white p-2 rounded-full hover:bg-procura-ai-blue hover:ring-1 hover:ring-procura-ai-white hover:text-white transition-all duration-500" onClick={toggleList}>
         <Bell className="size-7" />
         {notifications.length > 0 && (
           <span className="bg-red-500 text-white rounded-full w-6 h-6 font-bold flex items-center justify-center absolute -top-1 right-3">

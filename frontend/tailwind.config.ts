@@ -31,6 +31,9 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				}
 			},
+			spacing: {
+				'18': '68.2px'
+			},
 			backgroundImage: {
 				faq: "url('../assets/images/faq-bg.png')",
 				'landing-bg': "url('../assets/images/landing-bg.png')",
