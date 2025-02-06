@@ -71,26 +71,37 @@ const PieChartRechart = ({ numberOfDevicesRecovered, numberOfDevicesStolen, numb
   ]
 
   return (
-    <ResponsiveContainer width="100%" height="80%">
-      <PieChart width={400} height={200}>
-        <Pie
-          activeIndex={activeIndex}
-          activeShape={renderActiveShape}
-          data={newData}
-          cx="50%"
-          cy="50%"
-          innerRadius={60}
-          outerRadius={80}
-          fill={"#8884d8"}
-          dataKey="value"
-          onMouseEnter={onPieEnter}
-        >
-          {newData.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.color} />
-          ))}
-        </Pie>
-      </PieChart>
-    </ResponsiveContainer>
+    <>
+      {
+        numberOfDevicesLost === 0 && numberOfDevicesRecovered === 0 && numberOfDevicesStolen === 0 && numberOfDevicesRegistered === 0 ? (
+          <div className='h-full w-full flex items-center justify-center'>
+            <span>Nenhum dispositivo cadastrado</span>
+          </div>
+        ) : (
+
+          <ResponsiveContainer width="100%" height="80%">
+            <PieChart width={400} height={200}>
+              <Pie
+                activeIndex={activeIndex}
+                activeShape={renderActiveShape}
+                data={newData}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={80}
+                fill={"#8884d8"}
+                dataKey="value"
+                onMouseEnter={onPieEnter}
+              >
+                {newData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        )
+      }
+    </>
   );
 };
 

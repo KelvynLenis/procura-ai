@@ -12,16 +12,13 @@ import { PigeonMapLoader } from "../Maps/PigeonMapLoader";
 import { MapTiler2 } from "../Maps/MapTiler2";
 import { GoogleMapsEmbed } from '@next/third-parties/google'
 
-import { TiDeviceTablet } from "react-icons/ti";
-import { IoIosExpand } from "react-icons/io";
+import { BiExpandAlt } from "react-icons/bi";
 
 import { topBrandsStolen, topDangerousDistricts } from "@/utils/ChartData"
 import { Device, Event, EventProps } from "@/utils/types";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LoadingToast } from "../LoadingToast";
 import PieChartRechart from "./PieChartRechart";
-import { Skeleton } from "../ui/skeleton";
 
 const Map = dynamic(() => import('../Maps/MapTiler'), {
   ssr: false,
@@ -477,9 +474,9 @@ export function ChartBoard() {
         <div className="relative flex flex-col md:mr-2 self-start md:w-3/5 lg:w-8/12 xl:w-full bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center gap-3">
           <div className="flex justify-between">
             <h2 className="text-3xxl font-black text-procura-ai-blue">Localização de ocorrências</h2>
-            <button onClick={showLoadingToast} title="Clique para expandir" className="flex text-procura-ai-blue items-center gap-1 text-sm">
+            <button onClick={showLoadingToast} title="Clique para expandir" className="flex text-procura-ai-blue items-center gap-1 text-sm hover:opacity-50">
               Expandir
-              <IoIosExpand size={18} />
+              <BiExpandAlt size={18} />
             </button>
           </div>
 
@@ -490,15 +487,15 @@ export function ChartBoard() {
         </div>
 
         <div className="flex self-start gap-5">
-          <CardChart variant="blue" Icon={TiDeviceTablet} number={numberOfDevicesRegistered} title="Dispositivos cadastrados" />
-          <CardChart variant="green" Icon={TiDeviceTablet} number={numberOfDevicesRecovered} title="Dispositivos recuperados" />
-          <CardChart variant="red" Icon={TiDeviceTablet} number={numberOfDevicesStolen} title="Dispositivos Roubados" />
-          <CardChart variant="yellow" Icon={TiDeviceTablet} number={numberOfDevicesLost} title="Dispositivos Perdidos" />
+          <CardChart variant="blue" number={numberOfDevicesRegistered} title="Dispositivos cadastrados" />
+          <CardChart variant="green" number={numberOfDevicesRecovered} title="Dispositivos recuperados" />
+          <CardChart variant="red" number={numberOfDevicesStolen} title="Dispositivos Roubados" />
+          <CardChart variant="yellow" number={numberOfDevicesLost} title="Dispositivos Perdidos" />
         </div>
 
         <div className="flex w-full justify-around">
           <div className="flex flex-col gap-2 w-[540px] text-sm bg-white items-center justify-center h-80 ring-1 ring-zinc-300 rounded-lg self-start">
-            <span className="flex flex-col w-full items-start px-4 font-semibold text-procura-ai-blue">
+            <span className="flex flex-col w-full items-start px-4 pt-3 font-semibold text-procura-ai-blue">
               Dispositivos cadastrados
               <span className="font-medium">
                 Status
