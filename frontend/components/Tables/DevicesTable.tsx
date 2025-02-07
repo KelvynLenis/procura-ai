@@ -43,6 +43,7 @@ export function DevicesTable() {
   }
 
   useEffect(() => {
+    // @glaymar Paginação
     const getDevices = async () => {
       setIsLoading(true)
       try {
@@ -121,12 +122,12 @@ export function DevicesTable() {
             <DeviceRow
               key={device.$id}
               index={index}
-              id={device.$id}
+              id={device.$id!}
               phone_number={device.phone_number}
               phone_model={device.phone_model}
               brand={device.brand}
               imei={device.imei}
-              isStolen={device.isStolen!}
+              isStolen={device.is_stolen!}
               setDevices={setDevices}
             />
           ))

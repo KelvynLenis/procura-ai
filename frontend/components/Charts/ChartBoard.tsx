@@ -45,7 +45,7 @@ export function ChartBoard() {
       const params = new URLSearchParams({
         "queries[0]": JSON.stringify({
           method: "equal",
-          attribute: "isStolen",
+          attribute: "is_stolen",
           values: [true],
         }),
         "queries[1]": JSON.stringify({
@@ -151,7 +151,7 @@ export function ChartBoard() {
       const params = new URLSearchParams({
         "queries[0]": JSON.stringify({
           method: "equal",
-          attribute: "userId",
+          attribute: "user_id",
           values: [auth_id],
         }),
         "queries[1]": JSON.stringify({

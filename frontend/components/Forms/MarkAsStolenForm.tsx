@@ -84,12 +84,14 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
               'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
             },
             body: JSON.stringify({
-              data: { isStolen: true },
+              data: { is_stolen: true,
+                status: values.type
+               },
             }),
           }
         );
       }
-      setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, isStolen: true } : device));
+      setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, is_stolen: true } : device));
 
       toast.promise(callFunction, {
         pending: 'Marcando como roubado...',
