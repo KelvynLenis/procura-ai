@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 
 interface User {
-  $id: string;
+  $id?: string;
   name?: string;
   cpf?: string;
   email?: string;

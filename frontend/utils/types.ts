@@ -3,13 +3,14 @@ import EventSchema from "@/schemas/eventSchema";
 import { z } from "zod"
 
 export interface DeviceProps {
-  $id: string; // ID do dispositivo
+  $id?: string; // ID do dispositivo
   phone_number: string; // Número de telefone
   phone_model: string; // Modelo do telefone
   brand: string; // Marca do telefone
   imei: string; // IMEI do telefone
-  isStolen?: boolean; // Status de "roubado" (true/false)
+  is_stolen?: boolean; // Status de "roubado" (true/false)
   auth_id?: string
+  status?: string
 }
 
 export interface EventProps {

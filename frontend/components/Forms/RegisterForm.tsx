@@ -141,7 +141,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
             body: JSON.stringify({
               documentId,
               data: {
-                userId: createdUser.$id,
+                user_id: createdUser.$id,
                 name: values.name,
                 cpf: values.cpf,
                 email: values.email,

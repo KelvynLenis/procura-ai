@@ -119,7 +119,9 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
               'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
             },
             body: JSON.stringify({
-              data: { isStolen: false },
+              data: { is_stolen: false,
+                status:"Recuperado"
+               },
             }),
           }
         );

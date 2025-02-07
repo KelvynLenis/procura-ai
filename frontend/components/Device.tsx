@@ -10,7 +10,7 @@ import {
 import { DeviceForm } from "./Forms/DeviceForm";
 import { useToast } from "@/hooks/use-toast";
 import { Trash } from "lucide-react";
-export function Device({ phone_model, phone_number, brand, imei, latitude, longitude, $id, setDevices }: DeviceProps & { setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>> }) {
+export function Device({ phone_model, phone_number, brand, imei, $id, setDevices }: DeviceProps & { setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>> }) {
   const { toast } = useToast()
 
   async function handleDeleteDevice(id: string) {
@@ -58,7 +58,7 @@ export function Device({ phone_model, phone_number, brand, imei, latitude, longi
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Editar contato</DialogTitle>
-                <DeviceForm device={{ phone_model, phone_number, brand, imei, latitude, longitude }} />
+                <DeviceForm device={{ phone_model, phone_number, brand, imei }} />
               </DialogHeader>
             </DialogContent>
           </Dialog>

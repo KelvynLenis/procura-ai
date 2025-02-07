@@ -104,7 +104,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
       }
 
       const { $id: userId } = await account.get()
-
+      //@glaymar vai ser removido esse codigo ? 
       if (device) {
         const promise = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${device.$id}`,
@@ -121,7 +121,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                 phone_model: values.phone_model,
                 brand: values.brand,
                 imei: values.imei,
-                isStolen: false
+                is_stolen: false
               },
 
             })
@@ -158,7 +158,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                 phone_model: values.phone_model,
                 brand: values.brand,
                 imei: values.imei,
-                isStolen: false,
+                is_stolen: false,
                 auth_id: userId
 
               }
@@ -214,7 +214,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                 phone_model: values.phone_model,
                 brand: values.brand,
                 imei: values.imei,
-                isStolen: false
+                is_stolen: false
               }
             })
           }
@@ -499,7 +499,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
           device ? (
             <div className="flex justify-between w-full">
               {/* <DialogClose className="bg-white border-[0.5px] border-primary text-primary hover:bg-primary hover:text-white rounded-full text-center items-center justify-center flex w-fit px-2 py-2 shadow transition-all duration-300" type="button">Cancelar</DialogClose> */}
-              <Button isLoader type="submit" onClick={() => handleEditDevice(device.$id, form.getValues())} variant="blue" className="px-2">Salvar alterações</Button>
+              <Button isLoader type="submit" onClick={() => handleEditDevice(device.$id!, form.getValues())} variant="blue" className="px-2">Salvar alterações</Button>
               <Button isLoader onClick={() => goBack()} type="button" variant="red" >Cancelar</Button>
             </div>
           ) : (
