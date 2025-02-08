@@ -26,11 +26,12 @@ interface DeviceRowProps {
   brand: string; // Marca do telefone
   imei: string; // IMEI do telefone
   isStolen: boolean; // Status de "roubado" (true/false)
-  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
-  index: number
+  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>;
+  index: number;
+  status: string;
 }
 
-export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen, setDevices, index }: DeviceRowProps) {
+export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen, status, setDevices, index }: DeviceRowProps) {
   const [isLoading, setIsLoading] = useState(false)
 
 
@@ -70,7 +71,6 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
   }
 
   async function handleDeviceRecovery(id: string) {
-
     try {
       const eventId = uuidv4();
       const x = new Date().toISOString()
@@ -79,7 +79,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
       console.log(x)
       const callFunction = async () => {
 
-        const promise = await fetch(
+        const createEvent = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents/`,
           {
             method: 'POST',
@@ -119,15 +119,19 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
               'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
             },
             body: JSON.stringify({
-              data: { is_stolen: false,
-                status:"Recuperado"
-               },
+              data: {
+                is_stolen: false,
+                status: "Recuperado"
+              },
             }),
           }
         );
+
+
       }
 
-      setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, isStolen: false } : device));
+      setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, is_stolen: false, status: "Recuperado" } : device));
+      // setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device,  } : device));
 
 
       toast.promise(callFunction, {
@@ -153,7 +157,14 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
       <TableCell className="font-bold capitalize hidden md:table-cell">{brand}</TableCell>
       <TableCell className="font-bold hidden md:table-cell">{imei.slice(0, 1) + ' ' + imei.slice(1, 8) + ' ****** **'}</TableCell>
       <TableCell className="w-24">
-        <span className={cn("rounded-md w-20 flex items-center justify-center", isStolen ? "bg-red-500/20 text-red-700 p-1" : "bg-lime-500/20 text-lime-700 p-1")}>{isStolen ? 'Roubado' : 'Regular'}</span>
+        <span className={cn("rounded-md w-28 flex items-center justify-center capitalize",
+          status === "Roubado" && "bg-red-500/20 text-red-700 p-1",
+          status === "Recuperado" && "bg-lime-500/20 text-lime-700 p-1",
+          status === " regular" && "bg-lime-500/20 text-lime-700 p-1",
+          status === "Furtado" && "bg-yellow-500/20 text-yellow-700 p-1",
+          // status === "Perdido" && "bg-primary/20 text-primary p-1", // orange color
+          status === "Perdido" && "bg-violet-500/20 text-violet-700 p-1", // orange color
+        )}>{status.replace(' ', '')}</span>
       </TableCell>
       <TableCell className="flex gap-2 items-center h-20 my-10 md:my-3">
         <div className="flex flex-col md:flex-row items-center w-full gap-2">

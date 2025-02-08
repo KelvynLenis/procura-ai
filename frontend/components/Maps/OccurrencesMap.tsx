@@ -113,7 +113,7 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
       return '#CF4227' // red color
     }
     else if (type === 'Perda' || type === 'Extravio ou Perda') {
-      return '#0F2498' // blue color
+      return '#8b5cf6' // blue color
     }
   }
 

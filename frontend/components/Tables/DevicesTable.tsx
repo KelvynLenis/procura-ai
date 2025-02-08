@@ -65,6 +65,8 @@ export function DevicesTable() {
         }
 
         const result = await response.json();
+
+        console.log(result.documents);
         setDevices(result.documents || []);
       } catch (err) {
         console.error(`Fetch error: ${err}`);
@@ -128,6 +130,7 @@ export function DevicesTable() {
               brand={device.brand}
               imei={device.imei}
               isStolen={device.is_stolen!}
+              status={device.status!}
               setDevices={setDevices}
             />
           ))

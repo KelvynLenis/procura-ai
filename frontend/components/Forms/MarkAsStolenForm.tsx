@@ -1,4 +1,4 @@
-"use client"
+
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
@@ -17,6 +17,9 @@ import { v4 as uuidv4 } from 'uuid'
 import { DialogClose } from "../ui/dialog"
 import { DeviceProps } from "@/utils/types"
 import { Textarea } from "../ui/textarea"
+import { revalidateTag } from "next/cache"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 interface MarkAsStolenFormProps {
   id: string
@@ -24,11 +27,20 @@ interface MarkAsStolenFormProps {
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
 }
 
+const formSchema = z.object({
+  datetime: z.string().min(1, { message: "Data e hora são obrigatórios" }),
+  description: z.any().optional(),
+  type: z.string().min(1, { message: "Tipo de ocorrência é obrigatório" }),
+  coordinates: z.tuple([z.number(), z.number()]), // Fixed to exactly two numbers
+  cod_neighborhood: z.number().min(1, { message: "Bairro é obrigatório" })
+})
+
 export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormProps) {
 
   const occurrenceTypes = [
     { label: "Furto simples", value: "Furto simples" },
     { label: "Extravio ou Perda", value: "Extravio ou Perda" },
+    { label: "Roubo", value: "Roubo" },
   ] as const
 
   const form = useForm({
@@ -37,7 +49,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
       description: '',
       type: '',
       coordinates: [0, 0],
-      cod_bairro: 0
+      cod_neighborhood: 0
     }
   })
 
@@ -45,13 +57,45 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
     form.setValue('coordinates', coordinates)
   }
 
-  function handleSetBairro(codBairro: number) {
-    form.setValue('cod_bairro', codBairro)
+  function handleSetNeighborhood(codBairro: number) {
+    form.setValue('cod_neighborhood', codBairro)
   }
 
   async function onSubmit(values: any) {
+    console.log(values)
+
+
+
+    const getStatus = (type: string) => {
+      if (type === 'Furto simples') {
+        return 'Furtado'
+      } else if (type === 'Extravio ou Perda') {
+        return 'Perdido'
+      } else if (type === 'Roubo') {
+        return 'Roubado'
+      }
+    }
 
     try {
+
+      if (values.datetime === '') {
+        form.setError('datetime', { message: 'Data e hora são obrigatórios' })
+        toast.error('Data e hora são obrigatórios')
+        throw new Error('Data e hora são obrigatórios')
+      }
+
+      if (values.type === '') {
+        form.setError('type', { message: 'Tipo de ocorrência é obrigatório' })
+        toast.error('Tipo de ocorrência é obrigatório')
+        throw new Error('Tipo de ocorrência é obrigatório')
+      }
+
+      if (values.coordinates[0] === 0 || values.coordinates[1] === 0) {
+        form.setError('coordinates', { message: 'Selecione um ponto no mapa' })
+        toast.error('Coordenadas são obrigatórias')
+        throw new Error('Coordenadas são obrigatórias')
+      }
+
       const eventId = uuidv4();
       const callFunction = async () => {
         const promise = await fetch(
@@ -84,19 +128,22 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
               'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
             },
             body: JSON.stringify({
-              data: { is_stolen: true,
-                status: values.type
-               },
+              data: {
+                is_stolen: true,
+                status: getStatus(values.type)
+              },
             }),
           }
         );
+
       }
-      setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, is_stolen: true } : device));
+      setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, is_stolen: true, status: getStatus(values.type) } : device));
+      // setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device,  } : device));
 
       toast.promise(callFunction, {
-        pending: 'Marcando como roubado...',
-        success: 'Marcado como roubado',
-        error: 'Erro ao marcar como roubado'
+        pending: `Marcando como ${values.type}...`,
+        success: `Marcado como ${values.type}!`,
+        error: `Erro ao marcar como ${values.type}!`
       })
 
       console.log(values)
@@ -115,10 +162,14 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
               name="datetime"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
-                  <FormLabel className="">Data e hora do furto</FormLabel>
+                  <FormLabel className="w-fit text-center items-center flex">
+                    <span className="text-red-500 text-3xl h-6 flex align-text-bottom">*</span>
+                    Data e hora do furto
+                  </FormLabel>
                   <FormControl>
                     <Input type="datetime-local" {...field} className="ring-1 ring-zinc-300" />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -130,8 +181,9 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
                 <FormItem className="flex flex-col w-full">
                   <FormLabel className="">Descrição</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Uma descrição breve" {...field} className="resize-none h-36 ring-1 ring-zinc-300" />
+                    <Textarea placeholder="Uma descrição breve" {...field} className="resize-none text-start h-36 ring-1 ring-zinc-300" />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -141,7 +193,11 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
               name="type"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
-                  <FormLabel className="">Tipo de ocorrência</FormLabel>
+                  <FormLabel className="w-fit text-center items-center flex">
+                    <span className="text-red-500 text-3xl h-6 flex align-text-bottom">*</span>
+
+                    Tipo de ocorrência
+                  </FormLabel>
                   <DropdownMenu>
                     <DropdownMenuTrigger className="w-full flex items-center rounded-lg text-xs gap-0 p-2 md:text-base lg:gap-2 justify-between bg-zinc-100">
                       <span className="w-full text-sm">
@@ -159,6 +215,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
                           <DropdownMenuItem
                             key={occurrenceType.value}
                             onClick={() => form.setValue('type', occurrenceType.value)}
+                            className="hover:bg-primary hover:text-procura-ai-white"
                           >
                             {occurrenceType.label}
                           </DropdownMenuItem>
@@ -166,6 +223,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
                       }
                     </DropdownMenuContent>
                   </DropdownMenu>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -176,20 +234,21 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
               name="coordinates"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
-                  <FormLabel className="">Clique no mapa o local da ocorrência</FormLabel>
+                  <FormLabel className="w-fit text-center items-center flex">
+                    <span className="text-red-500 text-3xl h-6 flex align-text-bottom">*</span>
+                    Clique no mapa o local da ocorrência
+                  </FormLabel>
                   <FormControl>
-                    <MarkAsStolenMap setPosition={handleSetPosition} setBairro={handleSetBairro} />
+                    <MarkAsStolenMap setPosition={handleSetPosition} setBairro={handleSetNeighborhood} />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
           </div>
         </div>
 
-        <DialogClose asChild>
-
-          <Button variant="blue" type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl">Salvar</Button>
-        </DialogClose>
+        <Button variant="blue" type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl">Salvar</Button>
       </form>
     </Form>
   )

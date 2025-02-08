@@ -65,8 +65,9 @@ const PieChartRechart = ({ numberOfDevicesRecovered, numberOfDevicesStolen, numb
 
   const newData = [
     { name: 'Recuperado', value: numberOfDevicesRecovered, color: "#409A00" },
-    { name: 'Furtado', value: numberOfDevicesStolen, color: "#D04228" },
-    { name: 'Perdido', value: numberOfDevicesLost, color: '#D8A912' },
+    { name: 'Furtado', value: numberOfDevicesStolen, color: "#D8A913" },
+    { name: 'Roubado', value: numberOfDevicesStolen, color: "#CF4227" },
+    { name: 'Perdido', value: numberOfDevicesLost, color: '#8b5cf6' },
     { name: 'Cadastrado', value: numberOfDevicesRegistered, color: '#002E72' },
   ]
 
