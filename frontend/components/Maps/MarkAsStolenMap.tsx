@@ -6,12 +6,12 @@ import * as turf from "@turf/turf"
 
 interface MarkAsStolenMapProps {
   setPosition: (coordinates: [number, number]) => void
-  setBairro: (codBairro: number) => void
+  setNeighborhoodId: (districtId: number) => void
 }
 
 const geoJsonLink = "https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI"
 
-export function MarkAsStolenMap({ setPosition, setBairro }: MarkAsStolenMapProps) {
+export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolenMapProps) {
   const [isMarkerOn, setIsMarkerOn] = useState(false)
   const [coordinates, setCoordinates] = useState<[number, number]>([0, 0])
   const [geoJsonData, setGeoJsonData] = useState<any>(null)
@@ -46,9 +46,42 @@ export function MarkAsStolenMap({ setPosition, setBairro }: MarkAsStolenMapProps
       .then((data) => setGeoJsonData(data))
   }, [])
 
-  function handleGetPosition({ event, latLng }: { event: MouseEvent; latLng: [number, number] }) {
-    console.log("Coordenadas do clique:", latLng)
+  async function getNeighborhoodId(cod_neighborhood: number) {
 
+    const params = new URLSearchParams({
+      "queries[0]": JSON.stringify({
+        method: "equal",
+        attribute: "cod_neighborhood",
+        values: [cod_neighborhood],
+      }),
+    })
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DISTRICT}/documents?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+          },
+          cache: "no-store",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch stolen devices: ${await response.text()}`);
+      }
+
+      const result = await response.json();
+      console.log(result.documents[0]);
+      return result.documents[0].$id
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function handleGetPosition({ event, latLng }: { event: MouseEvent; latLng: [number, number] }) {
     const clickedPoint = turf.point([latLng[1], latLng[0]])
 
     let foundFeature = null
@@ -62,10 +95,9 @@ export function MarkAsStolenMap({ setPosition, setBairro }: MarkAsStolenMapProps
     }
 
     if (foundFeature) {
-      console.log("O ponto pertence a:", foundFeature.properties)
-      setBairro(foundFeature.properties.cod_bairro)
-    } else {
-      console.log("O ponto não pertence a nenhuma área do GeoJSON.")
+      // console.log("O ponto pertence a:", foundFeature.properties)
+      const neighborhoodId = await getNeighborhoodId(Number(foundFeature.properties.cod_bairro))
+      setNeighborhoodId(neighborhoodId)
     }
 
     setIsMarkerOn(true)

@@ -72,7 +72,7 @@ export function DeviceInfoCard({ occurence, closePopup, styles }: DeviceInfoCard
             <span className="font-semibold">{occurence.device.phone_model}</span>
             <span className="font-semibold">{occurence.device.brand}</span>
             <span className="font-semibold">{occurence.user.name}</span>
-            <span className="font-semibold">{occurence.event.description}</span>
+            <span className={cn(occurence.event.description ? "font-semibold" : "italic text-zinc-500")}>{occurence.event.description ? occurence.event.description : 'Sem detalhes'}</span>
           </div>
         </div>
 

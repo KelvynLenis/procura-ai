@@ -118,7 +118,7 @@ export function MapTiler2({ data, mapId, legendId }: ChoroplethMapProps) {
           <span className='flex w-fit bg-white text-black rounded-xl absolute top-10 right-10 p-2 ring-2 ring-black'>{hoverText}</span>
         </div>
       }
-      <div id={mapId} className=' w-[100%] h-[444px] '>
+      <div id={mapId} className=' w-[100%] h-[280px] '>
       </div>
       <div id="state-legend" className="legend">
         <h4>Qtd de incidências por bairro</h4>
