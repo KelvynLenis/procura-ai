@@ -28,45 +28,46 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
 
     const district = districts.find(district => district.cod_neighborhood === Number(feature.payload.properties.cod_bairro))
 
-    const total = district!.theft_counter + district!.lost_counter + district!.robbery_counter
+    const total = district?.robbery_counter ? district?.robbery_counter : 0
+
     setOverlayData({
       district,
-      color: getFillColor(total)
+      color: getFillColor(district?.cod_neighborhood)
     })
-    console.log(district)
   }
 
-  function getFillColor(value: number) {
-    switch (value) {
-      case 3:
-        return '#FEFF73';
-      case 4:
-        return '#F3B900';
-      case 17:
-        return '#F47A01';
-      case 24:
-        return '#E60000';
-      case 32:
-        return '#A80000';
-      default:
-        return '#FEFF73';
+  function getFillColor(cod_neighborhood: number) {
+
+    const district = districts.find(district => district.cod_neighborhood === cod_neighborhood)
+    const total = district?.robbery_counter ? district?.robbery_counter : 0
+
+    if (total <= 2) {
+      return '#FEFF73';
+    } else if (total <= 3) {
+      return '#F47A01';
+    } else if (total <= 4) {
+      return '#E60000';
+    } else if (total <= 20) {
+      return '#F50000';
+    } else {
+      return '#FEFF73';
     }
   }
 
-  function getHoverColor(value: number) {
-    switch (value) {
-      case 5:
-        return '#FEFF73';
-      case 9:
-        return '#F3B900';
-      case 17:
-        return '#F47A01';
-      case 24:
-        return '#E60000';
-      case 32:
-        return '#F50000';
-      default:
-        return '#FEFF73';
+  function getHoverColor(cod_neighborhood: number) {
+    const district = districts.find(district => district.cod_neighborhood === cod_neighborhood)
+    const total = district?.robbery_counter ? district?.robbery_counter : 0
+
+    if (total <= 2) {
+      return '#FEFF73';
+    } else if (total <= 3) {
+      return '#F47A01';
+    } else if (total <= 4) {
+      return '#E60000';
+    } else if (total <= 20) {
+      return '#F50000';
+    } else {
+      return '#FEFF73';
     }
   }
 
@@ -99,8 +100,8 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
           link={geoJsonLink}
           styleCallback={(feature, hover) =>
             hover
-              ? { fill: getHoverColor(feature.properties.value), opacity: 0.80, strokeWidth: '2', stroke: '#000' }
-              : { fill: getFillColor(feature.properties.value), opacity: 0.5, strokeWidth: '1', stroke: '#000' }
+              ? { fill: getHoverColor(Number(feature.properties.cod_bairro)), opacity: 0.80, strokeWidth: '2', stroke: '#000' }
+              : { fill: getFillColor(Number(feature.properties.cod_bairro)), opacity: 0.5, strokeWidth: '1', stroke: '#000' }
           }
           onMouseOver={
             (feature) => {
@@ -143,9 +144,10 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
       {
         isOverlayOpen && (
           <div
-            className={cn("absolute top-5 left-5 flex w-fit p-2 rounded-md h-fit bg-white ring-1 ring-black/50", `bg-[${OverlayData.color}]`)}
+            className={cn("absolute flex gap-2 top-5 left-5 w-fit p-2 rounded-md h-fit bg-white ring-1 ring-black/50")}
             onClick={() => setIsOverlayOpen(false)}
           >
+            <span className={`w-3 h-3 rounded-full ring-1 ring-black bg-[${OverlayData.color}]`}></span>
             <span className="font-bold">
               {OverlayData.district?.name_neighborhood && OverlayData.district.name_neighborhood} <br />
               No. Roubos {OverlayData.district?.robbery_counter && OverlayData.district.robbery_counter} <br />

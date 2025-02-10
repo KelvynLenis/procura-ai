@@ -199,21 +199,27 @@ export function ChartBoard() {
 
     const allDistricts: District[] = [];
 
-    const params = new URLSearchParams({
-      "queries[0]": JSON.stringify({
-        method: "equal",
-        attribute: "name_municipality",
-        values: ["João Pessoa"],
-      })
-    })
-
-
 
     while (offset < total) {
+      const params = new URLSearchParams({
+        "queries[0]": JSON.stringify({
+          method: "equal",
+          attribute: "name_municipality",
+          values: ["João Pessoa"],
+        }),
+        "queries[1]": JSON.stringify({
+          method: "limit",
+          values: [limit],
+        }),
+        "queries[2]": JSON.stringify({
+          method: "offset",
+          values: [offset],
+        }),
+      })
 
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DISTRICT}/documents`,
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DISTRICT}/documents?${params.toString()}`,
           {
             method: "GET",
             headers: {
@@ -239,7 +245,6 @@ export function ChartBoard() {
       }
     }
 
-    console.log(allDistricts);
     setDistricts(allDistricts);
   }
 

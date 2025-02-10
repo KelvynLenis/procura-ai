@@ -53,15 +53,15 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
     form.setValue('id_district', districtId)
   }
 
-  async function getNeighborhood(districtId: number) {
+  async function getNeighborhood(districtId: string) {
 
     console.log(districtId)
 
     const params = new URLSearchParams({
       "queries[0]": JSON.stringify({
         method: "equal",
-        attribute: "cod_neighborhood",
-        values: [Number(districtId)],
+        attribute: "$id",
+        values: [districtId],
       }),
     })
 
@@ -90,10 +90,10 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
     }
   }
 
-  async function updateDistrict(districtId: number) {
+  async function updateDistrict(districtId: string) {
     try {
 
-      const neighborhood = await getNeighborhood(Number(districtId))
+      const neighborhood = await getNeighborhood(districtId)
 
       console.log(neighborhood)
 
@@ -215,7 +215,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
                 }),
               }
             ),
-            updateDistrict(Number(values.id_district))
+            updateDistrict(values.id_district)
           ]);
 
           // console.log("Todas as operações foram concluídas com sucesso!", {

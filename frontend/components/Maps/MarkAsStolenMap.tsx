@@ -75,7 +75,7 @@ export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolen
 
       const result = await response.json();
       console.log(result.documents[0]);
-      return result.documents[0].$collectionId
+      return result.documents[0].$id
     } catch (error) {
       console.error(error);
     }
@@ -97,7 +97,7 @@ export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolen
     if (foundFeature) {
       // console.log("O ponto pertence a:", foundFeature.properties)
       const neighborhoodId = await getNeighborhoodId(Number(foundFeature.properties.cod_bairro))
-      setNeighborhoodId(foundFeature.properties.cod_bairro)
+      setNeighborhoodId(neighborhoodId)
     }
 
     setIsMarkerOn(true)
