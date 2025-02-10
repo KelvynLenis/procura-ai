@@ -116,26 +116,22 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
         />
         <div className="absolute w-36 top-2 right-2 bg-black/50 py-2 px-4 rounded-md text-white">
           <h1>Legend</h1>
-          <ul className="flex flex-wrap gap-2">
+          <ul className="flex flex-col gap-2">
             <li className="flex items-center gap-2">
               <span className="w-4 h-4 p-1 bg-[#FEFF73] inline-block rounded-full ring-1 ring-black" />
-              0 - 8
+              0 - 2
             </li>
             <li className="flex items-center gap-2">
               <span className="w-4 h-4 p-1 bg-[#F3B900] inline-block rounded-full ring-1 ring-black" />
-              8 - 16
+              2 - 3
             </li>
             <li className="flex items-center gap-2">
               <span className="w-4 h-4 p-1 bg-[#E60000] inline-block rounded-full ring-1 ring-black" />
-              17 - 23
+              3 - 4
             </li>
             <li className="flex items-center gap-2">
-              <span className="w-4 h-4 p-1 bg-[#E60000] inline-block rounded-full ring-1 ring-black" />
-              24 - 31
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="w-4 h-4 p-1 bg-[#A80000] inline-block rounded-full ring-1 ring-black" />
-              32 - 39
+              <span className="w-4 h-4 p-1 bg-[#F50000] inline-block rounded-full ring-1 ring-black" />
+              4 - 20
             </li>
           </ul>
         </div>

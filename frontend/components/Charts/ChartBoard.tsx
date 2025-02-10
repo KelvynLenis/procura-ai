@@ -562,7 +562,6 @@ export function ChartBoard() {
             </span>
 
             <div className="w-full h-full flex items-center justify-center bg-zinc-200 rounded-sm relative" >
-              {/* <span className="text-zinc-400 text-xl">Em breve</span> */}
               <OccurrencesHeatMap districts={districts} />
             </div>
           </div>
