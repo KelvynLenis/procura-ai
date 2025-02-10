@@ -1,32 +1,46 @@
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
+import { District } from "@/utils/types";
 import { Map, GeoJsonLoader, Overlay } from "pigeon-maps";
 import { useState } from "react";
 
 const geoJsonLink = "https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI"
 
-
-
 interface OverlayDataProps {
-  coordinates: [number, number]
-  text: string
-  value: number
+  district: District
   color: string
 }
 
-export function PigeonMapLoader() {
+interface OccurrencesHeatMapProps {
+  districts: District[]
+}
+
+export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false)
-  const [OverlayData, setOverlayData] = useState<OverlayDataProps>({
-    coordinates: [0, 0],
-    text: '',
-    value: 0,
-    color: ''
-  })
+  const [OverlayData, setOverlayData] = useState<OverlayDataProps>({} as OverlayDataProps)
+
+
+  function handleOverlayMouseOver(feature: any) {
+    console.log(feature.payload.properties.cod_bairro)
+
+    // console.log(typeof Number(feature.payload.properties.cod_bairro))
+
+    setIsOverlayOpen(true)
+
+    const district = districts.find(district => district.cod_neighborhood === Number(feature.payload.properties.cod_bairro))
+
+    const total = district!.theft_counter + district!.lost_counter + district!.robbery_counter
+    setOverlayData({
+      district,
+      color: getFillColor(total)
+    })
+    console.log(district)
+  }
 
   function getFillColor(value: number) {
     switch (value) {
-      case 5:
+      case 3:
         return '#FEFF73';
-      case 9:
+      case 4:
         return '#F3B900';
       case 17:
         return '#F47A01';
@@ -56,9 +70,31 @@ export function PigeonMapLoader() {
     }
   }
 
+  function setWidth() {
+
+    // if (window.innerWidth >= 2560) {
+    //   return window.innerWidth * 0.85
+    // }
+    // else if (window.innerWidth < 1200) {
+    //   return window.innerWidth * 0.6
+    // }
+    // else if (window.innerWidth < 1700) {
+    //   return window.innerWidth * 0.75
+    // }
+    // else if (window.innerWidth < 2560) {
+    //   return window.innerWidth * 0.8
+    // }
+    return 520
+
+  }
+
+  function setHeight() {
+    return 270
+  }
+
   return (
     <>
-      <Map height={450} defaultCenter={[-7.1509317, -34.8446769]} defaultZoom={13}>
+      <Map width={setWidth()} height={setHeight()} defaultCenter={[-7.1509317, -34.8446769]} defaultZoom={13}>
         <GeoJsonLoader
           link={geoJsonLink}
           styleCallback={(feature, hover) =>
@@ -69,8 +105,10 @@ export function PigeonMapLoader() {
           onMouseOver={
             (feature) => {
               setIsOverlayOpen(true)
-              setOverlayData({ coordinates: feature.payload.geometry.coordinates[0][0], text: feature.payload.properties.text, value: feature.payload.properties.value, color: getFillColor(feature.payload.properties.value) })
-              console.log(getFillColor(feature.payload.properties.value))
+              setOverlayData({ district: feature.payload.properties, color: getFillColor(feature.payload.properties.value) })
+              // console.log(getFillColor(feature.payload.properties.value))
+              // console.log(feature.payload.properties)
+              handleOverlayMouseOver(feature)
             }
           }
           onMouseOut={() => setIsOverlayOpen(false)}
@@ -105,13 +143,17 @@ export function PigeonMapLoader() {
       {
         isOverlayOpen && (
           <div
-            className={clsx("absolute top-10 left-5 flex w-fit p-2 rounded-md h-fit bg-white")}
+            className={cn("absolute top-5 left-5 flex w-fit p-2 rounded-md h-fit bg-white ring-1 ring-black/50", `bg-[${OverlayData.color}]`)}
             onClick={() => setIsOverlayOpen(false)}
           >
-            <span className="">
-              {OverlayData.text}: {OverlayData.value}
+            <span className="font-bold">
+              {OverlayData.district?.name_neighborhood && OverlayData.district.name_neighborhood} <br />
+              No. Roubos {OverlayData.district?.robbery_counter && OverlayData.district.robbery_counter} <br />
+              No. Furtos {OverlayData.district?.theft_counter && OverlayData.district.theft_counter} <br />
+              No. Perdidos {OverlayData.district?.lost_counter && OverlayData.district.lost_counter} <br />
             </span>
           </div>
+
         )
       }
     </>

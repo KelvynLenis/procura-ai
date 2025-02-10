@@ -1,4 +1,5 @@
 import DeviceSchema from "@/schemas/deviceSchema"
+import districtSchema from "@/schemas/districtSchema";
 import EventSchema from "@/schemas/eventSchema";
 import { z } from "zod"
 
@@ -24,3 +25,4 @@ export interface EventProps {
 
 export type Device = z.infer<typeof DeviceSchema>;
 export type Event = z.infer<typeof EventSchema>;
+export type District = z.infer<typeof districtSchema>;

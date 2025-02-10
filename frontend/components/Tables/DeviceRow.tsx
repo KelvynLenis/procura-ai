@@ -164,7 +164,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
           status === "Furtado" && "bg-yellow-500/20 text-yellow-700 p-1",
           // status === "Perdido" && "bg-primary/20 text-primary p-1", // orange color
           status === "Perdido" && "bg-violet-500/20 text-violet-700 p-1", // orange color
-        )}>{status.replace(' ', '')}</span>
+        )}>{status === 'Recuperado' ? "Regular" : status.replace(' ', '')}</span>
       </TableCell>
       <TableCell className="flex gap-2 items-center h-20 my-10 md:my-3">
         <div className="flex flex-col md:flex-row items-center w-full gap-2">

@@ -27,14 +27,6 @@ interface MarkAsStolenFormProps {
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
 }
 
-const formSchema = z.object({
-  datetime: z.string().min(1, { message: "Data e hora são obrigatórios" }),
-  description: z.any().optional(),
-  type: z.string().min(1, { message: "Tipo de ocorrência é obrigatório" }),
-  coordinates: z.tuple([z.number(), z.number()]), // Fixed to exactly two numbers
-  cod_neighborhood: z.number().min(1, { message: "Bairro é obrigatório" })
-})
-
 export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormProps) {
 
   const occurrenceTypes = [
@@ -49,7 +41,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
       description: '',
       type: '',
       coordinates: [0, 0],
-      cod_neighborhood: 0
+      id_district: 0
     }
   })
 
@@ -57,15 +49,97 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
     form.setValue('coordinates', coordinates)
   }
 
-  function handleSetNeighborhood(codBairro: number) {
-    form.setValue('cod_neighborhood', codBairro)
+  function handleSetNeighborhood(districtId: number) {
+    form.setValue('id_district', districtId)
+  }
+
+  async function getNeighborhood(districtId: number) {
+
+    console.log(districtId)
+
+    const params = new URLSearchParams({
+      "queries[0]": JSON.stringify({
+        method: "equal",
+        attribute: "cod_neighborhood",
+        values: [Number(districtId)],
+      }),
+    })
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DISTRICT}/documents?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+          },
+          cache: "no-store",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch stolen devices: ${await response.text()}`);
+      }
+
+      const result = await response.json();
+
+      return result.documents[0]
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function updateDistrict(districtId: number) {
+    try {
+
+      const neighborhood = await getNeighborhood(Number(districtId))
+
+      console.log(neighborhood)
+
+      let data
+
+      if (form.getValues('type') === 'Furto simples') {
+        data = {
+          theft_counter: neighborhood.theft_counter + 1,
+        }
+      } else if (form.getValues('type') === 'Extravio ou Perda') {
+        data = {
+          lost_counter: neighborhood.lost_counter + 1,
+        }
+      } else if (form.getValues('type') === 'Roubo') {
+        data = {
+          robbery_counter: neighborhood.robbery_counter + 1,
+        }
+      }
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DISTRICT}/documents/${neighborhood.$id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+          },
+          body: JSON.stringify({
+            data,
+          }),
+          cache: "no-store",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch stolen devices: ${await response.text()}`);
+      }
+
+      const result = await response.json();
+      return result
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async function onSubmit(values: any) {
-    console.log(values)
-
-
-
     const getStatus = (type: string) => {
       if (type === 'Furto simples') {
         return 'Furtado'
@@ -97,53 +171,71 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
       }
 
       const eventId = uuidv4();
+
       const callFunction = async () => {
-        const promise = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents/`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
-            },
-            body: JSON.stringify({
-              documentId: eventId,
-              data: {
-                id_device: id,
-                time_event: values.datetime,
-                last_location: values.coordinates,
-                description: values.description,
-                type: values.type,
-                is_alert_on: true
+
+        try {
+          const [createdEvent, updatedDeviceStatus, updatedDistrict] = await Promise.all([
+            fetch(
+              `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents/`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+                },
+                body: JSON.stringify({
+                  documentId: eventId,
+                  data: {
+                    id_device: id,
+                    time_event: values.datetime,
+                    description: values.description,
+                    type: values.type,
+                    is_alert_on: true,
+                    last_location: values.coordinates,
+                    id_district: values.id_district,
+                  }
+                })
               }
-            })
-          })
+            ),
 
-        const updateDeviceStatus = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
-          {
-            method: "PATCH",
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
-            },
-            body: JSON.stringify({
-              data: {
-                is_stolen: true,
-                status: getStatus(values.type)
-              },
-            }),
-          }
-        );
+            fetch(
+              `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
+              {
+                method: "PATCH",
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+                },
+                body: JSON.stringify({
+                  data: {
+                    is_stolen: true,
+                    status: getStatus(values.type)
+                  },
+                }),
+              }
+            ),
+            updateDistrict(Number(values.id_district))
+          ]);
 
+          // console.log("Todas as operações foram concluídas com sucesso!", {
+          //   createdEvent,
+          //   updatedDeviceStatus,
+          //   updatedDistrict
+          // });
+
+        } catch (error) {
+          console.error("Ocorreu um erro em uma das operações:", error);
+          return
+        }
       }
+
       setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, is_stolen: true, status: getStatus(values.type) } : device));
-      // setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device,  } : device));
 
       toast.promise(callFunction, {
-        pending: `Marcando como ${values.type}...`,
-        success: `Marcado como ${values.type}!`,
-        error: `Erro ao marcar como ${values.type}!`
+        pending: `Marcando como ${getStatus(values.type)}...`,
+        success: `Marcado como ${getStatus(values.type)}!`,
+        error: `Erro ao marcar como ${getStatus(values.type)}!`
       })
 
       console.log(values)
@@ -239,7 +331,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
                     Clique no mapa o local da ocorrência
                   </FormLabel>
                   <FormControl>
-                    <MarkAsStolenMap setPosition={handleSetPosition} setBairro={handleSetNeighborhood} />
+                    <MarkAsStolenMap setPosition={handleSetPosition} setNeighborhoodId={handleSetNeighborhood} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
