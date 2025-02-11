@@ -18,6 +18,7 @@ import { Device, District, Event, EventProps } from "@/utils/types";
 import { useRouter } from "next/navigation";
 import { LoadingToast } from "../LoadingToast";
 import PieChartRechart from "./PieChartRechart";
+import { NotificationButton } from "../NotificationButton";
 
 
 export function ChartBoard() {
@@ -28,6 +29,8 @@ export function ChartBoard() {
   const [numberOfDevicesLost, setNumberOfDevicesLost] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [districts, setDistricts] = useState<District[]>([])
+  const [notifications, setNotifications] = useState([]);
+
   // let districts: District[] = []
 
   const router = useRouter()
@@ -516,11 +519,13 @@ export function ChartBoard() {
     getNumberOfAllStolenDevices()
     getAllDistricts()
     fetchAllDevices()
-
-  }, [])
+    
+    }, [notifications])
 
   return (
     <>
+      <NotificationButton notifications={notifications} setNotifications={setNotifications}/>
+
       <div className="w-full h-full flex flex-col py-5 justify-start items-center gap-5">
 
         <div className="relative flex flex-col md:mr-2 self-start md:w-3/5 lg:w-8/12 xl:w-full bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center gap-3">

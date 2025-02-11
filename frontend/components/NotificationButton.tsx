@@ -4,14 +4,15 @@ import { client } from "@/lib/appwrite";
 import { Bell } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 
-export function NotificationButton() {
-  const [notifications, setNotifications] = useState([]);
+export function NotificationButton({ notifications, setNotifications }: {
+  notifications: [], setNotifications: React.Dispatch<React.SetStateAction<[]>>
+}) {
   const [isListVisible, setIsListVisible] = useState(false);
 
   const handleNewNotification = useCallback((response) => {
     const { payload } = response;
 
-    if (payload?.type === "Furto simples" || payload?.type === "Extravio ou Perda") {
+    if (payload?.type === "Furto simples" || payload?.type === "Extravio ou Perda" || payload?.type === "Roubo") {
       setNotifications((prevNotifications) => {
         const exists = prevNotifications.some((n) => n.$id === payload.$id);
         return exists ? prevNotifications : [...prevNotifications, payload];
@@ -40,25 +41,24 @@ export function NotificationButton() {
             {notifications.length}
           </span>
         )}
-
-        {isListVisible && (
-          <div className="absolute right-0 top-12 bg-white shadow-lg rounded-md w-64 border">
-            <div className="p-2 text-gray-700 font-semibold border-b">Notificações</div>
-            <div className="max-h-60 overflow-y-auto">
-              {notifications.length > 0 ? (
-                notifications.map((notification) => (
-                  <div key={notification.$id} className="p-3 border-b">
-                    <h1 className="font-bold">Novo {notification.type}</h1>
-                    <p className="text-sm text-gray-600">descrição: {notification.description}</p>
-                  </div>
-                ))
-              ) : (
-                <p className="p-3 text-gray-500 text-sm">Nenhuma notificação</p>
-              )}
-            </div>
-          </div>
-        )}
       </button >
+      {isListVisible && (
+        <div className="absolute right-0 top-12 bg-white shadow-lg rounded-md w-64 border z-100">
+          <div className="p-2 text-gray-700 font-semibold border-b">Notificações</div>
+          <div className="max-h-60 overflow-y-auto">
+            {notifications.length > 0 ? (
+              notifications.map((notification) => (
+                <div key={notification.$id} className="p-3 border-b">
+                  <h1 className="font-bold">Novo {notification.type}</h1>
+                  <p className="text-sm text-gray-600">descrição: {notification.description}</p>
+                </div>
+              ))
+            ) : (
+              <p className="p-3 text-gray-500 text-sm">Nenhuma notificação</p>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }
