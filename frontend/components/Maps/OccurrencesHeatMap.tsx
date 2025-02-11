@@ -20,26 +20,27 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
 
 
   function handleOverlayMouseOver(feature: any) {
-    console.log(feature.payload.properties.cod_bairro)
-
     // console.log(typeof Number(feature.payload.properties.cod_bairro))
 
     setIsOverlayOpen(true)
 
     const district = districts.find(district => district.cod_neighborhood === Number(feature.payload.properties.cod_bairro))
 
-    const total = district?.robbery_counter ? district?.robbery_counter : 0
-
     setOverlayData({
       district,
-      color: getFillColor(district?.cod_neighborhood)
+      color: getFillColor(district?.cod_neighborhood!)
     })
   }
 
   function getFillColor(cod_neighborhood: number) {
 
     const district = districts.find(district => district.cod_neighborhood === cod_neighborhood)
-    const total = district?.robbery_counter ? district?.robbery_counter : 0
+
+    const robbery_counter = district?.robbery_counter ? district?.robbery_counter : 0
+    const lost_counter = district?.lost_counter ? district?.lost_counter : 0
+    const theft_counter = district?.theft_counter ? district?.theft_counter : 0
+
+    const total = robbery_counter + lost_counter + theft_counter
 
     if (total <= 2) {
       return '#FEFF73';
@@ -56,7 +57,11 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
 
   function getHoverColor(cod_neighborhood: number) {
     const district = districts.find(district => district.cod_neighborhood === cod_neighborhood)
-    const total = district?.robbery_counter ? district?.robbery_counter : 0
+    const robbery_counter = district?.robbery_counter ? district?.robbery_counter : 0
+    const lost_counter = district?.lost_counter ? district?.lost_counter : 0
+    const theft_counter = district?.theft_counter ? district?.theft_counter : 0
+
+    const total = robbery_counter + lost_counter + theft_counter
 
     if (total <= 2) {
       return '#FEFF73';
@@ -105,10 +110,6 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
           }
           onMouseOver={
             (feature) => {
-              setIsOverlayOpen(true)
-              setOverlayData({ district: feature.payload.properties, color: getFillColor(feature.payload.properties.value) })
-              // console.log(getFillColor(feature.payload.properties.value))
-              // console.log(feature.payload.properties)
               handleOverlayMouseOver(feature)
             }
           }
