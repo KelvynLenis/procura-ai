@@ -11,8 +11,9 @@ export function NotificationButton({ notifications, setNotifications }: {
 
   const handleNewNotification = useCallback((response) => {
     const { payload } = response;
-
-    if (payload?.type === "Furto simples" || payload?.type === "Extravio ou Perda" || payload?.type === "Roubo") {
+    const isRelevant = ["Furto simples", "Extravio ou Perda", "Roubo", "Recuperado"].includes(payload.type);
+    if (isRelevant) {
+    // if (payload?.type === "Furto simples" || payload?.type === "Extravio ou Perda" || payload?.type === "Roubo"|| payload?.type === "Recuperado") {
       setNotifications((prevNotifications) => {
         const exists = prevNotifications.some((n) => n.$id === payload.$id);
         return exists ? prevNotifications : [...prevNotifications, payload];
@@ -31,14 +32,17 @@ export function NotificationButton({ notifications, setNotifications }: {
 
   const toggleList = () => setIsListVisible((prev) => !prev);
 
+  const filteredNotifications = notifications.filter(n => n.type !== "Recuperado");
+  console.log(filteredNotifications)
+
   return (
     <>
 
       <button className="absolute right-10 top-3 bg-procura-ai-white p-2 rounded-full hover:bg-procura-ai-blue hover:ring-1 hover:ring-procura-ai-white hover:text-white transition-all duration-500" onClick={toggleList}>
         <Bell className="size-7" />
-        {notifications.length > 0 && (
+        {filteredNotifications.length > 0 && (
           <span className="bg-red-500 text-white rounded-full w-6 h-6 font-bold flex items-center justify-center absolute -top-1 right-3">
-            {notifications.length}
+            {filteredNotifications.length}
           </span>
         )}
       </button >
@@ -46,8 +50,8 @@ export function NotificationButton({ notifications, setNotifications }: {
         <div className="absolute right-0 top-12 bg-white shadow-lg rounded-md w-64 border z-100">
           <div className="p-2 text-gray-700 font-semibold border-b">Notificações</div>
           <div className="max-h-60 overflow-y-auto">
-            {notifications.length > 0 ? (
-              notifications.map((notification) => (
+            {filteredNotifications.length > 0 ? (
+              filteredNotifications.map((notification) => (
                 <div key={notification.$id} className="p-3 border-b">
                   <h1 className="font-bold">Novo {notification.type}</h1>
                   <p className="text-sm text-gray-600">descrição: {notification.description}</p>
