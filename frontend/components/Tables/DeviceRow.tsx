@@ -189,7 +189,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
             isStolen
               ? <button title="Desativar alerta" className={cn("w-10 h-10 group relative rounded-lg ring-1 ring-red-500 flex flex-col md:flex-row items-center justify-center bg-red-200 hover:bg-white text-red-600")} onClick={() => handleDeviceRecovery(id)}>
                 <IoIosWarning size={28} />
-                <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-28 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
                   Desativar alerta
                 </span>
               </button>
