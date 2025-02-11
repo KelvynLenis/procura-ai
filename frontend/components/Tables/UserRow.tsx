@@ -27,7 +27,7 @@ interface UserRowProps {
   name?: string;
   cpf?: string;
   email?: string;
-  userId?: string
+  user_id?: string
 }
 
 export function UserRow({ user, index }: { user: UserRowProps, index: number }) {
@@ -35,11 +35,8 @@ export function UserRow({ user, index }: { user: UserRowProps, index: number }) 
   const [isLoading, setIsLoading] = useState(true)
   const [color, setColor] = useState('')
 
-  // console.log(user)
-
-
   async function buildParams() {
-    const userId = user.userId
+    const userId = user.user_id
     const params = new URLSearchParams({
       'queries[0]': JSON.stringify({
         method: "equal",
@@ -73,7 +70,7 @@ export function UserRow({ user, index }: { user: UserRowProps, index: number }) 
 
         const result = await response.json();
 
-        // console.log(result.documents)
+        console.log(result.documents)
         setDevices(result.documents || []);
       } catch (err) {
         console.error(`Fetch error: ${err}`);
