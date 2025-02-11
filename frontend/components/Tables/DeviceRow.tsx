@@ -160,7 +160,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
         <span className={cn("rounded-md w-28 flex items-center justify-center capitalize",
           status === "Roubado" && "bg-red-500/20 text-red-700 p-1",
           status === "Recuperado" && "bg-lime-500/20 text-lime-700 p-1",
-          status === " regular" && "bg-lime-500/20 text-lime-700 p-1",
+          status === "Regular" && "bg-lime-500/20 text-lime-700 p-1",
           status === "Furtado" && "bg-yellow-500/20 text-yellow-700 p-1",
           // status === "Perdido" && "bg-primary/20 text-primary p-1", // orange color
           status === "Perdido" && "bg-violet-500/20 text-violet-700 p-1", // orange color

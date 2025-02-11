@@ -8,15 +8,62 @@ import block from '../assets/icons/block.svg'
 import notify from '../assets/icons/notify.svg'
 import location from '../assets/icons/location.svg'
 import dollar from '../assets/icons/dollar.svg'
+import feat1 from '../assets/icons/feat1.png'
+import feat2 from '../assets/icons/feat2.png'
+import feat3 from '../assets/icons/feat3.png'
+import feat4 from '../assets/icons/feat4.png'
+import { Button } from "./ui/button";
 
 export function Features() {
 
   return (
-    <section className="w-full h-screen relative flex flex-col items-center justify-center px-4 z-0">
-      <Image src={shapesLeft} alt="formas esquerda" className="absolute bottom-24 left-0 z-0" />
-      <Image src={shapesRight} alt="formas direita" className="absolute top-80 -right-0" />
+    <section className="w-full h-full lg:h-[700px] gap-20 relative flex flex-col items-center px-4 z-0 py-32">
+      <Image src={shapesLeft} alt="formas esquerda" className="absolute hidden md:block md:top-[900px] lg:top-96 2xl:top-[420px] left-0 z-0" />
+      <Image src={shapesRight} alt="formas direita" className="absolute hidden md:block top-96 md:top-[700px] lg:top-[200px] right-0" />
 
-      <div className="flex md:flex-row flex-col lg:gap-10 z-10 gap-5 md:px-10">
+      <h1 className="text-4xl text-primary font-medium self-start ml-10">Veja como é fácil se proteger</h1>
+
+      <div className="flex lg:flex-wrap flex-col lg:flex-row gap-4">
+        <div className="bg-slate-500 w-72 py-6 px-3 rounded-xl flex gap-2">
+          <Image src={feat1} alt="feat1" />
+          <div className="flex flex-col gap-2">
+            <span className="font-bold">Crie uma conta</span>
+            <span className="font-medium">Cadastre-se no Procura.Aí informando alguns dados básicos</span>
+          </div>
+        </div>
+
+        <div className="bg-procura-ai-yellow/50 w-72 py-6 px-3 rounded-xl flex gap-2">
+          <Image src={feat2} alt="feat1" />
+          <div className="flex flex-col gap-2">
+            <span className="font-bold">Crie uma conta</span>
+            <span className="font-medium">Cadastre-se no Procura.Aí informando alguns dados básicos</span>
+          </div>
+        </div>
+
+        <div className="bg-[#D04228]/50 w-72 py-6 px-3 rounded-xl flex gap-2">
+          <Image src={feat3} alt="feat1" />
+          <div className="flex flex-col gap-2">
+            <span className="font-bold">Crie uma conta</span>
+            <span className="font-medium">Cadastre-se no Procura.Aí informando alguns dados básicos</span>
+          </div>
+        </div>
+
+        <div className="bg-[#39AF84]/50 w-72 py-6 px-3 rounded-xl flex gap-2">
+          <Image src={feat4} alt="feat1" />
+          <div className="flex flex-col gap-2">
+            <span className="font-bold">Crie uma conta</span>
+            <span className="font-medium">Cadastre-se no Procura.Aí informando alguns dados básicos</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col items-center gap-7">
+        <Button className="bg-primary w-fit text-white rounded-full text-xl shadow-sm px-10 py-7 shadow-zinc-800 hover:bg-white hover:text-primary">Cadastrar</Button>
+        <span className="text-2xl font-bold text-procura-ai-black">Disponível em breve nas principais lojas de aplicativos</span>
+      </div>
+
+
+      {/* <div className="flex md:flex-row flex-col lg:gap-10 z-10 gap-5 md:px-10">
         <div className="md:flex justify-center items-center hidden">
           <div className="flex flex-col lg:w-[390px]">
             <Image src={arrow} alt="arrow" className="rotate-90 md:rotate-0" />
@@ -40,7 +87,7 @@ export function Features() {
             </li>
           </ul>
         </div>
-      </div>
+      </div> */}
 
       {/* <span className="font-bold mb-4 text-lg z-10">Baixe nas principais lojas de aplicativos</span>
       <div className="flex z-10">

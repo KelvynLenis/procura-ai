@@ -118,9 +118,9 @@ export function LoginForm() {
             name="email"
             render={({ field }) => (
               <FormItem className="flex flex-col w-full">
-                <FormLabel className="text-zinc-700 ml-4 font-bold">Usuário</FormLabel>
+                <FormLabel className="text-zinc-700 ml-4 font-bold pl-5">E-mail</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="Email" {...field} className="rounded-full" />
+                  <Input type="text" placeholder="Email" {...field} className="rounded-full w-64 self-center" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -132,15 +132,15 @@ export function LoginForm() {
             name="password"
             render={({ field }) => (
               <FormItem className="flex flex-col w-full">
-                <FormLabel className="text-zinc-700 ml-4 font-bold">Senha</FormLabel>
+                <FormLabel className="text-zinc-700 ml-4 font-bold pl-5">Senha</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="Senha" {...field} className="rounded-full" />
+                  <Input type="password" placeholder="Senha" {...field} className="rounded-full w-64 self-center" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Link href="/forgot-password" aria-disabled className="underline self-start hover:opacity-50 text-sm">Esqueceu sua senha?</Link>
+          <Link href="/forgot-password" aria-disabled className="underline aria-disabled:text-zinc-400 self-start pl-10 text-sm ">Esqueceu sua senha?</Link>
 
           <Button className="bg-primary text-white rounded-full w-44 text-lg py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">Entrar</Button>
 

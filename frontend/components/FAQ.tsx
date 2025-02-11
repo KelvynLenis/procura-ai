@@ -13,8 +13,8 @@ import { cn } from "@/lib/utils"
 export function FAQ({ position }: { position: string }) {
 
   return (
-    <section className={cn('w-full  h-fit bg-faq bg-cover flex flex-col justify-between pt-28', position === 'relative' ? 'relative' : 'absolute -bottom-[125%] md:-bottom-[113%] lg:-bottom-[115%] xl:-bottom-[110%] 2xl:-bottom-[115%]')}>
-      <div className="flex flex-col gap-5 w-full h-full px-4 lg:px-32 mb-5">
+    <section className={cn('w-full h-fit  bg-faq bg-cover flex flex-col justify-between pt-28 relative -top-28')} >
+      <div className="flex flex-col gap-5 w-full h-full px-4 lg:px-32">
         <h2 className='text-secondary font-bold text-3xl self-center'>Perguntas frequentes</h2>
 
         <div className="w-full flex flex-col gap-6">
@@ -31,7 +31,9 @@ export function FAQ({ position }: { position: string }) {
         </div>
       </div>
 
-      <Footer />
-    </section>
+      <div className="flex w-full absolute -bottom-28">
+        <Footer />
+      </div>
+    </section >
   )
 }
