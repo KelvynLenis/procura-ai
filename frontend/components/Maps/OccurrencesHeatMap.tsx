@@ -32,14 +32,19 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
 
     setOverlayData({
       district,
-      color: getFillColor(district?.cod_neighborhood)
+      color: getFillColor(district?.cod_neighborhood!)
     })
   }
 
   function getFillColor(cod_neighborhood: number) {
 
     const district = districts.find(district => district.cod_neighborhood === cod_neighborhood)
-    const total = district?.robbery_counter ? district?.robbery_counter : 0
+
+    const robbery_counter = district?.robbery_counter ? district?.robbery_counter : 0
+    const lost_counter = district?.lost_counter ? district?.lost_counter : 0
+    const theft_counter = district?.theft_counter ? district?.theft_counter : 0
+
+    const total = robbery_counter + lost_counter + theft_counter
 
     if (total <= 2) {
       return '#FEFF73';
@@ -56,7 +61,11 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
 
   function getHoverColor(cod_neighborhood: number) {
     const district = districts.find(district => district.cod_neighborhood === cod_neighborhood)
-    const total = district?.robbery_counter ? district?.robbery_counter : 0
+    const robbery_counter = district?.robbery_counter ? district?.robbery_counter : 0
+    const lost_counter = district?.lost_counter ? district?.lost_counter : 0
+    const theft_counter = district?.theft_counter ? district?.theft_counter : 0
+
+    const total = robbery_counter + lost_counter + theft_counter
 
     if (total <= 2) {
       return '#FEFF73';
