@@ -24,7 +24,7 @@ export default function Login() {
         </div>
 
         <div className="relative w-full bg-[#F2F7FC]">
-          <FAQ position="relative" />
+          <FAQ />
         </div>
         {/* <Footer /> */}
       </main>

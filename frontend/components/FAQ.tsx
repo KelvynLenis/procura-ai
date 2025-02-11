@@ -10,10 +10,11 @@ import { cn } from "@/lib/utils"
 
 
 
-export function FAQ({ position }: { position: string }) {
+
+export function FAQ({ bottom }: { bottom?: string }) {
 
   return (
-    <section className={cn('w-full h-fit  bg-faq bg-cover flex flex-col justify-between pt-28 relative -top-28')} >
+    <section className={cn('w-full h-fit  bg-faq bg-cover flex flex-col justify-between pt-28 relative -top-28', `top-${bottom}`)} >
       <div className="flex flex-col gap-5 w-full h-full px-4 lg:px-32">
         <h2 className='text-secondary font-bold text-3xl self-center'>Perguntas frequentes</h2>
 
@@ -31,7 +32,7 @@ export function FAQ({ position }: { position: string }) {
         </div>
       </div>
 
-      <div className="flex w-full absolute -bottom-28">
+      <div className={cn("flex w-full absolute -bottom-28", `bottom-${bottom}`)}>
         <Footer />
       </div>
     </section >
