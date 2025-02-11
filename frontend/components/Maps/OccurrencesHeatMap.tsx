@@ -20,15 +20,11 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
 
 
   function handleOverlayMouseOver(feature: any) {
-    console.log(feature.payload.properties.cod_bairro)
-
     // console.log(typeof Number(feature.payload.properties.cod_bairro))
 
     setIsOverlayOpen(true)
 
     const district = districts.find(district => district.cod_neighborhood === Number(feature.payload.properties.cod_bairro))
-
-    const total = district?.robbery_counter ? district?.robbery_counter : 0
 
     setOverlayData({
       district,
@@ -114,10 +110,6 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
           }
           onMouseOver={
             (feature) => {
-              setIsOverlayOpen(true)
-              setOverlayData({ district: feature.payload.properties, color: getFillColor(feature.payload.properties.value) })
-              // console.log(getFillColor(feature.payload.properties.value))
-              // console.log(feature.payload.properties)
               handleOverlayMouseOver(feature)
             }
           }
