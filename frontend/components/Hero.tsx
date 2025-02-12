@@ -6,7 +6,7 @@ import landingImages from '../assets/images/landing-images.png'
 
 export function Hero() {
   return (
-    <section className="z-100 w-full bg-zinc-100 flex items-center justify-between h-full text-lg md:text-xl lg:text-4xl text-white px-2 md:px-5 lg:px-10 py-7 z-10">
+    <section className="z-100 w-full bg-hero-bg bg-repeat flex items-center justify-between h-full text-lg md:text-xl lg:text-4xl text-white px-2 md:px-5 lg:px-10 py-7 z-10">
       <Image src={landingImages} alt="landing background" className="w-1/2 hidden lg:block" />
       <div className="flex flex-col items-end gap-4 lg:gap-5">
         <span className="font-bold w-[80.5%] text-end text-xl lg:text-5xl text-primary">

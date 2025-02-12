@@ -39,6 +39,7 @@ export default {
 				'landing-bg': "url('../assets/images/landing-bg.png')",
 				'login-bg': "url('../assets/images/login-banner.png')",
 				'device-bg': "url('../assets/images/devices-bg.png')",
+				'hero-bg': "url('../assets/images/hero-bg.png')",
 			},
 			keyframes: {
 				'accordion-down': {
