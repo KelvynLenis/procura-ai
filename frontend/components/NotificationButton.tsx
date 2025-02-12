@@ -5,7 +5,7 @@ import { Bell } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 
 export function NotificationButton({ notifications, setNotifications }: {
-  notifications: [], setNotifications: React.Dispatch<React.SetStateAction<[]>>
+  notifications: never[], setNotifications: React.Dispatch<React.SetStateAction<never[]>>
 }) {
   const [isListVisible, setIsListVisible] = useState(false);
 
