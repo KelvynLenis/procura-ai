@@ -101,7 +101,7 @@ export function UserRow({ user, index }: { user: UserRowProps, index: number }) 
         <TableCell className="break-words">
           <div className="flex  items-center">
 
-            <span className={cn("text-xl text-white capitalize font-bold rounded-full w-10 h-10 px-1 flex items-center justify-center mr-3 bg-procura-ai-blue")}>
+            <span className={cn("text-xl text-white capitalize font-bold uppercase rounded-full w-10 h-10 px-1 flex items-center justify-center mr-3 bg-procura-ai-blue")}>
               {user.name!.split(" ").length > 1 ? user.name!.split(" ")[0][0] + user.name!.split(" ")[1][0] : user.name!.split(" ")[0][0]}
             </span>
             {user.name || "N/A"}

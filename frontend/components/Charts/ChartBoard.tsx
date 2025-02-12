@@ -25,8 +25,9 @@ export function ChartBoard() {
   const [occurrences, setOccurrences] = useState<EventProps[]>([])
   const [numberOfDevicesRegistered, setNumberOfDevicesRegistered] = useState(0)
   const [numberOfDevicesRecovered, setNumberOfDevicesRecovered] = useState(0)
-  const [numberOfDevicesStolen, setNumberOfDevicesStolen] = useState(0)
+  const [numberOfDevicesRobbed, setNumberOfDevicesRobbed] = useState(0)
   const [numberOfDevicesLost, setNumberOfDevicesLost] = useState(0)
+  const [numbeOfDevicesTheft, setNumbeOfDevicesTheft] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [districts, setDistricts] = useState<District[]>([])
   const [notifications, setNotifications] = useState([]);
@@ -141,7 +142,7 @@ export function ChartBoard() {
     return allDevices
   }
 
-  async function getNumberOfAllStolenDevices() {
+  async function getNumberOfRobbedDevices() {
     const allEvents: Event[] = [];
     let offset = 0;
     const limit = 25;
@@ -152,7 +153,7 @@ export function ChartBoard() {
         "queries[0]": JSON.stringify({
           method: "equal",
           attribute: "status",
-          values: ["roubado", "Furtado"],
+          values: ["Roubado"],
         }),
         "queries[1]": JSON.stringify({
           method: "limit",
@@ -186,7 +187,61 @@ export function ChartBoard() {
         allEvents.push(...documents);
         total = fetchedTotal;
         offset += limit;
-        setNumberOfDevicesStolen(fetchedTotal);
+        setNumberOfDevicesRobbed(fetchedTotal);
+      } catch (error) {
+        console.error(error);
+        break;
+      }
+    }
+    return allEvents;
+  }
+
+  async function getNumberOfTheftDevices() {
+    const allEvents: Event[] = [];
+    let offset = 0;
+    const limit = 25;
+    let total = Infinity;
+
+    while (offset < total) {
+      const params = new URLSearchParams({
+        "queries[0]": JSON.stringify({
+          method: "equal",
+          attribute: "status",
+          values: ["Furtado"],
+        }),
+        "queries[1]": JSON.stringify({
+          method: "limit",
+          values: [limit],
+        }),
+        "queries[2]": JSON.stringify({
+          method: "offset",
+          values: [offset],
+        }),
+      });
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+            },
+            cache: "no-store",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch events: ${await response.text()}`);
+        }
+
+
+        const { documents, total: fetchedTotal } = await response.json();
+        allEvents.push(...documents);
+        total = fetchedTotal;
+        offset += limit;
+        setNumbeOfDevicesTheft(fetchedTotal);
       } catch (error) {
         console.error(error);
         break;
@@ -516,7 +571,8 @@ export function ChartBoard() {
     fetchStolenDevices()
     getNumberOfRecoveredDevices()
     getNumberOfLostDevices()
-    getNumberOfAllStolenDevices()
+    getNumberOfRobbedDevices()
+    getNumberOfTheftDevices()
     getAllDistricts()
     fetchAllDevices()
 
@@ -549,7 +605,8 @@ export function ChartBoard() {
         <div className="flex self-start gap-5 lg:w-[90%] xl:w-[95%] xl:mx-auto 2xl:self-center 2xl:w-full justify-around flex-wrap">
           <CardChart variant="blue" number={numberOfDevicesRegistered} title="Dispositivos cadastrados" />
           <CardChart variant="green" number={numberOfDevicesRecovered} title="Dispositivos recuperados" />
-          <CardChart variant="red" number={numberOfDevicesStolen} title="Dispositivos Roubados" />
+          <CardChart variant="red" number={numberOfDevicesRobbed} title="Dispositivos Roubados" />
+          <CardChart variant="orange" number={numbeOfDevicesTheft} title="Dispositivos Furtados" />
           <CardChart variant="yellow" number={numberOfDevicesLost} title="Dispositivos Perdidos" />
           <CardChart variant="city" number={1} title="Municípios monitoriados" />
         </div>
@@ -562,7 +619,7 @@ export function ChartBoard() {
                 Status
               </span>
             </span>
-            <PieChartRechart numberOfDevicesRegistered={numberOfDevicesRegistered} numberOfDevicesLost={numberOfDevicesLost} numberOfDevicesRecovered={numberOfDevicesRecovered} numberOfDevicesStolen={numberOfDevicesStolen} />
+            <PieChartRechart numberOfDevicesRegistered={numberOfDevicesRegistered} numberOfDevicesLost={numberOfDevicesLost} numberOfDevicesRecovered={numberOfDevicesRecovered} numberOfDevicesRobbed={numberOfDevicesRobbed} numbeOfDevicesTheft={numbeOfDevicesTheft} />
           </div>
 
           <div className="flex flex-col gap-2 w-[540px] p-3 text-sm bg-white items-center justify-center h-80 ring-1 ring-zinc-300 rounded-lg self-start">

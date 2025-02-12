@@ -1,12 +1,13 @@
 import { cn } from "@/lib/utils";
 import registeredIcon from '../../assets/icons/registered-icon.png'
 import recoveredIcon from '../../assets/icons/recovered-icon.png'
+import theftIcon from '../../assets/icons/theft-icon.png'
 import cities from '../../assets/icons/cities.png'
 import Image from "next/image";
 import { TiDeviceTablet } from "react-icons/ti";
 
 interface CardChartProps {
-  variant: 'blue' | 'green' | 'red' | 'yellow' | 'city';
+  variant: 'blue' | 'green' | 'red' | 'yellow' | 'city' | 'orange';
   number: number;
   title: string;
 }
@@ -24,6 +25,13 @@ export function CardChart({ variant, number, title }: CardChartProps) {
       </div>
     } else if (variant === 'city') {
       return <Image src={cities} alt="cities-icon" width={44} height={44} />
+    } else if (variant === 'yellow') {
+      return <Image src={theftIcon} alt="theft-icon" width={44} height={44} />
+    }
+    else if (variant === 'orange') {
+      return <div className={cn("rounded-full p-1.5", "bg-orange-400/30 text-orange-600")}>
+        <TiDeviceTablet size={31} />
+      </div>
     }
     else {
       return <div className={cn("rounded-full p-1.5", "bg-yellow-400/20 text-yellow-600")}>

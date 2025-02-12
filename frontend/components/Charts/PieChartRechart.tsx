@@ -51,12 +51,13 @@ const renderActiveShape = (props) => {
 
 interface ChartProps {
   numberOfDevicesRecovered: number
-  numberOfDevicesStolen: number
+  numberOfDevicesRobbed: number
   numberOfDevicesLost: number
   numberOfDevicesRegistered: number
+  numbeOfDevicesTheft: number
 }
 
-const PieChartRechart = ({ numberOfDevicesRecovered, numberOfDevicesStolen, numberOfDevicesLost, numberOfDevicesRegistered }: ChartProps) => {
+const PieChartRechart = ({ numberOfDevicesRecovered, numberOfDevicesRobbed, numbeOfDevicesTheft, numberOfDevicesLost, numberOfDevicesRegistered }: ChartProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const onPieEnter = (_, index) => {
@@ -65,8 +66,8 @@ const PieChartRechart = ({ numberOfDevicesRecovered, numberOfDevicesStolen, numb
 
   const newData = [
     { name: 'Recuperado', value: numberOfDevicesRecovered, color: "#409A00" },
-    { name: 'Furtado', value: numberOfDevicesStolen, color: "rgb(249 115 22)" },
-    { name: 'Roubado', value: numberOfDevicesStolen, color: "#D04228" },
+    { name: 'Furtado', value: numbeOfDevicesTheft, color: "rgb(249 115 22)" },
+    { name: 'Roubado', value: numberOfDevicesRobbed, color: "#D04228" },
     { name: 'Perdido', value: numberOfDevicesLost, color: 'rgb(234 179 8)' },
     { name: 'Cadastrado', value: numberOfDevicesRegistered, color: '#002E72' },
   ]
@@ -74,7 +75,7 @@ const PieChartRechart = ({ numberOfDevicesRecovered, numberOfDevicesStolen, numb
   return (
     <>
       {
-        numberOfDevicesLost === 0 && numberOfDevicesRecovered === 0 && numberOfDevicesStolen === 0 && numberOfDevicesRegistered === 0 ? (
+        numberOfDevicesLost === 0 && numberOfDevicesRecovered === 0 && numberOfDevicesRobbed === 0 && numberOfDevicesRegistered === 0 ? (
           <div className='h-full w-full flex items-center justify-center'>
             <span>Nenhum dispositivo cadastrado</span>
           </div>
