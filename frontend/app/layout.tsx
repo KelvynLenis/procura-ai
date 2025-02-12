@@ -5,7 +5,7 @@ import "./globals.css";
 import { Footer } from "@/components/Footer";
 import { ToastContainer } from 'react-toastify';
 
-const roboto = Raleway({
+const roboto = Roboto({
   subsets: ['latin'], // Escolha o conjunto de caracteres necessário
   weight: ['100', '300', '400', '500', '700', '900'], // Escolha os pesos necessários
   style: ['normal', 'italic'], // (Opcional) Para incluir estilos como itálico

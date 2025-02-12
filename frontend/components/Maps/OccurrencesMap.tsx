@@ -108,12 +108,12 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
 
   function getColor(type: string) {
     if (type === 'Furto' || type === 'Furto simples') {
-      return '#D8A913' // yellow color
+      return '#f97316'
     } else if (type === 'Roubo') {
-      return '#CF4227' // red color
+      return '#EF4444'
     }
     else if (type === 'Perda' || type === 'Extravio ou Perda') {
-      return '#8b5cf6' // blue color
+      return '#EAB308'
     }
   }
 

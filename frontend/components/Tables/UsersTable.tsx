@@ -14,6 +14,7 @@ interface User {
   name?: string;
   cpf?: string;
   email?: string;
+  type: string;
 }
 
 interface UsersTableProps {
@@ -100,15 +101,20 @@ export function UsersTable({ pageNumberParam }: UsersTableProps) {
     <Table className="bg-white shadow-lg rounded-lg self-center">
       <TableHeader className="bg-zinc-200/60">
         <TableRow>
-          <TableHead className="text-center">ID</TableHead>
-          <TableHead className="">Nome</TableHead>
-          <TableHead className="">Email</TableHead>
-          <TableHead className="">Ações</TableHead>
+          <TableHead className="text-black/80 text-lg font-medium text-center">ID</TableHead>
+          <TableHead className="text-black/80 text-lg font-medium ">Nome</TableHead>
+          <TableHead className="text-black/80 text-lg font-medium ">Email</TableHead>
+          <TableHead className="text-black/80 text-lg font-medium ">Papel</TableHead>
+          <TableHead className="text-black/80 text-lg font-medium ">Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {loading ? (
           <TableRow className="w-full  gap-5 px-7 pt-7">
+            <TableCell className="w-1/4">
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+
             <TableCell className="w-1/4">
               <Skeleton className="h-8 w-full" />
             </TableCell>

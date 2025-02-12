@@ -519,12 +519,15 @@ export function ChartBoard() {
     getNumberOfAllStolenDevices()
     getAllDistricts()
     fetchAllDevices()
-    
-    }, [notifications])
+
+  }, [notifications])
 
   return (
     <>
-      <NotificationButton notifications={notifications} setNotifications={setNotifications}/>
+      <div className="absolute top-0 right-5 z-10">
+        <NotificationButton notifications={notifications} setNotifications={setNotifications} />
+
+      </div>
 
       <div className="w-full h-full flex flex-col py-5 justify-start items-center gap-5">
 

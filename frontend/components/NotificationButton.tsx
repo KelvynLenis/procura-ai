@@ -48,11 +48,11 @@ export function NotificationButton({ notifications, setNotifications }: {
       </button >
       {isListVisible && (
         <div className="absolute right-0 top-12 bg-white shadow-lg rounded-md w-64 border z-100">
-          <div className="p-2 text-gray-700 font-semibold border-b">Notificações</div>
-          <div className="max-h-60 overflow-y-auto">
-            {filteredNotifications.length > 0 ? (
-              filteredNotifications.map((notification) => (
-                <div key={notification.$id} className="p-3 border-b">
+          <div className="p-2 text-gray-700 font-semibold border-b w-full flex justify-center">Notificações</div>
+          <div className="max-h-60 overflow-y-auto flex flex-col items-center justify-center py-2">
+            {notifications.length > 0 ? (
+              notifications.map((notification) => (
+                <div key={notification.$id} className="py-3 w-full hover:bg-zinc-100 flex items-center justify-center flex-col">
                   <h1 className="font-bold">Novo {notification.type}</h1>
                   <p className="text-sm text-gray-600">descrição: {notification.description}</p>
                 </div>

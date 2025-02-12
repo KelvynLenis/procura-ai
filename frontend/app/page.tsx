@@ -14,7 +14,7 @@ export default function Landing() {
       <main className="flex flex-col row-start-2 items-center sm:items-start">
         <Hero />
         <Features />
-        <FAQ position={"relative"} />
+        <FAQ bottom="0" />
       </main>
     </>
   );

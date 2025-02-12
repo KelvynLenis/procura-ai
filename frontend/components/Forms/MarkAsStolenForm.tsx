@@ -255,7 +255,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
                   <FormLabel className="w-fit text-center items-center flex">
-                    <span className="text-red-500 text-3xl h-6 flex align-text-bottom">*</span>
+                    <span className="text-red-500 h-6 flex align-text-bottom">*</span>
                     Data e hora do furto
                   </FormLabel>
                   <FormControl>
@@ -286,7 +286,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
                   <FormLabel className="w-fit text-center items-center flex">
-                    <span className="text-red-500 text-3xl h-6 flex align-text-bottom">*</span>
+                    <span className="text-red-500 h-6 flex align-text-bottom">*</span>
 
                     Tipo de ocorrência
                   </FormLabel>
@@ -327,7 +327,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
                   <FormLabel className="w-fit text-center items-center flex">
-                    <span className="text-red-500 text-3xl h-6 flex align-text-bottom">*</span>
+                    <span className="text-red-500 h-6 flex align-text-bottom">*</span>
                     Clique no mapa o local da ocorrência
                   </FormLabel>
                   <FormControl>
