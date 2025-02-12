@@ -494,9 +494,9 @@ export function ChartBoard() {
     return allDevices
   }
 
-  function showLoadingToast() {
+  function showLoadingToast(url: string) {
     setIsLoading(true)
-    router.push(`/map/ocorrencias`)
+    router.push(`${url}`)
   }
 
   useEffect(() => {
@@ -531,10 +531,10 @@ export function ChartBoard() {
 
       <div className="w-full h-full flex flex-col py-5 justify-start items-center gap-5">
 
-        <div className="relative flex flex-col md:mr-2 self-start md:w-3/5 lg:w-8/12 xl:w-full bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center gap-3">
+        <div className="relative flex flex-col md:mr-2 self-start md:w-3/5 lg:w-[98%] xl:w-[98%] bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center gap-3">
           <div className="flex justify-between">
             <h2 className="text-3xxl font-black text-procura-ai-blue">Localização de ocorrências</h2>
-            <button onClick={showLoadingToast} title="Clique para expandir" className="flex text-procura-ai-blue items-center gap-1 text-sm hover:opacity-50">
+            <button onClick={() => showLoadingToast('/map/ocorrencias')} title="Clique para expandir" className="flex text-procura-ai-blue items-center gap-1 text-sm hover:opacity-50">
               Expandir
               <BiExpandAlt size={18} />
             </button>
@@ -546,14 +546,15 @@ export function ChartBoard() {
 
         </div>
 
-        <div className="flex self-start gap-5">
+        <div className="flex self-start gap-5 lg:w-[90%] xl:w-[95%] xl:mx-auto 2xl:self-center 2xl:w-full justify-around flex-wrap">
           <CardChart variant="blue" number={numberOfDevicesRegistered} title="Dispositivos cadastrados" />
           <CardChart variant="green" number={numberOfDevicesRecovered} title="Dispositivos recuperados" />
           <CardChart variant="red" number={numberOfDevicesStolen} title="Dispositivos Roubados" />
           <CardChart variant="yellow" number={numberOfDevicesLost} title="Dispositivos Perdidos" />
+          <CardChart variant="city" number={1} title="Municípios monitoriados" />
         </div>
 
-        <div className="flex w-full justify-around">
+        <div className="flex w-full justify-around flex-wrap gap-5">
           <div className="flex flex-col gap-2 w-[540px] text-sm bg-white items-center justify-center h-80 ring-1 ring-zinc-300 rounded-lg self-start">
             <span className="flex flex-col w-full items-start px-4 pt-3 font-semibold text-procura-ai-blue">
               Dispositivos cadastrados
@@ -565,9 +566,16 @@ export function ChartBoard() {
           </div>
 
           <div className="flex flex-col gap-2 w-[540px] p-3 text-sm bg-white items-center justify-center h-80 ring-1 ring-zinc-300 rounded-lg self-start">
-            <span className="flex flex-col w-full items-start self-start font-semibold text-procura-ai-blue">
-              Ocorrências distribuídas nos bairros de João Pessoa
-            </span>
+            <div className="flex justify-between w-full">
+              <span className="flex flex-col w-full items-start self-start font-semibold text-procura-ai-blue">
+                Ocorrências distribuídas nos bairros de João Pessoa
+              </span>
+              <button onClick={() => showLoadingToast('map/bairros')} title="Clique para expandir" className="flex text-procura-ai-blue items-center gap-1 text-sm hover:opacity-50">
+                Expandir
+                <BiExpandAlt size={18} />
+              </button>
+            </div>
+
 
             <div className="w-full h-full flex items-center justify-center bg-zinc-200 rounded-sm relative" >
               <OccurrencesHeatMap districts={districts} />

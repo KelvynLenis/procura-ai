@@ -1,5 +1,8 @@
+"use client"
+
 import { cn } from "@/lib/utils";
 import { District } from "@/utils/types";
+import { usePathname } from "next/navigation";
 import { Map, GeoJsonLoader, Overlay } from "pigeon-maps";
 import { useState } from "react";
 
@@ -17,6 +20,8 @@ interface OccurrencesHeatMapProps {
 export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false)
   const [OverlayData, setOverlayData] = useState<OverlayDataProps>({} as OverlayDataProps)
+
+  const pathname = usePathname().slice(1)
 
 
   function handleOverlayMouseOver(feature: any) {
@@ -77,25 +82,20 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
   }
 
   function setWidth() {
-
-    // if (window.innerWidth >= 2560) {
-    //   return window.innerWidth * 0.85
-    // }
-    // else if (window.innerWidth < 1200) {
-    //   return window.innerWidth * 0.6
-    // }
-    // else if (window.innerWidth < 1700) {
-    //   return window.innerWidth * 0.75
-    // }
-    // else if (window.innerWidth < 2560) {
-    //   return window.innerWidth * 0.8
-    // }
-    return 520
-
+    if (pathname === 'map/bairros') {
+      return window.innerWidth
+    }
+    else {
+      return 520
+    }
   }
 
   function setHeight() {
-    return 270
+    if (pathname === 'map/bairros') {
+      return window.innerHeight
+    } else {
+      return 270
+    }
   }
 
   return (
@@ -115,7 +115,7 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
           }
           onMouseOut={() => setIsOverlayOpen(false)}
         />
-        <div className="absolute w-36 top-2 right-2 bg-black/50 py-2 px-4 rounded-md text-white">
+        <div className="absolute w-36 bottom-2 right-3 bg-black/50 py-2 px-4 rounded-md text-white">
           <h1>Legend</h1>
           <ul className="flex flex-col gap-2">
             <li className="flex items-center gap-2">
@@ -132,7 +132,7 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
             </li>
             <li className="flex items-center gap-2">
               <span className="w-4 h-4 p-1 bg-[#F50000] inline-block rounded-full ring-1 ring-black" />
-              4 - 20
+              5 - 20
             </li>
           </ul>
         </div>
