@@ -83,11 +83,11 @@ export function DevicesTable() {
       <TableHeader className="bg-zinc-200/60">
         <TableRow>
           <TableHead className="text-black/80 text-lg pl-5 font-medium hidden lg:table-cell w-20">ID</TableHead>
-          <TableHead className="text-black/80 text-lg font-medium flex w-28 sm:justify-center md:flex items-center">Modelo</TableHead>
+          <TableHead className="text-black/80 text-lg font-medium flex w-28 md:flex items-end">Modelo</TableHead>
           <TableHead className="text-black/80 text-lg font-medium hidden md:table-cell w-1/3">Marca</TableHead>
           <TableHead className="text-black/80 text-lg font-medium hidden md:table-cell lg:w-full">IMEI</TableHead>
-          <TableHead className="text-black/80 text-lg font-medium md:flex w-32 text-center md:ml-3">Status</TableHead>
-          <TableHead className="text-black/80 text-lg w-20 font-medium text-center">Ações</TableHead>
+          <TableHead className="text-black/80 text-lg font-medium md:flex w-32">Status</TableHead>
+          <TableHead className="text-black/80 text-lg w-20 font-medium">Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

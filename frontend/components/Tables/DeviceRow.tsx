@@ -158,11 +158,11 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
       <TableCell className="font-bold hidden md:table-cell">{imei.slice(0, 1) + ' ' + imei.slice(1, 8) + ' ****** **'}</TableCell>
       <TableCell className="w-24">
         <span className={cn("rounded-md w-20 flex items-center justify-center capitalize",
-          status === "Roubado" && "bg-red-500/30 text-red-700 p-1",
-          status === "Recuperado" && "bg-lime-500/30 text-lime-700 p-1",
-          status === "Regular" && "bg-lime-500/30 text-lime-700 p-1",
-          status === "Furtado" && "bg-orange-500/40 text-orange-700 p-1",
-          status === "Perdido" && "bg-yellow-500/30 text-yellow-700 p-1",
+          status === "Roubado" && "bg-robbery-bg text-robbery-text p-1",
+          status === "Recuperado" && "bg-regular-bg text-regular-text p-1",
+          status === "Regular" && "bg-regular-bg text-regular-text p-1",
+          status === "Furtado" && "bg-theft-bg text-theft-text p-1",
+          status === "Perdido" && "bg-lost-bg text-lost-text p-1",
           // status === "Perdido" && "bg-violet-500/20 text-violet-700 p-1",
         )}>{status === 'Recuperado' ? "Regular" : status.replace(' ', '')}</span>
       </TableCell>
@@ -239,9 +239,9 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
             isStolen
               ? <button title="Desativar alerta" className={cn(
                 "w-10 h-10 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white",
-                status === "Roubado" && "bg-red-500/30 text-red-600 p-1 ring-1 ring-red-500",
-                status === "Furtado" && "bg-orange-500/60 text-orange-600 p-1 ring-1 ring-orange-500",
-                status === "Perdido" && "bg-yellow-500/30 text-yellow-600 p-1 ring-1 ring-yellow-500",
+                status === "Roubado" && "bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500",
+                status === "Furtado" && "bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500",
+                status === "Perdido" && "bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500",
                 status === "Recuperado" && "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
                 status === "Regular" && "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
               )} onClick={() => handleDeviceRecovery(id)}>
