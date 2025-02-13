@@ -95,14 +95,14 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
         else if (window.innerWidth < 1200) {
           return window.innerWidth * 0.4
         }
-        else if (window.innerWidth < 1700) {
+        else if (window.innerWidth <= 1700) {
           return window.innerWidth * 0.75
         }
-        else if (window.innerWidth < 2560) {
-          return window.innerWidth * 0.8
+        else if (window.innerWidth <= 2560) {
+          return window.innerWidth * 0.75
         }
       }
-      return 700
+      // return 700
     }
   }
 

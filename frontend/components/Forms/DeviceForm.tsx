@@ -273,7 +273,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
           render={({ field }) => (
             <FormItem className="flex flex-col w-fit self-start">
               <FormLabel className="text-lg w-fit text-center items-start flex">
-                <span className="text-red-500 text-3xl">*</span>
+                <span className="text-red-500 text-xl">*</span>
                 Marca
               </FormLabel>
               <Popover open={isBrandsPopoverOpen} onOpenChange={setIsBrandsPopoverOpen}>
@@ -343,7 +343,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
           render={({ field }) => (
             <FormItem className="flex flex-col w-fit self-start">
               <FormLabel className="text-lg w-fit text-center items-start flex">
-                <span className="text-red-500 text-3xl">*</span>
+                <span className="text-red-500 text-xl">*</span>
                 Modelo do dispositivo
               </FormLabel>
               <Popover open={open} onOpenChange={setOpen}>
@@ -415,7 +415,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
             <FormItem className="flex flex-col md:flex-row gap-5 w-full">
               <div>
                 <FormLabel className="text-lg w-fit text-center items-start flex">
-                  <span className="text-red-500 text-3xl">*</span>
+                  <span className="text-red-500 text-xl">*</span>
                   IMEI
                 </FormLabel>
                 <FormControl>
@@ -461,7 +461,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
           render={({ field }) => (
             <FormItem className="flex flex-col md:w-fit self-start">
               <FormLabel className="text-lg w-fit text-center items-start flex">
-                <span className="text-red-500 text-3xl">*</span>
+                <span className="text-red-500 text-xl">*</span>
                 Número do celular
               </FormLabel>
               <FormControl>
