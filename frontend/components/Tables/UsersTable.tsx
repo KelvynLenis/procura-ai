@@ -4,10 +4,8 @@
 import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { UserRow } from "./UserRow";
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "../ui/pagination";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import Button from "../Button"
 
 interface User {
   $id?: string;
@@ -17,85 +15,66 @@ interface User {
   type: string;
 }
 
-interface UsersTableProps {
-  pageNumberParam?: number;
-}
 
-export function UsersTable({ pageNumberParam }: UsersTableProps) {
+export function UsersTable() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(pageNumberParam || 0);
-  const [pages, setPages] = useState(0);
+  const [page, setPage] = useState(1)
+  const [totalUsers, setTotalUsers] = useState(0)
+  const limit = 10;
 
-  function handleGoToNextPage() {
-    if (page < pages) {
-      setPage(page + 1);
-    }
-  }
-
-  function handleGoToPage(pageNumber: number) {
-    setPage(pageNumber);
-  }
-
-  function handleGoToPreviousPage() {
-    if (page > 0) {
-      setPage(page - 1);
-    }
-  }
-
-  async function buildParams(page?: number) {
+  async function buildParams() {
     const params = new URLSearchParams({
       'queries[0]': JSON.stringify({
         method: "limit",
-        values: 5,
+        values:[limit],
+      }),
+      "queries[1]": JSON.stringify({
+        method: "offset",
+        values: [((page - 1) * limit)],
       }),
 
     });
     return params;
   }
-
-  const fetchUsers = async (page?: number) => {
-    console.log(page);
-    setLoading(true);
-    try {
-      const params = page ? buildParams(page) : '';
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Appwrite-Project": process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || "",
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(`Error: ${error}`);
-      }
-
-      const result = await response.json();
-
-      console.log(result);
-
-      const totalPages = Math.ceil(result.total / 5);
-
-      setPages(totalPages);
-      setUsers(result.documents || []);
-    } catch (error) {
-      console.error("Failed to fetch users:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchUsers(page);
+    const fetchUsers = async () => {
+      setLoading(true);
+      try {
+        const params = await buildParams();
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Appwrite-Project": process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || "",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          const error = await response.text();
+          throw new Error(`Error: ${error}`);
+        }
+
+        const result = await response.json();
+
+        console.log(result);
+
+        const totalPages = Math.ceil(result.total / 5);
+
+        setUsers(result.documents || []);
+        setTotalUsers(result.total || 0);
+      } catch (error) {
+        console.error("Failed to fetch users:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUsers();
   }, [page]);
 
-  const user = users[0];
 
   return (
     <Table className="bg-white shadow-lg rounded-lg self-center">
@@ -169,6 +148,25 @@ export function UsersTable({ pageNumberParam }: UsersTableProps) {
         </Pagination> */}
 
       </TableBody>
+      <div className="flex justify-between items-center mt-4">
+        <Button
+          variant="gray"
+          disabled={page === 1}
+          onClick={() => setPage(page - 1)}
+        >
+          Anterior
+        </Button>
+
+        <span>Página {page}</span>
+
+        <Button
+          variant="gray"
+          disabled={page * limit >= totalUsers}
+          onClick={() => setPage(page + 1)}
+        >
+          Próximo
+        </Button>
+      </div>
     </Table>
   );
 }

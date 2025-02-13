@@ -16,9 +16,15 @@ import { account } from "@/lib/appwrite"
 import Button from "../Button"
 import Link from "next/link"
 
+
+
 export function DevicesTable() {
   const [devices, setDevices] = useState<DeviceProps[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [totalDevices, setTotalDevices] = useState(0)
+  const limit = 5;
+
 
   async function getUserId() {
     const { $id: userId } = await account.get();
@@ -31,6 +37,7 @@ export function DevicesTable() {
 
 
   async function buildParams() {
+
     const userId = await getUserId();
     const params = new URLSearchParams({
       'queries[0]': JSON.stringify({
@@ -38,12 +45,19 @@ export function DevicesTable() {
         attribute: "auth_id",
         values: [userId],
       }),
+      "queries[1]": JSON.stringify({
+        method: "limit",
+        values: [limit],
+      }),
+      "queries[2]": JSON.stringify({
+        method: "offset",
+        values: [((page - 1) * limit)],
+      }),
     });
     return params;
   }
 
   useEffect(() => {
-    // @glaymar Paginação
     const getDevices = async () => {
       setIsLoading(true)
       try {
@@ -68,6 +82,7 @@ export function DevicesTable() {
 
         console.log(result.documents);
         setDevices(result.documents || []);
+        setTotalDevices(result.total || 0);
       } catch (err) {
         console.error(`Fetch error: ${err}`);
       } finally {
@@ -76,7 +91,7 @@ export function DevicesTable() {
     };
 
     getDevices();
-  }, [setDevices]);
+  }, [page]);
 
   return (
     <Table className="bg-white shadow-lg rounded-lg self-center">
@@ -149,6 +164,26 @@ export function DevicesTable() {
           </TableCell>
         </TableRow>
       </TableBody>
+      <div className="flex justify-between items-center mt-4">
+        <Button
+          variant="gray"
+          disabled={page === 1}
+          onClick={() => setPage(page - 1)}
+        >
+          Anterior
+        </Button>
+
+        <span>Página {page}</span>
+
+        <Button
+          variant="gray"
+          disabled={page * limit >= totalDevices}
+          onClick={() => setPage(page + 1)}
+        >
+          Próximo
+        </Button>
+      </div>
     </Table >
+
   )
 }
