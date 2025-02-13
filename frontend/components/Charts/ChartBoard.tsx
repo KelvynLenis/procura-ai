@@ -602,7 +602,7 @@ export function ChartBoard() {
 
         </div>
 
-        <div className="flex self-start gap-5 lg:w-[90%] xl:w-[95%] xl:mx-auto 2xl:self-center 2xl:w-full justify-around flex-wrap">
+        <div className="flex self-start gap-5 lg:w-[90%] xl:w-[95%] xl:mx-auto 2xl:self-center 2xl:w-full justify-center flex-wrap">
           <CardChart variant="blue" number={numberOfDevicesRegistered} title="Dispositivos cadastrados" />
           <CardChart variant="green" number={numberOfDevicesRecovered} title="Dispositivos recuperados" />
           <CardChart variant="red" number={numberOfDevicesRobbed} title="Dispositivos Roubados" />

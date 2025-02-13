@@ -97,19 +97,22 @@ export function UserRow({ user, index }: { user: UserRowProps, index: number }) 
   return (
     <>
       <TableRow>
-        <TableCell className="text-center py-8">{index}</TableCell>
+        <TableCell className="text-center py-8 font-bold">{index}</TableCell>
         <TableCell className="break-words">
-          <div className="flex font-bold items-center">
+          <div className="flex  items-center">
 
-            <span className={cn("text-xl text-white capitalize font-bold uppercase rounded-full w-10 h-10 px-1 flex items-center justify-center mr-3 bg-procura-ai-blue")}>
+            <span className={cn("text-xl text-white font-bold uppercase rounded-full w-10 h-10 px-1 flex items-center justify-center mr-3 bg-procura-ai-blue")}>
               {user.name!.split(" ").length > 1 ? user.name!.split(" ")[0][0] + user.name!.split(" ")[1][0] : user.name!.split(" ")[0][0]}
             </span>
-            {user.name || "N/A"}
+            <span className="text-lg font-bold">
+              {user.name || "N/A"}
+
+            </span>
           </div>
         </TableCell>
-        <TableCell className="font-bold break-words">{user.email || "N/A"}</TableCell>
+        <TableCell className="font-bold text-lg break-words">{user.email || "N/A"}</TableCell>
         <TableCell className={cn("font-bold break-words")}>
-          <span className={cn("font-bold break-words p-2 rounded-md capitalize", user.type === 'usuario' ? 'bg-sky-400/40 text-sky-700' : 'bg-blue-500/30 text-blue-700')}>
+          <span className={cn("font-bold text-lg break-words p-2 rounded-md capitalize", user.type === 'Usuario' ? 'bg-sky-400/40 text-sky-700' : 'bg-blue-500/30 text-blue-700')}>
             {user.type || "N/A"}
           </span>
         </TableCell>
