@@ -97,7 +97,7 @@ export function UserRow({ user, index }: { user: UserRowProps, index: number }) 
   return (
     <>
       <TableRow>
-        <TableCell className="text-center py-8">{index}</TableCell>
+        <TableCell className="text-center py-8 font-bold">{index}</TableCell>
         <TableCell className="break-words">
           <div className="flex  items-center">
 
