@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { UserRow } from "./UserRow";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import Button from "../Button"
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "../ui/pagination";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import Button from "../Button";
 
 interface User {
   $id?: string;
@@ -20,6 +22,8 @@ export function UsersTable() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1)
+  const [pages, setPages] = useState(1);
+
   const [totalUsers, setTotalUsers] = useState(0)
   const limit = 10;
 
@@ -27,7 +31,7 @@ export function UsersTable() {
     const params = new URLSearchParams({
       'queries[0]': JSON.stringify({
         method: "limit",
-        values:[limit],
+        values: [limit],
       }),
       "queries[1]": JSON.stringify({
         method: "offset",
@@ -62,10 +66,11 @@ export function UsersTable() {
 
         console.log(result);
 
-        const totalPages = Math.ceil(result.total / 5);
+        const totalPages = Math.ceil(result.total / limit);
 
         setUsers(result.documents || []);
         setTotalUsers(result.total || 0);
+        setPages(totalPages);
       } catch (error) {
         console.error("Failed to fetch users:", error);
       } finally {
@@ -148,7 +153,7 @@ export function UsersTable() {
         </Pagination> */}
 
       </TableBody>
-      <div className="flex justify-between items-center mt-4">
+      {/* <div className="flex justify-between items-center mt-4">
         <Button
           variant="gray"
           disabled={page === 1}
@@ -166,7 +171,7 @@ export function UsersTable() {
         >
           Próximo
         </Button>
-      </div>
+      </div> */}
     </Table>
   );
 }
