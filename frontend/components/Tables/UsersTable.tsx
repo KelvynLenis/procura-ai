@@ -5,7 +5,10 @@ import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { UserRow } from "./UserRow";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import Button from "../Button"
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "../ui/pagination";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import Button from "../Button";
+import { cn } from "@/lib/utils";
 
 interface User {
   $id?: string;
@@ -20,6 +23,8 @@ export function UsersTable() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1)
+  const [pages, setPages] = useState(1);
+
   const [totalUsers, setTotalUsers] = useState(0)
   const limit = 10;
 
@@ -27,7 +32,7 @@ export function UsersTable() {
     const params = new URLSearchParams({
       'queries[0]': JSON.stringify({
         method: "limit",
-        values:[limit],
+        values: [limit],
       }),
       "queries[1]": JSON.stringify({
         method: "offset",
@@ -37,6 +42,23 @@ export function UsersTable() {
     });
     return params;
   }
+
+  function handleGoToNextPage() {
+    if (page < pages) {
+      setPage(page + 1);
+    }
+  }
+
+  function handleGoToPage(pageNumber: number) {
+    setPage(pageNumber);
+  }
+
+  function handleGoToPreviousPage() {
+    if (page > 0) {
+      setPage(page - 1);
+    }
+  }
+
   useEffect(() => {
     const fetchUsers = async () => {
       setLoading(true);
@@ -62,10 +84,11 @@ export function UsersTable() {
 
         console.log(result);
 
-        const totalPages = Math.ceil(result.total / 5);
+        const totalPages = Math.ceil(result.total / limit);
 
         setUsers(result.documents || []);
         setTotalUsers(result.total || 0);
+        setPages(totalPages);
       } catch (error) {
         console.error("Failed to fetch users:", error);
       } finally {
@@ -113,7 +136,7 @@ export function UsersTable() {
           </TableRow>
         ) : users.length > 0 ? (
           users.map((user, index) => (
-            <UserRow key={user.$id} user={user} index={index} />
+            <UserRow key={user.$id} user={user} index={(index + 1 * ((page - 1) * limit))} />
           ))
         ) : (
           <TableRow>
@@ -123,50 +146,35 @@ export function UsersTable() {
           </TableRow>
         )}
 
-        {/* <Pagination>
-          <PaginationContent className="py-1">
-            <PaginationItem>
-              <button className="flex items-center gap-1 hover:bg-zinc-100 rounded-md p-2" onClick={handleGoToPreviousPage}>
-                <ChevronLeft className="h-4 w-4" />
-                <span>Previous</span>
-              </button>
-            </PaginationItem>
-            {
-              [...Array(pages)].map((_, index) => (
-                <PaginationItem key={index}>
-                  <button onClick={() => handleGoToPage(index)} className={cn("rounded-full px-3 py-1", index === page ? "bg-zinc-200 hover:bg-zinc-300" : "hover:bg-zinc-100")} >{index + 1}</button>
+        <TableRow>
+          <TableCell colSpan={6} className="text-center">
+            <Pagination className="flex items-center justify-center w-full">
+              <PaginationContent className="py-1">
+                <PaginationItem>
+                  <button disabled={page === 1} className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent" onClick={handleGoToPreviousPage}>
+                    <ChevronLeft className="h-4 w-4" />
+                    <span>Anterior</span>
+                  </button>
                 </PaginationItem>
-              ))
-            }
-            <PaginationItem>
-              <button className="flex items-center gap-1 hover:bg-zinc-100 rounded-md p-2" onClick={handleGoToNextPage}>
-                Próximo
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination> */}
+                {
+                  [...Array(pages)].map((_, index) => (
+                    <PaginationItem key={index}>
+                      <button onClick={() => handleGoToPage(index + 1)} className={cn("rounded-full px-3 py-1", index === page - 1 ? "bg-zinc-200 hover:bg-zinc-300" : "hover:bg-zinc-200")} >{index + 1}</button>
+                    </PaginationItem>
+                  ))
+                }
+                <PaginationItem>
+                  <button disabled={page * limit >= totalUsers} className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent" onClick={handleGoToNextPage}>
+                    Próximo
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </TableCell>
+        </TableRow>
 
       </TableBody>
-      <div className="flex justify-between items-center mt-4">
-        <Button
-          variant="gray"
-          disabled={page === 1}
-          onClick={() => setPage(page - 1)}
-        >
-          Anterior
-        </Button>
-
-        <span>Página {page}</span>
-
-        <Button
-          variant="gray"
-          disabled={page * limit >= totalUsers}
-          onClick={() => setPage(page + 1)}
-        >
-          Próximo
-        </Button>
-      </div>
     </Table>
   );
 }

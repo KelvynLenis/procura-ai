@@ -152,7 +152,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
 
   return (
     <TableRow className="text-base">
-      <TableCell className="font-bold text-zinc-800 pl-5 hidden lg:table-cell">{index}</TableCell>
+      <TableCell className="font-bold text-zinc-800 pl-5 hidden lg:table-cell">{index + 1}</TableCell>
       <TableCell className="font-bold text-zinc-800 lg:flex">{phone_model}</TableCell>
       <TableCell className="font-bold capitalize hidden md:table-cell">{brand}</TableCell>
       <TableCell className="font-bold hidden md:table-cell">{imei.slice(0, 1) + ' ' + imei.slice(1, 8) + ' ****** **'}</TableCell>
