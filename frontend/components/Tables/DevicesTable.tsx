@@ -186,7 +186,7 @@ export function DevicesTable() {
               <Pagination className="flex items-center justify-center w-full">
                 <PaginationContent className="py-1">
                   <PaginationItem>
-                    <button disabled={page === 1} className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2" onClick={handleGoToPreviousPage}>
+                    <button disabled={page === 1} className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent" onClick={handleGoToPreviousPage}>
                       <ChevronLeft className="h-4 w-4" />
                       <span>Previous</span>
                     </button>
@@ -199,7 +199,7 @@ export function DevicesTable() {
                     ))
                   }
                   <PaginationItem>
-                    <button className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2" onClick={handleGoToNextPage}>
+                    <button disabled={page * limit >= totalDevices} className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent" onClick={handleGoToNextPage}>
                       Próximo
                       <ChevronRight className="h-4 w-4" />
                     </button>

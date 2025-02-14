@@ -113,7 +113,7 @@ export function UserRow({ user, index }: { user: UserRowProps, index: number }) 
         <TableCell className="font-bold text-lg break-words">{user.email || "N/A"}</TableCell>
         <TableCell className={cn("font-bold break-words")}>
           <span className={cn("font-bold text-lg break-words p-2 rounded-md capitalize", user.type === 'Usuario' ? 'bg-sky-400/40 text-sky-700' : 'bg-blue-500/30 text-blue-700')}>
-            {user.type || "N/A"}
+            {user.type === 'Usuario' ? 'Usuário' : user.type || "N/A"}
           </span>
         </TableCell>
         <TableCell>
