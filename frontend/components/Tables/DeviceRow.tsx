@@ -77,66 +77,74 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
 
       console.log(x)
       const callFunction = async () => {
-        const createEvent = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents/`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
-            },
-            body: JSON.stringify({
-              documentId: eventId,
-              data: {
-                id_device: id,
-                time_event: new Date().toISOString(),
-                last_location: [0, 0],
-                description: "Recuperado",
-                type: "Recuperado",
-                is_alert_on: false
-              }
-            })
-          }).then(async (response) => {
-
-            if (!response.ok) {
-              const error = await response.text();
-              throw new Error(`Error: ${error}`);
-            }
-            return response.json();
-          }).catch((err) => {
-            console.log(`Fetch error: ${err.message}`);
-            return null;
-          });
-
-        const updateDeviceStatus = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
-          {
-            method: "PATCH",
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
-            },
-            body: JSON.stringify({
-              data: {
-                is_stolen: false,
-                status: "Recuperado"
+        try {
+          const createEvent = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents/`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
               },
-            }),
-          }
-        );
+              body: JSON.stringify({
+                documentId: eventId,
+                data: {
+                  id_device: id,
+                  time_event: new Date().toISOString(),
+                  last_location: [0, 0],
+                  description: "Recuperado",
+                  type: "Recuperado",
+                  is_alert_on: false
+                }
+              })
+            }).then(async (response) => {
 
+              if (!response.ok) {
+                const error = await response.text();
+                throw new Error(`Error: ${error}`);
+              }
+              return response.json();
+            }).catch((err) => {
+              console.log(`Fetch error: ${err.message}`);
+              return null;
+            });
 
+          const updateDeviceStatus = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
+            {
+              method: "PATCH",
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+              },
+              body: JSON.stringify({
+                data: {
+                  is_stolen: false,
+                  status: "Recuperado"
+                },
+              }),
+            }
+          );
+
+          return true; // Return success flag
+        } catch (error) {
+          console.error("Ocorreu um erro em uma das operações:", error);
+          return false; // Return failure flag
+        }
       }
 
       // setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device,  } : device));
 
-      await toast.promise(callFunction, {
+      const success = await toast.promise(callFunction, {
         pending: 'Recuperando Dispositivo...',
         success: 'Recuperado',
         error: 'Erro ao recuperar'
       })
 
-      setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, is_stolen: false, status: "Recuperado" } : device));
+      if (success) {
+        setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, is_stolen: false, status: "Recuperado" } : device));
+
+      }
       // router.refresh()
     } catch (error) {
       console.error(error)
