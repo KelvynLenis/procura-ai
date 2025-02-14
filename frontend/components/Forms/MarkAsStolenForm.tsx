@@ -17,7 +17,6 @@ import { v4 as uuidv4 } from 'uuid'
 import { DialogClose } from "../ui/dialog"
 import { DeviceProps } from "@/utils/types"
 import { Textarea } from "../ui/textarea"
-import { revalidateTag } from "next/cache"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
@@ -171,9 +170,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
       }
 
       const eventId = uuidv4();
-
       const callFunction = async () => {
-
         try {
           const [createdEvent, updatedDeviceStatus, updatedDistrict] = await Promise.all([
             fetch(
@@ -218,25 +215,28 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
             updateDistrict(values.id_district)
           ]);
 
-          // console.log("Todas as operações foram concluídas com sucesso!", {
-          //   createdEvent,
-          //   updatedDeviceStatus,
-          //   updatedDistrict
-          // });
-
+          return true; // Return success flag
         } catch (error) {
           console.error("Ocorreu um erro em uma das operações:", error);
-          return
+          return false; // Return failure flag
         }
       }
 
-      setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, is_stolen: true, status: getStatus(values.type) } : device));
-
-      toast.promise(callFunction, {
+      const success = await toast.promise(callFunction, {
         pending: `Marcando como ${getStatus(values.type)}...`,
         success: `Marcado como ${getStatus(values.type)}!`,
         error: `Erro ao marcar como ${getStatus(values.type)}!`
-      })
+      });
+
+      if (success) {
+        setDevices((prevDevices) =>
+          prevDevices.map((device) =>
+            device.$id === id
+              ? { ...device, is_stolen: true, status: getStatus(values.type) }
+              : device
+          )
+        );
+      }
 
       console.log(values)
     } catch (error) {
