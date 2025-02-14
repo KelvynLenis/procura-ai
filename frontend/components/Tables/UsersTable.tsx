@@ -153,13 +153,13 @@ export function UsersTable() {
                 <PaginationItem>
                   <button disabled={page === 1} className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent" onClick={handleGoToPreviousPage}>
                     <ChevronLeft className="h-4 w-4" />
-                    <span>Previous</span>
+                    <span>Anterior</span>
                   </button>
                 </PaginationItem>
                 {
                   [...Array(pages)].map((_, index) => (
                     <PaginationItem key={index}>
-                      <button onClick={() => handleGoToPage(index)} className={cn("rounded-full px-3 py-1", index === page - 1 ? "bg-zinc-200 hover:bg-zinc-300" : "hover:bg-zinc-200")} >{index + 1}</button>
+                      <button onClick={() => handleGoToPage(index + 1)} className={cn("rounded-full px-3 py-1", index === page - 1 ? "bg-zinc-200 hover:bg-zinc-300" : "hover:bg-zinc-200")} >{index + 1}</button>
                     </PaginationItem>
                   ))
                 }
@@ -175,25 +175,6 @@ export function UsersTable() {
         </TableRow>
 
       </TableBody>
-      {/* <div className="flex justify-between items-center mt-4">
-        <Button
-          variant="gray"
-          disabled={page === 1}
-          onClick={() => setPage(page - 1)}
-        >
-          Anterior
-        </Button>
-
-        <span>Página {page}</span>
-
-        <Button
-          variant="gray"
-          disabled={page * limit >= totalUsers}
-          onClick={() => setPage(page + 1)}
-        >
-          Próximo
-        </Button>
-      </div> */}
     </Table>
   );
 }
