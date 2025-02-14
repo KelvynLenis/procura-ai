@@ -34,7 +34,6 @@ interface DeviceRowProps {
 export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen, status, setDevices, index }: DeviceRowProps) {
   const [isLoading, setIsLoading] = useState(false)
 
-
   async function handleDeleteDevice(id: string) {
     try {
       const callFunction = async () => {
@@ -78,7 +77,6 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
 
       console.log(x)
       const callFunction = async () => {
-
         const createEvent = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents/`,
           {
@@ -130,16 +128,16 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
 
       }
 
-      setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, is_stolen: false, status: "Recuperado" } : device));
       // setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device,  } : device));
 
-
-      toast.promise(callFunction, {
+      await toast.promise(callFunction, {
         pending: 'Recuperando Dispositivo...',
         success: 'Recuperado',
         error: 'Erro ao recuperar'
       })
 
+      setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, is_stolen: false, status: "Recuperado" } : device));
+      // router.refresh()
     } catch (error) {
       console.error(error)
     }
