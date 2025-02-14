@@ -170,9 +170,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
       }
 
       const eventId = uuidv4();
-
       const callFunction = async () => {
-
         try {
           const [createdEvent, updatedDeviceStatus, updatedDistrict] = await Promise.all([
             fetch(
@@ -217,20 +215,28 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
             updateDistrict(values.id_district)
           ]);
 
+          return true; // Return success flag
         } catch (error) {
           console.error("Ocorreu um erro em uma das operações:", error);
-          return
+          return false; // Return failure flag
         }
       }
 
-
-      await toast.promise(callFunction, {
+      const success = await toast.promise(callFunction, {
         pending: `Marcando como ${getStatus(values.type)}...`,
         success: `Marcado como ${getStatus(values.type)}!`,
         error: `Erro ao marcar como ${getStatus(values.type)}!`
-      })
+      });
 
-      setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, is_stolen: true, status: getStatus(values.type) } : device));
+      if (success) {
+        setDevices((prevDevices) =>
+          prevDevices.map((device) =>
+            device.$id === id
+              ? { ...device, is_stolen: true, status: getStatus(values.type) }
+              : device
+          )
+        );
+      }
 
       console.log(values)
     } catch (error) {
