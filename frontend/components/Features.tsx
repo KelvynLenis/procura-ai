@@ -24,35 +24,35 @@ export function Features() {
       <h1 className="text-4xl text-primary font-medium self-start ml-10">Veja como é fácil se proteger</h1>
 
       <div className="flex lg:flex-wrap flex-col lg:flex-row gap-4">
-        <div className="bg-slate-500 w-72 py-6 px-3 rounded-xl flex gap-2">
-          <Image src={feat1} alt="feat1" />
-          <div className="flex flex-col gap-2">
-            <span className="font-bold">Crie uma conta</span>
+        <div className="flex flex-col gap-2">
+          <span className="font-bold">Crie uma conta</span>
+          <div className="bg-slate-500 w-72 py-6 px-3 rounded-xl flex gap-2">
+            <Image src={feat1} alt="feat1" className="w-28 h-28 self-center" />
             <span className="font-medium">Cadastre-se no Procura.Aí informando alguns dados básicos</span>
           </div>
         </div>
 
-        <div className="bg-procura-ai-yellow/50 w-72 py-6 px-3 rounded-xl flex gap-2">
-          <Image src={feat2} alt="feat1" />
-          <div className="flex flex-col gap-2">
-            <span className="font-bold">Crie uma conta</span>
-            <span className="font-medium">Cadastre-se no Procura.Aí informando alguns dados básicos</span>
+        <div className="flex flex-col gap-2">
+          <span className="font-bold">Cadastre seus dispositivos</span>
+          <div className="bg-procura-ai-yellow/50 w-72 py-6 px-3 rounded-xl flex gap-2">
+            <Image src={feat2} alt="feat2" className="w-28 h-28 self-center" />
+            <span className="font-medium">Registre um ou mais celulares para mantê-los protegidos</span>
           </div>
         </div>
 
-        <div className="bg-[#D04228]/50 w-72 py-6 px-3 rounded-xl flex gap-2">
-          <Image src={feat3} alt="feat1" />
-          <div className="flex flex-col gap-2">
-            <span className="font-bold">Crie uma conta</span>
-            <span className="font-medium">Cadastre-se no Procura.Aí informando alguns dados básicos</span>
+        <div className="flex flex-col gap-2">
+          <span className="font-bold">Crie um alerta</span>
+          <div className="bg-[#D04228]/50 w-72 py-6 px-3 rounded-xl flex gap-2">
+            <Image src={feat3} alt="feat3" className="w-28 h-28 self-center" />
+            <span className="font-medium">Em caso de roubo, perda ou furto de algum dispositivo, crie um alerta </span>
           </div>
         </div>
 
-        <div className="bg-[#39AF84]/50 w-72 py-6 px-3 rounded-xl flex gap-2">
-          <Image src={feat4} alt="feat1" />
-          <div className="flex flex-col gap-2">
-            <span className="font-bold">Crie uma conta</span>
-            <span className="font-medium">Cadastre-se no Procura.Aí informando alguns dados básicos</span>
+        <div className="flex flex-col gap-2">
+          <span className="font-bold">Autoridades são acionadas</span>
+          <div className="bg-[#39AF84]/50 w-72 py-6 px-3 rounded-xl flex gap-2">
+            <Image src={feat4} alt="feat4" className="w-28 h-28 self-center" />
+            <span className="font-medium">Agora seu celular tem mais chances de ser recuperado pelas autoridades </span>
           </div>
         </div>
       </div>
