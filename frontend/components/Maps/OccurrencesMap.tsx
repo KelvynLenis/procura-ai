@@ -30,9 +30,10 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
   const [isInfoCardOpen, setIsInfoCardOpen] = useState(false)
 
   const pathname = usePathname().slice(1)
+  const isFullScreen = pathname === 'map/ocorrencias'
 
   function handleOpenPopup(event: EventProps) {
-    pathname === 'map/ocorrencias' ? setIsOverlayOpen(true) : setIsInfoCardOpen(true)
+    isFullScreen ? setIsOverlayOpen(true) : setIsInfoCardOpen(true)
     setOccurence(event)
   }
 
@@ -68,7 +69,7 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
   }
 
   function setWidth() {
-    if (pathname === 'map/ocorrencias') {
+    if (isFullScreen) {
       return window.innerWidth
     } else {
       if (!isInfoCardOpen) {
@@ -107,7 +108,7 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
   }
 
   function setHeight() {
-    if (pathname === 'map/ocorrencias') {
+    if (isFullScreen) {
       return window.innerHeight
     } else {
       return 300

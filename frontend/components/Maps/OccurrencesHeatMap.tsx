@@ -3,7 +3,6 @@
 import { cn } from "@/lib/utils";
 import { District } from "@/utils/types";
 import { usePathname } from "next/navigation";
-import path from "path";
 import { Map, GeoJsonLoader, Overlay } from "pigeon-maps";
 import { useState } from "react";
 import { FaCircleExclamation } from "react-icons/fa6";
@@ -25,6 +24,7 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
   const [OverlayData, setOverlayData] = useState<OverlayDataProps>({} as OverlayDataProps)
 
   const pathname = usePathname().slice(1)
+  const issFullScreen = pathname === 'map/bairros'
 
 
   function handleOverlayMouseOver({ event, anchor, payload }: { event: any; anchor: any; payload: any }) {
@@ -92,7 +92,7 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
   }
 
   function setWidth() {
-    if (pathname === 'map/bairros') {
+    if (issFullScreen) {
       return window.innerWidth
     }
     else {
@@ -101,7 +101,7 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
   }
 
   function setHeight() {
-    if (pathname === 'map/bairros') {
+    if (issFullScreen) {
       return window.innerHeight
     } else {
       return 270
@@ -152,8 +152,8 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
                 "flex flex-col absolute gap-2 w-56 rounded-xl h-fit bg-primary ring-1 ring-black/50 text-white font-semibold"
               )}
               style={{
-                top: `${pathname === 'map/bairros' ? OverlayData.anchor.y : -130}px`,
-                left: `${pathname === 'map/bairros' ? OverlayData.anchor.x : 5}px`,
+                top: `${issFullScreen ? OverlayData.anchor.y : -130}px`,
+                left: `${issFullScreen ? OverlayData.anchor.x : 5}px`,
               }}
               onClick={() => setIsOverlayOpen(false)}
             >
