@@ -58,7 +58,7 @@ export function Features() {
       </div>
 
       <div className="flex flex-col items-center gap-7">
-        <Button className="bg-primary w-fit text-white rounded-full text-xl shadow-sm px-10 py-7 shadow-zinc-800 hover:bg-white hover:text-primary">Cadastrar</Button>
+        <Button className="bg-primary w-fit text-white rounded-full text-xl shadow-sm px-10 py-7 shadow-zinc-800 hover:bg-white hover:text-primary">Cadastre-se</Button>
         <span className="text-2xl font-bold text-procura-ai-black">Disponível em breve nas principais lojas de aplicativos</span>
       </div>
 
