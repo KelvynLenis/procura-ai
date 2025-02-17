@@ -13,6 +13,7 @@ import feat2 from '../assets/icons/feat2.png'
 import feat3 from '../assets/icons/feat3.png'
 import feat4 from '../assets/icons/feat4.png'
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 export function Features() {
 
@@ -58,7 +59,9 @@ export function Features() {
       </div>
 
       <div className="flex flex-col items-center gap-7">
-        <Button className="bg-primary w-fit text-white rounded-full text-xl shadow-sm px-10 py-7 shadow-zinc-800 hover:bg-white hover:text-primary">Cadastre-se</Button>
+        <Link href={'/cadastro'}>
+          <Button className="bg-primary w-fit text-white rounded-full text-xl shadow-sm px-10 py-7 shadow-zinc-800 hover:bg-white hover:text-primary">Cadastre-se</Button>
+        </Link>
         <span className="text-2xl font-bold text-procura-ai-black">Disponível em breve nas principais lojas de aplicativos</span>
       </div>
 
