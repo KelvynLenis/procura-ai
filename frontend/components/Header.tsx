@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation"
 export function Header() {
   const pathname = usePathname().slice(1)
 
+  const isFullScreen = pathname === 'map/ocorrencias'
+
   const routes = [
     {
       name: 'home',
@@ -29,7 +31,7 @@ export function Header() {
   ]
 
   return (
-    pathname !== 'map/ocorrencias' &&
+    !isFullScreen &&
     (
       <header className="flex items-center drop-shadow-md bg-procura-ai-blue self-end w-full h-16">
         <div className="w-1/5 md:w-[35%] lg:w-[26%] xl:w-1/5 h-1" />

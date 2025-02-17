@@ -5,12 +5,14 @@ import { District } from "@/utils/types";
 import { usePathname } from "next/navigation";
 import { Map, GeoJsonLoader, Overlay } from "pigeon-maps";
 import { useState } from "react";
+import { FaCircleExclamation } from "react-icons/fa6";
 
 const geoJsonLink = "https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI"
 
 interface OverlayDataProps {
   district: District
   color: string
+  anchor?: any
 }
 
 interface OccurrencesHeatMapProps {
@@ -22,18 +24,26 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
   const [OverlayData, setOverlayData] = useState<OverlayDataProps>({} as OverlayDataProps)
 
   const pathname = usePathname().slice(1)
+  const issFullScreen = pathname === 'map/bairros'
 
 
-  function handleOverlayMouseOver(feature: any) {
-    // console.log(typeof Number(feature.payload.properties.cod_bairro))
-
+  function handleOverlayMouseOver({ event, anchor, payload }: { event: any; anchor: any; payload: any }) {
     setIsOverlayOpen(true)
+    // console.log(event)
 
-    const district = districts.find(district => district.cod_neighborhood === Number(feature.payload.properties.cod_bairro))
+    // Calculate offset from cursor
+    const offset = { x: 10, y: 10 } // Pixels to offset from cursor
+    const mouseAnchor = {
+      x: event.pageX + offset.x,
+      y: event.pageY + offset.y,
+    }
+
+    const district = districts.find(district => district.cod_neighborhood === Number(payload.properties.cod_bairro))
 
     setOverlayData({
       district,
-      color: getFillColor(district?.cod_neighborhood!)
+      color: getFillColor(district?.cod_neighborhood!),
+      anchor: mouseAnchor // Use mouse position instead of feature anchor
     })
   }
 
@@ -82,7 +92,7 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
   }
 
   function setWidth() {
-    if (pathname === 'map/bairros') {
+    if (issFullScreen) {
       return window.innerWidth
     }
     else {
@@ -91,7 +101,7 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
   }
 
   function setHeight() {
-    if (pathname === 'map/bairros') {
+    if (issFullScreen) {
       return window.innerHeight
     } else {
       return 270
@@ -108,14 +118,10 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
               ? { fill: getHoverColor(Number(feature.properties.cod_bairro)), opacity: 0.80, strokeWidth: '2', stroke: '#000' }
               : { fill: getFillColor(Number(feature.properties.cod_bairro)), opacity: 0.5, strokeWidth: '1', stroke: '#000' }
           }
-          onMouseOver={
-            (feature) => {
-              handleOverlayMouseOver(feature)
-            }
-          }
+          onMouseOver={handleOverlayMouseOver}
           onMouseOut={() => setIsOverlayOpen(false)}
         />
-        <div className="absolute w-36 bottom-2 right-3 bg-black/50 py-2 px-4 rounded-md text-white">
+        <div className="absolute w-24 bottom-2 right-5 bg-black/50 py-2 px-4 rounded-md text-white">
           <h1>Legend</h1>
           <ul className="flex flex-col gap-2">
             <li className="flex items-center gap-2">
@@ -136,23 +142,40 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
             </li>
           </ul>
         </div>
-      </Map>
+      </Map >
 
       {
         isOverlayOpen && (
-          <div
-            className={cn("absolute flex gap-2 top-5 left-5 w-fit p-2 rounded-md h-fit bg-white ring-1 ring-black/50")}
-            onClick={() => setIsOverlayOpen(false)}
-          >
-            <span className={`w-3 h-3 rounded-full ring-1 ring-black bg-[${OverlayData.color}]`}></span>
-            <span className="font-bold">
-              {OverlayData.district?.name_neighborhood && OverlayData.district.name_neighborhood} <br />
-              No. Roubos {OverlayData.district?.robbery_counter && OverlayData.district.robbery_counter} <br />
-              No. Furtos {OverlayData.district?.theft_counter && OverlayData.district.theft_counter} <br />
-              No. Perdidos {OverlayData.district?.lost_counter && OverlayData.district.lost_counter} <br />
-            </span>
-          </div>
-
+          <Overlay className="flex w-full" anchor={OverlayData.anchor}>
+            <div
+              className={cn(
+                "flex flex-col absolute gap-2 w-56 rounded-xl h-fit bg-primary ring-1 ring-black/50 text-white font-semibold"
+              )}
+              style={{
+                top: `${issFullScreen ? OverlayData.anchor.y : -130}px`,
+                left: `${issFullScreen ? OverlayData.anchor.x : 5}px`,
+              }}
+              onClick={() => setIsOverlayOpen(false)}
+            >
+              {/* <span
+                className="w-3 h-3 rounded-full ring-1 ring-black"
+                style={{ backgroundColor: OverlayData.color }}
+              ></span> */}
+              <div className="bg-white text-primary rounded-t-xl px-2 py-1 flex items-center break-words">
+                {OverlayData.district?.name_neighborhood && OverlayData.district.name_neighborhood}
+              </div>
+              <div className="py-0.5 px-2">
+                <span className="font-bold">
+                  {OverlayData.district?.robbery_counter && OverlayData.district.robbery_counter} {OverlayData.district?.robbery_counter > 1 ? 'roubos' : 'roubo'} <br />
+                  {OverlayData.district?.theft_counter && OverlayData.district.theft_counter} {OverlayData.district?.theft_counter > 1 ? 'furtos' : 'furto'} <br />
+                  {OverlayData.district?.lost_counter && OverlayData.district.lost_counter} {OverlayData.district?.lost_counter > 1 ? 'perdas' : 'perda'} <br />
+                </span>
+              </div>
+              <div className="flex gap-2 px-2">
+                <FaCircleExclamation /> baixa periculosidade
+              </div>
+            </div>
+          </Overlay>
         )
       }
     </>
