@@ -27,7 +27,7 @@ export function Features() {
       <div className="flex lg:flex-wrap flex-col lg:flex-row gap-4">
         <div className="flex flex-col gap-2">
           <span className="font-bold">Crie uma conta</span>
-          <div className="bg-slate-500 w-72 py-6 px-3 rounded-xl flex gap-2">
+          <div className="bg-[#7F96B8] w-72 py-6 px-3 rounded-xl flex gap-2">
             <Image src={feat1} alt="feat1" className="w-28 h-28 self-center" />
             <span className="font-medium">Cadastre-se no Procura.Aí informando alguns dados básicos</span>
           </div>
