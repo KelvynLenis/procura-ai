@@ -1,17 +1,10 @@
 import Image from "next/image";
 import shapesLeft from '../assets/images/shapes-left.svg'
 import shapesRight from '../assets/images/shapes-right.svg'
-import googlePlay from '../assets/images/google-play.svg'
-import appStore from '../assets/images/app-store.svg'
-import arrow from '../assets/icons/arrow.svg'
-import block from '../assets/icons/block.svg'
-import notify from '../assets/icons/notify.svg'
-import location from '../assets/icons/location.svg'
-import dollar from '../assets/icons/dollar.svg'
-import feat1 from '../assets/icons/feat1.png'
-import feat2 from '../assets/icons/feat2.png'
-import feat3 from '../assets/icons/feat3.png'
-import feat4 from '../assets/icons/feat4.png'
+import feat1 from '../assets/icons/feat1.svg'
+import feat2 from '../assets/icons/feat2.svg'
+import feat3 from '../assets/icons/feat3.svg'
+import feat4 from '../assets/icons/feat4.svg'
 import { Button } from "./ui/button";
 import Link from "next/link";
 
@@ -28,7 +21,7 @@ export function Features() {
         <div className="flex flex-col gap-2">
           <span className="font-bold">Crie uma conta</span>
           <div className="bg-[#7F96B8] w-72 py-6 px-3 rounded-xl flex gap-2">
-            <Image src={feat1} alt="feat1" className="w-28 h-28 self-center" />
+            <Image src={feat1} alt="feat1" className="h-24 self-center" />
             <span className="font-medium">Cadastre-se no Procura.Aí informando alguns dados básicos</span>
           </div>
         </div>
@@ -36,7 +29,7 @@ export function Features() {
         <div className="flex flex-col gap-2">
           <span className="font-bold">Cadastre seus dispositivos</span>
           <div className="bg-procura-ai-yellow/50 w-72 py-6 px-3 rounded-xl flex gap-2">
-            <Image src={feat2} alt="feat2" className="w-28 h-28 self-center" />
+            <Image src={feat2} alt="feat2" className="h-24 self-center" />
             <span className="font-medium">Registre um ou mais celulares para mantê-los protegidos</span>
           </div>
         </div>
@@ -44,7 +37,7 @@ export function Features() {
         <div className="flex flex-col gap-2">
           <span className="font-bold">Crie um alerta</span>
           <div className="bg-[#D04228]/50 w-72 py-6 px-3 rounded-xl flex gap-2">
-            <Image src={feat3} alt="feat3" className="w-28 h-28 self-center" />
+            <Image src={feat3} alt="feat3" className="h-24 self-center" />
             <span className="font-medium">Em caso de roubo, perda ou furto de algum dispositivo, crie um alerta </span>
           </div>
         </div>
@@ -52,7 +45,7 @@ export function Features() {
         <div className="flex flex-col gap-2">
           <span className="font-bold">Autoridades são acionadas</span>
           <div className="bg-[#39AF84]/50 w-72 py-6 px-3 rounded-xl flex gap-2">
-            <Image src={feat4} alt="feat4" className="w-28 h-28 self-center" />
+            <Image src={feat4} alt="feat4" className="h-24 self-center" />
             <span className="font-medium">Agora seu celular tem mais chances de ser recuperado pelas autoridades </span>
           </div>
         </div>

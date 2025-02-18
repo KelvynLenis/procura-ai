@@ -190,7 +190,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
 
         if (sessions.status) {
           setIsLoading(true)
-          admin ? router.push('/dashboard') : router.push('/home')
+          admin ? router.push('/dashboard') : router.push('/meus-dispositivos')
         }
       } catch (error) {
         console.log("Erro: ", error)

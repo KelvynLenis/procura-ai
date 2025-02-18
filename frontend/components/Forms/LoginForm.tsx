@@ -55,7 +55,7 @@ export function LoginForm() {
           router.push('/dashboard');
         } else {
           setIsLoading(true)
-          router.push('/home');
+          router.push('/meus-dispositivos');
         }
 
         return promise
@@ -88,7 +88,7 @@ export function LoginForm() {
           const sessions = await account.get()
           if (sessions.status) {
             setIsLoading(true)
-            sessions.labels[0] == "admin" ? router.push('/dashboard') : router.push('/home')
+            sessions.labels[0] == "admin" ? router.push('/dashboard') : router.push('/meus-dispositivos')
           }
         }
 

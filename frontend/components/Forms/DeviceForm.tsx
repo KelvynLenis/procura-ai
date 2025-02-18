@@ -505,7 +505,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
           ) : (
             <div className="flex justify-between w-full">
               <Button isLoader type="submit" variant="blue" className="px-3">Cadastrar dispositivo</Button>
-              <Link href={'/home'}>
+              <Link href={'/meus-dispositivos'}>
                 <Button isLoader onClick={() => goBack()} type="button" variant="red">Cancelar</Button>
               </Link>
             </div>
