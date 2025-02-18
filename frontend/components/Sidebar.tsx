@@ -127,7 +127,7 @@ export function AppSidebar({ admin }: SidebarProps) {
             <span className="w-[90%] rounded-lg h-0.5 bg-zinc-300" />
           </div>
 
-          {
+          {/* {
             !admin && (
               <SidebarGroup className="flex px-2">
                 <SidebarMenu className="flex flex-col gap-1 font-bold">
@@ -142,7 +142,7 @@ export function AppSidebar({ admin }: SidebarProps) {
                 </SidebarMenu>
               </SidebarGroup>
             )
-          }
+          } */}
 
 
           <SidebarGroup className="flex flex-col gap-2 px-2">

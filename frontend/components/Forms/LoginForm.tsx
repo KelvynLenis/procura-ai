@@ -55,7 +55,7 @@ export function LoginForm() {
           router.push('/dashboard');
         } else {
           setIsLoading(true)
-          router.push('/home');
+          router.push('/meus-dispositivos');
         }
 
         return promise
