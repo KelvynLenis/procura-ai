@@ -93,9 +93,7 @@ export function LoginForm() {
         }
 
         toast.promise(callFunction, {
-          pending: 'Verificando sessão ativa...',
-          success: 'Sessão encontrada',
-          error: 'Sem sessão ativa. Faça login para continuar.'
+          success: 'Sessão encontrada'
         })
 
       } catch (error) {

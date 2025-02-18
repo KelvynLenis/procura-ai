@@ -3,18 +3,16 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
 import { account } from "@/lib/appwrite"
-import { ChartColumnBig, CirclePlus, FileWarning, Home, LogOut, Pencil, Plus, Siren, Smartphone, Table, Users } from "lucide-react"
+import { ChartColumnBig, FileWarning, Home, LogOut, Pencil, Siren, Smartphone } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { CustomSidebarTrigger } from "./CustomSidebarTrigger"
 import Link from "next/link"
@@ -24,7 +22,7 @@ import { PiUsersThreeFill } from "react-icons/pi";
 import { useState } from "react"
 import { LoadingToast } from "./LoadingToast"
 import { toast } from "react-toastify"
-import logo from '../assets/icons/logo.svg'
+import logo from '../assets/icons/logo-text-2.svg'
 import Image from "next/image"
 
 const devicesGroup = [
