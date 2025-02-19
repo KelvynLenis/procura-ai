@@ -31,11 +31,15 @@ interface AddDeviceFormProps {
 }
 
 const formSchema = z.object({
-  phone_model: z.string(),
+  phone_model: z.string().min(1, {
+    message: "O modelo do dispositivo é obrigatório.",
+  }),
   phone_number: z.string().min(11, {
     message: "O número de celular deve conter exatamente 11 dígitos numéricos.",
   }),
-  brand: z.string(),
+  brand: z.string().min(1, {
+    message: "A marca do dispositivo é obrigatória.",
+  }),
   imei: z.string().min(15, {
     message: "O IMEI deve conter exatamente 15 dígitos numéricos.",
   })
@@ -92,6 +96,16 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
 
       const isValidIMEI = /^[0-9]{15}$/.test(imei);
       const isValidPhoneNumber = /^[0-9]{11}$/.test(number);
+
+      if (values.phone_model === '') {
+        toast.error("O modelo do dispositivo é obrigatório.")
+        return
+      }
+
+      if (values.brand === '') {
+        toast.error("O modelo do dispositivo é obrigatório.")
+        return
+      }
 
       if (!isValidIMEI) {
         toast.error("O IMEI deve conter exatamente 15 dígitos numéricos.")
@@ -196,6 +210,34 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
   async function handleEditDevice(id: string, values: DeviceProps) {
     console.log({ id, values })
     try {
+
+      const imei = values.imei.trim();
+      const number = values.phone_number.trim();
+
+      const isValidIMEI = /^[0-9]{15}$/.test(imei);
+      const isValidPhoneNumber = /^[0-9]{11}$/.test(number);
+
+      if (values.phone_model === '') {
+        toast.error("O modelo do dispositivo é obrigatório.")
+        return
+      }
+
+      if (values.brand === '') {
+        toast.error("O modelo do dispositivo é obrigatório.")
+        return
+      }
+
+
+      if (!isValidIMEI) {
+        toast.error("O IMEI deve conter exatamente 15 dígitos numéricos.")
+        return
+      }
+
+      if (!isValidPhoneNumber) {
+        toast.error("O número de telefone deve conter exatamente 11 dígitos numéricos.")
+        return
+      }
+
       const { $id: userId } = await account.get();
 
       const callFunction = async () => {
@@ -248,7 +290,6 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
       return null;
     }
   }
-
 
 
   return (
@@ -313,6 +354,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                             key={brand.value}
                             onSelect={() => {
                               form.setValue("brand", brand.label)
+                              form.setValue("phone_model", '')
                               setIsBrandsPopoverOpen(false)
                             }}
                           >
@@ -403,6 +445,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                   </Command>
                 </PopoverContent>
               </Popover>
+
             </FormItem>
           )}
         />
@@ -499,14 +542,14 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
           device ? (
             <div className="flex justify-between w-full">
               {/* <DialogClose className="bg-white border-[0.5px] border-primary text-primary hover:bg-primary hover:text-white rounded-full text-center items-center justify-center flex w-fit px-2 py-2 shadow transition-all duration-300" type="button">Cancelar</DialogClose> */}
-              <Button isLoader type="submit" onClick={() => handleEditDevice(device.$id!, form.getValues())} variant="blue" className="px-2">Salvar alterações</Button>
-              <Button isLoader onClick={() => goBack()} type="button" variant="red" >Cancelar</Button>
+              <Button type="submit" onClick={() => handleEditDevice(device.$id!, form.getValues())} variant="blue" className="px-2">Salvar alterações</Button>
+              <Button onClick={() => goBack()} type="button" variant="red" >Cancelar</Button>
             </div>
           ) : (
             <div className="flex justify-between w-full">
-              <Button isLoader type="submit" variant="blue" className="px-3">Cadastrar dispositivo</Button>
+              <Button type="submit" variant="blue" className="px-3">Cadastrar dispositivo</Button>
               <Link href={'/meus-dispositivos'}>
-                <Button isLoader onClick={() => goBack()} type="button" variant="red">Cancelar</Button>
+                <Button onClick={() => goBack()} type="button" variant="red">Cancelar</Button>
               </Link>
             </div>
           )
