@@ -1,6 +1,10 @@
 'use client'
 
 import { usePathname } from "next/navigation"
+import { AppSidebar } from "./Sidebar"
+import { SidebarProvider, SidebarTrigger } from "./ui/sidebar"
+import { CustomSidebarTrigger } from "./CustomSidebarTrigger"
+import { OpenSidebarTrigger } from "./OpenSidebarTrigger"
 
 export function Header() {
   const pathname = usePathname().slice(1)
