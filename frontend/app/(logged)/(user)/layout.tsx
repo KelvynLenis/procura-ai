@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Header />
         <div className="flex relative">
           <SidebarProvider className="flex flex-col w-fit mr-10 md:flex-row relative">
-            <SidebarTrigger className="absolute z-1 top-16" />
+            <CustomSidebarTrigger className="absolute z-1 -top-10 text-white ml-3" />
             <AppSidebar />
           </SidebarProvider>
 
