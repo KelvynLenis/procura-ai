@@ -425,12 +425,12 @@ export function AlertForm({ id, status, handleDeviceRecovery }: MarkAsStolenForm
                 <span className="font-bold">Data e hora da ocorrência: <span className="font-normal">{formatDateTime(event.time_event)}</span></span>
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex flex-col w-1/3 items-end">
 
                 <AlertDialog>
                   <AlertDialogTrigger>
                     <span title="Desativar alerta" className={cn(
-                      "w-10 h-10 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white",
+                      "w-fit gap-2 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white",
                       status === "Roubado" && "bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500",
                       status === "Furtado" && "bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500",
                       status === "Perdido" && "bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500",
@@ -438,7 +438,10 @@ export function AlertForm({ id, status, handleDeviceRecovery }: MarkAsStolenForm
                       status === "Regular" && "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
                     )}>
                       <IoIosWarning size={28} />
-                      <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
+                      <span className="hidden opacity-0 group-hover:block group-hover:md:hidden group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
+                        Desativar alerta
+                      </span>
+                      <span className="hidden md:block">
                         Desativar alerta
                       </span>
                     </span>
