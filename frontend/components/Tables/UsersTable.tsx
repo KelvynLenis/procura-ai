@@ -106,7 +106,7 @@ export function UsersTable() {
           <TableHead className="text-black/80 text-lg font-medium text-center">ID</TableHead>
           <TableHead className="text-black/80 text-lg font-medium ">Nome</TableHead>
           <TableHead className="text-black/80 text-lg font-medium ">Email</TableHead>
-          <TableHead className="text-black/80 text-lg font-medium ">Papel</TableHead>
+          <TableHead className="text-black/80 text-lg font-medium ">Perfil</TableHead>
           <TableHead className="text-black/80 text-lg font-medium ">Ações</TableHead>
         </TableRow>
       </TableHeader>
