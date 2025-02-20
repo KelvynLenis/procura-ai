@@ -14,10 +14,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { MarkAsStolenForm } from "../Forms/MarkAsStolenForm";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from 'uuid'
 import { useState } from "react";
+import { AlertForm } from "../Forms/AlertForm";
 
 interface DeviceRowProps {
   id: string; // ID do dispositivo
@@ -234,28 +246,57 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
               </button>
             </Link>
 
-            <button className="rounded-lg w-10 h-10 flex group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90" onClick={() => handleDeleteDevice(id)}>
-              <Trash2 size={20} />
-              <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
-                Deletar dispositivo
-              </span>
-            </button>
+            <AlertDialog>
+              <AlertDialogTrigger>
+                <button className="rounded-lg w-10 h-10 flex group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90">
+                  <Trash2 size={20} />
+                  <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                    Deletar dispositivo
+                  </span>
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Tem certeza que deseja excluir o dispositivo?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Essa ação não pode ser desfeita. Isso excluirá permanentemente o dispositivo e removerá seus dados de nossos servidores.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="bg-white mr-2">Cancelar</AlertDialogCancel>
+                  <AlertDialogAction className="bg-red-500" onClick={() => handleDeleteDevice(id)}>Confirmar</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
 
             {
               isStolen
-                ? <button title="Desativar alerta" className={cn(
-                  "w-10 h-10 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white",
-                  status === "Roubado" && "bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500",
-                  status === "Furtado" && "bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500",
-                  status === "Perdido" && "bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500",
-                  status === "Recuperado" && "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
-                  status === "Regular" && "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
-                )} onClick={() => handleDeviceRecovery(id)}>
-                  <IoIosWarning size={28} />
-                  <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
-                    Desativar alerta
-                  </span>
-                </button>
+                ?
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <button title="Desativar alerta" className={cn(
+                      "w-10 h-10 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white",
+                      status === "Roubado" && "bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500",
+                      status === "Furtado" && "bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500",
+                      status === "Perdido" && "bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500",
+                      status === "Recuperado" && "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
+                      status === "Regular" && "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
+                    )}>
+                      <IoIosWarning size={28} />
+                      <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
+                        Visualizar alerta
+                      </span>
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-fit py-8">
+                    <DialogHeader>
+                      <DialogTitle>Detalhes do alerta</DialogTitle>
+                    </DialogHeader>
+                    <AlertForm id={id} status={status} handleDeviceRecovery={handleDeviceRecovery} />
+                  </DialogContent>
+                </Dialog>
 
                 :
                 <Dialog>
