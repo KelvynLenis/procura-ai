@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn, formatDateTime } from "@/lib/utils";
 import { DeviceProps, EventProps } from "@/utils/types";
 import { X } from "lucide-react";
 import Link from "next/link";
@@ -64,6 +64,7 @@ export function DeviceInfoCard({ occurence, closePopup, styles }: DeviceInfoCard
             <span>Modelo:</span>
             <span>Marca:</span>
             <span>Proprietário:</span>
+            <span>Data e hora:</span>
             <span>Detalhe:</span>
           </div>
 
@@ -72,6 +73,7 @@ export function DeviceInfoCard({ occurence, closePopup, styles }: DeviceInfoCard
             <span className="font-semibold">{occurence.device.phone_model}</span>
             <span className="font-semibold">{occurence.device.brand}</span>
             <span className="font-semibold">{occurence.user.name}</span>
+            <span className="font-semibold">{formatDateTime(occurence.event.time_event)}</span>
             <span className={cn(occurence.event.description ? "font-semibold" : "italic text-zinc-500")}>{occurence.event.description ? occurence.event.description : 'Sem detalhes'}</span>
           </div>
         </div>
