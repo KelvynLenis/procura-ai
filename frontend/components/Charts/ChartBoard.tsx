@@ -612,7 +612,7 @@ export function ChartBoard() {
         </div>
 
         <div className="flex w-full justify-around flex-wrap gap-5">
-          <div className="flex flex-col gap-2 w-[540px] text-sm bg-white items-center justify-center h-80 ring-1 ring-zinc-300 rounded-lg self-start">
+          <div className="flex flex-col gap-2 w-[540px] h-fit text-sm bg-white items-center justify-center  ring-1 ring-zinc-300 rounded-lg self-start">
             <span className="flex flex-col w-full items-start px-4 pt-3 font-semibold text-procura-ai-blue">
               Dispositivos cadastrados
               <span className="font-medium">

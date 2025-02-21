@@ -81,7 +81,7 @@ const PieChartRechart = ({ numberOfDevicesRecovered, numberOfDevicesRobbed, numb
           </div>
         ) : (
 
-          <ResponsiveContainer width="100%" height="80%">
+          <ResponsiveContainer width="100%" height="100%">
             <PieChart width={400} height={200}>
               <Pie
                 activeIndex={activeIndex}
