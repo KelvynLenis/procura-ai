@@ -248,7 +248,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 text-zinc-900 self-center items-center justify-between rounded-lg">
         <div className="w-full flex flex-col md:flex-row justify-between gap-4">
-          <div className="flex flex-col gap-5 w-full md:w-44">
+          <div className="flex flex-col gap-5 w-full md:w-48 lg:w-56">
             <FormField
               control={form.control}
               name="datetime"

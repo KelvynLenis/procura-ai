@@ -404,9 +404,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                       >
                         <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
                         {field.value
-                          ? phoneBrands.find(
-                            (model) => model.brand === form.control._formValues.brand
-                          )?.models.find((model) => model === field.value)
+                          ? field.value
                           : "Pesquise o modelo do dispositivo"}
                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </ButtonShadcn>
@@ -416,7 +414,12 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                 </PopoverTrigger>
                 <PopoverContent className="w-[200px] p-0">
                   <Command>
-                    <CommandInput placeholder="Digite o modelo." />
+                    <CommandInput placeholder="Digite o modelo." value={field.value} onValueChange={(value) => {
+                      if (value === '') {
+                        form.setValue("phone_model", '')
+                      }
+                      form.setValue("phone_model", value)
+                    }} />
                     <CommandList>
                       <CommandEmpty>Nenhum modelo encontrado.</CommandEmpty>
                       <CommandGroup>

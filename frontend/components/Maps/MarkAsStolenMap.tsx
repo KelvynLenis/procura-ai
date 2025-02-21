@@ -110,26 +110,26 @@ export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolen
     if (window.innerWidth >= 1700) {
       return 1380
     }
-    if (window.innerWidth >= 1600) {
+    else if (window.innerWidth >= 1600) {
       return 1230
     }
-    else if (window.innerWidth > 1400) {
-      return 1100
+    else if (window.innerWidth >= 1400) {
+      return 1000
     }
-    else if (window.innerWidth > 1200) {
+    else if (window.innerWidth >= 1200) {
       return 900
     }
     else if (window.innerWidth >= 1024) {
-      return 700
+      return 600
     }
     else if (window.innerWidth >= 768) {
-      return 450
+      return 420
     }
     else if (window.innerWidth >= 425) {
       return 300
     }
     else {
-      return 240
+      return 220
     }
   }
 
