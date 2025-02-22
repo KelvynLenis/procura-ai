@@ -117,6 +117,32 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
         return
       }
 
+      const imeiCheckResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          }
+        }
+      );
+
+      if (!imeiCheckResponse.ok) {
+        toast.error("Erro ao verificar IMEI. Tente novamente.");
+        return;
+      }
+
+      const existingDevices = await imeiCheckResponse.json();
+      const imeiExists = existingDevices.documents.some(
+        (existingDevice: DeviceProps) => existingDevice.imei === imei && (!device || existingDevice.$id !== device.$id)
+      );
+
+      if (imeiExists) {
+        toast.error("Este IMEI já está cadastrado no sistema.");
+        return;
+      }
+
       const { $id: userId } = await account.get()
       //@glaymar vai ser removido esse codigo ? 
       if (device) {
@@ -225,6 +251,31 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
       if (values.brand === '') {
         toast.error("O modelo do dispositivo é obrigatório.")
         return
+      }
+      const imeiCheckResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          }
+        }
+      );
+
+      if (!imeiCheckResponse.ok) {
+        toast.error("Erro ao verificar IMEI. Tente novamente.");
+        return;
+      }
+
+      const existingDevices = await imeiCheckResponse.json();
+      const imeiExists = existingDevices.documents.some(
+        (existingDevice: DeviceProps) => existingDevice.imei === imei && (!device || existingDevice.$id !== device.$id)
+      );
+
+      if (imeiExists) {
+        toast.error("Este IMEI já está cadastrado no sistema.");
+        return;
       }
 
 
