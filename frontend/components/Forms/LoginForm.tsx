@@ -87,14 +87,17 @@ export function LoginForm() {
         const callFunction = async () => {
           const sessions = await account.get()
           if (sessions.status) {
-            setIsLoading(true)
-            sessions.labels[0] == "admin" ? router.push('/dashboard') : router.push('/meus-dispositivos')
+            await account.deleteSession('current')
+            // setIsLoading(true)
+            // sessions.labels[0] == "admin" ? router.push('/dashboard') : router.push('/meus-dispositivos')
           }
         }
 
-        toast.promise(callFunction, {
-          success: 'Sessão encontrada'
-        })
+        callFunction()
+
+        // toast.promise(callFunction, {
+        //   success: 'Sessão encontrada'
+        // })
 
       } catch (error) {
         console.log("Erro: ", error)
