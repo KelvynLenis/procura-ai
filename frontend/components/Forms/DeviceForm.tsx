@@ -52,6 +52,49 @@ const formSchema = z.object({
     path: ["phone_number"], // Indica onde mostrar o erro
     message: "O número de celular deve conter exatamente 11 dígitos numéricos.",
   })
+  .refine(async (data) => {
+    const params = new URLSearchParams({
+      'queries[0]': JSON.stringify({
+        method: "equal", 
+        attribute: "imei",
+        values: [data.imei],
+      }),
+    })
+
+    try {
+      const imeiCheckResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          }
+        }
+      );
+
+      if (!imeiCheckResponse.ok) {
+        toast.error("Erro ao verificar IMEI. Tente novamente.");
+        return false;
+      }
+
+      const existingDevices = await imeiCheckResponse.json();
+      const imeiExists = existingDevices.documents.some(
+        (existingDevice: DeviceProps) => existingDevice.imei === data.imei
+      );
+
+      return !imeiExists;
+
+    } catch (error) {
+      console.error("Erro ao verificar IMEI:", error);
+      toast.error("Erro ao verificar IMEI. Tente novamente.");
+      return false;
+    }
+
+  }, {
+    path: ["imei"],
+    message: "Este IMEI já está cadastrado no sistema."
+  })
 
 export function DeviceForm({ device }: AddDeviceFormProps) {
   const [open, setOpen] = useState(false)
@@ -190,7 +233,7 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
             return null;
           });
 
-        return
+        return promise;
       }
 
       toast.promise(callFunction(), {
@@ -226,7 +269,6 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
         toast.error("O modelo do dispositivo é obrigatório.")
         return
       }
-
 
       if (!isValidIMEI) {
         toast.error("O IMEI deve conter exatamente 15 dígitos numéricos.")
@@ -544,9 +586,12 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
         {
           device ? (
             <div className="flex justify-between w-full">
-              {/* <DialogClose className="bg-white border-[0.5px] border-primary text-primary hover:bg-primary hover:text-white rounded-full text-center items-center justify-center flex w-fit px-2 py-2 shadow transition-all duration-300" type="button">Cancelar</DialogClose> */}
-              <Button type="submit" onClick={() => handleEditDevice(device.$id!, form.getValues())} variant="blue" className="px-2">Salvar alterações</Button>
-              <Button onClick={() => goBack()} type="button" variant="red" >Cancelar</Button>
+              <Button type="submit" variant="blue" className="px-2">
+                Salvar alterações
+              </Button>
+              <Button onClick={() => goBack()} type="button" variant="red">
+                Cancelar
+              </Button>
             </div>
           ) : (
             <div className="flex justify-between w-full">
