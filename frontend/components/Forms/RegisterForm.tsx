@@ -145,6 +145,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
                 name: values.name,
                 cpf: values.cpf,
                 email: values.email,
+                registration: new Date().toISOString()
               },
               // permissions: [
               //   `read(\"user:"${createdUser.$id}"\")`,

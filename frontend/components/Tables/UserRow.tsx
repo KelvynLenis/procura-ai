@@ -29,6 +29,8 @@ interface UserRowProps {
   email?: string;
   user_id?: string;
   type?: string;
+  accessed_at?: string;
+  registration?: string;
 }
 
 export function UserRow({ user, index }: { user: UserRowProps, index: number }) {
@@ -149,6 +151,28 @@ export function UserRow({ user, index }: { user: UserRowProps, index: number }) 
                 <div className="flex flex-col gap-2 items-center justify-start">
                   <span className="font-bold">CPF</span>
                   <span>{user.cpf}</span>
+                </div>
+
+                <div className="flex flex-col items-start justify-center">
+                  <span className="font-bold">Último acesso</span>
+                  <span>{user.accessed_at ? new Date(user.accessed_at).toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit', 
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  }) : 'N/A'}</span>
+                </div>
+
+                <div className="flex flex-col items-start justify-center">
+                  <span className="font-bold">Registrado em</span>
+                  <span>{user.registration ? new Date(user.registration).toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit', 
+                    minute: '2-digit'
+                  }) : 'N/A'}</span>
                 </div>
 
               </div>
