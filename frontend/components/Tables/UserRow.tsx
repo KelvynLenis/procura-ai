@@ -30,7 +30,8 @@ interface UserRowProps {
   user_id?: string;
   type?: string;
   accessed_at?: string;
-  registration?: string;
+  $createdAt?: string;
+
 }
 
 export function UserRow({ user, index }: { user: UserRowProps, index: number }) {
@@ -166,7 +167,7 @@ export function UserRow({ user, index }: { user: UserRowProps, index: number }) 
 
                 <div className="flex flex-col items-start justify-center">
                   <span className="font-bold">Registrado em</span>
-                  <span>{user.registration ? new Date(user.registration).toLocaleDateString('pt-BR', {
+                  <span>{user.$createdAt ? new Date(user.$createdAt).toLocaleDateString('pt-BR', {
                     day: '2-digit',
                     month: '2-digit',
                     year: 'numeric',
