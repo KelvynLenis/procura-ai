@@ -129,12 +129,12 @@ export function UserRow({ user, index }: { user: UserRowProps, index: number }) 
                 </span>
               </button>
             </DialogTrigger>
-            <DialogContent className="flex flex-col py-10 gap-10">
+            <DialogContent className="flex flex-col py-10 gap-10 w-[70%]">
               <DialogHeader>
                 <DialogTitle>Detalhes do usuários</DialogTitle>
               </DialogHeader>
 
-              <div className="flex gap-8">
+              <div className="flex flex-wrap gap-10">
                 <span className={cn("text-3xl text-white capitalize font-bold rounded-full w-14 h-14 px-1 flex items-center justify-center mr-3 bg-procura-ai-blue")}>
                   {user.name!.split(" ").length > 1 ? user.name!.split(" ")[0][0] + user.name!.split(" ")[1][0] : user.name!.split(" ")[0][0]}
                 </span>
@@ -158,7 +158,7 @@ export function UserRow({ user, index }: { user: UserRowProps, index: number }) 
                   <span className="font-bold">Último acesso</span>
                   <span>{user.accessed_at ? new Date(user.accessed_at).toLocaleDateString('pt-BR', {
                     day: '2-digit',
-                    month: '2-digit', 
+                    month: '2-digit',
                     year: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit'
@@ -171,7 +171,7 @@ export function UserRow({ user, index }: { user: UserRowProps, index: number }) 
                     day: '2-digit',
                     month: '2-digit',
                     year: 'numeric',
-                    hour: '2-digit', 
+                    hour: '2-digit',
                     minute: '2-digit'
                   }) : 'N/A'}</span>
                 </div>
