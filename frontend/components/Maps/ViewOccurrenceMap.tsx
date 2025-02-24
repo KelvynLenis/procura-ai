@@ -55,13 +55,13 @@ export function ViewOccurrenceMap({ position }: MarkAsStolenMapProps) {
       return 600
     }
     else if (window.innerWidth >= 425) {
-      return 340
+      return 380
     }
     else if (window.innerWidth >= 375) {
-      return 270
+      return 340
     }
     else if (window.innerWidth >= 320) {
-      return 230
+      return 280
     }
 
     return 200
@@ -81,10 +81,10 @@ export function ViewOccurrenceMap({ position }: MarkAsStolenMapProps) {
       return 340
     }
     else if (window.innerWidth >= 375) {
-      return 270
+      return 300
     }
     else if (window.innerWidth >= 320) {
-      return 230
+      return 270
     }
   }
 

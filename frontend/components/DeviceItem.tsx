@@ -32,8 +32,8 @@ interface DeviceItemProps {
 
 export function DeviceItem({ id, phone_number, phone_model, brand, imei, isStolen, status, setDevices, index }: DeviceItemProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false)
+  const [isViewAlertModalOpen, setIsViewAlertModalOpen] = useState(false)
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
   async function handleDeviceRecovery(id: string) {
@@ -156,15 +156,21 @@ export function DeviceItem({ id, phone_number, phone_model, brand, imei, isStole
     }
   }
 
+  function handleOpenAlertModal() {
+    const isRegular = status === "Regular" || status === "Recuperado"
+    !isRegular ? setIsAlertModalOpen(true) : setIsAlertModalOpen(false)
+  }
+
   function handleViewDevice() {
-    setIsModalOpen(true)
+    const isRegular = status === "Regular" || status === "Recuperado"
+    setIsViewAlertModalOpen(true)
   }
 
   return (
     <>
       <div className="flex flex-col w-full h-fit bg-white rounded-lg shadow-md">
-        <div className="flex items-center justify-end w-full h-20 bg-primary rounded-t-xl px-4 gap-3">
-          <button onClick={() => setIsFormModalOpen(true)} className={cn("rounded-lg group w-10 h-10 ring-1 bg-white ring-zinc-300 flex flex-col md:flex-row items-center justify-center text-red-600 hover:bg-red-300 hover:ring-red-500")}>
+        <div className="flex items-center justify-end w-full h-16 bg-primary rounded-t-xl px-4 gap-3">
+          <button onClick={() => setIsAlertModalOpen(true)} className={cn("rounded-lg group w-10 h-10 ring-1 bg-white ring-zinc-300 flex flex-col md:flex-row items-center justify-center text-red-600 hover:bg-red-300 hover:ring-red-500")}>
             <IoIosWarning size={28} />
           </button>
 
@@ -296,7 +302,7 @@ export function DeviceItem({ id, phone_number, phone_model, brand, imei, isStole
             <span className="">Status</span>
           </div>
 
-          <div className="flex flex-col items-start justify-center gap-2 px-4 pt-4 pb-6 w-full h-full">
+          <div className="flex flex-col items-start justify-center gap-2 px-4 pt-4 pb-4 w-full h-full">
             <span className="font-semibold">{phone_model}</span>
             <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
 
@@ -306,17 +312,24 @@ export function DeviceItem({ id, phone_number, phone_model, brand, imei, isStole
             <span className="font-semibold">{imei.slice(0, 1) + ' ' + imei.slice(1, 8) + ' ****** **'}</span>
             <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
 
-            <span className="font-semibold">{status}</span>
+            <span className={cn("rounded-md w-20 flex items-center justify-center capitalize",
+              status === "Roubado" && "bg-robbery-bg text-robbery-text p-1",
+              status === "Recuperado" && "bg-regular-bg text-regular-text p-1",
+              status === "Regular" && "bg-regular-bg text-regular-text p-1",
+              status === "Furtado" && "bg-theft-bg text-theft-text p-1",
+              status === "Perdido" && "bg-lost-bg text-lost-text p-1",
+              // status === "Perdido" && "bg-violet-500/20 text-violet-700 p-1",
+            )}>{status === 'Recuperado' ? "Regular" : status.replace(' ', '')}</span>
           </div>
         </div>
       </div>
 
       {
-        isModalOpen && <ViewDeviceModal phone_model={phone_model} phone_number={phone_number} brand={brand} imei={imei} status={status} setModalOpen={setIsModalOpen} />
+        isViewAlertModalOpen && <ViewAlerteModal phone_model={phone_model} phone_number={phone_number} brand={brand} imei={imei} status={status} setModalOpen={setIsViewAlertModalOpen} />
       }
 
       {
-        isFormModalOpen && <FormModal id={id} isStolen={isStolen} setDevices={setDevices} setModalOpen={setIsFormModalOpen} />
+        isAlertModalOpen && <AlertFormModal id={id} isStolen={isStolen} status={status} handleDeviceRecovery={handleDeviceRecovery} setDevices={setDevices} setModalOpen={setIsAlertModalOpen} />
       }
 
       {
@@ -335,7 +348,7 @@ interface ModalProps {
   setModalOpen: (value: boolean) => void
 }
 
-function ViewDeviceModal({ phone_number, phone_model, brand, imei, status, setModalOpen }: ModalProps) {
+function ViewAlerteModal({ phone_number, phone_model, brand, imei, status, setModalOpen }: ModalProps) {
   return (
     <>
       <div className="flex flex-col gap-4 bg-white  p-6 z-50 fixed inset-0 m-auto">
@@ -381,30 +394,38 @@ function ViewDeviceModal({ phone_number, phone_model, brand, imei, status, setMo
   )
 }
 
-interface FormModalProps {
+interface AlertFormModalProps {
   id: string
   isStolen: boolean
+  status: string
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
+  handleDeviceRecovery: (id: string) => Promise<void>
   setModalOpen: (value: boolean) => void
 }
 
-function FormModal({ id, isStolen, setDevices, setModalOpen }: FormModalProps) {
+function AlertFormModal({ id, isStolen, setDevices, status, setModalOpen, handleDeviceRecovery }: AlertFormModalProps) {
   return (
     <div className="fixed inset-0 m-auto bg-white p-6 z-50 flex flex-col gap-4 overflow-y-auto">
       <X size={24} className="absolute top-4 right-4 cursor-pointer z-50" onClick={() => setModalOpen(false)} />
+      <div className="flex flex-col gap-1 mt-7">
+        {
+          isStolen ? (
+            <>
+              <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
+                Visualizar alerta
+              </span>
+              <AlertForm id={id} status={status} handleDeviceRecovery={handleDeviceRecovery} />
+            </>
+          ) : (
+            <>
+              <h2 className="font-bold">Preencha as informações</h2>
+              <MarkAsStolenForm id={id} isStolen={isStolen} setDevices={setDevices} />
+            </>
 
-      <div className="flex flex-col gap-1">
-        <h2 className="font-bold">Preencha as informações</h2>
-        {/* <span className="text-sm text-zinc-500">
-          Insira as informações abaixo para criar um alerta.
-        </span>
-        <span className="text-red-500 text-xs">
-          * campos obrigatórios
-        </span> */}
+          )}
       </div>
 
-      <MarkAsStolenForm id={id} isStolen={isStolen} setDevices={setDevices} />
-    </div>
+    </div >
   )
 }
 
