@@ -82,7 +82,7 @@ export function LoginForm() {
               },
               body: JSON.stringify({
                 data: {
-                  accessed_at: user.accessedAt
+                  accessed_at: new Date().toISOString()
                 }
               })
             }
@@ -127,6 +127,46 @@ export function LoginForm() {
       try {
         const callFunction = async () => {
           const sessions = await account.get()
+          const params = new URLSearchParams({
+            'queries[0]': JSON.stringify({
+              method: "equal",
+              attribute: "user_id",
+              values: [`${sessions.$id}`],
+            }),
+          });
+
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
+            {
+              method: "GET",
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+              }
+            }
+          );
+
+          const { documents: [userDoc] } = await response.json();
+
+          if (userDoc) {
+            await fetch(
+              `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents/${userDoc.$id}`,
+              {
+                method: "PATCH",
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+                },
+                body: JSON.stringify({
+                  data: {
+                    accessed_at: new Date().toISOString()
+                  }
+                })
+              }
+            ).catch(err => {
+              console.error("Erro ao atualizar último acesso:", err)
+            });
+          }
 
 
 
