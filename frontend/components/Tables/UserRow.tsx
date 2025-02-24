@@ -20,6 +20,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 
 interface UserRowProps {
@@ -156,24 +158,12 @@ export function UserRow({ user, index }: { user: UserRowProps, index: number }) 
 
                 <div className="flex flex-col items-start justify-center">
                   <span className="font-bold">Último acesso</span>
-                  <span>{user.accessed_at ? new Date(user.accessed_at).toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  }) : 'N/A'}</span>
+                  <span>{user.accessed_at ? format(new Date(user.accessed_at), 'dd/MM/yyyy - HH:mm', { locale: ptBR }) : 'N/A'}</span>
                 </div>
 
                 <div className="flex flex-col items-start justify-center">
                   <span className="font-bold">Registrado em</span>
-                  <span>{user.$createdAt ? new Date(user.$createdAt).toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  }) : 'N/A'}</span>
+                  <span>{user.$createdAt ? format(new Date(user.$createdAt), 'dd/MM/yyyy - HH:mm', { locale: ptBR }) : 'N/A'}</span>
                 </div>
 
               </div>
