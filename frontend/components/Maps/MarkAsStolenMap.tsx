@@ -129,7 +129,7 @@ export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolen
       return 300
     }
     else {
-      return 220
+      return 260
     }
   }
 

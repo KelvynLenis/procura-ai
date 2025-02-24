@@ -198,7 +198,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
               </DialogTrigger>
               <DialogContent className="flex flex-col py-10 gap-10">
                 <DialogHeader>
-                  <DialogTitle>Detalhes do usuários</DialogTitle>
+                  <DialogTitle>Detalhes do dispositivo</DialogTitle>
                 </DialogHeader>
 
                 <div className="flex gap-8">
@@ -214,7 +214,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
                   </div>
 
                   <div className="flex flex-col gap-2 items-center justify-start">
-                    <span className="font-bold">Brand</span>
+                    <span className="font-bold">Marca</span>
                     <span>{brand}</span>
                   </div>
 

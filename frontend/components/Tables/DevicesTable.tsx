@@ -9,112 +9,22 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
-import { DeviceRow } from "./DeviceRow"
-import { useEffect, useState } from "react"
 import { DeviceProps } from "@/utils/types"
-import { account } from "@/lib/appwrite"
-import Button from "../Button"
-import Link from "next/link"
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "../ui/pagination";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils"
+import { DeviceRow } from "./DeviceRow";
 
-export function DevicesTable() {
-  const [devices, setDevices] = useState<DeviceProps[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [page, setPage] = useState(1)
-  const [pages, setPages] = useState(1);
-  const [totalDevices, setTotalDevices] = useState(0)
+interface DevicesTableProps {
+  devices: DeviceProps[];
+  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>;
+  totalDevices: number;
+  page: number;
+  pages: number;
+  limit: number;
+  isLoading: boolean
+}
 
-  const limit = 5;
-
-
-  async function getUserId() {
-    const { $id: userId } = await account.get();
-    return userId;
-  }
-
-  function showLoadingToast() {
-    setIsLoading(true)
-  }
-
-
-  async function buildParams() {
-
-    const userId = await getUserId();
-    const params = new URLSearchParams({
-      'queries[0]': JSON.stringify({
-        method: "equal",
-        attribute: "auth_id",
-        values: [userId],
-      }),
-      "queries[1]": JSON.stringify({
-        method: "limit",
-        values: [limit],
-      }),
-      "queries[2]": JSON.stringify({
-        method: "offset",
-        values: [((page - 1) * limit)],
-      }),
-    });
-    return params;
-  }
-
-  function handleGoToNextPage() {
-    if (page < pages) {
-      setPage(page + 1);
-    }
-  }
-
-  function handleGoToPage(pageNumber: number) {
-    setPage(pageNumber);
-  }
-
-  function handleGoToPreviousPage() {
-    if (page > 0) {
-      setPage(page - 1);
-    }
-  }
-
-
-  useEffect(() => {
-    const getDevices = async () => {
-      setIsLoading(true)
-      try {
-        const params = await buildParams();
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          const error = await response.text();
-          throw new Error(`Error: ${error}`);
-        }
-
-        const result = await response.json();
-
-        const totalPages = Math.ceil(result.total / limit);
-
-        console.log(result.documents);
-        setDevices(result.documents || []);
-        setTotalDevices(result.total || 0);
-        setPages(totalPages);
-      } catch (err) {
-        console.error(`Fetch error: ${err}`);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    getDevices();
-  }, [page]);
+export function DevicesTable({ devices, setDevices, totalDevices, page, pages, limit, isLoading }: DevicesTableProps) {
 
   return (
     <>
@@ -181,12 +91,16 @@ export function DevicesTable() {
             </TableRow>
           )}
 
-          <TableRow>
+          {/* <TableRow>
             <TableCell colSpan={6} className="text-center">
               <Pagination className="flex items-center justify-center w-full">
                 <PaginationContent className="py-1">
                   <PaginationItem>
-                    <button disabled={page === 1} className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent" onClick={handleGoToPreviousPage}>
+                    <button
+                      disabled={page === 1}
+                      className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent"
+                      onClick={handleGoToPreviousPage}
+                    >
                       <ChevronLeft className="h-4 w-4" />
                       <span>Anterior</span>
                     </button>
@@ -194,12 +108,20 @@ export function DevicesTable() {
                   {
                     [...Array(pages)].map((_, index) => (
                       <PaginationItem key={index}>
-                        <button onClick={() => handleGoToPage(index + 1)} className={cn("rounded-full px-3 py-1", index === page - 1 ? "bg-zinc-200 hover:bg-zinc-300" : "hover:bg-zinc-200")} >{index + 1}</button>
+                        <button
+                          onClick={() => handleGoToPage(index + 1)}
+                          className={cn("rounded-full px-3 py-1", index === page - 1 ? "bg-zinc-200 hover:bg-zinc-300" : "hover:bg-zinc-200")}
+                        >
+                          {index + 1}
+                        </button>
                       </PaginationItem>
                     ))
                   }
                   <PaginationItem>
-                    <button disabled={page * limit >= totalDevices} className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent" onClick={handleGoToNextPage}>
+                    <button
+                      disabled={page * limit >= totalDevices}
+                      className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent"
+                      onClick={handleGoToNextPage}>
                       Próximo
                       <ChevronRight className="h-4 w-4" />
                     </button>
@@ -207,13 +129,10 @@ export function DevicesTable() {
                 </PaginationContent>
               </Pagination>
             </TableCell>
-          </TableRow>
+          </TableRow> */}
         </TableBody>
 
       </Table >
-      <Link href={'/cadastrar-dispositivo'}>
-        <Button onClick={showLoadingToast} variant="blue" className="self-end w-44 my-3">Cadastrar dispositivo</Button>
-      </Link>
     </>
 
   )
