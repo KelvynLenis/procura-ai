@@ -123,7 +123,7 @@ const formSchema = z.object({
     return sum % 10 === 0;
   }, {
     path: ["imei"],
-    message: "IMEI inválido. O número deve ter 15 dígitos e passar na verificação de validação."
+    message: "IMEI inválido. O número deve ter 15 dígitos e ser um IMEI válido."
   })
 
 export function DeviceForm({ device }: AddDeviceFormProps) {
