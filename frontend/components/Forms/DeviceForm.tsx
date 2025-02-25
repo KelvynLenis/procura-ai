@@ -45,8 +45,8 @@ const formSchema = z.object({
   })
 })
   .refine((data) => validateIMEI(data.imei), {
-    path: ["imei"], // Indica onde mostrar o erro
-    message: "O IMEI deve conter exatamente 15 dígitos numéricos.",
+    path: ["imei"],
+    message: "IMEI inválido. Por favor, verifique o número.",
   })
   .refine((data) => validatePhoneNumber(data.phone_number), {
     path: ["phone_number"], // Indica onde mostrar o erro
@@ -55,7 +55,7 @@ const formSchema = z.object({
   .refine(async (data) => {
     const params = new URLSearchParams({
       'queries[0]': JSON.stringify({
-        method: "equal", 
+        method: "equal",
         attribute: "imei",
         values: [data.imei],
       }),
@@ -95,6 +95,36 @@ const formSchema = z.object({
     path: ["imei"],
     message: "Este IMEI já está cadastrado no sistema."
   })
+  .refine((data) => {
+    // Validação básica: IMEI deve ter 15 dígitos numéricos
+    if (!/^\d{15}$/.test(data.imei)) {
+      return false;
+    }
+
+    // Algoritmo de Luhn para validação de IMEI
+    let sum = 0;
+    const imeiArray = data.imei.split('').map(Number);
+
+    for (let i = 0; i < 15; i++) {
+      let digit = imeiArray[i];
+
+      // Dobra os dígitos em posições pares (índice ímpar, pois começamos do 0)
+      if (i % 2 !== 0) {
+        digit *= 2;
+        if (digit > 9) {
+          digit -= 9;
+        }
+      }
+
+      sum += digit;
+    }
+
+    // O IMEI é válido se a soma for divisível por 10
+    return sum % 10 === 0;
+  }, {
+    path: ["imei"],
+    message: "IMEI inválido. O número deve ter 15 dígitos e ser um IMEI válido."
+  })
 
 export function DeviceForm({ device }: AddDeviceFormProps) {
   const [open, setOpen] = useState(false)
@@ -132,74 +162,17 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
   }
 
   async function onSubmit(values: DeviceProps) {
-    console.log(values)
     try {
-      const imei = values.imei.trim();
-      const number = values.phone_number.trim();
-
-      const isValidIMEI = /^[0-9]{15}$/.test(imei);
-      const isValidPhoneNumber = /^[0-9]{11}$/.test(number);
-
-      if (values.phone_model === '') {
-        toast.error("O modelo do dispositivo é obrigatório.")
-        return
-      }
-
-      if (values.brand === '') {
-        toast.error("O modelo do dispositivo é obrigatório.")
-        return
-      }
-
-      if (!isValidIMEI) {
-        toast.error("O IMEI deve conter exatamente 15 dígitos numéricos.")
-        return
-      }
-
-      if (!isValidPhoneNumber) {
-        toast.error("O número de telefone deve conter exatamente 11 dígitos numéricos.")
-        return
-      }
-
       const { $id: userId } = await account.get()
-      //@glaymar vai ser removido esse codigo ? 
+
       if (device) {
-        const promise = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${device.$id}`,
-          {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
-            },
-            body: JSON.stringify({
-              data: {
-                auth_id: userId,
-                phone_number: values.phone_number,
-                phone_model: values.phone_model,
-                brand: values.brand,
-                imei: values.imei,
-                is_stolen: false
-              },
-
-            })
-          }).then(async (response) => {
-            if (!response.ok) {
-              const error = await response.text();
-              throw new Error(`Error: ${error}`);
-            }
-            return response.json();
-          }).catch((err) => {
-            console.log(`Fetch error: ${err.message}`);
-            return null;
-          });
-
+        await handleEditDevice(device.$id!, values)
         return
       }
 
       const deviceId = uuidv4();
 
       const callFunction = async () => {
-
         const promise = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents`,
           {
@@ -217,7 +190,6 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
                 imei: values.imei,
                 is_stolen: false,
                 auth_id: userId
-
               }
             })
           }).then(async (response) => {
@@ -242,45 +214,16 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
         error: "Erro ao atualizar dispositivo.",
       })
 
-
       router.push('/meus-dispositivos')
     } catch (error) {
       console.error(error)
+      toast.error("Erro ao processar a operação.")
     }
   }
 
-
   async function handleEditDevice(id: string, values: DeviceProps) {
-    console.log({ id, values })
     try {
-
-      const imei = values.imei.trim();
-      const number = values.phone_number.trim();
-
-      const isValidIMEI = /^[0-9]{15}$/.test(imei);
-      const isValidPhoneNumber = /^[0-9]{11}$/.test(number);
-
-      if (values.phone_model === '') {
-        toast.error("O modelo do dispositivo é obrigatório.")
-        return
-      }
-
-      if (values.brand === '') {
-        toast.error("O modelo do dispositivo é obrigatório.")
-        return
-      }
-
-      if (!isValidIMEI) {
-        toast.error("O IMEI deve conter exatamente 15 dígitos numéricos.")
-        return
-      }
-
-      if (!isValidPhoneNumber) {
-        toast.error("O número de telefone deve conter exatamente 11 dígitos numéricos.")
-        return
-      }
-
-      const { $id: userId } = await account.get();
+      const { $id: userId } = await account.get()
 
       const callFunction = async () => {
         const response = await fetch(
@@ -305,34 +248,24 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
         );
 
         if (!response.ok) {
-          const error = await response.text();
-          throw new Error(`Error: ${error}`);
+          throw new Error(await response.text());
         }
-        const updatedDevice = await response.json();
 
-        console.log("Device updated successfully");
-        console.log(updatedDevice);
-
-        return response
+        return response.json();
       }
 
-
-      toast.promise(
-        callFunction,
-        {
-          pending: 'Atualizando dispositivo...',
-          success: 'Dispositivo atualizado com sucesso!',
-          error: 'Erro ao atualizar dispositivo.'
-        }
-      )
+      await toast.promise(callFunction(), {
+        pending: 'Atualizando dispositivo...',
+        success: 'Dispositivo atualizado com sucesso!',
+        error: 'Erro ao atualizar dispositivo.'
+      });
 
       route.push('/meus-dispositivos')
-    } catch (err) {
-      console.log(`Fetch error: ${err}`);
-      return null;
+    } catch (error) {
+      console.error('Erro ao atualizar dispositivo:', error)
+      toast.error('Erro ao atualizar dispositivo. Tente novamente.')
     }
   }
-
 
   return (
     <Form {...form}>
@@ -583,25 +516,31 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
         />
 
 
-        {
-          device ? (
-            <div className="flex justify-between w-full">
-              <Button type="submit" variant="blue" className="px-2">
-                Salvar alterações
-              </Button>
-              <Button onClick={() => goBack()} type="button" variant="red">
-                Cancelar
-              </Button>
-            </div>
-          ) : (
-            <div className="flex justify-between w-full">
-              <Button type="submit" variant="blue" className="px-3">Cadastrar dispositivo</Button>
-              <Link href={'/meus-dispositivos'}>
-                <Button onClick={() => goBack()} type="button" variant="red">Cancelar</Button>
-              </Link>
-            </div>
-          )
-        }
+        {device ? (
+          <div className="flex justify-between w-full">
+            <Button
+              type="submit"
+              variant="blue"
+              className="px-2"
+            >
+              Salvar alterações
+            </Button>
+            <Button
+              onClick={() => goBack()}
+              type="button"
+              variant="red"
+            >
+              Cancelar
+            </Button>
+          </div>
+        ) : (
+          <div className="flex justify-between w-full">
+            <Button type="submit" variant="blue" className="px-3">Cadastrar dispositivo</Button>
+            <Link href={'/meus-dispositivos'}>
+              <Button onClick={() => goBack()} type="button" variant="red">Cancelar</Button>
+            </Link>
+          </div>
+        )}
       </form>
     </Form>
   )
