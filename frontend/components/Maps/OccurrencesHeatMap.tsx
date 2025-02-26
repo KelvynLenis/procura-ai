@@ -204,16 +204,16 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
             </li>
             <li className="flex items-center gap-2">
               <span className="w-6 h-5 p-1 bg-[#E78A33] inline-block" />
-              3 - 4
+              4 - 5
             </li>
             <li className="flex items-center gap-2">
               <span className="w-6 h-5 p-1 bg-[#DC662E] inline-block" />
-              5 - 20
+              6 - 20
             </li>
 
             <li className="flex items-center gap-2">
               <span className="w-6 h-5 p-1 bg-[#D04228] inline-block" />
-              5 - 20
+              20+
             </li>
           </ul>
         </div>
