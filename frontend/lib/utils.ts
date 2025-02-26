@@ -44,7 +44,9 @@ export function validatePhoneNumber(phoneNumber: string) {
 
 export function formatDateTime(isoString: string) {
   const date = new Date(isoString);
+  console.log(isoString)
+  console.log(date)
 
   // Formatar para "10:30 terça 28/01/2025"
-  return format(date, "HH:mm EEEE dd/MM/yyyy", { locale: ptBR });
+  return format(date, "HH:mm - dd/MM/yyyy");
 }

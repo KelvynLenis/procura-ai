@@ -53,10 +53,9 @@ export function AlertForm({ id, status, handleDeviceRecovery }: MarkAsStolenForm
       "queries[0]": JSON.stringify({
         method: "equal",
         attribute: "id_device",
-        values: [id],
+        values: [`${id}`],
       })
     });
-
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents?${params.toString()}`,
@@ -75,8 +74,11 @@ export function AlertForm({ id, status, handleDeviceRecovery }: MarkAsStolenForm
       }
 
       const { documents } = await response.json();
-      event.push(documents[0]);
 
+      console.log(documents)
+      event.push(documents.sort((a, b) => new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime())[0]);
+
+      console.log(event)
     } catch (error) {
       console.error(error);
     }
