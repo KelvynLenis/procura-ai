@@ -140,7 +140,11 @@ export function AlertForm({ id, status, handleDeviceRecovery }: MarkAsStolenForm
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel className="bg-white mr-2">Cancelar</AlertDialogCancel>
-                      <AlertDialogAction className="bg-red-500" onClick={() => handleDeviceRecovery(id)}>Confirmar</AlertDialogAction>
+                      <AlertDialogAction className="bg-red-500" onClick={() => handleDeviceRecovery(id)}>
+                        <DialogClose>
+                          Confirmar
+                        </DialogClose>
+                      </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>

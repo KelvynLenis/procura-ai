@@ -340,7 +340,9 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
           </div>
         </div>
 
-        <Button variant="blue" type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl">Salvar</Button>
+        <DialogClose className="w-1/3">
+          <Button variant="blue" type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl">Salvar</Button>
+        </DialogClose>
       </form>
     </Form>
   )

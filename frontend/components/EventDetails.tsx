@@ -4,13 +4,13 @@ import { X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-interface DeviceInfoCardProps {
+interface EventDetailsProps {
   occurence: EventProps;
   closePopup: () => void;
   styles?: string;
 }
 
-export function DeviceInfoCard({ occurence, closePopup, styles }: DeviceInfoCardProps) {
+export function EventDetails({ occurence, closePopup, styles }: EventDetailsProps) {
   const pathname = usePathname().slice(1)
 
   const fullScreenMap = pathname === 'map/ocorrencias'

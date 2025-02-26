@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 import { Map, Marker, GeoJson, Overlay, ZoomControl } from "pigeon-maps"
 import { EventProps } from "@/utils/types";
 import { usePathname } from 'next/navigation'
-import { DeviceInfoCard } from "../DeviceInfoCard";
+import { EventDetails } from "../EventDetails";
 import { Home, Triangle } from "lucide-react";
 import Image from "next/image";
 import theft from '../../assets/icons/theft.svg'
@@ -152,7 +152,7 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
             >
               <div className="flex flex-col relative -translate-x-1/2 rounded-lg ring-1 ring-procura-ai-blue bg-white px-4 py-2" >
                 <Triangle className="text-white absolute fill-white -top-3 left-[46%]" />
-                <DeviceInfoCard occurence={occurence} closePopup={closePopup} styles="w-full ring-0 h-fit" />
+                <EventDetails occurence={occurence} closePopup={closePopup} styles="w-full ring-0 h-fit" />
               </div>
             </Overlay>
           )
@@ -160,7 +160,7 @@ export function OccurrencesMap({ width, height, defaultCenter, defaultZoom, occu
       </Map>
       {
         isInfoCardOpen && (
-          <DeviceInfoCard occurence={occurence} closePopup={closePopup} />
+          <EventDetails occurence={occurence} closePopup={closePopup} />
         )
       }
     </>

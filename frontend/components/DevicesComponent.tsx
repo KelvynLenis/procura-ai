@@ -20,16 +20,10 @@ export function DevicesComponent() {
 
   const limit = 5;
 
-
   async function getUserId() {
     const { $id: userId } = await account.get();
     return userId;
   }
-
-  function showLoadingToast() {
-    setIsLoading(true)
-  }
-
 
   async function buildParams() {
 
@@ -68,6 +62,9 @@ export function DevicesComponent() {
     }
   }
 
+  function showLoadingToast() {
+    setIsLoading(true)
+  }
 
   useEffect(() => {
     const getDevices = async () => {
@@ -110,16 +107,17 @@ export function DevicesComponent() {
 
   return (
     <>
+
       <div className="hidden md:block">
         <DevicesTable devices={devices} setDevices={setDevices} page={page} limit={limit} totalDevices={totalDevices} pages={pages} isLoading={isLoading} />
+        <Link href={'/cadastrar-dispositivo'} className="self-end">
+          <Button onClick={showLoadingToast} variant="blue" className="self-end w-44 my-3">Cadastrar dispositivo</Button>
+        </Link>
       </div>
 
-      <div className=" md:hidden">
-        <DevicesList devices={devices} setDevices={setDevices} page={page} limit={limit} isLoading={isLoading} />
+      <div className="md:hidden">
+        <DevicesList devices={devices} setDevices={setDevices} page={page} limit={limit} isLoading={isLoading} setIsLoading={setIsLoading} />
       </div>
-      <Link href={'/cadastrar-dispositivo'}>
-        <Button onClick={showLoadingToast} variant="blue" className="self-end w-44 my-3">Cadastrar dispositivo</Button>
-      </Link>
 
       <Pagination className="flex items-center justify-center w-full">
         <PaginationContent className="py-1">

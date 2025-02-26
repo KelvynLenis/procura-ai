@@ -126,7 +126,7 @@ export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolen
       return 420
     }
     else if (window.innerWidth >= 425) {
-      return 300
+      return 280
     }
     else {
       return 260

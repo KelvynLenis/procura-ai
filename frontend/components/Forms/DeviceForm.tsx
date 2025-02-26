@@ -28,6 +28,8 @@ import { Check, ChevronDown, Search } from "lucide-react"
 
 interface AddDeviceFormProps {
   device?: DeviceProps;
+  setModalOpen?: (value: boolean) => void
+  isPopover?: boolean
 }
 
 const formSchema = z.object({
@@ -126,7 +128,7 @@ const formSchema = z.object({
     message: "IMEI inválido. O número deve ter 15 dígitos e ser um IMEI válido."
   })
 
-export function DeviceForm({ device }: AddDeviceFormProps) {
+export function DeviceForm({ device, setModalOpen, isPopover }: AddDeviceFormProps) {
   const [open, setOpen] = useState(false)
   const [isBrandsPopoverOpen, setIsBrandsPopoverOpen] = useState(false)
 
@@ -272,29 +274,34 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className={cn(
-          "w-fit md:w-10/12 lg:w-full bg-white flex flex-col px-5 mr-20 md:mr-7 xl:mr-14 my-5 md:px-10 py-4 gap-8 text-zinc-900 self-center items-center justify-center rounded-3xl shadow-md",
+          "w-fit md:w-10/12 lg:w-full bg-white flex flex-col px-5 md:px-10 py-4 gap-8 text-zinc-900 self-center items-center justify-center rounded-3xl shadow-md",
           // !device && "shadow-form" // Adiciona "shadow-form" apenas se device estiver presente
         )}>
-        <div className="flex flex-col w-full gap-8">
-          <span className="font-medium">Insira os dados abaixo:</span>
-          <div className="flex flex-col w-full gap-1">
-            <span className="h-0.5 w-full bg-zinc-400" />
-            <span className="text-red-500 text-sm flex items-start">*Campos obrigatórios</span>
-          </div>
-        </div>
+
+        {
+          !device && (
+            <div className="flex flex-col w-full gap-8">
+              <span className="font-medium">Insira os dados abaixo:</span>
+              <div className="flex flex-col w-full gap-1">
+                <span className="h-0.5 w-full bg-zinc-400" />
+                <span className="text-red-500 text-sm flex items-start">*Campos obrigatórios</span>
+              </div>
+            </div>
+          )
+        }
 
         <FormField
           control={form.control}
           name="brand"
           render={({ field }) => (
-            <FormItem className="flex flex-col w-fit self-start">
+            <FormItem className="flex flex-col w-full md:w-fit self-start">
               <FormLabel className="text-lg w-fit text-center items-start flex">
                 <span className="text-red-500 text-base">*</span>
                 Marca
               </FormLabel>
               <Popover open={isBrandsPopoverOpen} onOpenChange={setIsBrandsPopoverOpen}>
                 <PopoverTrigger asChild>
-                  <div className="self-start">
+                  <div className="self-start w-full md:w-fit">
                     <FormControl>
                       <ButtonShadcn
                         variant="outline"
@@ -358,14 +365,14 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
           control={form.control}
           name="phone_model"
           render={({ field }) => (
-            <FormItem className="flex flex-col w-fit self-start">
+            <FormItem className="flex flex-col w-full md:w-fit self-start">
               <FormLabel className="text-lg w-fit text-center items-start flex">
                 <span className="text-red-500 text-base">*</span>
                 Modelo do dispositivo
               </FormLabel>
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
-                  <div className="self-start">
+                  <div className="self-start w-full md:w-fit">
 
                     <FormControl>
                       <ButtonShadcn
@@ -525,20 +532,28 @@ export function DeviceForm({ device }: AddDeviceFormProps) {
             >
               Salvar alterações
             </Button>
-            <Button
-              onClick={() => goBack()}
-              type="button"
-              variant="red"
-            >
-              Cancelar
-            </Button>
+            {
+              isPopover ? (
+                <Button onClick={() => setModalOpen!(false)} type="button" variant="red">Cancelar</Button>
+              ) : (
+                <Link href={'/meus-dispositivos'}>
+                  <Button onClick={() => goBack()} type="button" variant="red">Cancelar</Button>
+                </Link>
+              )
+            }
           </div>
         ) : (
           <div className="flex justify-between w-full">
             <Button type="submit" variant="blue" className="px-3">Cadastrar dispositivo</Button>
-            <Link href={'/meus-dispositivos'}>
-              <Button onClick={() => goBack()} type="button" variant="red">Cancelar</Button>
-            </Link>
+            {
+              isPopover ? (
+                <Button onClick={() => setModalOpen!(false)} type="button" variant="red">Cancelar</Button>
+              ) : (
+                <Link href={'/meus-dispositivos'}>
+                  <Button onClick={() => goBack()} type="button" variant="red">Cancelar</Button>
+                </Link>
+              )
+            }
           </div>
         )}
       </form>
