@@ -1,13 +1,9 @@
-import { Board } from "@/components/board";
 import { DeviceForm } from "@/components/Forms/DeviceForm";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import { account } from "@/lib/appwrite";
-
 export default async function AddDevice() {
 
   return (
     <>
-      <div className="w-full flex flex-col items-center justify-center">
+      <div className="w-full flex flex-col items-center justify-center pr-20 my-5">
         <DeviceForm />
       </div >
     </>

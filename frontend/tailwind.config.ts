@@ -44,6 +44,9 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				}
 			},
+			height: {
+				400: '400px',
+			},
 			spacing: {
 				'18': '68.2px'
 			},
