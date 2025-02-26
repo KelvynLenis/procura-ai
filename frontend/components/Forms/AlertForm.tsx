@@ -54,7 +54,12 @@ export function AlertForm({ id, status, handleDeviceRecovery }: MarkAsStolenForm
         method: "equal",
         attribute: "id_device",
         values: [`${id}`],
-      })
+      }),
+      "queries[1]": JSON.stringify({
+          method: "equal",
+          attribute: "is_alert_on",
+          values: [true],
+        }),
     });
     try {
       const response = await fetch(
