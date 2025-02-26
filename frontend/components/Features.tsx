@@ -1,4 +1,5 @@
 import Image from "next/image";
+import circlesLine from '../assets/images/circles-line.png'
 import shapesLeft from '../assets/images/shapes-left.svg'
 import shapesRight from '../assets/images/shapes-right.svg'
 import feat1 from '../assets/icons/feat1.svg'
@@ -15,11 +16,17 @@ export function Features() {
       <Image src={shapesLeft} alt="formas esquerda" className="absolute hidden md:block md:top-[900px] lg:top-96 2xl:top-[420px] left-0 z-0" />
       <Image src={shapesRight} alt="formas direita" className="absolute hidden md:block top-96 md:top-[700px] lg:top-[200px] right-0" />
 
-      <h1 className="text-4xl text-primary font-medium self-start ml-10">Veja como é fácil se proteger</h1>
+      <div className="flex flex-col w-full gap-2">
+        <h1 className="text-4xl text-primary font-medium self-center">Veja como é fácil se proteger</h1>
+        <Image src={circlesLine} alt="feat1" className="self-center" />
+      </div>
 
       <div className="flex lg:flex-wrap flex-col lg:flex-row gap-4">
         <div className="flex flex-col gap-2">
-          <span className="font-bold">Crie uma conta</span>
+          <span className="font-bold text-primary flex gap-1 text-lg">
+            <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">1.</span>
+            Crie uma conta
+          </span>
           <div className="bg-[#7F96B8] w-72 py-6 px-3 rounded-xl flex gap-2">
             <Image src={feat1} alt="feat1" className="h-24 self-center" />
             <span className="font-medium">Cadastre-se no Procura.Aí informando alguns dados básicos</span>
@@ -27,7 +34,10 @@ export function Features() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <span className="font-bold">Cadastre seus dispositivos</span>
+          <span className="font-bold text-primary flex gap-1 text-lg">
+            <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">2.</span>
+            Cadastre seus dispositivos
+          </span>
           <div className="bg-procura-ai-yellow/50 w-72 py-6 px-3 rounded-xl flex gap-2">
             <Image src={feat2} alt="feat2" className="h-24 self-center" />
             <span className="font-medium">Registre um ou mais celulares para mantê-los protegidos</span>
@@ -35,7 +45,10 @@ export function Features() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <span className="font-bold">Crie um alerta</span>
+          <span className="font-bold text-primary flex gap-1 text-lg">
+            <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">3.</span>
+            Crie um alerta
+          </span>
           <div className="bg-[#D04228]/50 w-72 py-6 px-3 rounded-xl flex gap-2">
             <Image src={feat3} alt="feat3" className="h-24 self-center" />
             <span className="font-medium">Em caso de roubo, perda ou furto de algum dispositivo, crie um alerta </span>
@@ -43,7 +56,10 @@ export function Features() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <span className="font-bold">Autoridades são acionadas</span>
+          <span className="font-bold text-primary flex gap-1 text-lg">
+            <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">4.</span>
+            Autoridades são acionadas
+          </span>
           <div className="bg-[#39AF84]/50 w-72 py-6 px-3 rounded-xl flex gap-2">
             <Image src={feat4} alt="feat4" className="h-24 self-center" />
             <span className="font-medium">Agora seu celular tem mais chances de ser recuperado pelas autoridades </span>
