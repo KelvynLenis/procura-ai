@@ -23,7 +23,7 @@ export function Features() {
 
       <div className="flex lg:flex-wrap flex-col lg:flex-row gap-4">
         <div className="flex flex-col gap-2">
-          <span className="font-bold text-primary flex gap-1">
+          <span className="font-bold text-primary flex gap-1 text-lg">
             <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">1.</span>
             Crie uma conta
           </span>
@@ -34,7 +34,7 @@ export function Features() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <span className="font-bold text-primary flex gap-1">
+          <span className="font-bold text-primary flex gap-1 text-lg">
             <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">2.</span>
             Cadastre seus dispositivos
           </span>
@@ -45,7 +45,7 @@ export function Features() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <span className="font-bold text-primary flex gap-1">
+          <span className="font-bold text-primary flex gap-1 text-lg">
             <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">3.</span>
             Crie um alerta
           </span>
@@ -56,7 +56,7 @@ export function Features() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <span className="font-bold text-primary flex gap-1">
+          <span className="font-bold text-primary flex gap-1 text-lg">
             <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">4.</span>
             Autoridades são acionadas
           </span>
