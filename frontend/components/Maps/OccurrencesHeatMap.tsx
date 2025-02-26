@@ -25,11 +25,14 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
   const [OverlayData, setOverlayData] = useState<OverlayDataProps>({} as OverlayDataProps)
 
   const pathname = usePathname().slice(1)
-  const issFullScreen = pathname === 'map/bairros'
+  const isFullScreen = pathname === 'map/bairros'
 
   const colorScale = new ColorScale(0, 7, ["#FECF3E", "#D04228"]);
 
   function handleOverlayMouseOver({ event, anchor, payload }: { event: any; anchor: any; payload: any }) {
+
+    if (!isFullScreen) return;
+
     setIsOverlayOpen(true)
     // console.log(event)
 
@@ -116,7 +119,7 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
   }
 
   function setWidth() {
-    if (issFullScreen) {
+    if (isFullScreen) {
       return window.innerWidth
     }
     else {
@@ -125,7 +128,7 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
   }
 
   function setHeight() {
-    if (issFullScreen) {
+    if (isFullScreen) {
       return window.innerHeight
     } else {
       return 270
@@ -201,16 +204,16 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
             </li>
             <li className="flex items-center gap-2">
               <span className="w-6 h-5 p-1 bg-[#E78A33] inline-block" />
-              3 - 4
+              4 - 5
             </li>
             <li className="flex items-center gap-2">
               <span className="w-6 h-5 p-1 bg-[#DC662E] inline-block" />
-              5 - 20
+              6 - 20
             </li>
 
             <li className="flex items-center gap-2">
               <span className="w-6 h-5 p-1 bg-[#D04228] inline-block" />
-              5 - 20
+              20+
             </li>
           </ul>
         </div>
@@ -224,8 +227,8 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
                 "flex flex-col absolute gap-2 w-56 rounded-xl h-fit bg-primary ring-1 ring-black/50 text-white font-semibold"
               )}
               style={{
-                top: `${issFullScreen ? OverlayData.anchor.y : -130}px`,
-                left: `${issFullScreen ? OverlayData.anchor.x : 5}px`,
+                top: `${isFullScreen ? OverlayData.anchor.y : -130}px`,
+                left: `${isFullScreen ? OverlayData.anchor.x : 5}px`,
               }}
               onClick={() => setIsOverlayOpen(false)}
             >

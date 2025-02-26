@@ -21,7 +21,7 @@ import PieChartRechart from "./PieChartRechart";
 import { NotificationButton } from "../NotificationButton";
 
 
-export function ChartBoard() {
+export function Dashboard() {
   const [occurrences, setOccurrences] = useState<EventProps[]>([])
   const [numberOfDevicesRegistered, setNumberOfDevicesRegistered] = useState(0)
   const [numberOfDevicesRecovered, setNumberOfDevicesRecovered] = useState(0)
