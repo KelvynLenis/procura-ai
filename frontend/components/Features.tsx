@@ -1,4 +1,5 @@
 import Image from "next/image";
+import circlesLine from '../assets/images/circles-line.png'
 import shapesLeft from '../assets/images/shapes-left.svg'
 import shapesRight from '../assets/images/shapes-right.svg'
 import feat1 from '../assets/icons/feat1.svg'
@@ -15,7 +16,10 @@ export function Features() {
       <Image src={shapesLeft} alt="formas esquerda" className="absolute hidden md:block md:top-[900px] lg:top-96 2xl:top-[420px] left-0 z-0" />
       <Image src={shapesRight} alt="formas direita" className="absolute hidden md:block top-96 md:top-[700px] lg:top-[200px] right-0" />
 
-      <h1 className="text-4xl text-primary font-medium self-start ml-10">Veja como é fácil se proteger</h1>
+      <div className="flex flex-col w-full gap-2">
+        <h1 className="text-4xl text-primary font-medium self-center">Veja como é fácil se proteger</h1>
+        <Image src={circlesLine} alt="feat1" className="self-center" />
+      </div>
 
       <div className="flex lg:flex-wrap flex-col lg:flex-row gap-4">
         <div className="flex flex-col gap-2">

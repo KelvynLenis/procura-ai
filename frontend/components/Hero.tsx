@@ -9,8 +9,8 @@ export function Hero() {
     <section className="z-100 w-full h-screen bg-hero-bg bg-repeat flex items-center justify-between text-lg md:text-xl lg:text-4xl text-white px-2 md:px-5 lg:px-10 py-7 z-10">
       <Image src={landingImages} alt="landing background" className="w-full hidden lg:block" />
       <div className="flex flex-col items-end gap-4 lg:gap-5">
-        <span className="font-bold w-[80.5%] text-end text-xl lg:text-5xl text-primary">
-          Perdeu ou teve seu celular roubado? O <span className="text-white bg-primary rounded-lg px-2 py-0">Procura.AÍ</span>pode te ajudar
+        <span className="font-bold w-[76%] text-end text-xl lg:text-5xl text-primary leading-7">
+          Perdeu ou teve seu celular roubado? O <span className="text-white bg-primary rounded-lg px-1.5 pt-1 h-fit leading-snug">Procura.AÍ</span> pode te ajudar!
         </span>
         <span className="font-semibold lg:text-2xl break-words w-9/12 text-procura-ai-black text-end">
           Cadastre seus dispositivos e, se algo acontecer, acione as autoridades de forma rápida e segura. <br />
