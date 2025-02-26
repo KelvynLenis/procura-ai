@@ -16,7 +16,7 @@ export function DevicesList({ devices, setDevices, page, limit, isLoading }: Dev
 
   return (
     <>
-      <div className="md:hidden flex flex-col w-full ml-1 self-center gap-5">
+      <div className="flex flex-col w-full ml-1 self-center gap-5 bg-zinc-200 ring-1 ring-zinc-300 rounded-xl">
         {
           isLoading ? (
             <div className="flex flex-col w-full h-fit bg-white rounded-lg shadow-md">

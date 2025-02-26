@@ -238,7 +238,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
 
 
             <Link href={`meus-dispositivos/edit/${id}`}>
-              <button onClick={showLoadingToast} className="rounded-lg w-10 h-10 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90">
+              <button onClick={showLoadingToast} className="hidden md:flex rounded-lg w-10 h-10 ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90">
                 <ImPencil size={16} />
                 <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
                   Editar dispositivo
@@ -248,7 +248,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
 
             <AlertDialog>
               <AlertDialogTrigger>
-                <button className="rounded-lg w-10 h-10 flex group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90">
+                <button className="hidden md:flex rounded-lg w-10 h-10 group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90">
                   <Trash2 size={20} />
                   <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
                     Deletar dispositivo

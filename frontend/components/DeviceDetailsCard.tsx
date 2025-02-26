@@ -18,7 +18,7 @@ import { AlertDialogHeader, AlertDialogFooter } from "./ui/alert-dialog";
 import Link from "next/link";
 import Button from "./Button";
 
-interface DeviceItemProps {
+interface DeviceDetailsCardProps {
   id: string; // ID do dispositivo
   phone_number: string; // Número de telefone
   phone_model: string; // Modelo do telefone
@@ -30,7 +30,7 @@ interface DeviceItemProps {
   status: string;
 }
 
-export function DeviceItem({ id, phone_number, phone_model, brand, imei, isStolen, status, setDevices, index }: DeviceItemProps) {
+export function DeviceDetailsCard({ id, phone_number, phone_model, brand, imei, isStolen, status, setDevices, index }: DeviceDetailsCardProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isViewAlertModalOpen, setIsViewAlertModalOpen] = useState(false)
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false)
@@ -168,14 +168,92 @@ export function DeviceItem({ id, phone_number, phone_model, brand, imei, isStole
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-4 bg-white  p-6 z-50 fixed inset-0 m-auto border border-zinc-300">
-        <span>{phone_model}</span>
-        <span>{status}</span>
-        <span>
-          <button>alertar</button>
-          <button>view</button>
-        </span>
+      <div className="flex flex-col w-full h-fit bg-white rounded-lg shadow-md">
+        <div className="flex items-center justify-end w-full h-16 bg-primary rounded-t-xl px-4 gap-3">
+          <button onClick={() => setIsAlertModalOpen(true)} className={cn("rounded-lg group w-10 h-10 ring-1 bg-white ring-zinc-300 flex flex-col md:flex-row items-center justify-center text-red-600 hover:bg-red-300 hover:ring-red-500")}>
+            <IoIosWarning size={28} />
+          </button>
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className={cn("rounded-lg group w-10 h-10 ring-1 bg-white ring-zinc-300 flex flex-col md:flex-row items-center justify-center text-procura-ai-black")}>
+                <EllipsisVertical size={28} />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="flex absolute flex-col items-start gap-2 justify-center bg-white py-2 w-40 px-3 rounded-lg ring-1 ring-zinc-300 -right-5 top-4">
+              <Triangle className="fill-white text-white absolute -top-3.5 right-2" />
+
+              <button onClick={handleViewDevice} className="rounded-lg gap-2 flex group hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90">
+                <Eye size={24} />
+                Ver detalhes
+              </button>
+
+              <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+
+              <Link href={`meus-dispositivos/edit/${id}`}>
+                <button onClick={showLoadingToast} className="rounded-lg flex gap-3 ml-1 group hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90">
+                  <ImPencil size={18} />
+                  Editar
+                </button>
+              </Link>
+
+              <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+
+              <button onClick={() => setIsDeleteModalOpen(true)} className="rounded-lg flex ml-0.5 gap-3 group items-center justify-center hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90">
+                <Trash2 size={19} />
+                Excluir
+              </button>
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        <div className="flex w-full h-full">
+          <div className="flex flex-col items-start justify-center gap-2 bg-procura-ai-zinc/10 px-4 pt-4 pb-6 h-full">
+            <span className="">Modelo</span>
+            <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+
+            <span className="">Marca</span>
+            <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+
+            <span className="">IMEI</span>
+            <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+
+            <span className="">Status</span>
+          </div>
+
+          <div className="flex flex-col items-start justify-center gap-2 px-4 pt-4 pb-4 w-full h-full">
+            <span className="font-semibold">{phone_model}</span>
+            <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+
+            <span className="font-semibold">{brand}</span>
+            <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+
+            <span className="font-semibold">{imei.slice(0, 1) + ' ' + imei.slice(1, 8) + ' ****** **'}</span>
+            <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+
+            <span className={cn("rounded-md w-20 flex items-center justify-center capitalize",
+              status === "Roubado" && "bg-robbery-bg text-robbery-text p-1",
+              status === "Recuperado" && "bg-regular-bg text-regular-text p-1",
+              status === "Regular" && "bg-regular-bg text-regular-text p-1",
+              status === "Furtado" && "bg-theft-bg text-theft-text p-1",
+              status === "Perdido" && "bg-lost-bg text-lost-text p-1",
+              // status === "Perdido" && "bg-violet-500/20 text-violet-700 p-1",
+            )}>{status === 'Recuperado' ? "Regular" : status.replace(' ', '')}</span>
+          </div>
+        </div>
       </div>
+
+      {
+        isViewAlertModalOpen && <ViewAlerteModal phone_model={phone_model} phone_number={phone_number} brand={brand} imei={imei} status={status} setModalOpen={setIsViewAlertModalOpen} />
+      }
+
+      {
+        isAlertModalOpen && <AlertFormModal id={id} isStolen={isStolen} status={status} handleDeviceRecovery={handleDeviceRecovery} setDevices={setDevices} setModalOpen={setIsAlertModalOpen} />
+      }
+
+      {
+        isDeleteModalOpen && <DeleteDeviceModal id={id} handleDeleteDevice={handleDeleteDevice} setModalOpen={setIsDeleteModalOpen} />
+      }
     </>
   )
 }

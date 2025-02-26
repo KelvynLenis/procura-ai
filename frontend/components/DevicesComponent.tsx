@@ -114,7 +114,7 @@ export function DevicesComponent() {
         <DevicesTable devices={devices} setDevices={setDevices} page={page} limit={limit} totalDevices={totalDevices} pages={pages} isLoading={isLoading} />
       </div>
 
-      <div className=" md:hidden">
+      <div className="md:hidden">
         <DevicesList devices={devices} setDevices={setDevices} page={page} limit={limit} isLoading={isLoading} />
       </div>
       <Link href={'/cadastrar-dispositivo'}>

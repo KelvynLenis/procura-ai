@@ -28,8 +28,8 @@ export function DevicesTable({ devices, setDevices, totalDevices, page, pages, l
 
   return (
     <>
-      <Table className="bg-white shadow-lg rounded-lg self-center">
-        <TableHeader className="bg-zinc-200/60">
+      <Table className="bg-white shadow-lg rounded-xl self-center">
+        <TableHeader className="bg-zinc-200/60 rounded-xl">
           <TableRow>
             <TableHead className="text-black/80 text-lg pl-5 font-medium hidden lg:table-cell lg:w-1/12">ID</TableHead>
             <TableHead className="text-black/80 text-lg font-medium flex w-28 md:flex lg:table-cell lg:w-48 items-end">Modelo</TableHead>
