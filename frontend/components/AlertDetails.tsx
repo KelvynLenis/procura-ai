@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Event } from "@/utils/types"
 import { useEffect, useState } from "react"
-import { ViewOccurrenceMap } from "../Maps/ViewOccurrenceMap"
+import { ViewOccurrenceMap } from "./Maps/ViewOccurrenceMap"
 import { cn, formatDateTime } from "@/lib/utils"
 import { IoIosWarning } from "react-icons/io"
 import ClipLoader from "react-spinners/ClipLoader"
@@ -25,7 +25,7 @@ interface AlertDetailsProps {
   setModalOpen?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function AlertForm({ id, status, handleDeviceRecovery, setModalOpen }: AlertDetailsProps) {
+export function AlertDetails({ id, status, handleDeviceRecovery, setModalOpen }: AlertDetailsProps) {
   const [event, setEvent] = useState({} as Event)
   const [isLoading, setIsLoading] = useState(true)
 

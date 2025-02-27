@@ -5,7 +5,7 @@ import { IoIosWarning } from "react-icons/io";
 import { MarkAsStolenForm } from "./Forms/MarkAsStolenForm";
 import { DeviceProps } from "@/utils/types";
 import { ArrowLeft, Trash2, X } from "lucide-react";
-import { AlertForm } from "./Forms/AlertForm";
+import { AlertDetails } from "./AlertDetails";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from 'uuid';
 import { ImPencil } from "react-icons/im";
@@ -238,7 +238,7 @@ export function DeviceDetailsCard({ id, phone_number, phone_model, brand, imei, 
                   <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
                     Visualizar alerta
                   </span>
-                  <AlertForm id={id} status={status} handleDeviceRecovery={handleDeviceRecovery} />
+                  <AlertDetails id={id} status={status} handleDeviceRecovery={handleDeviceRecovery} />
                 </>
               ) : (
                 <>

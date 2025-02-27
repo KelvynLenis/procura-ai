@@ -29,7 +29,7 @@ import { MarkAsStolenForm } from "../Forms/MarkAsStolenForm";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from 'uuid'
 import { useState } from "react";
-import { AlertForm } from "../Forms/AlertForm";
+import { AlertDetails } from "../AlertDetails";
 
 interface DeviceRowProps {
   id: string; // ID do dispositivo
@@ -323,7 +323,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
               <X className="hover:opacity-50 transition-opacity duration-150 cursor-pointer" onClick={() => setIsDialogOpen(false)} />
             </div>
             <div className="flex gap-2">
-              <AlertForm id={id} status={status} handleDeviceRecovery={handleDeviceRecovery} setModalOpen={setIsDialogOpen} />
+              <AlertDetails id={id} status={status} handleDeviceRecovery={handleDeviceRecovery} setModalOpen={setIsDialogOpen} />
             </div>
           </div>
         </div>
