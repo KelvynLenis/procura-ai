@@ -91,7 +91,7 @@ export function DevicesComponent() {
 
         const totalPages = Math.ceil(result.total / limit);
 
-        console.log(result.documents);
+        ;
         setDevices(result.documents || []);
         setTotalDevices(result.total || 0);
         setPages(totalPages);

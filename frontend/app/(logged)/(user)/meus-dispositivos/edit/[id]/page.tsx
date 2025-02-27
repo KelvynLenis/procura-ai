@@ -1,7 +1,7 @@
 import { DeviceForm } from "@/components/Forms/DeviceForm";
 import { Device } from "@/utils/types";
 
-export default async function EditDevice({params}: {params: Promise<{ id: string }>}) {
+export default async function EditDevice({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   if (!process.env.NEXT_PUBLIC_API_URL || !process.env.NEXT_PUBLIC_DATABASE_ID) {
@@ -35,7 +35,7 @@ export default async function EditDevice({params}: {params: Promise<{ id: string
     return <div>Erro ao carregar os dados do dispositivo.</div>;
   }
 
-  console.log('Dados do dispositivo:', result);
+  ;
   const { brand, phone_model, phone_number, imei } = result;
 
   return (

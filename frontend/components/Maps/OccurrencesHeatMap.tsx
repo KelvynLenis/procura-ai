@@ -34,7 +34,7 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
     if (!isFullScreen) return;
 
     setIsOverlayOpen(true)
-    // console.log(event)
+    // 
 
     // Calculate offset from cursor
     const offset = { x: 10, y: 10 } // Pixels to offset from cursor

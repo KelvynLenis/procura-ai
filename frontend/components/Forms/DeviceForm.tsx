@@ -203,7 +203,7 @@ export function DeviceForm({ device, setModalOpen, isPopover }: AddDeviceFormPro
 
             return response.json();
           }).catch((err) => {
-            console.log(`Fetch error: ${err.message}`);
+            console.error(`Fetch error: ${err.message}`);
             return null;
           });
 

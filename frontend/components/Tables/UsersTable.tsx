@@ -82,7 +82,7 @@ export function UsersTable() {
 
         const result = await response.json();
 
-        console.log(result);
+        ;
 
         const totalPages = Math.ceil(result.total / limit);
 

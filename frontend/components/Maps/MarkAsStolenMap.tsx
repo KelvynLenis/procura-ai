@@ -6,7 +6,7 @@ import * as turf from "@turf/turf"
 
 interface MarkAsStolenMapProps {
   setPosition: (coordinates: [number, number]) => void
-  setNeighborhoodId: (districtId: number) => void
+  setNeighborhoodId: (districtId: string) => void
 }
 
 const geoJsonLink = "https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI"
@@ -46,7 +46,7 @@ export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolen
       .then((data) => setGeoJsonData(data))
   }, [])
 
-  async function getNeighborhoodId(cod_neighborhood: number) {
+  async function getNeighborhoodId(cod_neighborhood: string) {
 
     const params = new URLSearchParams({
       "queries[0]": JSON.stringify({
@@ -74,7 +74,7 @@ export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolen
       }
 
       const result = await response.json();
-      console.log(result.documents[0]);
+      ;
       return result.documents[0].$id
     } catch (error) {
       console.error(error);
@@ -95,8 +95,8 @@ export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolen
     }
 
     if (foundFeature) {
-      // console.log("O ponto pertence a:", foundFeature.properties)
-      const neighborhoodId = await getNeighborhoodId(Number(foundFeature.properties.cod_bairro))
+
+      const neighborhoodId = await getNeighborhoodId(foundFeature.properties.cod_bairro)
       setNeighborhoodId(neighborhoodId)
     }
 
@@ -108,16 +108,16 @@ export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolen
   function setWidth() {
 
     if (window.innerWidth >= 1700) {
-      return 1380
-    }
-    else if (window.innerWidth >= 1600) {
-      return 1230
-    }
-    else if (window.innerWidth >= 1400) {
       return 1000
     }
+    else if (window.innerWidth >= 1600) {
+      return 600
+    }
+    else if (window.innerWidth >= 1400) {
+      return 600
+    }
     else if (window.innerWidth >= 1200) {
-      return 900
+      return 600
     }
     else if (window.innerWidth >= 1024) {
       return 600

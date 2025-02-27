@@ -16,7 +16,7 @@ interface DevicesListProps {
 }
 
 export function DevicesList({ devices, setDevices, page, limit, isLoading, setIsLoading }: DevicesListProps) {
-  console.log(devices)
+
 
   function showLoadingToast() {
     setIsLoading(true)

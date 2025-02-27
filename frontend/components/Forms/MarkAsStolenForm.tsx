@@ -19,14 +19,39 @@ import { DeviceProps } from "@/utils/types"
 import { Textarea } from "../ui/textarea"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useEffect, useState } from "react"
 
 interface MarkAsStolenFormProps {
   id: string
   isStolen: boolean
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
+  setModalOpen?: (value: boolean) => void
 }
 
-export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormProps) {
+export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen }: MarkAsStolenFormProps) {
+  const size = useWindowSize()
+
+  function useWindowSize() {
+    const [windowSize, setWindowSize] = useState({
+      width: 0,
+      height: 0,
+    })
+
+    useEffect(() => {
+      function handleResize() {
+        setWindowSize({
+          width: window.innerWidth,
+          height: window.innerHeight,
+        })
+      }
+
+      window.addEventListener("resize", handleResize)
+      handleResize()
+      return () => window.removeEventListener("resize", handleResize)
+    }, [])
+
+    return windowSize
+  }
 
   const occurrenceTypes = [
     { label: "Furto simples", value: "Furto simples" },
@@ -40,7 +65,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
       description: '',
       type: '',
       coordinates: [0, 0],
-      id_district: 0
+      id_district: ''
     }
   })
 
@@ -48,13 +73,13 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
     form.setValue('coordinates', coordinates)
   }
 
-  function handleSetNeighborhood(districtId: number) {
+  function handleSetNeighborhood(districtId: string) {
     form.setValue('id_district', districtId)
   }
 
   async function getNeighborhood(districtId: string) {
 
-    console.log(districtId)
+
 
     const params = new URLSearchParams({
       "queries[0]": JSON.stringify({
@@ -94,7 +119,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
 
       const neighborhood = await getNeighborhood(districtId)
 
-      console.log(neighborhood)
+
 
       let data
 
@@ -169,51 +194,53 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
         throw new Error('Coordenadas são obrigatórias')
       }
 
+
+
       const eventId = uuidv4();
       const callFunction = async () => {
         try {
-          const [createdEvent, updatedDeviceStatus, updatedDistrict] = await Promise.all([
-            fetch(
-              `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents/`,
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
-                },
-                body: JSON.stringify({
-                  documentId: eventId,
-                  data: {
-                    id_device: id,
-                    time_event: values.datetime,
-                    description: values.description,
-                    type: values.type,
-                    is_alert_on: true,
-                    last_location: values.coordinates,
-                    id_district: values.id_district,
-                  }
-                })
-              }
-            ),
+          await fetch(`${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents/`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+              },
+              body: JSON.stringify({
+                documentId: eventId,
+                data: {
+                  id_device: id,
+                  time_event: values.datetime,
+                  description: values.description,
+                  type: values.type,
+                  is_alert_on: true,
+                  last_location: values.coordinates,
+                  id_district: values.id_district.toString(),
+                }
+              })
+            }
+          )
 
-            fetch(
-              `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
-              {
-                method: "PATCH",
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
+            {
+              method: "PATCH",
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+              },
+              body: JSON.stringify({
+                data: {
+                  is_stolen: true,
+                  status: getStatus(values.type)
                 },
-                body: JSON.stringify({
-                  data: {
-                    is_stolen: true,
-                    status: getStatus(values.type)
-                  },
-                }),
-              }
-            ),
-            updateDistrict(values.id_district)
-          ]);
+              }),
+            }
+          )
+
+          if (values.id_district !== '') {
+            await updateDistrict(values.id_district)
+          }
 
           return true; // Return success flag
         } catch (error) {
@@ -238,9 +265,12 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
         );
       }
 
-      console.log(values)
+      if (setModalOpen) {
+        setModalOpen(false)
+      }
+
     } catch (error) {
-      console.error(error)
+
     }
   }
 
@@ -340,9 +370,17 @@ export function MarkAsStolenForm({ id, isStolen, setDevices }: MarkAsStolenFormP
           </div>
         </div>
 
-        <DialogClose className="w-1/3">
-          <Button variant="blue" type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl">Salvar</Button>
-        </DialogClose>
+
+        {
+          size.width <= 768 ? (
+            <Button variant="blue" type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl">Salvar</Button>
+          ) : (
+            <DialogClose className="w-1/2">
+              <Button variant="blue" type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl">Salvar</Button>
+            </DialogClose>
+          )
+        }
+
       </form>
     </Form>
   )

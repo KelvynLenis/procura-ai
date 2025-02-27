@@ -13,7 +13,7 @@ export function NotificationButton({ notifications, setNotifications }: {
     const { payload } = response;
     const isRelevant = ["Furto simples", "Extravio ou Perda", "Roubo", "Recuperado"].includes(payload.type);
     if (isRelevant) {
-    // if (payload?.type === "Furto simples" || payload?.type === "Extravio ou Perda" || payload?.type === "Roubo"|| payload?.type === "Recuperado") {
+      // if (payload?.type === "Furto simples" || payload?.type === "Extravio ou Perda" || payload?.type === "Roubo"|| payload?.type === "Recuperado") {
       setNotifications((prevNotifications) => {
         const exists = prevNotifications.some((n) => n.$id === payload.$id);
         return exists ? prevNotifications : [...prevNotifications, payload];
@@ -33,7 +33,7 @@ export function NotificationButton({ notifications, setNotifications }: {
   const toggleList = () => setIsListVisible((prev) => !prev);
 
   const filteredNotifications = notifications.filter(n => n.type !== "Recuperado");
-  console.log(filteredNotifications)
+
 
   return (
     <>

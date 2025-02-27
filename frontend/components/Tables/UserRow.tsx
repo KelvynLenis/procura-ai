@@ -76,7 +76,7 @@ export function UserRow({ user, index }: { user: UserRowProps, index: number }) 
 
         const result = await response.json();
 
-        console.log(result.documents)
+
         setDevices(result.documents || []);
       } catch (err) {
         console.error(`Fetch error: ${err}`);

@@ -9,7 +9,7 @@ export function CustomSidebarTrigger({ ...props }: CustomSidebarTriggerProps) {
   const { state, open, openMobile, isMobile, toggleSidebar } = useSidebar()
 
   function handleClick() {
-    // console.log("CustomSidebarTrigger", "isMobile: ", isMobile, "openMobile: ", openMobile, "state: ", state, "open: ", open)
+    // 
     toggleSidebar()
   }
 

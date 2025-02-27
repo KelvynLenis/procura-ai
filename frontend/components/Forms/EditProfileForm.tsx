@@ -42,7 +42,7 @@ export function EditProfileForm() {
         duration: 3000
       })
 
-      console.log(values)
+
     } catch (error) {
       console.error(error)
     }
