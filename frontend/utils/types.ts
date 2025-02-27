@@ -1,3 +1,4 @@
+import cepSearchResponseSchema from "@/schemas/cepSearchResponseSchema";
 import DeviceSchema from "@/schemas/deviceSchema"
 import districtSchema from "@/schemas/districtSchema";
 import EventSchema from "@/schemas/eventSchema";
@@ -26,3 +27,4 @@ export interface EventProps {
 export type Device = z.infer<typeof DeviceSchema>;
 export type Event = z.infer<typeof EventSchema>;
 export type District = z.infer<typeof districtSchema>;
+export type cepSearchResponse = z.infer<typeof cepSearchResponseSchema>;

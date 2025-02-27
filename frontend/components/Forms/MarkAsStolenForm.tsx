@@ -15,11 +15,12 @@ import { ChevronDown } from "lucide-react"
 import { toast } from "react-toastify"
 import { v4 as uuidv4 } from 'uuid'
 import { DialogClose } from "../ui/dialog"
-import { DeviceProps } from "@/utils/types"
+import { cepSearchResponse, DeviceProps } from "@/utils/types"
 import { Textarea } from "../ui/textarea"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "../ui/input-otp"
 
 interface MarkAsStolenFormProps {
   id: string
@@ -30,6 +31,7 @@ interface MarkAsStolenFormProps {
 
 export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen }: MarkAsStolenFormProps) {
   const size = useWindowSize()
+  const [mapPositionByCep, setMapPositionByCep] = useState<[number, number]>()
 
   function useWindowSize() {
     const [windowSize, setWindowSize] = useState({
@@ -65,9 +67,12 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen }: Mar
       description: '',
       type: '',
       coordinates: [0, 0],
-      id_district: ''
+      id_district: '',
+      cep: '',
     }
   })
+
+  const cep = form.watch('cep')
 
   function handleSetPosition(coordinates: [number, number]) {
     form.setValue('coordinates', coordinates)
@@ -78,9 +83,6 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen }: Mar
   }
 
   async function getNeighborhood(districtId: string) {
-
-
-
     const params = new URLSearchParams({
       "queries[0]": JSON.stringify({
         method: "equal",
@@ -118,9 +120,6 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen }: Mar
     try {
 
       const neighborhood = await getNeighborhood(districtId)
-
-
-
       let data
 
       if (form.getValues('type') === 'Furto simples') {
@@ -274,6 +273,38 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen }: Mar
     }
   }
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (cep.length === 8) {
+          fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+              if (!data.erro) {
+                console.log(data)
+                const cepData = data
+
+                const street = cepData.logradouro.split(' ').join('+')
+
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${street}`)
+                  .then(response => response.json())
+                  .then((data) => {
+                    console.log(data)
+                    handleSetPosition([Number(data[0].lat), Number(data[0].lon)])
+                    setMapPositionByCep([Number(data[0].lat), Number(data[0].lon)])
+                  })
+              }
+            });
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados do CEP:', error);
+      }
+    }
+
+    fetchData();
+
+  }, [cep])
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 text-zinc-900 self-center items-center justify-between rounded-lg">
@@ -349,6 +380,37 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen }: Mar
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="cep"
+              render={({ field }) => (
+                <FormItem className="flex flex-col w-full">
+                  <FormLabel className="w-fit text-center items-center flex">
+                    {/* <span className="text-red-500 h-6 flex align-text-bottom">*</span> */}
+                    Se preferir, informe o CEP do local da ocorrência.
+                  </FormLabel>
+                  <FormControl>
+                    <InputOTP maxLength={8} {...field} className="w-full flex gap-0.5 justify-center items-center" >
+                      <InputOTPGroup >
+                        <InputOTPSlot className="w-7 md:w-5 h-5 border-t-0 border-r-0 border-black  shadow-transparent" index={0} />
+                        <InputOTPSlot className="w-7 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={1} />
+                        <InputOTPSlot className="w-7 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={2} />
+                        <InputOTPSlot className="w-7 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={3} />
+                        <InputOTPSlot className="w-7 md:w-5 h-5 border-t-0 border-r-0 border-black shadow-transparent" index={4} />
+                      </InputOTPGroup>
+                      <InputOTPSeparator data-dash />
+                      <InputOTPGroup>
+                        <InputOTPSlot className="w-7 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={5} />
+                        <InputOTPSlot className="w-7 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={6} />
+                        <InputOTPSlot className="w-7 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent" index={7} />
+                      </InputOTPGroup>
+                    </InputOTP>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <div className="flex flex-col gap-2 w-full items-center justify-center">
             <FormField
@@ -361,7 +423,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen }: Mar
                     Clique no mapa o local da ocorrência
                   </FormLabel>
                   <FormControl>
-                    <MarkAsStolenMap setPosition={handleSetPosition} setNeighborhoodId={handleSetNeighborhood} />
+                    <MarkAsStolenMap position={cep.length === 8 ? mapPositionByCep : undefined} setPosition={handleSetPosition} setNeighborhoodId={handleSetNeighborhood} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -6,6 +6,7 @@ import * as turf from "@turf/turf"
 import { toast } from "react-toastify"
 
 interface MarkAsStolenMapProps {
+  position?: [number, number] | undefined
   setPosition: (coordinates: [number, number]) => void
   setNeighborhoodId: (districtId: string) => void
 }
@@ -13,7 +14,7 @@ interface MarkAsStolenMapProps {
 const geoJsonLink = "https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI"
 const geoJsonPB = "https://api.maptiler.com/data/96b36f41-dc19-4a71-a05d-69317764eba8/features.json?key=QKbTJZdA6lXljsicnOEI"
 
-export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolenMapProps) {
+export function MarkAsStolenMap({ position, setPosition, setNeighborhoodId }: MarkAsStolenMapProps) {
   const [isMarkerOn, setIsMarkerOn] = useState(false)
   const [coordinates, setCoordinates] = useState<[number, number]>([0, 0])
   const [geoJsonData, setGeoJsonData] = useState<any>(null)
@@ -81,14 +82,14 @@ export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolen
       }
 
       const result = await response.json();
-      ;
+
       return result.documents[0].$id
     } catch (error) {
       console.error(error);
     }
   }
 
-  async function handleGetPosition({ event, latLng }: { event: MouseEvent; latLng: [number, number] }) {
+  async function handleGetPosition({ event, latLng }: { event: MouseEvent | undefined; latLng: [number, number] }) {
     const clickedPoint = turf.point([latLng[1], latLng[0]])
 
     let foundState = null
@@ -154,6 +155,12 @@ export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolen
       return 260
     }
   }
+
+  useEffect(() => {
+    if (position) {
+      handleGetPosition({ event: undefined, latLng: position })
+    }
+  }, [position])
 
   return (
     <Map
