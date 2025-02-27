@@ -14,7 +14,7 @@ export function Device({ phone_model, phone_number, brand, imei, $id, setDevices
   const { toast } = useToast()
 
   async function handleDeleteDevice(id: string) {
-    console.log(id)
+
     try {
       const promise = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
@@ -33,7 +33,7 @@ export function Device({ phone_model, phone_number, brand, imei, $id, setDevices
 
           return response;
         }).catch((err) => {
-          console.log(`Fetch error: ${err}`);
+          console.error(`Fetch error: ${err}`);
           return null;
         });
     } catch (error) {

@@ -114,7 +114,7 @@ export function LoginForm() {
       form.setError('password', { message: "Email ou senha incorretos" })
 
 
-      console.log("Erro ao logar: ", error)
+      console.error("Erro ao logar: ", error)
     }
   }
 
@@ -184,7 +184,7 @@ export function LoginForm() {
         // })
 
       } catch (error) {
-        console.log("Erro: ", error)
+        console.error("Erro: ", error)
       }
     }
 

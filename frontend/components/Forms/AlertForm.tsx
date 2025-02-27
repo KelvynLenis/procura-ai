@@ -1,16 +1,5 @@
 
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { useForm } from "react-hook-form"
-import { Input } from "../Input"
-import { MarkAsStolenMap } from "../Maps/MarkAsStolenMap"
-import Button from "../Button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,27 +11,21 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { ChevronDown } from "lucide-react"
-import { toast } from "react-toastify"
-import { v4 as uuidv4 } from 'uuid'
-import { DialogClose } from "../ui/dialog"
-import { DeviceProps, Event, EventProps } from "@/utils/types"
-import { Textarea } from "../ui/textarea"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { Event } from "@/utils/types"
 import { useEffect, useState } from "react"
 import { ViewOccurrenceMap } from "../Maps/ViewOccurrenceMap"
 import { cn, formatDateTime } from "@/lib/utils"
 import { IoIosWarning } from "react-icons/io"
 import ClipLoader from "react-spinners/ClipLoader"
 
-interface MarkAsStolenFormProps {
+interface AlertDetailsProps {
   id: string
   status: string
   handleDeviceRecovery: (id: string) => Promise<void>
+  setModalOpen?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function AlertForm({ id, status, handleDeviceRecovery }: MarkAsStolenFormProps) {
+export function AlertForm({ id, status, handleDeviceRecovery, setModalOpen }: AlertDetailsProps) {
   const [event, setEvent] = useState({} as Event)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -56,10 +39,10 @@ export function AlertForm({ id, status, handleDeviceRecovery }: MarkAsStolenForm
         values: [`${id}`],
       }),
       "queries[1]": JSON.stringify({
-          method: "equal",
-          attribute: "is_alert_on",
-          values: [true],
-        }),
+        method: "equal",
+        attribute: "is_alert_on",
+        values: [true],
+      }),
     });
     try {
       const response = await fetch(
@@ -80,14 +63,21 @@ export function AlertForm({ id, status, handleDeviceRecovery }: MarkAsStolenForm
 
       const { documents } = await response.json();
 
-      console.log(documents)
+
       event.push(documents.sort((a, b) => new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime())[0]);
 
-      console.log(event)
+
     } catch (error) {
       console.error(error);
     }
     return event;
+  }
+
+  function handleConfirmDialog() {
+    handleDeviceRecovery(id)
+    if (setModalOpen) {
+      setModalOpen(false)
+    }
   }
 
   useEffect(() => {
@@ -111,13 +101,12 @@ export function AlertForm({ id, status, handleDeviceRecovery }: MarkAsStolenForm
           <div className="flex flex-col gap-5">
             <div className="flex">
               <div className="flex flex-col gap-2 w-full">
-                <span className="font-bold">Tipe de alerta: <span className="font-normal">{event.type}</span></span>
-                <span className="font-bold">Descrição do alerta: <span className="font-normal">{event.description}</span></span>
-                <span className="font-bold">Data e hora da ocorrência: <span className="font-normal">{formatDateTime(event.time_event)}</span></span>
+                <span className="font-bold">Tipo de alerta: <span className="font-normal">{event?.type ? event?.type : "Tipo de alerta não registrado"}</span></span>
+                <span className="font-bold">Descrição do alerta: <span className="font-normal">{event?.description ? event?.description : "Descrição não registrada"}</span></span>
+                <span className="font-bold">Data e hora da ocorrência: <span className="font-normal">{event?.time_event ? formatDateTime(event?.time_event) : "Data não registrada"}</span></span>
               </div>
 
               <div className="flex flex-col w-1/3 items-end">
-
                 <AlertDialog>
                   <AlertDialogTrigger>
                     <span title="Desativar alerta" className={cn(
@@ -147,10 +136,8 @@ export function AlertForm({ id, status, handleDeviceRecovery }: MarkAsStolenForm
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel className="bg-white mr-2">Cancelar</AlertDialogCancel>
-                      <AlertDialogAction className="bg-red-500" onClick={() => handleDeviceRecovery(id)}>
-                        <DialogClose>
-                          Confirmar
-                        </DialogClose>
+                      <AlertDialogAction className="bg-red-500" onClick={handleConfirmDialog}>
+                        Confirmar
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -159,7 +146,15 @@ export function AlertForm({ id, status, handleDeviceRecovery }: MarkAsStolenForm
             </div>
 
             <div>
-              <ViewOccurrenceMap position={event.last_location} />
+              {
+                event?.last_location ? (
+                  <ViewOccurrenceMap position={event?.last_location} />
+                ) : (
+                  <div>
+                    <span className="font-bold">Localização da ocorrência: <span className="font-normal">Localização não registrada</span></span>
+                  </div>
+                )
+              }
             </div>
           </div>
         )

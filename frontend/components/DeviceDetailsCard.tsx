@@ -51,7 +51,7 @@ export function DeviceDetailsCard({ id, phone_number, phone_model, brand, imei, 
       const x = new Date().toISOString()
 
 
-      console.log(x)
+
       const callFunction = async () => {
         try {
           const createEvent = await fetch(
@@ -81,7 +81,7 @@ export function DeviceDetailsCard({ id, phone_number, phone_model, brand, imei, 
               }
               return response.json();
             }).catch((err) => {
-              console.log(`Fetch error: ${err.message}`);
+              console.error(`Fetch error: ${err.message}`);
               return null;
             });
 
@@ -150,7 +150,7 @@ export function DeviceDetailsCard({ id, phone_number, phone_model, brand, imei, 
 
             return response;
           }).catch((err) => {
-            console.log(`Fetch error: ${err}`);
+            console.error(`Fetch error: ${err}`);
             return null;
           });
       }

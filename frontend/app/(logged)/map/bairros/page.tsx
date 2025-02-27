@@ -69,7 +69,7 @@ export default async function Dashboard() {
 
     districtsData = dashboardData
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 
   return (

@@ -6,7 +6,7 @@ import { ImPencil } from "react-icons/im";
 import Link from "next/link";
 import { DeviceProps } from "@/utils/types";
 import { cn } from "@/lib/utils";
-import { Eye, Trash2 } from "lucide-react";
+import { Eye, Trash2, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -45,6 +45,7 @@ interface DeviceRowProps {
 
 export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen, status, setDevices, index }: DeviceRowProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   async function handleDeleteDevice(id: string) {
     try {
@@ -66,7 +67,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
 
             return response;
           }).catch((err) => {
-            console.log(`Fetch error: ${err}`);
+            console.error(`Fetch error: ${err}`);
             return null;
           });
       }
@@ -87,7 +88,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
       const x = new Date().toISOString()
 
 
-      console.log(x)
+
       const callFunction = async () => {
         try {
           const createEvent = await fetch(
@@ -117,7 +118,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
               }
               return response.json();
             }).catch((err) => {
-              console.log(`Fetch error: ${err.message}`);
+              console.error(`Fetch error: ${err.message}`);
               return null;
             });
 
@@ -145,7 +146,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
         }
       }
 
-      // setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device,  } : device));
+      // setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, } : device));
 
       const success = await toast.promise(callFunction, {
         pending: 'Recuperando Dispositivo...',
@@ -155,8 +156,8 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
 
       if (success) {
         setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, is_stolen: false, status: "Recuperado" } : device));
-
       }
+
     } catch (error) {
       console.error(error)
     }
@@ -273,30 +274,21 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
             {
               isStolen
                 ?
-
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <button title="Desativar alerta" className={cn(
-                      "w-10 h-10 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white",
-                      status === "Roubado" && "bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500",
-                      status === "Furtado" && "bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500",
-                      status === "Perdido" && "bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500",
-                      status === "Recuperado" && "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
-                      status === "Regular" && "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
-                    )}>
-                      <IoIosWarning size={28} />
-                      <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
-                        Visualizar alerta
-                      </span>
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-fit py-8">
-                    <DialogHeader>
-                      <DialogTitle>Detalhes do alerta</DialogTitle>
-                    </DialogHeader>
-                    <AlertForm id={id} status={status} handleDeviceRecovery={handleDeviceRecovery} />
-                  </DialogContent>
-                </Dialog>
+                <>
+                  <button onClick={() => setIsDialogOpen(true)} title="Desativar alerta" className={cn(
+                    "w-10 h-10 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white",
+                    status === "Roubado" && "bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500",
+                    status === "Furtado" && "bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500",
+                    status === "Perdido" && "bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500",
+                    status === "Recuperado" && "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
+                    status === "Regular" && "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
+                  )}>
+                    <IoIosWarning size={28} />
+                    <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
+                      Visualizar alerta
+                    </span>
+                  </button>
+                </>
 
                 :
                 <Dialog>
@@ -320,6 +312,23 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
           </div>
         </TableCell>
       </TableRow>
+
+      {
+        isDialogOpen &&
+        <div className="w-screen h-screen flex items-center justify-center fixed inset-0 z-50 bg-black/60">
+          <div className="flex flex-col gap-2 bg-white p-6 rounded-sm">
+            <div className="flex justify-between">
+              <h1 className="font-bold text-xl">Detalhes do alerta</h1>
+
+              <X className="hover:opacity-50 transition-opacity duration-150 cursor-pointer" onClick={() => setIsDialogOpen(false)} />
+            </div>
+            <div className="flex gap-2">
+              <AlertForm id={id} status={status} handleDeviceRecovery={handleDeviceRecovery} setModalOpen={setIsDialogOpen} />
+            </div>
+          </div>
+        </div>
+
+      }
     </>
   )
 }

@@ -13,7 +13,7 @@ export function cn(...inputs: ClassValue[]) {
 export function validateCPF(cpf: string) {
   try {
     const validCPF = cpfSchema.parse(cpf.trim());
-    // console.log("CPF válido:", validCPF);
+    // ;
     return true; // CPF válido
   } catch (error) {
     console.error("Erro na validação do CPF:", error.errors[0]?.message || error.message);
@@ -44,8 +44,8 @@ export function validatePhoneNumber(phoneNumber: string) {
 
 export function formatDateTime(isoString: string) {
   const date = new Date(isoString);
-  console.log(isoString)
-  console.log(date)
+
+
 
   // Formatar para "10:30 terça 28/01/2025"
   return format(date, "HH:mm - dd/MM/yyyy");

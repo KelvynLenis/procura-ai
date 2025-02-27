@@ -125,7 +125,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
             }
             return response.json();
           }).catch((err) => {
-            console.log(`Fetch error: ${err.message}`);
+            console.error(`Fetch error: ${err.message}`);
             return null;
           });
 
@@ -159,7 +159,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
             }
             return response.json();
           }).catch((err) => {
-            console.log(`Fetch error: ${err.message}`);
+            console.error(`Fetch error: ${err.message}`);
             return null;
           });
       }
@@ -175,7 +175,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
 
     } catch (error) {
       toast.error("Erro no cadastro.");
-      console.log("Erro no cadastro: ", error)
+      console.error("Erro no cadastro: ", error)
     }
   }
 
@@ -193,7 +193,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
           admin ? router.push('/dashboard') : router.push('/meus-dispositivos')
         }
       } catch (error) {
-        console.log("Erro: ", error)
+        console.error("Erro: ", error)
       }
     }
 

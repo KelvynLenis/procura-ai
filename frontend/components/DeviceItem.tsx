@@ -1,22 +1,14 @@
 'use client'
 
 import { cn } from "@/lib/utils";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
 import { IoIosWarning } from "react-icons/io";
 import { MarkAsStolenForm } from "./Forms/MarkAsStolenForm";
-import { DialogHeader } from "./ui/dialog";
 import { DeviceProps } from "@/utils/types";
-import { Popover, PopoverTrigger, PopoverContent } from "@radix-ui/react-popover";
-import { EllipsisVertical, Eye, Trash2, Triangle, X } from "lucide-react";
+import { Eye, X } from "lucide-react";
 import { AlertForm } from "./Forms/AlertForm";
 import { toast } from "react-toastify";
-import { v4 as uuidv4 } from 'uuid'
-import { ImPencil } from "react-icons/im";
+import { v4 as uuidv4 } from 'uuid';
 import { useState } from "react";
-import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction } from "@radix-ui/react-alert-dialog";
-import { AlertDialogHeader, AlertDialogFooter } from "./ui/alert-dialog";
-import Link from "next/link";
-import Button from "./Button";
 import { DeviceDetailsCard } from "./DeviceDetailsCard";
 import { Modal } from "./Modal";
 
@@ -33,7 +25,6 @@ interface DeviceItemProps {
 }
 
 export function DeviceItem({ id, phone_number, phone_model, brand, imei, isStolen, status, setDevices, index }: DeviceItemProps) {
-  const [isLoading, setIsLoading] = useState(false)
   const [isViewDeviceDetailsCardOpen, setIsViewDeviceDetailsCardOpen] = useState(false)
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false)
 
@@ -45,7 +36,7 @@ export function DeviceItem({ id, phone_number, phone_model, brand, imei, isStole
       const x = new Date().toISOString()
 
 
-      console.log(x)
+
       const callFunction = async () => {
         try {
           const createEvent = await fetch(
@@ -75,7 +66,7 @@ export function DeviceItem({ id, phone_number, phone_model, brand, imei, isStole
               }
               return response.json();
             }).catch((err) => {
-              console.log(`Fetch error: ${err.message}`);
+              console.error(`Fetch error: ${err.message}`);
               return null;
             });
 
@@ -167,12 +158,12 @@ export function DeviceItem({ id, phone_number, phone_model, brand, imei, isStole
                   <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
                     Visualizar alerta
                   </span>
-                  <AlertForm id={id} status={status} handleDeviceRecovery={handleDeviceRecovery} />
+                  <AlertForm id={id} status={status} handleDeviceRecovery={handleDeviceRecovery} setModalOpen={setIsAlertModalOpen} />
                 </>
               ) : (
                 <>
                   <h2 className="font-bold">Preencha as informações</h2>
-                  <MarkAsStolenForm id={id} isStolen={isStolen} setDevices={setDevices} />
+                  <MarkAsStolenForm id={id} isStolen={isStolen} setDevices={setDevices} setModalOpen={setIsAlertModalOpen} />
                 </>
               )}
           </div>

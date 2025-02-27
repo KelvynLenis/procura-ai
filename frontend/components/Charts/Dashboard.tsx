@@ -477,7 +477,7 @@ export function Dashboard() {
           const recentEvent = events
             .filter((event) => event.id_device === device.$id)
             .sort((a, b) => new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime())[0];
-          console.log(recentEvent)
+
 
           const ownerResponse = await fetchOwnerInfo(device.auth_id!);
           const ownerInfo = ownerResponse?.[0];
@@ -558,11 +558,11 @@ export function Dashboard() {
     const fetchOccurrences = async () => {
       try {
         const dashboardData = await getDashboardData();
-        console.log(dashboardData);
+        ;
 
         setOccurrences(dashboardData)
       } catch (error) {
-        console.log(error)
+
       }
     }
 

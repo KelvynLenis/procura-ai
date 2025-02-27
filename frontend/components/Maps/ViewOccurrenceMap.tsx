@@ -43,7 +43,7 @@ export function ViewOccurrenceMap({ position }: MarkAsStolenMapProps) {
   }, [])
 
   function setWidth() {
-    console.log(window.innerWidth)
+
 
     if (window.innerWidth >= 1440) {
       return 700
