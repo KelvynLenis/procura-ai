@@ -31,9 +31,13 @@ interface MarkAsStolenFormProps {
 }
 
 const formSchema = z.object({
-  datetime: z.string().min(1, {
-    message: "A data e hora da ocorrência é obrigatória.",
-  }),
+  datetime: z.string()
+    .min(1, {
+      message: "A data e hora da ocorrência é obrigatória.",
+    })
+    .refine((date) => new Date(date) <= new Date(), {
+      message: "A data não pode ser no futuro.",
+    }),
   description: z.string().optional(),
   type: z.string().min(1, {
     message: "O tipo da ocorrência é obrigatório.",
