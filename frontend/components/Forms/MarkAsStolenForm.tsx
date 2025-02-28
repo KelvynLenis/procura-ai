@@ -21,6 +21,8 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "../ui/input-otp"
+import { MapTilerGeocodingControl } from "../Maps/MapTilerGeocodingControl"
+import dynamic from "next/dynamic"
 
 interface MarkAsStolenFormProps {
   id: string
@@ -28,6 +30,10 @@ interface MarkAsStolenFormProps {
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
   setModalOpen?: (value: boolean) => void
 }
+
+const Map = dynamic(() => import('../Maps/Map/DynamicMap'), {
+  ssr: false,
+});
 
 export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen }: MarkAsStolenFormProps) {
   const size = useWindowSize()
@@ -424,6 +430,8 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen }: Mar
                   </FormLabel>
                   <FormControl>
                     <MarkAsStolenMap position={cep.length === 8 ? mapPositionByCep : undefined} setPosition={handleSetPosition} setNeighborhoodId={handleSetNeighborhood} />
+                    {/* <MapTilerGeocodingControl /> */}
+                    {/* <Map /> */}
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -1,8 +1,10 @@
+import "@maptiler/sdk/dist/maptiler-sdk.css";
+import "@maptiler/geocoding-control/style.css";
+
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster"
-import { Roboto, Raleway } from 'next/font/google';
+import { Roboto } from 'next/font/google';
 import "./globals.css";
-import { Footer } from "@/components/Footer";
 import { ToastContainer } from 'react-toastify';
 
 const roboto = Roboto({
