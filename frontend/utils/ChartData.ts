@@ -3,7 +3,7 @@ export const topBrandsStolen = [
   { item: "Samsung", value: 31 },
   { item: "Xiaomi", value: 15 },
   { item: "Oppo", value: 12 },
-  { item: "Vivo", value: 2 },
+  { item: "VIVO", value: 2 },
   { item: "Motorola", value: 24 },
   { item: "Realme", value: 1 },
   { item: "Asus", value: 3 },
