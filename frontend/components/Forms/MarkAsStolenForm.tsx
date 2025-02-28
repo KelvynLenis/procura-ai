@@ -80,6 +80,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen, setIs
   ] as const
 
   const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       datetime: '',
       description: '',
@@ -193,8 +194,6 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen, setIs
         return 'Roubado'
       }
     }
-
-    console.log(values)
 
     try {
 
