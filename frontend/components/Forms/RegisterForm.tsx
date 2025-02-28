@@ -61,7 +61,87 @@ const formSchema = z.object({
   .refine((data) => data.email === data.confirmEmail, {
     path: ["confirmEmail"], // Indica onde mostrar o erro
     message: "Os e-mails precisam ser iguais",
-  });
+  })
+  .refine(async (data) => {
+    const params = new URLSearchParams({
+      'queries[0]': JSON.stringify({
+        method: "equal",
+        attribute: "cpf",
+        values: [data.cpf],
+      }),
+    })
+
+    try {
+      const cpfCheckResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          }
+        }
+      );
+      if (!cpfCheckResponse.ok) {
+        toast.error("Erro ao verificar CPF. Tente novamente.");
+        return false;
+      }
+
+      const existingUsers = await cpfCheckResponse.json();
+      const cpfExists = existingUsers.documents.some(
+        (existingUser: any) => existingUser.cpf === data.cpf
+      );
+
+      return !cpfExists;
+    } catch (error) {
+      console.error("Erro ao verificar CPF: ", error);
+      toast.error("Erro ao verificar CPF. Tente novamente.");
+      return false;
+    }
+  }, {
+    path: ["cpf"],
+    message: "Este CPF já está cadastrado no sistema."
+  })
+  .refine(async (data) => {
+    const params = new URLSearchParams({
+      'queries[0]': JSON.stringify({
+        method: "equal",
+        attribute: "email",
+        values: [data.email],
+      }),
+    })
+
+    try {
+      const emailCheckResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`
+          }
+        }
+      );
+      if (!emailCheckResponse.ok) {
+        toast.error("Erro ao verificar e-mail. Tente novamente.");
+        return false;
+      }
+
+      const existingUsers = await emailCheckResponse.json();
+      const emailExists = existingUsers.documents.some(
+        (existingUser: any) => existingUser.email === data.email
+      );
+
+      return !emailExists;
+    } catch (error) {
+      console.error("Erro ao verificar e-mail: ", error);
+      toast.error("Erro ao verificar e-mail. Tente novamente.");
+      return false;
+    }
+  }, {
+    path: ["email"],
+    message: "Este e-mail já está cadastrado no sistema."
+  })
 
 export function RegisterForm({ admin }: RegisterFormProps) {
   const router = useRouter()

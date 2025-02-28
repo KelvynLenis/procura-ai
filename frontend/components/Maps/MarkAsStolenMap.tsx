@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { GeoJsonLoader, Map, Marker, ZoomControl } from "pigeon-maps"
 import * as turf from "@turf/turf"
+import { toast } from "react-toastify"
 
 interface MarkAsStolenMapProps {
   setPosition: (coordinates: [number, number]) => void
@@ -10,11 +11,13 @@ interface MarkAsStolenMapProps {
 }
 
 const geoJsonLink = "https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI"
+const geoJsonPB = "https://api.maptiler.com/data/96b36f41-dc19-4a71-a05d-69317764eba8/features.json?key=QKbTJZdA6lXljsicnOEI"
 
 export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolenMapProps) {
   const [isMarkerOn, setIsMarkerOn] = useState(false)
   const [coordinates, setCoordinates] = useState<[number, number]>([0, 0])
   const [geoJsonData, setGeoJsonData] = useState<any>(null)
+  const [geoJsonPBData, setGeoJsonPBData] = useState<any>(null)
 
   const size = useWindowSize()
 
@@ -44,6 +47,10 @@ export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolen
     fetch(geoJsonLink)
       .then((res) => res.json())
       .then((data) => setGeoJsonData(data))
+
+    fetch(geoJsonPB)
+      .then((res) => res.json())
+      .then((data) => setGeoJsonPBData(data))
   }, [])
 
   async function getNeighborhoodId(cod_neighborhood: Number) {
@@ -51,7 +58,7 @@ export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolen
       "queries[0]": JSON.stringify({
         method: "equal",
         attribute: "cod_neighborhood",
-        values: [cod_neighborhood],
+        values: [Number(cod_neighborhood)],
       }),
     })
 
@@ -83,7 +90,23 @@ export function MarkAsStolenMap({ setPosition, setNeighborhoodId }: MarkAsStolen
   async function handleGetPosition({ event, latLng }: { event: MouseEvent; latLng: [number, number] }) {
     const clickedPoint = turf.point([latLng[1], latLng[0]])
 
+    let foundState = null
     let foundFeature = null
+
+    if (geoJsonPBData) {
+      for (const feature of geoJsonPBData.features) {
+        if (turf.booleanPointInPolygon(clickedPoint, feature)) {
+          foundState = feature
+          break
+        }
+      }
+    }
+
+    if (!foundState) {
+      toast.error("O local informado não está dentro da Paraíba")
+      return
+    }
+
     if (geoJsonData) {
       for (const feature of geoJsonData.features) {
         if (turf.booleanPointInPolygon(clickedPoint, feature)) {
