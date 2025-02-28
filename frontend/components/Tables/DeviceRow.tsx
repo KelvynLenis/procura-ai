@@ -46,6 +46,7 @@ interface DeviceRowProps {
 export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen, status, setDevices, index }: DeviceRowProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isViewAlertModalOpen, setIsViewAlertModalOpen] = useState(false)
 
   async function handleDeleteDevice(id: string) {
     try {
@@ -275,7 +276,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
               isStolen
                 ?
                 <>
-                  <button onClick={() => setIsDialogOpen(true)} title="Desativar alerta" className={cn(
+                  <button onClick={() => setIsViewAlertModalOpen(true)} title="Desativar alerta" className={cn(
                     "w-10 h-10 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white",
                     status === "Roubado" && "bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500",
                     status === "Furtado" && "bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500",
@@ -289,9 +290,8 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
                     </span>
                   </button>
                 </>
-
                 :
-                <Dialog>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <DialogTrigger asChild>
                     <button className={cn("rounded-lg group relative w-10 h-10 ring-1 ring-zinc-300 flex flex-col md:flex-row items-center justify-center text-red-600 hover:bg-red-300 hover:ring-red-500")}>
                       <IoIosWarning size={28} />
@@ -305,7 +305,7 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
                     <DialogHeader>
                       <DialogTitle>Preencha as informações</DialogTitle>
                     </DialogHeader>
-                    <MarkAsStolenForm id={id} isStolen={isStolen} setDevices={setDevices} />
+                    <MarkAsStolenForm id={id} isStolen={isStolen} setDevices={setDevices} setIsDialogOpen={setIsDialogOpen} />
                   </DialogContent>
                 </Dialog>
             }
@@ -314,16 +314,16 @@ export function DeviceRow({ id, phone_number, phone_model, brand, imei, isStolen
       </TableRow>
 
       {
-        isDialogOpen &&
+        isViewAlertModalOpen &&
         <div className="w-screen h-screen flex items-center justify-center fixed inset-0 z-50 bg-black/60">
           <div className="flex flex-col gap-2 bg-white p-6 rounded-sm">
             <div className="flex justify-between">
               <h1 className="font-bold text-xl">Detalhes do alerta</h1>
 
-              <X className="hover:opacity-50 transition-opacity duration-150 cursor-pointer" onClick={() => setIsDialogOpen(false)} />
+              <X className="hover:opacity-50 transition-opacity duration-150 cursor-pointer" onClick={() => setIsViewAlertModalOpen(false)} />
             </div>
             <div className="flex gap-2">
-              <AlertDetails id={id} status={status} handleDeviceRecovery={handleDeviceRecovery} setModalOpen={setIsDialogOpen} />
+              <AlertDetails id={id} status={status} handleDeviceRecovery={handleDeviceRecovery} setModalOpen={setIsViewAlertModalOpen} />
             </div>
           </div>
         </div>
