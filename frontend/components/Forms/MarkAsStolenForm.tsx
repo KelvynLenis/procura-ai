@@ -20,15 +20,35 @@ import { Textarea } from "../ui/textarea"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
+import { validateCoordinates } from "@/lib/utils"
 
 interface MarkAsStolenFormProps {
   id: string
   isStolen: boolean
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
   setModalOpen?: (value: boolean) => void
+  setIsDialogOpen?: (value: boolean) => void
 }
 
-export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen }: MarkAsStolenFormProps) {
+const formSchema = z.object({
+  datetime: z.string().min(1, {
+    message: "A data e hora da ocorrência é obrigatória.",
+  }),
+  description: z.string().optional(),
+  type: z.string().min(1, {
+    message: "O tipo da ocorrência é obrigatório.",
+  }),
+  coordinates: z.array(z.number()).min(2, {
+    message: "Selecione um local no mapa.",
+  }),
+  id_district: z.string().optional(),
+})
+  .refine((data) => validateCoordinates(data.coordinates), {
+    path: ["coordinates"],
+    message: "Selecione um local no mapa.",
+  })
+
+export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen, setIsDialogOpen }: MarkAsStolenFormProps) {
   const size = useWindowSize()
 
   function useWindowSize() {
@@ -59,7 +79,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen }: Mar
     { label: "Roubo", value: "Roubo" },
   ] as const
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
       datetime: '',
       description: '',
@@ -174,27 +194,9 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen }: Mar
       }
     }
 
+    console.log(values)
+
     try {
-
-      if (values.datetime === '') {
-        form.setError('datetime', { message: 'Data e hora são obrigatórios' })
-        toast.error('Data e hora são obrigatórios')
-        throw new Error('Data e hora são obrigatórios')
-      }
-
-      if (values.type === '') {
-        form.setError('type', { message: 'Tipo de ocorrência é obrigatório' })
-        toast.error('Tipo de ocorrência é obrigatório')
-        throw new Error('Tipo de ocorrência é obrigatório')
-      }
-
-      if (values.coordinates[0] === 0 || values.coordinates[1] === 0) {
-        form.setError('coordinates', { message: 'Selecione um ponto no mapa' })
-        toast.error('Coordenadas são obrigatórias')
-        throw new Error('Coordenadas são obrigatórias')
-      }
-
-
 
       const eventId = uuidv4();
       const callFunction = async () => {
@@ -263,6 +265,8 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen }: Mar
               : device
           )
         );
+
+        setIsDialogOpen && setIsDialogOpen(false)
       }
 
       if (setModalOpen) {
@@ -375,9 +379,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen }: Mar
           size.width <= 768 ? (
             <Button variant="blue" type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl">Salvar</Button>
           ) : (
-            <DialogClose className="w-1/2">
-              <Button variant="blue" type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl">Salvar</Button>
-            </DialogClose>
+            <Button variant="blue" type="submit" className="w-1/2 h-10 flex items-center justify-center text-xl text-white self-center rounded-xl">Salvar</Button>
           )
         }
 

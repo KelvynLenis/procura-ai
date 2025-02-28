@@ -45,8 +45,16 @@ export function validatePhoneNumber(phoneNumber: string) {
 export function formatDateTime(isoString: string) {
   const date = new Date(isoString);
 
-
-
-  // Formatar para "10:30 terça 28/01/2025"
+  // Formatar para "10:30 - 28/01/2025"
   return format(date, "HH:mm - dd/MM/yyyy");
+}
+
+export function validateCoordinates(coordinates: number[]) {
+  if (coordinates.length !== 2) {
+    return false;
+  }
+
+  const [latitude, longitude] = coordinates;
+
+  return latitude !== 0 && longitude !== 0;
 }
