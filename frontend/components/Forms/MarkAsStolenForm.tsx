@@ -200,6 +200,14 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen, setIs
     }
 
     try {
+      const dataAtual = new Date();
+      const dataEvento = new Date(values.datetime);
+
+      if (dataEvento > dataAtual) {
+        form.setError('datetime', { message: 'Não é possível cadastrar alertas com data futura' });
+        toast.error('Não é possível cadastrar alertas com data futura');
+        throw new Error('Não é possível cadastrar alertas com data futura');
+      }
 
       const eventId = uuidv4();
       const callFunction = async () => {
