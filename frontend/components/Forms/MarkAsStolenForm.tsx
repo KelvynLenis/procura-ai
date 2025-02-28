@@ -175,6 +175,14 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen }: Mar
     }
 
     try {
+      const dataAtual = new Date();
+      const dataEvento = new Date(values.datetime);
+
+      if (dataEvento > dataAtual) {
+        form.setError('datetime', { message: 'Não é possível cadastrar alertas com data futura' });
+        toast.error('Não é possível cadastrar alertas com data futura');
+        throw new Error('Não é possível cadastrar alertas com data futura');
+      }
 
       if (values.datetime === '') {
         form.setError('datetime', { message: 'Data e hora são obrigatórios' })
