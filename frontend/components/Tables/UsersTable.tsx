@@ -307,7 +307,7 @@ export function UsersTable() {
             onClick={handleExportClick}
             disabled={users.length === 0 || loading}
           >
-            Exportar CSV
+            Exportar planilha
           </Button>
         </div>
 
