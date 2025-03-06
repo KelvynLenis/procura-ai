@@ -1,9 +1,8 @@
-
+'use client'
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
 import { Input } from "../Input"
-import { MarkAsStolenMap } from "../Maps/MarkAsStolenMap"
 import Button from "../Button"
 import {
   DropdownMenu,
@@ -14,12 +13,13 @@ import {
 import { ChevronDown } from "lucide-react"
 import { toast } from "react-toastify"
 import { v4 as uuidv4 } from 'uuid'
-import { DialogClose } from "../ui/dialog"
 import { DeviceProps } from "@/utils/types"
 import { Textarea } from "../ui/textarea"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
+import { MarkAsStolenMapWithGeocoding } from "../Maps/MarkAsStolenMapWithGeocoding"
+import dynamic from "next/dynamic"
 import { validateCoordinates } from "@/lib/utils"
 
 interface MarkAsStolenFormProps {
@@ -51,6 +51,10 @@ const formSchema = z.object({
     path: ["coordinates"],
     message: "Selecione um local no mapa.",
   })
+
+const Map = dynamic(() => import('../Maps/Map/DynamicMap'), {
+  ssr: false,
+});
 
 export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen, setIsDialogOpen }: MarkAsStolenFormProps) {
   const size = useWindowSize()
@@ -90,7 +94,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen, setIs
       description: '',
       type: '',
       coordinates: [0, 0],
-      id_district: ''
+      id_district: '',
     }
   })
 
@@ -103,9 +107,6 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen, setIs
   }
 
   async function getNeighborhood(districtId: string) {
-
-
-
     const params = new URLSearchParams({
       "queries[0]": JSON.stringify({
         method: "equal",
@@ -143,9 +144,6 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen, setIs
     try {
 
       const neighborhood = await getNeighborhood(districtId)
-
-
-
       let data
 
       if (form.getValues('type') === 'Furto simples') {
@@ -364,6 +362,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen, setIs
                 </FormItem>
               )}
             />
+
           </div>
           <div className="flex flex-col gap-2 w-full items-center justify-center">
             <FormField
@@ -376,7 +375,9 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen, setIs
                     Clique no mapa o local da ocorrência
                   </FormLabel>
                   <FormControl>
-                    <MarkAsStolenMap setPosition={handleSetPosition} setNeighborhoodId={handleSetNeighborhood} />
+                    {/* <MarkAsStolenMap setPosition={handleSetPosition} setNeighborhoodId={handleSetNeighborhood} /> */}
+                    <MarkAsStolenMapWithGeocoding setPosition={handleSetPosition} setNeighborhoodId={handleSetNeighborhood} />
+                    {/* <Map /> */}
                   </FormControl>
                   <FormMessage />
                 </FormItem>

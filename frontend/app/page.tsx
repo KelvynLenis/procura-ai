@@ -1,7 +1,6 @@
 import { Features } from "@/components/Features";
 import { FAQ } from "@/components/FAQ";
 import { Hero } from "@/components/Hero";
-import { Header } from "@/components/Header";
 import Image from "next/image";
 import logo from '../assets/icons/logo-text.svg'
 
