@@ -91,6 +91,7 @@ export function MarkAsStolenMap({ position, setPosition, setNeighborhoodId }: Ma
 
   async function handleGetPosition({ event, latLng }: { event: MouseEvent | undefined; latLng: [number, number] }) {
     const clickedPoint = turf.point([latLng[1], latLng[0]])
+    console.log(clickedPoint)
 
     let foundState = null
     let foundFeature = null

@@ -1,53 +1,108 @@
 'use client'
 
-import React, { useRef, useEffect, useState } from 'react';
-import "leaflet/dist/leaflet.css";
+import { useEffect, useRef } from "react";
+import maplibregl from 'maplibre-gl';
+import MaplibreGeocoder, { CarmenGeojsonFeature, MaplibreGeocoderApi } from '@maplibre/maplibre-gl-geocoder';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
 
-import L from "leaflet";
+// import icon from "./constants";
 
-// import styles from './map.module.css';
-
-import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
-import { GeocodingControl } from '@maptiler/geocoding-control/maptilersdk';
-
-const WithLeaflet = () => {
-  const mapContainer = useRef(null);
-  const map = useRef(null);
-  const center = { lng: -47.9292, lat: -15.7801 };
-  const [zoom] = useState(12);
+export default function WithLeaflet() {
+  const mapRef = useRef(null);
 
   useEffect(() => {
-    if (map.current) return; // stops map from intializing more than once
-
-    map.current = new L.Map(mapContainer.current, {
-      center: L.latLng(center.lat, center.lng),
-      zoom: zoom
+    if (mapRef.current) {
+      const map = new maplibregl.Map({
+        container: mapRef.current, // container id
+        style: {
+          'version': 8,
+          'name': 'Blank',
+          'center': [0, 0],
+          'zoom': 0,
+          'sources': {
+              'raster-tiles': {
+                'type': 'raster',
+                'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                'tileSize': 256,
+                'minzoom': 0,
+                'maxzoom': 19
+              }
+          },
+          'layers': [
+              {
+                'id': 'background',
+                'type': 'background',
+                'paint': {
+                    'background-color': '#e0dfdf'
+                }
+              },
+              {
+                'id': 'simple-tiles',
+                'type': 'raster',
+                'source': 'raster-tiles'
+              }
+          ],
+      },
+      center: [-34.8446769, -7.1509317],
+      zoom: 11,
+      pitch: 0,
+      bearing: 0,
+      canvasContextAttributes: {antialias: true}
     });
 
-    // Create a MapTiler Layer inside Leaflet
-    const mtLayer = new MaptilerLayer({
-      // Get your free API key at https://cloud.maptiler.com
-      apiKey: process.env.NEXT_PUBLIC_MAPTILER_API_KEY!,
-    }).addTo(map.current);
+    const geocoderApi: MaplibreGeocoderApi = {
+      forwardGeocode: async (config) => {
+          const features: CarmenGeojsonFeature[] = [];
+          
+          try {
+              const request =
+          `https://nominatim.openstreetmap.org/search?q=${
+              config.query
+          }&format=geojson&polygon_geojson=1&addressdetails=1`;
+              const response = await fetch(request);
+              const geojson = await response.json();
+              for (const feature of geojson.features) {
+                  const center = [
+                      feature.bbox[0] +
+                  (feature.bbox[2] - feature.bbox[0]) / 2,
+                      feature.bbox[1] +
+                  (feature.bbox[3] - feature.bbox[1]) / 2
+                  ];
+                  const point: CarmenGeojsonFeature = {
+                      type: 'Feature',
+                      geometry: {
+                          type: 'Point',
+                          coordinates: center
+                      },
+                      place_name: feature.properties.display_name,
+                      properties: feature.properties,
+                      text: feature.properties.display_name,
+                      place_type: ['place'],
+                  };
+                  features.push(point);
+              }
+          } catch (e) {
+              console.error(`Failed to forwardGeocode with error: ${e}`);
+          }
 
-    const geocodingControl = new GeocodingControl({
-      placeholder: 'Pesquisar lugares...',
-      language: 'pt-BR',
-      country: 'BR',
-    });
+          return {
+              type: 'FeatureCollection',
+              features: features
+          };
+        }
+      };
 
-    mtLayer.on('load', () => {
-      mtLayer.addControl(geocodingControl, 'top-left');
-    });
+      map.addControl(
+          new MaplibreGeocoder(geocoderApi, {
+              maplibregl
+          })
+      );
 
-
-  }, [center.lng, center.lat, zoom]);
-
-  return (
-    <div className='relative w-[1000px] h-[700px]'>
-      <div ref={mapContainer} className='absolute w-full h-full' />
-    </div>
+      return () => map.remove();
+    }
+  }, []);  return (     
+     <div ref={mapRef} id="map" className="absolute flex w-[600px] h-[500px] m-10">
+      </div>
   )
 }
-
-export default WithLeaflet;
