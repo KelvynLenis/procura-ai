@@ -58,7 +58,7 @@ export const phoneBrands = [
       "Vivo X90 Pro+",
       "Vivo Y100",
       "Vivo V29 Pro",
-      "Vivo T2 5G",
+      "Vivo T2 5g",
       "Vivo X Fold 2",
     ],
   },

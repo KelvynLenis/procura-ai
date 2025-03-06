@@ -54,8 +54,7 @@ export function MarkAsStolenMap({ position, setPosition, setNeighborhoodId }: Ma
       .then((data) => setGeoJsonPBData(data))
   }, [])
 
-  async function getNeighborhoodId(cod_neighborhood: string) {
-
+  async function getNeighborhoodId(cod_neighborhood: Number) {
     const params = new URLSearchParams({
       "queries[0]": JSON.stringify({
         method: "equal",
@@ -120,7 +119,8 @@ export function MarkAsStolenMap({ position, setPosition, setNeighborhoodId }: Ma
     }
 
     if (foundFeature) {
-      const neighborhoodId = await getNeighborhoodId(foundFeature.properties.cod_bairro)
+
+      const neighborhoodId = await getNeighborhoodId(Number(foundFeature.properties.cod_bairro))
       setNeighborhoodId(neighborhoodId)
     }
 
