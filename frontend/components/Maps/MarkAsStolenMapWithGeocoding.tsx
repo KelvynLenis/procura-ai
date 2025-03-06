@@ -8,6 +8,7 @@ import { toast } from "react-toastify"
 import { GeocodingControl } from "@maptiler/geocoding-control/maplibregl";
 import { FeatureCollectionSchema } from "@/schemas/featureCollectionSchema";
 import { z } from "zod";
+import { Feature, Geometry } from 'geojson';
 
 import "@maptiler/geocoding-control/style.css";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -27,7 +28,6 @@ const geoJsonPB = "https://api.maptiler.com/data/96b36f41-dc19-4a71-a05d-6931776
 export function MarkAsStolenMapWithGeocoding({ setPosition, setNeighborhoodId }: MarkAsStolenMapWithGeocodingProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const markerRef = useRef<Marker | null>(null);
-  const [isMarkerOn, setIsMarkerOn] = useState(false)
   const [coordinates, setCoordinates] = useState<[number, number]>([0, 0])
 
   type geojsonType = z.infer<typeof FeatureCollectionSchema>
@@ -69,25 +69,28 @@ export function MarkAsStolenMapWithGeocoding({ setPosition, setNeighborhoodId }:
     }
   }
   
-  async function handleGetPosition({ event, latLng }: { event: MouseEvent | undefined; latLng: [number, number] }) {
+  async function handleGetPosition({ event, latLng, map }: { 
+    event: any; 
+    latLng: [number, number],
+    map: maplibregl.Map 
+  }) {
     const clickedPoint = turf.point([latLng[1], latLng[0]])
 
-    let foundState = null
     let foundFeature = null
-
-    if (geoJsonPBData) {
-      for (const feature of geoJsonPBData.features) {
-        if (turf.booleanPointInPolygon(clickedPoint, feature)) {
-          foundState = feature
-          break
-        }
-      }
-    }
-
-    if (!foundState) {
-      toast.error("O local informado não está dentro da Paraíba")
-      return
-    }
+    
+    // let foundState = null
+    // if (geoJsonPBData) {
+    //   for (const feature of geoJsonPBData.features) {
+    //     if (turf.booleanPointInPolygon(clickedPoint, feature)) {
+    //       foundState = feature
+    //       break
+    //     }
+    //   }
+    // }
+    // if (!foundState) {
+    //   toast.error("O local informado não está dentro da Paraíba")
+    //   return
+    // }
 
     if (geoJsonData) {
       for (const feature of geoJsonData.features) {
@@ -103,11 +106,34 @@ export function MarkAsStolenMapWithGeocoding({ setPosition, setNeighborhoodId }:
       setNeighborhoodId(neighborhoodId)
     }
 
-    setIsMarkerOn(true)
     setCoordinates(latLng)
     setPosition(latLng)
+
+    return
+  } 
+
+  function checkIfPointIsInParaiba({ latLng }: { latLng: [number, number] }) {
+    const clickedPoint = turf.point([latLng[1], latLng[0]])
+
+    let foundState = null
+
+    if (geoJsonPBData) {
+      for (const feature of geoJsonPBData.features) {
+        if (turf.booleanPointInPolygon(clickedPoint, feature)) {
+          foundState = feature
+          break
+        }
+      }
+    }
+
+    if (!foundState) {
+      toast.error("O local informado não está dentro da Paraíba")
+      return false
+    }
+
+    return true
   }
-    
+
   useEffect(() => {
     Promise.all([
       fetch(geoJsonLink)
@@ -137,40 +163,47 @@ export function MarkAsStolenMapWithGeocoding({ setPosition, setNeighborhoodId }:
         
         const gc = new GeocodingControl({
           apiKey,
+          placeholder: 'Digite o endereço ou CEP',
         });
      
         map.addControl(gc, 'top-left');
      
         gc.on('pick', (e) => {
           if (e.feature?.center) {
+            const isPointInParaiba =  checkIfPointIsInParaiba({ latLng: [e.feature.center[1], e.feature.center[0]] })
+
+            if (!isPointInParaiba) return
+
+            handleGetPosition({ event: e, latLng: [e.feature.center[1], e.feature.center[0]], map })
+            
             if (markerRef.current) {
               markerRef.current.remove()
             }
             
-            // Create and store new marker
             markerRef.current = new Marker({
               color: '#002E72'
             })
               .setLngLat([e.feature?.center[0], e.feature?.center[1]])
               .addTo(map)
-  
-            handleGetPosition({ event: undefined, latLng: [e.feature.center[1], e.feature.center[0]] })
           }
         })
      
         map.on("click", (e) => {
+          const isPointInParaiba =  checkIfPointIsInParaiba({ latLng: [e.lngLat.lat, e.lngLat.lng] })
+            
+          if (!isPointInParaiba) return
+          
+          handleGetPosition({ event: e, latLng: [e.lngLat.lat, e.lngLat.lng], map })
+            
           if (markerRef.current) {
             markerRef.current.remove()
           }
-          
-          // Create and store new marker
-          markerRef.current = new Marker({
+
+            markerRef.current = new Marker({
             color: '#002E72'
           })
             .setLngLat([e.lngLat.lng, e.lngLat.lat])
             .addTo(map)
-
-          handleGetPosition({ event: undefined, latLng: [e.lngLat.lat, e.lngLat.lng] })
         })
      
         return () => map.remove();

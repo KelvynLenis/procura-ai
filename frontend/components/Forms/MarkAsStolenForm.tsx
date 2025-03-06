@@ -3,7 +3,6 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
 import { Input } from "../Input"
-import { MarkAsStolenMap } from "../Maps/MarkAsStolenMap"
 import Button from "../Button"
 import {
   DropdownMenu,
@@ -14,13 +13,11 @@ import {
 import { ChevronDown } from "lucide-react"
 import { toast } from "react-toastify"
 import { v4 as uuidv4 } from 'uuid'
-import { DialogClose } from "../ui/dialog"
 import { DeviceProps } from "@/utils/types"
 import { Textarea } from "../ui/textarea"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
-import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "../ui/input-otp"
 import { MarkAsStolenMapWithGeocoding } from "../Maps/MarkAsStolenMapWithGeocoding"
 import dynamic from "next/dynamic"
 import { validateCoordinates } from "@/lib/utils"
@@ -61,7 +58,6 @@ const Map = dynamic(() => import('../Maps/Map/DynamicMap'), {
 
 export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen, setIsDialogOpen }: MarkAsStolenFormProps) {
   const size = useWindowSize()
-  const [mapPositionByCep, setMapPositionByCep] = useState<[number, number]>()
 
   function useWindowSize() {
     const [windowSize, setWindowSize] = useState({
@@ -379,7 +375,7 @@ export function MarkAsStolenForm({ id, isStolen, setDevices, setModalOpen, setIs
                     Clique no mapa o local da ocorrência
                   </FormLabel>
                   <FormControl>
-                    {/* <MarkAsStolenMap position={cep.length === 8 ? mapPositionByCep : undefined} setPosition={handleSetPosition} setNeighborhoodId={handleSetNeighborhood} /> */}
+                    {/* <MarkAsStolenMap setPosition={handleSetPosition} setNeighborhoodId={handleSetNeighborhood} /> */}
                     <MarkAsStolenMapWithGeocoding setPosition={handleSetPosition} setNeighborhoodId={handleSetNeighborhood} />
                     {/* <Map /> */}
                   </FormControl>
