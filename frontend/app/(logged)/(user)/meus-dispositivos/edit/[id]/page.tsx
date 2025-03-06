@@ -39,7 +39,7 @@ export default async function EditDevice({ params }: { params: Promise<{ id: str
   const { brand, phone_model, phone_number, imei } = result;
 
   return (
-    <div className="w-full flex flex-col items-center justify-center">
+    <div className="w-full flex flex-col items-center justify-center pr-20 my-5">
       <DeviceForm device={{ $id: id, brand, phone_model, phone_number, imei }} />
     </div>
   );
