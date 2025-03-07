@@ -29,6 +29,8 @@ interface User {
   cpf?: string;
   email?: string;
   type: string;
+  accessed_at?: string;
+  $createdAt?: string;
 }
 interface Events {
   $id?: string;
@@ -750,13 +752,16 @@ export function Dashboard() {
         offset += limit;
       }
 
-      const headers = ['ID', 'Nome', 'Email', 'Perfil'];
+      const headers = ['ID', 'CPF', 'NOME', 'EMAIL', 'PERFIL', 'ACESSADO EM', 'CRIADO EM'];
       const csvData = allUsers.map(user => [
         user.$id || '',
+        user.cpf || '',
         user.name || '',
         user.email || '',
-        user.type || ''
-      ]);
+        user.type || '',
+        user.accessed_at ? new Date(user.accessed_at).toLocaleString('pt-BR', { timeZone: 'UTC' }) : '',
+        user.$createdAt ? new Date(user.$createdAt).toLocaleString('pt-BR', { timeZone: 'UTC' }) : '',
+        ]);
 
       const csvContent = [
         headers.join(','),
@@ -775,6 +780,7 @@ export function Dashboard() {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
+      setIsExporting(false);
       toast.success('Usuários exportados com sucesso!', {
         autoClose: 3000
       });
@@ -792,7 +798,7 @@ export function Dashboard() {
       </div>
 
       <div className="w-full h-full flex flex-col py-5 justify-start items-center gap-5">
-        <div className="flex justify-between items-center w-full px-8">
+        {/* <div className="flex justify-between items-center w-full px-8">
           <Button
             variant="blue"
             className="w-44"
@@ -800,9 +806,9 @@ export function Dashboard() {
           >
             Exportar planilha
           </Button>
-        </div>
+        </div> */}
 
-        <Dialog open={isExportDialogOpen} onOpenChange={setIsExportDialogOpen}>
+        {/* <Dialog open={isExportDialogOpen} onOpenChange={setIsExportDialogOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Selecione os arquivos para exportar</DialogTitle>
@@ -843,7 +849,7 @@ export function Dashboard() {
               </Button>
             </div>
           </DialogContent>
-        </Dialog>
+        </Dialog> */}
 
         <div className="relative flex flex-col md:mr-2 self-start md:w-3/5 lg:w-[98%] xl:w-[98%] 2xl:w-[98%] bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center gap-3">
           <div className="flex justify-between">

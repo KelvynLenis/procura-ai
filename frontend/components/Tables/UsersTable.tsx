@@ -12,13 +12,16 @@ import { cn } from "@/lib/utils";
 import { toast } from 'react-toastify';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { LoadingToast } from "@/components/LoadingToast";
+import { Device } from "@/utils/types";
 
 interface User {
-  $id?: string;
+  user_id: string;
   name?: string;
   cpf?: string;
   email?: string;
   type: string;
+  accessed_at?: string;
+  $createdAt?: string;
 }
 interface Events {
   $id?: string;
@@ -106,8 +109,24 @@ export function UsersTable() {
       const allAlerts: Events[] = [];
       let offset = 0;
       const limit = 25;
-      let total = Infinity;   
-      
+      let total = Infinity;
+
+      // Buscar todos os dispositivos e usuários primeiro
+      const [devices, users] = await Promise.all([
+        fetchAllDevices(),
+        fetchAllUsers()
+      ]);
+
+      const deviceMap = devices.reduce((acc, device) => {
+        acc[device.$id] = device;
+        return acc;
+      }, {} as Record<string, Device>);
+
+      const userMap = users.reduce((acc, user) => {
+        acc[user.user_id] = user;
+        return acc;
+      }, {} as Record<string, User>);
+
       while (offset < total) {
         const params = new URLSearchParams({
           "queries[0]": JSON.stringify({
@@ -119,13 +138,13 @@ export function UsersTable() {
             values: [offset],
           }),
         });
-        
+
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents?${params.toString()}`,
           {
             method: "GET",
             headers: {
-              "Content-Type": "application/json", 
+              "Content-Type": "application/json",
               "X-Appwrite-Project": process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || "",
             },
             cache: "no-store",
@@ -142,26 +161,36 @@ export function UsersTable() {
         offset += limit;
       }
 
-      const headers = ['ID', 'type', 'description', 'time_event', 'is_alert_on', 'id_device', 'last_location', 'id_district'];
-      const csvData = allAlerts.map(alert => [
-        alert.$id || '',
-        alert.type || '',
-        alert.description || '',
-        alert.time_event || '',
-        alert.is_alert_on || '',
-        alert.id_device || '',
-        Array.isArray(alert.last_location) ? `${alert.last_location[0]},${alert.last_location[1]}` : '',
-        alert.id_district || ''
-      ]);
+      const headers = ['ID', 'TIPO', 'DESCRIÇÃO', 'DATA', 'ALERTA ATIVO', 'ID DISPOSITIVO', 'MODELO', 'ID USUÁRIO', 'NOME USUÁRIO', 'LOCALIZAÇÃO', 'ID DISTRITO'];
+      const csvData = allAlerts.map(alert => {
+        const device = deviceMap[alert.id_device!];
+        const user = device ? userMap[device.auth_id] : null;
+
+        return [
+          alert.$id || '',
+          alert.type || '',
+          alert.description || '',
+          alert.time_event ? new Date(alert.time_event).toLocaleString('pt-BR', { timeZone: 'UTC' }) : '',
+          alert.is_alert_on ? 'Sim' : 'Não',
+          alert.id_device || '',
+          device?.phone_model || '',
+          device?.auth_id || '',
+          user?.name || '',
+          Array.isArray(alert.last_location) ? `${alert.last_location[0]},${alert.last_location[1]}` : '',
+          alert.id_district || '',
+
+
+        ];
+      });
 
       const csvContent = [
-        headers.join(';'),  
+        headers.join(';'),
         ...csvData.map(row => row.join(';'))
       ].join('\n');
 
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);  
+      const url = URL.createObjectURL(blob);
 
       link.setAttribute('href', url);
       link.setAttribute('download', 'alertas.csv');
@@ -186,56 +215,22 @@ export function UsersTable() {
 
   const handleUsersExportCSV = async () => {
     try {
-      const allUsers: User[] = [];
-      let offset = 0;
-      const limit = 25;
-      let total = Infinity;
+      const allUsers = await fetchAllUsers();
 
-      while (offset < total) {
-        const params = new URLSearchParams({
-          "queries[0]": JSON.stringify({
-            method: "limit",
-            values: [limit],
-          }),
-          "queries[1]": JSON.stringify({
-            method: "offset",
-            values: [offset],
-          }),
-        });
-
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "X-Appwrite-Project": process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || "",
-            },
-            cache: "no-store",
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Falha ao buscar usuários: ${await response.text()}`);
-        }
-
-        const { documents, total: fetchedTotal } = await response.json();
-        allUsers.push(...documents);
-        total = fetchedTotal;
-        offset += limit;
-      }
-
-      const headers = ['ID', 'Nome', 'Email', 'Perfil'];
+      const headers = ['ID', 'CPF', 'NOME', 'EMAIL', 'PERFIL', 'ACESSADO EM', 'CRIADO EM'];
       const csvData = allUsers.map(user => [
-        user.$id || '',
+        user.user_id || '',
+        user.cpf || '',
         user.name || '',
         user.email || '',
-        user.type || ''
+        user.type || '',
+        user.accessed_at ? new Date(user.accessed_at).toLocaleString('pt-BR', { timeZone: 'UTC' }) : '',
+        user.$createdAt ? new Date(user.$createdAt).toLocaleString('pt-BR', { timeZone: 'UTC' }) : '',
       ]);
 
       const csvContent = [
-        headers.join(','),
-        ...csvData.map(row => row.join(','))
+        headers.join(';'),
+        ...csvData.map(row => row.join(';'))
       ].join('\n');
 
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -250,11 +245,108 @@ export function UsersTable() {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
+      setIsExporting(false);
+      toast.success('Usuários exportados com sucesso!', {
+        autoClose: 3000
+      });
+
     } catch (error) {
       console.error('Erro ao exportar CSV:', error);
       toast.error('Erro ao exportar CSV. Tente novamente.');
     }
   };
+
+  async function fetchAllDevices() {
+    const allDevices: Device[] = [];
+    let offset = 0;
+    const limit = 25;
+    let total = Infinity;
+    while (offset < total) {
+      const params = new URLSearchParams({
+        "queries[0]": JSON.stringify({
+          method: "limit",
+          values: [limit],
+        }),
+        "queries[1]": JSON.stringify({
+          method: "offset",
+          values: [offset],
+        }),
+      });
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+            },
+            cache: "no-store",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch stolen devices: ${await response.text()}`);
+        }
+
+        const { documents, total: fetchedTotal } = await response.json();
+
+        allDevices.push(...documents);
+        total = fetchedTotal;
+        offset += limit;
+
+
+      } catch (error) {
+        console.error(error);
+        break;
+      }
+
+    }
+    return allDevices
+  }
+
+  async function fetchAllUsers() {
+    const allUsers: User[] = [];
+    let offset = 0;
+    const limit = 25;
+    let total = Infinity;
+
+    while (offset < total) {
+      const params = new URLSearchParams({
+        "queries[0]": JSON.stringify({
+          method: "limit",
+          values: [limit],
+        }),
+        "queries[1]": JSON.stringify({
+          method: "offset",
+          values: [offset],
+        }),
+      });
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Appwrite-Project": process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || "",
+          },
+          cache: "no-store",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Falha ao buscar usuários: ${await response.text()}`);
+      }
+
+      const { documents, total: fetchedTotal } = await response.json();
+      allUsers.push(...documents);
+      total = fetchedTotal;
+      offset += limit;
+    }
+
+    return allUsers;
+  }
 
   useEffect(() => {
     const fetchUsers = async () => {
