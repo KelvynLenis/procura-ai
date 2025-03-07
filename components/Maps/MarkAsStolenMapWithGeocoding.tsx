@@ -200,7 +200,7 @@ export function MarkAsStolenMapWithGeocoding({ setPosition, setNeighborhoodId }:
           map.setMaxBounds(bounds);
           map.fitBounds(bounds, { padding: 20 });
         });
-     
+        
         map.addControl(gc, 'top-left');
      
         gc.on('pick', (e) => {
