@@ -326,7 +326,7 @@ export function UserRow({
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>
-                    Tem certeza que deseja excluir o usuário?
+                    Tem certeza que deseja desativar o usuário?
                   </AlertDialogTitle>
                   <AlertDialogDescription>
                     Os dados do usuáiro permaneceram na base de dados,
@@ -347,16 +347,41 @@ export function UserRow({
               </AlertDialogContent>
             </AlertDialog>
 
-            <button
-              type="button"
-              onClick={() => handleDeleteUser(user.user_id!, user.$id!)}
-              className="rounded-lg w-10 h-10 flex ring-1 ring-zinc-300 group relative hover:bg-red-100 hover:ring-red-700 hover:text-red-700 items-center justify-center hover:opacity-90"
-            >
-              <Trash size={26} />
-              <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
-                Excluir usuário
-              </span>
-            </button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button
+                  type="button"
+                  className="rounded-lg w-10 h-10 flex ring-1 ring-zinc-300 group relative hover:bg-red-100 hover:ring-red-700 hover:text-red-700 items-center justify-center hover:opacity-90"
+                >
+                  <Trash size={26} />
+                  <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                    Excluir usuário
+                  </span>
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Tem certeza que deseja excluir o usuário?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Os dados do usuáiro serão removidos da base de dados,
+                    entretanto seu histórico de alertas será mantido.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="rounded-full text-center items-center justify-center flex w-fit px-2 py-2 drop-shadow-lg transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0 bg-procura-ai-blue text-white hover:bg-white hover:text-procura-ai-blue hover:ring-1 hover:ring-procura-ai-blue">
+                    Cancelar
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => handleDeleteUser(user.user_id!, user.$id!)}
+                    className="rounded-full text-center items-center justify-center flex w-fit px-2 py-2 drop-shadow-lg transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0 bg-red-500 border-[0.5px] border-red-500 text-white hover:bg-white hover:text-red-500"
+                  >
+                    Confirmar
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </TableCell>
       </TableRow>
