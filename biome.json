@@ -24,14 +24,18 @@
       "a11y": {
         "noSvgWithoutTitle": "off"
       },
+      "style": {
+        "noNonNullAssertion": "off"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "off"
+      },
       "suspicious": {
         "noArrayIndexKey": "info"
       }
     }
   },
   "files": {
-    "ignore": [
-      "node_modules"
-    ]
+    "ignore": ["node_modules"]
   }
 }

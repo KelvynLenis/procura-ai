@@ -1,392 +1,439 @@
-'use client';
+'use client'
 
-
-import { useEffect, useState } from "react";
-import { Skeleton } from "../ui/skeleton";
-import { UserRow } from "./UserRow";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "../ui/pagination";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import Button from "../Button";
-import { cn } from "@/lib/utils";
-import { toast } from 'react-toastify';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { LoadingToast } from "@/components/LoadingToast";
-import { Device } from "@/utils/types";
+import { useEffect, useState } from 'react'
+import { Skeleton } from '../ui/skeleton'
+import { UserRow } from './UserRow'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../ui/table'
+import { Pagination, PaginationContent, PaginationItem } from '../ui/pagination'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import Button from '../Button'
+import { cn } from '@/lib/utils'
+import { toast } from 'react-toastify'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog'
+import { LoadingToast } from '@/components/LoadingToast'
+import type { Device } from '@/utils/types'
 
 interface User {
-  user_id: string;
-  name?: string;
-  cpf?: string;
-  email?: string;
-  type: string;
-  accessed_at?: string;
-  $createdAt?: string;
+  user_id: string
+  name?: string
+  cpf?: string
+  email?: string
+  type: string
+  accessed_at?: string
+  $createdAt?: string
 }
 interface Events {
-  $id?: string;
-  time_event?: string;
-  description?: string;
-  type?: string;
-  is_alert_on?: boolean;
-  id_device?: string;
-  last_location?: [];
-  id_district?: string;
+  $id?: string
+  time_event?: string
+  description?: string
+  type?: string
+  is_alert_on?: boolean
+  id_device?: string
+  last_location?: []
+  id_district?: string
 }
 
 export function UsersTable() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState<User[]>([])
+  const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
-  const [pages, setPages] = useState(1);
+  const [pages, setPages] = useState(1)
 
   const [totalUsers, setTotalUsers] = useState(0)
-  const limit = 10;
+  const limit = 10
 
-  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false)
   const [exportOptions, setExportOptions] = useState({
     users: true,
-    alerts: false
-  });
+    alerts: false,
+  })
 
-  const [isExporting, setIsExporting] = useState(false);
+  const [isExporting, setIsExporting] = useState(false)
 
   async function buildParams() {
     const params = new URLSearchParams({
       'queries[0]': JSON.stringify({
-        method: "limit",
+        method: 'limit',
         values: [limit],
       }),
-      "queries[1]": JSON.stringify({
-        method: "offset",
-        values: [((page - 1) * limit)],
+      'queries[1]': JSON.stringify({
+        method: 'offset',
+        values: [(page - 1) * limit],
       }),
-
-    });
-    return params;
+      'queries[2]': JSON.stringify({
+        method: 'equal',
+        attribute: 'status',
+        values: [' Ativo', ' ativo', 'Ativo', 'ativo'],
+      }),
+    })
+    return params
   }
 
   function handleGoToNextPage() {
     if (page < pages) {
-      setPage(page + 1);
+      setPage(page + 1)
     }
   }
 
   function handleGoToPage(pageNumber: number) {
-    setPage(pageNumber);
+    setPage(pageNumber)
   }
 
   function handleGoToPreviousPage() {
     if (page > 0) {
-      setPage(page - 1);
+      setPage(page - 1)
     }
   }
 
   const handleExportOptionChange = (option: 'users' | 'alerts') => {
     setExportOptions(prev => ({
       ...prev,
-      [option]: !prev[option]
-    }));
-  };
+      [option]: !prev[option],
+    }))
+  }
 
   const handleExportClick = () => {
-    setIsExportDialogOpen(true);
-  };
+    setIsExportDialogOpen(true)
+  }
 
   const handleConfirmExport = async () => {
     if (exportOptions.users) {
-      await handleUsersExportCSV();
+      await handleUsersExportCSV()
     }
     if (exportOptions.alerts) {
-      await handleAlertsExportCSV();
+      await handleAlertsExportCSV()
     }
-    setIsExportDialogOpen(false);
-  };
+    setIsExportDialogOpen(false)
+  }
 
   const handleAlertsExportCSV = async () => {
     try {
-      setIsExporting(true);
-      const allAlerts: Events[] = [];
-      let offset = 0;
-      const limit = 25;
-      let total = Infinity;
+      setIsExporting(true)
+      const allAlerts: Events[] = []
+      let offset = 0
+      const limit = 25
+      let total = Infinity
 
       // Buscar todos os dispositivos e usuários primeiro
       const [devices, users] = await Promise.all([
         fetchAllDevices(),
-        fetchAllUsers()
-      ]);
+        fetchAllUsers(),
+      ])
 
-      const deviceMap = devices.reduce((acc, device) => {
-        acc[device.$id] = device;
-        return acc;
-      }, {} as Record<string, Device>);
+      const deviceMap = devices.reduce(
+        (acc, device) => {
+          acc[device.$id] = device
+          return acc
+        },
+        {} as Record<string, Device>
+      )
 
-      const userMap = users.reduce((acc, user) => {
-        acc[user.user_id] = user;
-        return acc;
-      }, {} as Record<string, User>);
+      const userMap = users.reduce(
+        (acc, user) => {
+          acc[user.user_id] = user
+          return acc
+        },
+        {} as Record<string, User>
+      )
 
       while (offset < total) {
         const params = new URLSearchParams({
-          "queries[0]": JSON.stringify({
-            method: "limit",
+          'queries[0]': JSON.stringify({
+            method: 'limit',
             values: [limit],
           }),
-          "queries[1]": JSON.stringify({
-            method: "offset",
+          'queries[1]': JSON.stringify({
+            method: 'offset',
             values: [offset],
           }),
-        });
+        })
 
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents?${params.toString()}`,
           {
-            method: "GET",
+            method: 'GET',
             headers: {
-              "Content-Type": "application/json",
-              "X-Appwrite-Project": process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || "",
+              'Content-Type': 'application/json',
+              'X-Appwrite-Project':
+                process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || '',
             },
-            cache: "no-store",
+            cache: 'no-store',
           }
-        );
+        )
 
         if (!response.ok) {
-          throw new Error(`Falha ao buscar alertas: ${await response.text()}`);
+          throw new Error(`Falha ao buscar alertas: ${await response.text()}`)
         }
 
-        const { documents, total: fetchedTotal } = await response.json();
-        allAlerts.push(...documents);
-        total = fetchedTotal;
-        offset += limit;
+        const { documents, total: fetchedTotal } = await response.json()
+        allAlerts.push(...documents)
+        total = fetchedTotal
+        offset += limit
       }
 
-      const headers = ['ID', 'TIPO', 'DESCRIÇÃO', 'DATA', 'ALERTA ATIVO', 'ID DISPOSITIVO', 'MODELO', 'ID USUÁRIO', 'NOME USUÁRIO', 'LOCALIZAÇÃO', 'ID DISTRITO'];
+      const headers = [
+        'ID',
+        'TIPO',
+        'DESCRIÇÃO',
+        'DATA',
+        'ALERTA ATIVO',
+        'ID DISPOSITIVO',
+        'MODELO',
+        'ID USUÁRIO',
+        'NOME USUÁRIO',
+        'LOCALIZAÇÃO',
+        'ID DISTRITO',
+      ]
       const csvData = allAlerts.map(alert => {
-        const device = deviceMap[alert.id_device!];
-        const user = device ? userMap[device.auth_id] : null;
+        const device = deviceMap[alert.id_device!]
+        const user = device ? userMap[device.auth_id] : null
 
         return [
           alert.$id || '',
           alert.type || '',
           alert.description || '',
-          alert.time_event ? new Date(alert.time_event).toLocaleString('pt-BR', { timeZone: 'UTC' }) : '',
+          alert.time_event
+            ? new Date(alert.time_event).toLocaleString('pt-BR', {
+                timeZone: 'UTC',
+              })
+            : '',
           alert.is_alert_on ? 'Sim' : 'Não',
           alert.id_device || '',
           device?.phone_model || '',
           device?.auth_id || '',
           user?.name || '',
-          Array.isArray(alert.last_location) ? `${alert.last_location[0]},${alert.last_location[1]}` : '',
+          Array.isArray(alert.last_location)
+            ? `${alert.last_location[0]},${alert.last_location[1]}`
+            : '',
           alert.id_district || '',
-
-
-        ];
-      });
+        ]
+      })
 
       const csvContent = [
         headers.join(';'),
-        ...csvData.map(row => row.join(';'))
-      ].join('\n');
+        ...csvData.map(row => row.join(';')),
+      ].join('\n')
 
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const link = document.createElement('a')
+      const url = URL.createObjectURL(blob)
 
-      link.setAttribute('href', url);
-      link.setAttribute('download', 'alertas.csv');
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      link.setAttribute('href', url)
+      link.setAttribute('download', 'alertas.csv')
+      link.style.visibility = 'hidden'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
 
-      setIsExporting(false);
+      setIsExporting(false)
       toast.success('Alertas exportados com sucesso!', {
-        autoClose: 3000
-      });
+        autoClose: 3000,
+      })
     } catch (error) {
-      setIsExporting(false);
-      console.error('Erro ao exportar CSV:', error);
+      setIsExporting(false)
+      console.error('Erro ao exportar CSV:', error)
       toast.error('Erro ao exportar CSV. Tente novamente.', {
-        autoClose: 3000
-      });
+        autoClose: 3000,
+      })
     }
   }
 
   const handleUsersExportCSV = async () => {
     try {
-      const allUsers = await fetchAllUsers();
+      const allUsers = await fetchAllUsers()
 
-      const headers = ['ID', 'CPF', 'NOME', 'EMAIL', 'PERFIL', 'ACESSADO EM', 'CRIADO EM'];
+      const headers = [
+        'ID',
+        'CPF',
+        'NOME',
+        'EMAIL',
+        'PERFIL',
+        'ACESSADO EM',
+        'CRIADO EM',
+      ]
       const csvData = allUsers.map(user => [
         user.user_id || '',
         user.cpf || '',
         user.name || '',
         user.email || '',
         user.type || '',
-        user.accessed_at ? new Date(user.accessed_at).toLocaleString('pt-BR', { timeZone: 'UTC' }) : '',
-        user.$createdAt ? new Date(user.$createdAt).toLocaleString('pt-BR', { timeZone: 'UTC' }) : '',
-      ]);
+        user.accessed_at
+          ? new Date(user.accessed_at).toLocaleString('pt-BR', {
+              timeZone: 'UTC',
+            })
+          : '',
+        user.$createdAt
+          ? new Date(user.$createdAt).toLocaleString('pt-BR', {
+              timeZone: 'UTC',
+            })
+          : '',
+      ])
 
       const csvContent = [
         headers.join(';'),
-        ...csvData.map(row => row.join(';'))
-      ].join('\n');
+        ...csvData.map(row => row.join(';')),
+      ].join('\n')
 
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const link = document.createElement('a')
+      const url = URL.createObjectURL(blob)
 
-      link.setAttribute('href', url);
-      link.setAttribute('download', 'usuarios.csv');
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      link.setAttribute('href', url)
+      link.setAttribute('download', 'usuarios.csv')
+      link.style.visibility = 'hidden'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
 
-      setIsExporting(false);
+      setIsExporting(false)
       toast.success('Usuários exportados com sucesso!', {
-        autoClose: 3000
-      });
-
+        autoClose: 3000,
+      })
     } catch (error) {
-      console.error('Erro ao exportar CSV:', error);
-      toast.error('Erro ao exportar CSV. Tente novamente.');
+      console.error('Erro ao exportar CSV:', error)
+      toast.error('Erro ao exportar CSV. Tente novamente.')
     }
-  };
+  }
 
   async function fetchAllDevices() {
-    const allDevices: Device[] = [];
-    let offset = 0;
-    const limit = 25;
-    let total = Infinity;
+    const allDevices: Device[] = []
+    let offset = 0
+    const limit = 25
+    let total = Infinity
     while (offset < total) {
       const params = new URLSearchParams({
-        "queries[0]": JSON.stringify({
-          method: "limit",
+        'queries[0]': JSON.stringify({
+          method: 'limit',
           values: [limit],
         }),
-        "queries[1]": JSON.stringify({
-          method: "offset",
+        'queries[1]': JSON.stringify({
+          method: 'offset',
           values: [offset],
         }),
-      });
+      })
       try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
           {
-            method: "GET",
+            method: 'GET',
             headers: {
-              "Content-Type": "application/json",
-              "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+              'Content-Type': 'application/json',
+              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
             },
-            cache: "no-store",
+            cache: 'no-store',
           }
-        );
+        )
 
         if (!response.ok) {
-          throw new Error(`Failed to fetch stolen devices: ${await response.text()}`);
+          throw new Error(
+            `Failed to fetch stolen devices: ${await response.text()}`
+          )
         }
 
-        const { documents, total: fetchedTotal } = await response.json();
+        const { documents, total: fetchedTotal } = await response.json()
 
-        allDevices.push(...documents);
-        total = fetchedTotal;
-        offset += limit;
-
-
+        allDevices.push(...documents)
+        total = fetchedTotal
+        offset += limit
       } catch (error) {
-        console.error(error);
-        break;
+        console.error(error)
+        break
       }
-
     }
     return allDevices
   }
 
   async function fetchAllUsers() {
-    const allUsers: User[] = [];
-    let offset = 0;
-    const limit = 25;
-    let total = Infinity;
+    const allUsers: User[] = []
+    let offset = 0
+    const limit = 25
+    let total = Infinity
 
     while (offset < total) {
       const params = new URLSearchParams({
-        "queries[0]": JSON.stringify({
-          method: "limit",
+        'queries[0]': JSON.stringify({
+          method: 'limit',
           values: [limit],
         }),
-        "queries[1]": JSON.stringify({
-          method: "offset",
+        'queries[1]': JSON.stringify({
+          method: 'offset',
           values: [offset],
         }),
-      });
+      })
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
         {
-          method: "GET",
+          method: 'GET',
           headers: {
-            "Content-Type": "application/json",
-            "X-Appwrite-Project": process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || "",
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project':
+              process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || '',
           },
-          cache: "no-store",
+          cache: 'no-store',
         }
-      );
+      )
 
       if (!response.ok) {
-        throw new Error(`Falha ao buscar usuários: ${await response.text()}`);
+        throw new Error(`Falha ao buscar usuários: ${await response.text()}`)
       }
 
-      const { documents, total: fetchedTotal } = await response.json();
-      allUsers.push(...documents);
-      total = fetchedTotal;
-      offset += limit;
+      const { documents, total: fetchedTotal } = await response.json()
+      allUsers.push(...documents)
+      total = fetchedTotal
+      offset += limit
     }
 
-    return allUsers;
+    return allUsers
   }
 
   useEffect(() => {
     const fetchUsers = async () => {
-      setLoading(true);
+      setLoading(true)
+
       try {
-        const params = await buildParams();
+        const params = await buildParams()
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
           {
-            method: "GET",
+            method: 'GET',
             headers: {
-              "Content-Type": "application/json",
-              "X-Appwrite-Project": process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || "",
+              'Content-Type': 'application/json',
+              'X-Appwrite-Project':
+                process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || '',
             },
           }
-        );
+        )
 
         if (!response.ok) {
-          const error = await response.text();
-          throw new Error(`Error: ${error}`);
+          const error = await response.text()
+          throw new Error(`Error: ${error}`)
         }
 
-        const result = await response.json();
+        const result = await response.json()
 
-        ;
+        const totalPages = Math.ceil(result.total / limit)
 
-        const totalPages = Math.ceil(result.total / limit);
-
-        setUsers(result.documents || []);
-        setTotalUsers(result.total || 0);
-        setPages(totalPages);
+        setUsers(result.documents || [])
+        setTotalUsers(result.total || 0)
+        setPages(totalPages)
       } catch (error) {
-        console.error("Failed to fetch users:", error);
+        console.error('Failed to fetch users:', error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
-    fetchUsers();
-  }, [page]);
-
+    }
+    fetchUsers()
+  }, [page])
 
   return (
     <>
@@ -449,11 +496,21 @@ export function UsersTable() {
         <Table className="bg-white shadow-lg rounded-lg w-full">
           <TableHeader className="bg-zinc-200/60">
             <TableRow>
-              <TableHead className="text-black/80 text-lg font-medium text-center">ID</TableHead>
-              <TableHead className="text-black/80 text-lg font-medium ">Nome</TableHead>
-              <TableHead className="text-black/80 text-lg font-medium ">Email</TableHead>
-              <TableHead className="text-black/80 text-lg font-medium ">Perfil</TableHead>
-              <TableHead className="text-black/80 text-lg font-medium ">Ações</TableHead>
+              <TableHead className="text-black/80 text-lg font-medium text-center">
+                ID
+              </TableHead>
+              <TableHead className="text-black/80 text-lg font-medium ">
+                Nome
+              </TableHead>
+              <TableHead className="text-black/80 text-lg font-medium ">
+                Email
+              </TableHead>
+              <TableHead className="text-black/80 text-lg font-medium ">
+                Perfil
+              </TableHead>
+              <TableHead className="text-black/80 text-lg font-medium ">
+                Ações
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -478,15 +535,18 @@ export function UsersTable() {
                 <TableCell className="w-1/4">
                   <Skeleton className="h-8 w-full" />
                 </TableCell>
-
               </TableRow>
             ) : users.length > 0 ? (
               users.map((user, index) => (
-                <UserRow key={user.$id} user={user} index={(index + 1 * ((page - 1) * limit))} />
+                <UserRow
+                  key={user.$id}
+                  user={user}
+                  index={index + 1 * ((page - 1) * limit)}
+                />
               ))
             ) : (
               <TableRow>
-                <TableCell className="text-center">
+                <TableCell colSpan={6} className="text-center">
                   Nenhum usuário encontrado.
                 </TableCell>
               </TableRow>
@@ -497,20 +557,39 @@ export function UsersTable() {
                 <Pagination className="flex items-center justify-center w-full">
                   <PaginationContent className="py-1">
                     <PaginationItem>
-                      <button disabled={page === 1} className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent" onClick={handleGoToPreviousPage}>
+                      <button
+                        type="button"
+                        disabled={page === 1}
+                        className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent"
+                        onClick={handleGoToPreviousPage}
+                      >
                         <ChevronLeft className="h-4 w-4" />
                         <span>Anterior</span>
                       </button>
                     </PaginationItem>
-                    {
-                      [...Array(pages)].map((_, index) => (
-                        <PaginationItem key={index}>
-                          <button onClick={() => handleGoToPage(index + 1)} className={cn("rounded-full px-3 py-1", index === page - 1 ? "bg-zinc-200 hover:bg-zinc-300" : "hover:bg-zinc-200")} >{index + 1}</button>
-                        </PaginationItem>
-                      ))
-                    }
+                    {[...Array(pages)].map((_, index) => (
+                      <PaginationItem key={index}>
+                        <button
+                          type="button"
+                          onClick={() => handleGoToPage(index + 1)}
+                          className={cn(
+                            'rounded-full px-3 py-1',
+                            index === page - 1
+                              ? 'bg-zinc-200 hover:bg-zinc-300'
+                              : 'hover:bg-zinc-200'
+                          )}
+                        >
+                          {index + 1}
+                        </button>
+                      </PaginationItem>
+                    ))}
                     <PaginationItem>
-                      <button disabled={page * limit >= totalUsers} className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent" onClick={handleGoToNextPage}>
+                      <button
+                        type="button"
+                        disabled={page * limit >= totalUsers}
+                        className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent"
+                        onClick={handleGoToNextPage}
+                      >
                         Próximo
                         <ChevronRight className="h-4 w-4" />
                       </button>
@@ -523,5 +602,5 @@ export function UsersTable() {
         </Table>
       </div>
     </>
-  );
+  )
 }
