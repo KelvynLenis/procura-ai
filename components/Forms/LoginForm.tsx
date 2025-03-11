@@ -90,7 +90,7 @@ export function LoginForm() {
         } = await response.json()
 
         if (userDoc) {
-          if (userDoc.status === 'inactive') {
+          if (userDoc.status === 'Inativo') {
             toast.error('Esse usuário foi desativado.')
 
             account.deleteSession('current')

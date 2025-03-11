@@ -135,7 +135,7 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
         if (prevUser.$id === user.$id) {
           return {
             ...prevUser,
-            status: prevUser.status === 'Ativo' ? 'Inativo' : 'Ativo',
+            status: user.status === 'Ativo' ? 'Inativo' : 'Ativo',
           }
         }
         return prevUser
@@ -362,11 +362,14 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>
-                    Tem certeza que deseja desativar o usuário?
+                    {isUserActive
+                      ? 'Tem certeza que deseja desativar o usuário?'
+                      : 'Tem certeza que deseja ativar o usuário?'}
                   </AlertDialogTitle>
                   <AlertDialogDescription>
-                    Os dados do usuáiro permaneceram na base de dados,
-                    entretanto seu acesso será revogado.
+                    {isUserActive
+                      ? 'Os dados do usuáiro permaneceram na base de dados, entretanto seu acesso será revogado.'
+                      : 'O acesso do usuário será restaurado.'}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
