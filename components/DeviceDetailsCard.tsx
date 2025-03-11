@@ -187,7 +187,7 @@ export function DeviceDetailsCard({
 
   return (
     <>
-      <div className="flex flex-col w-full h-fit bg-white rounded-xl shadow-md">
+      <div className="flex flex-col w-[88%] h-fit bg-white rounded-xl shadow-md">
         <div className="flex items-center justify-end w-full h-16 bg-primary rounded-t-xl px-4 gap-3">
           <button
             type="button"
