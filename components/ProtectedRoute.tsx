@@ -57,14 +57,16 @@ export default function ProtectedRoute({
             toast.error('Usuário inativo')
 
             account.deleteSession('current')
-            router.back()
+            // router.back()
+            router.push('/login')
             return
           }
         }
 
         setIsAuthenticated(true)
       } catch (error) {
-        router.back()
+        // router.back()
+        router.push('/login')
       } finally {
         setIsLoading(false)
       }

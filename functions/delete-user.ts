@@ -8,5 +8,14 @@ const client = new sdk.Client()
 const users = new sdk.Users(client)
 
 export async function deleteUser(userId: string) {
+  const session = await users.deleteSessions(userId)
+
+  console.log(session)
+
   const result = await users.delete(userId)
+}
+
+export async function deleteUserSession(userId: string) {
+  const result = await users.deleteSessions(userId)
+  console.log(result)
 }

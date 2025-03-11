@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Eye, Info, Trash, UserX } from 'lucide-react'
+import { Eye, Trash2, UserX } from 'lucide-react'
 import {
   Dialog,
   DialogClose,
@@ -38,23 +38,27 @@ import {
 import { toast } from 'react-toastify'
 import { account } from '@/lib/appwrite'
 import { Query } from 'appwrite'
-import { deleteUser } from '@/functions/delete-user'
+import { deleteUser, deleteUserSession } from '@/functions/delete-user'
 
-interface UserRowProps {
-  $id?: string
+interface User {
+  $id: string
+  user_id: string
   name?: string
   cpf?: string
   email?: string
-  user_id?: string
-  type?: string
+  type: string
+  status: string
   accessed_at?: string
   $createdAt?: string
 }
 
-export function UserRow({
-  user,
-  index,
-}: { user: UserRowProps; index: number }) {
+interface UserRowProps {
+  user: User
+  index: number
+  setUsers: React.Dispatch<React.SetStateAction<User[]>>
+}
+
+export function UserRow({ user, index, setUsers }: UserRowProps) {
   const [devices, setDevices] = useState<DeviceProps[]>([] as DeviceProps[])
   const [isLoading, setIsLoading] = useState(true)
   const [color, setColor] = useState('')
@@ -91,6 +95,10 @@ export function UserRow({
         throw new Error(`Failed to delete user: ${await response.text()}`)
       }
 
+      setUsers(prevUsers =>
+        prevUsers.filter(prevUser => prevUser.$id !== userDocumentId)
+      )
+
       toast.success('Usuário deletado com sucesso!')
     } catch (error) {
       toast.error('Erro ao deletar usuário. Tente novamente.')
@@ -98,22 +106,43 @@ export function UserRow({
     }
   }
 
-  async function handleDeactivateUser(userId: string) {
-    const updatedUser = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents/${userId}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-        },
-        body: JSON.stringify({
-          data: {
-            status: 'inactive',
+  async function handleDeactivateUser() {
+    try {
+      const updatedUser = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents/${user.$id}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
           },
-        }),
-      }
+          body: JSON.stringify({
+            data: {
+              status: user.status === 'Ativo' ? 'Inativo' : 'Ativo',
+            },
+          }),
+        }
+      )
+
+      toast.success('Usuário desativado com sucesso!')
+    } catch (error) {
+      toast.error('Erro ao desativar usuário. Tente novamente.')
+      console.error('Erro ao desativar usuário:', error)
+    }
+
+    setUsers(prevUsers =>
+      prevUsers.map(prevUser => {
+        if (prevUser.$id === user.$id) {
+          return {
+            ...prevUser,
+            status: prevUser.status === 'Ativo' ? 'Inativo' : 'Ativo',
+          }
+        }
+        return prevUser
+      })
     )
+
+    deleteUserSession(user.user_id!)
   }
 
   useEffect(() => {
@@ -168,6 +197,8 @@ export function UserRow({
 
     setColor(colors[Math.floor(Math.random() * colors.length)])
   }
+
+  const isUserActive = user.status === 'Ativo'
 
   return (
     <>
@@ -315,11 +346,16 @@ export function UserRow({
               <AlertDialogTrigger asChild>
                 <button
                   type="button"
-                  className="rounded-lg w-10 h-10 flex ring-1 ring-zinc-300 group relative hover:bg-red-100 hover:ring-red-700 hover:text-red-700 items-center justify-center hover:opacity-90"
+                  className={cn(
+                    'rounded-lg w-10 h-10 flex ring-1  group relative  items-center justify-center p-1 hover:opacity-90',
+                    isUserActive
+                      ? 'ring-zinc-300 hover:bg-orange-100 hover:ring-orange-600 hover:text-orange-700 text-orange-600'
+                      : 'bg-orange-100 ring-orange-600 hover:ring-orange-300 hover:text-orange-500 text-orange-600'
+                  )}
                 >
                   <UserX size={26} />
                   <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
-                    Desativar usuário
+                    {isUserActive ? 'Desativar usuário' : 'Ativar usuário'}
                   </span>
                 </button>
               </AlertDialogTrigger>
@@ -338,7 +374,7 @@ export function UserRow({
                     Cancelar
                   </AlertDialogCancel>
                   <AlertDialogAction
-                    onClick={() => handleDeactivateUser(user.$id!)}
+                    onClick={() => handleDeactivateUser()}
                     className="rounded-full text-center items-center justify-center flex w-fit px-2 py-2 drop-shadow-lg transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0 bg-red-500 border-[0.5px] border-red-500 text-white hover:bg-white hover:text-red-500"
                   >
                     Confirmar
@@ -351,9 +387,9 @@ export function UserRow({
               <AlertDialogTrigger asChild>
                 <button
                   type="button"
-                  className="rounded-lg w-10 h-10 flex ring-1 ring-zinc-300 group relative hover:bg-red-100 hover:ring-red-700 hover:text-red-700 items-center justify-center hover:opacity-90"
+                  className="rounded-lg w-10 h-10 flex ring-1 ring-zinc-300 group relative hover:text-red-700 items-center justify-center hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90"
                 >
-                  <Trash size={26} />
+                  <Trash2 size={26} />
                   <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
                     Excluir usuário
                   </span>

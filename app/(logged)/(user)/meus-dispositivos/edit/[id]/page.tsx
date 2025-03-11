@@ -1,14 +1,22 @@
-import { DeviceForm } from "@/components/Forms/DeviceForm";
-import { Device } from "@/utils/types";
+import { DeviceForm } from '@/components/Forms/DeviceForm'
+import ProtectedRoute from '@/components/ProtectedRoute'
+import { Device } from '@/utils/types'
 
-export default async function EditDevice({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default async function EditDevice({
+  params,
+}: { params: Promise<{ id: string }> }) {
+  const { id } = await params
 
-  if (!process.env.NEXT_PUBLIC_API_URL || !process.env.NEXT_PUBLIC_DATABASE_ID) {
-    throw new Error('Configuração incompleta: verifique as variáveis de ambiente.');
+  if (
+    !process.env.NEXT_PUBLIC_API_URL ||
+    !process.env.NEXT_PUBLIC_DATABASE_ID
+  ) {
+    throw new Error(
+      'Configuração incompleta: verifique as variáveis de ambiente.'
+    )
   }
 
-  let result: Device;
+  let result: Device
 
   try {
     const response = await fetch(
@@ -21,26 +29,27 @@ export default async function EditDevice({ params }: { params: Promise<{ id: str
         },
         cache: 'no-store',
       }
-    );
+    )
 
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Error: ${error}`);
+      const error = await response.text()
+      throw new Error(`Error: ${error}`)
     }
 
-
-    result = await response.json();
+    result = await response.json()
   } catch (error) {
-    console.error('Erro ao buscar dados do dispositivo:', error);
-    return <div>Erro ao carregar os dados do dispositivo.</div>;
+    console.error('Erro ao buscar dados do dispositivo:', error)
+    return <div>Erro ao carregar os dados do dispositivo.</div>
   }
-
-  ;
-  const { brand, phone_model, phone_number, imei } = result;
+  const { brand, phone_model, phone_number, imei } = result
 
   return (
-    <div className="w-full flex flex-col items-center justify-center pr-20 my-5">
-      <DeviceForm device={{ $id: id, brand, phone_model, phone_number, imei }} />
-    </div>
-  );
+    <ProtectedRoute>
+      <div className="w-full flex flex-col items-center justify-center pr-20 my-5">
+        <DeviceForm
+          device={{ $id: id, brand, phone_model, phone_number, imei }}
+        />
+      </div>
+    </ProtectedRoute>
+  )
 }

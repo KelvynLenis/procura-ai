@@ -21,11 +21,13 @@ import { LoadingToast } from '@/components/LoadingToast'
 import type { Device } from '@/utils/types'
 
 interface User {
+  $id: string
   user_id: string
   name?: string
   cpf?: string
   email?: string
   type: string
+  status: string
   accessed_at?: string
   $createdAt?: string
 }
@@ -66,11 +68,6 @@ export function UsersTable() {
       'queries[1]': JSON.stringify({
         method: 'offset',
         values: [(page - 1) * limit],
-      }),
-      'queries[2]': JSON.stringify({
-        method: 'equal',
-        attribute: 'status',
-        values: [' Ativo', ' ativo', 'Ativo', 'ativo'],
       }),
     })
     return params
@@ -119,7 +116,7 @@ export function UsersTable() {
       const allAlerts: Events[] = []
       let offset = 0
       const limit = 25
-      let total = Infinity
+      let total = Number.POSITIVE_INFINITY
 
       // Buscar todos os dispositivos e usuários primeiro
       const [devices, users] = await Promise.all([
@@ -308,7 +305,7 @@ export function UsersTable() {
     const allDevices: Device[] = []
     let offset = 0
     const limit = 25
-    let total = Infinity
+    let total = Number.POSITIVE_INFINITY
     while (offset < total) {
       const params = new URLSearchParams({
         'queries[0]': JSON.stringify({
@@ -356,7 +353,7 @@ export function UsersTable() {
     const allUsers: User[] = []
     let offset = 0
     const limit = 25
-    let total = Infinity
+    let total = Number.POSITIVE_INFINITY
 
     while (offset < total) {
       const params = new URLSearchParams({
@@ -420,7 +417,6 @@ export function UsersTable() {
         }
 
         const result = await response.json()
-
         const totalPages = Math.ceil(result.total / limit)
 
         setUsers(result.documents || [])
@@ -542,6 +538,7 @@ export function UsersTable() {
                   key={user.$id}
                   user={user}
                   index={index + 1 * ((page - 1) * limit)}
+                  setUsers={setUsers}
                 />
               ))
             ) : (

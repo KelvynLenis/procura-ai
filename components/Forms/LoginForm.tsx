@@ -44,10 +44,25 @@ export function LoginForm() {
   async function onSubmit(values: { email: string; password: string }) {
     try {
       const callFunction = async () => {
-        const promise = await account.createEmailPasswordSession(
-          values.email,
-          values.password
-        )
+        try {
+          const promise = await account.createEmailPasswordSession(
+            values.email,
+            values.password
+          )
+        } catch (error) {
+          if (error.message.match(/password/)) {
+            form.setError('email', { message: 'Email ou senha incorretos' })
+            form.setError('password', { message: 'Email ou senha incorretos' })
+            toast.error('Email ou senha incorretos')
+
+            return
+          }
+
+          toast.error('Erro ao logar')
+
+          console.error('Erro ao logar: ', error.message)
+        }
+
         const user = await account.get()
         const isAdmin = user.labels[0] === 'admin'
 
@@ -110,17 +125,13 @@ export function LoginForm() {
         }
 
         toast.success('Logado com sucesso')
-
-        return promise
       }
 
-      callFunction()
+      // callFunction()
 
-      // toast.promise(callFunction, {
-      //   pending: 'Logando...',
-      //   success: 'Logado com sucesso',
-      //   error: 'Erro ao logar',
-      // })
+      toast.promise(callFunction, {
+        pending: 'Logando...',
+      })
     } catch (error) {
       form.setError('email', { message: 'Email ou senha incorretos' })
       form.setError('password', { message: 'Email ou senha incorretos' })
@@ -140,48 +151,49 @@ export function LoginForm() {
       try {
         const callFunction = async () => {
           const sessions = await account.get()
-          const params = new URLSearchParams({
-            'queries[0]': JSON.stringify({
-              method: 'equal',
-              attribute: 'user_id',
-              values: [`${sessions.$id}`],
-            }),
-          })
 
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
-            {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-              },
-            }
-          )
+          // const params = new URLSearchParams({
+          //   'queries[0]': JSON.stringify({
+          //     method: 'equal',
+          //     attribute: 'user_id',
+          //     values: [`${sessions.$id}`],
+          //   }),
+          // })
 
-          const {
-            documents: [userDoc],
-          } = await response.json()
+          // const response = await fetch(
+          //   `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
+          //   {
+          //     method: 'GET',
+          //     headers: {
+          //       'Content-Type': 'application/json',
+          //       'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+          //     },
+          //   }
+          // )
 
-          if (userDoc) {
-            await fetch(
-              `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents/${userDoc.$id}`,
-              {
-                method: 'PATCH',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-                },
-                body: JSON.stringify({
-                  data: {
-                    accessed_at: new Date().toISOString(),
-                  },
-                }),
-              }
-            ).catch(err => {
-              console.error('Erro ao atualizar último acesso:', err)
-            })
-          }
+          // const {
+          //   documents: [userDoc],
+          // } = await response.json()
+
+          // if (userDoc) {
+          //   await fetch(
+          //     `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents/${userDoc.$id}`,
+          //     {
+          //       method: 'PATCH',
+          //       headers: {
+          //         'Content-Type': 'application/json',
+          //         'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+          //       },
+          //       body: JSON.stringify({
+          //         data: {
+          //           accessed_at: new Date().toISOString(),
+          //         },
+          //       }),
+          //     }
+          //   ).catch(err => {
+          //     console.error('Erro ao atualizar último acesso:', err)
+          //   })
+          // }
 
           if (sessions.status) {
             await account.deleteSession('current')
