@@ -429,7 +429,7 @@ export function MarkAsStolenForm({
         <Button
           variant="blue"
           type="submit"
-          className="w-fit px-5 h-10 flex items-center justify-center text-xl text-white self-center rounded-xl"
+          className="w-fit px-5 h-10 flex items-center justify-center text-xl text-white self-center"
         >
           Salvar
         </Button>

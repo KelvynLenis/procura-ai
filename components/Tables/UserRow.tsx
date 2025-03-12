@@ -5,7 +5,6 @@ import type { DeviceProps } from '@/utils/types'
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -14,9 +13,7 @@ import {
 import { Eye, Trash2, UserX } from 'lucide-react'
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -24,21 +21,9 @@ import {
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '../ui/alert-dialog'
 import { toast } from 'react-toastify'
-import { account } from '@/lib/appwrite'
-import { Query } from 'appwrite'
 import { deleteUser } from '@/functions/delete-user'
+import { ConfirmationDialog } from '../ConfirmationDialog'
 
 interface User {
   $id: string
@@ -342,85 +327,50 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
               </DialogContent>
             </Dialog>
 
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <button
-                  type="button"
-                  className={cn(
-                    'rounded-lg w-10 h-10 flex ring-1  group relative  items-center justify-center p-1 hover:opacity-90',
-                    isUserActive
-                      ? 'ring-zinc-300 hover:bg-orange-100 hover:ring-orange-600 hover:text-orange-700 text-orange-600'
-                      : 'bg-orange-100 ring-orange-600 hover:ring-orange-300 hover:text-orange-500 text-orange-600'
-                  )}
-                >
-                  <UserX size={26} />
-                  <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
-                    {isUserActive ? 'Desativar usuário' : 'Ativar usuário'}
-                  </span>
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    {isUserActive
-                      ? 'Tem certeza que deseja desativar o usuário?'
-                      : 'Tem certeza que deseja ativar o usuário?'}
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    {isUserActive
-                      ? 'Os dados do usuáiro permaneceram na base de dados, entretanto seu acesso será revogado.'
-                      : 'O acesso do usuário será restaurado.'}
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel className="rounded-full text-center items-center justify-center flex w-fit px-2 py-2 drop-shadow-lg transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0 bg-procura-ai-blue text-white hover:bg-white hover:text-procura-ai-blue hover:ring-1 hover:ring-procura-ai-blue">
-                    Cancelar
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => handleDeactivateUser()}
-                    className="rounded-full text-center items-center justify-center flex w-fit px-2 py-2 drop-shadow-lg transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0 bg-red-500 border-[0.5px] border-red-500 text-white hover:bg-white hover:text-red-500"
-                  >
-                    Confirmar
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <ConfirmationDialog
+              title={
+                isUserActive
+                  ? 'Tem certeza que deseja desativar o usuário?'
+                  : 'Tem certeza que deseja ativar o usuário?'
+              }
+              description={
+                isUserActive
+                  ? 'Os dados do usuáiro permaneceram na base de dados, entretanto seu acesso será revogado.'
+                  : 'O acesso do usuário será restaurado.'
+              }
+              onConfirm={handleDeactivateUser}
+            >
+              <button
+                type="button"
+                className={cn(
+                  'rounded-lg w-10 h-10 flex ring-1  group relative  items-center justify-center p-1 hover:opacity-90',
+                  isUserActive
+                    ? 'ring-zinc-300 hover:bg-orange-100 hover:ring-orange-600 hover:text-orange-700 text-orange-600'
+                    : 'bg-orange-100 ring-orange-600 hover:ring-orange-300 hover:text-orange-500 text-orange-600'
+                )}
+              >
+                <UserX size={26} />
+                <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                  {isUserActive ? 'Desativar usuário' : 'Ativar usuário'}
+                </span>
+              </button>
+            </ConfirmationDialog>
 
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <button
-                  type="button"
-                  className="rounded-lg w-10 h-10 flex ring-1 ring-zinc-300 group relative hover:text-red-700 items-center justify-center hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90"
-                >
-                  <Trash2 size={26} />
-                  <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
-                    Excluir usuário
-                  </span>
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Tem certeza que deseja excluir o usuário?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Os dados do usuáiro serão removidos da base de dados,
-                    entretanto seu histórico de alertas será mantido.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel className="rounded-full text-center items-center justify-center flex w-fit px-2 py-2 drop-shadow-lg transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0 bg-procura-ai-blue text-white hover:bg-white hover:text-procura-ai-blue hover:ring-1 hover:ring-procura-ai-blue">
-                    Cancelar
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => handleDeleteUser(user.user_id!, user.$id!)}
-                    className="rounded-full text-center items-center justify-center flex w-fit px-2 py-2 drop-shadow-lg transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0 bg-red-500 border-[0.5px] border-red-500 text-white hover:bg-white hover:text-red-500"
-                  >
-                    Confirmar
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <ConfirmationDialog
+              title="Tem certeza que deseja excluir o usuário?"
+              description="Os dados do usuário serão excluídos permanentemente, entretanto seu histórico de alertas será mantido."
+              onConfirm={() => handleDeleteUser(user.user_id!, user.$id!)}
+            >
+              <button
+                type="button"
+                className="rounded-lg w-10 h-10 flex ring-1 ring-zinc-300 group relative hover:text-red-700 items-center justify-center hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90"
+              >
+                <Trash2 size={26} />
+                <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                  Excluir usuário
+                </span>
+              </button>
+            </ConfirmationDialog>
           </div>
         </TableCell>
       </TableRow>
