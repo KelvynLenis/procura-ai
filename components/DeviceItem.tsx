@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils'
 import { IoIosWarning } from 'react-icons/io'
 import { MarkAsStolenForm } from './Forms/MarkAsStolenForm'
-import { DeviceProps } from '@/utils/types'
+import type { DeviceProps } from '@/utils/types'
 import { Eye, X } from 'lucide-react'
 import { AlertDetails } from './AlertDetails'
 import { toast } from 'react-toastify'
@@ -152,6 +152,7 @@ export function DeviceItem({
         <div className="flex justify-center gap-2">
           {isRegular ? (
             <button
+              type="button"
               onClick={() => setIsAlertModalOpen(true)}
               className={cn(
                 'rounded-lg group relative w-6 h-6 ring-1 ring-zinc-300 flex flex-col md:flex-row items-center justify-center text-red-600 hover:bg-red-300 hover:ring-red-500'
@@ -161,6 +162,7 @@ export function DeviceItem({
             </button>
           ) : (
             <button
+              type="button"
               onClick={() => setIsAlertModalOpen(true)}
               className={cn(
                 'rounded-lg group relative w-6 h-6 ring-1 ring-red-700 flex flex-col md:flex-row items-center justify-center text-white bg-red-600 hover:bg-red-100 hover:text-red-600'
@@ -170,6 +172,7 @@ export function DeviceItem({
             </button>
           )}
           <button
+            type="button"
             onClick={handleViewDevice}
             className="rounded-lg w-6 h-6 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
           >

@@ -135,7 +135,7 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
         if (prevUser.$id === user.$id) {
           return {
             ...prevUser,
-            status: user.status === 'Ativo' ? 'Inativo' : 'Ativo',
+            status: prevUser.status === 'Ativo' ? 'Inativo' : 'Ativo',
           }
         }
         return prevUser

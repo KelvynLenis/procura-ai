@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { DeviceProps } from '@/utils/types'
+import type { DeviceProps } from '@/utils/types'
 import { account } from '@/lib/appwrite'
 import Button from './Button'
 import Link from 'next/link'
@@ -10,7 +10,6 @@ import { cn } from '@/lib/utils'
 import { DevicesList } from './DevicesList'
 import { Pagination, PaginationContent, PaginationItem } from './ui/pagination'
 import { DevicesTable } from './Tables/DevicesTable'
-import { listDevices } from '@/functions/devices/list-devices'
 
 export function DevicesComponent() {
   const [devices, setDevices] = useState<DeviceProps[]>([])
@@ -67,23 +66,40 @@ export function DevicesComponent() {
   }
 
   useEffect(() => {
-    const fetchDevices = async () => {
+    const getDevices = async () => {
+      setIsLoading(true)
       try {
         const params = await buildParams()
-        const response = await fetch(`/api/devices/list?${params.toString()}`)
-        const data = await response.json()
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+            },
+          }
+        )
 
-        setDevices(data.devices)
-        setTotalDevices(data.totalDevices)
-        setPages(data.pages)
-      } catch (error) {
-        console.error('Erro ao buscar dispositivos:', error)
+        if (!response.ok) {
+          const error = await response.text()
+          throw new Error(`Error: ${error}`)
+        }
+
+        const result = await response.json()
+
+        const totalPages = Math.ceil(result.total / limit)
+        setDevices(result.documents || [])
+        setTotalDevices(result.total || 0)
+        setPages(totalPages)
+      } catch (err) {
+        console.error(`Fetch error: ${err}`)
       } finally {
         setIsLoading(false)
       }
     }
 
-    fetchDevices()
+    getDevices()
   }, [page])
 
   return (
