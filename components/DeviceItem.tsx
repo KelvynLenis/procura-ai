@@ -12,6 +12,15 @@ import { useState } from 'react'
 import { DeviceDetailsCard } from './DeviceDetailsCard'
 import { Modal } from './Modal'
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+
 interface DeviceItemProps {
   id: string // ID do dispositivo
   phone_number: string // Número de telefone
@@ -150,7 +159,46 @@ export function DeviceItem({
           </span>
         </div>
         <div className="flex justify-center gap-2">
-          {isRegular ? (
+          <Dialog>
+            <DialogTrigger asChild>
+              <button
+                type="button"
+                className={cn(
+                  'rounded-lg group relative w-6 h-6 ring-1 flex flex-col md:flex-row items-center justify-center',
+                  isRegular
+                    ? 'ring-zinc-300 bg-white text-red-600 hover:bg-red-300 hover:ring-red-500'
+                    : 'ring-red-700 text-white bg-red-600 hover:bg-red-100 hover:text-red-600'
+                )}
+              >
+                <IoIosWarning size={18} />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="h-[90%] overflow-scroll flex flex-col w-[85%]">
+              {isStolen ? (
+                <>
+                  <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
+                    Visualizar alerta
+                  </span>
+                  <AlertDetails
+                    id={id}
+                    status={status}
+                    handleDeviceRecovery={handleDeviceRecovery}
+                  />
+                </>
+              ) : (
+                <>
+                  <h2 className="font-bold">Preencha as informações</h2>
+                  <MarkAsStolenForm
+                    id={id}
+                    isStolen={isStolen}
+                    setDevices={setDevices}
+                    isPopup
+                  />
+                </>
+              )}
+            </DialogContent>
+          </Dialog>
+          {/* {isRegular ? (
             <button
               type="button"
               onClick={() => setIsAlertModalOpen(true)}
@@ -170,14 +218,38 @@ export function DeviceItem({
             >
               <IoIosWarning size={18} />
             </button>
-          )}
-          <button
+          )} */}
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <button
+                type="button"
+                className="rounded-lg w-6 h-6 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
+              >
+                <Eye size={18} />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="bg-transparent ml-5 p-0 border-none ring-0 w-full">
+              <DeviceDetailsCard
+                id={id}
+                isStolen={isStolen}
+                setDevices={setDevices}
+                index={index}
+                phone_model={phone_model}
+                phone_number={phone_number}
+                brand={brand}
+                imei={imei}
+                status={status}
+              />
+            </DialogContent>
+          </Dialog>
+          {/* <button
             type="button"
             onClick={handleViewDevice}
             className="rounded-lg w-6 h-6 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
           >
             <Eye size={18} />
-          </button>
+          </button> */}
         </div>
       </div>
       {isViewDeviceDetailsCardOpen && (

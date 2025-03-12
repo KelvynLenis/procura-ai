@@ -1,13 +1,14 @@
 'use client'
 
-import React, { useEffect, useState } from "react"
-import { Map, Marker, ZoomControl } from "pigeon-maps"
+import React, { useEffect, useState } from 'react'
+import { Map, Marker, ZoomControl } from 'pigeon-maps'
 
 interface MarkAsStolenMapProps {
   position: [number, number]
 }
 
-const geoJsonLink = "https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI"
+const geoJsonLink =
+  'https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI'
 
 export function ViewOccurrenceMap({ position }: MarkAsStolenMapProps) {
   const [geoJsonData, setGeoJsonData] = useState<any>(null)
@@ -28,9 +29,9 @@ export function ViewOccurrenceMap({ position }: MarkAsStolenMapProps) {
         })
       }
 
-      window.addEventListener("resize", handleResize)
+      window.addEventListener('resize', handleResize)
       handleResize()
-      return () => window.removeEventListener("resize", handleResize)
+      return () => window.removeEventListener('resize', handleResize)
     }, [])
 
     return windowSize
@@ -38,30 +39,23 @@ export function ViewOccurrenceMap({ position }: MarkAsStolenMapProps) {
 
   useEffect(() => {
     fetch(geoJsonLink)
-      .then((res) => res.json())
-      .then((data) => setGeoJsonData(data))
+      .then(res => res.json())
+      .then(data => setGeoJsonData(data))
   }, [])
 
   function setWidth() {
-
-
     if (window.innerWidth >= 1440) {
       return 700
-    }
-    else if (window.innerWidth >= 1024) {
+    } else if (window.innerWidth >= 1024) {
       return 700
-    }
-    else if (window.innerWidth >= 768) {
+    } else if (window.innerWidth >= 768) {
       return 600
-    }
-    else if (window.innerWidth >= 425) {
-      return 380
-    }
-    else if (window.innerWidth >= 375) {
-      return 340
-    }
-    else if (window.innerWidth >= 320) {
-      return 280
+    } else if (window.innerWidth >= 425) {
+      return 320
+    } else if (window.innerWidth >= 375) {
+      return 270
+    } else if (window.innerWidth >= 320) {
+      return 230
     }
 
     return 200
@@ -70,20 +64,15 @@ export function ViewOccurrenceMap({ position }: MarkAsStolenMapProps) {
   function setHeight() {
     if (window.innerWidth >= 1440) {
       return 280
-    }
-    else if (window.innerWidth >= 1024) {
+    } else if (window.innerWidth >= 1024) {
       return 280
-    }
-    else if (window.innerWidth >= 768) {
+    } else if (window.innerWidth >= 768) {
       return 280
-    }
-    else if (window.innerWidth >= 425) {
+    } else if (window.innerWidth >= 425) {
       return 340
-    }
-    else if (window.innerWidth >= 375) {
+    } else if (window.innerWidth >= 375) {
       return 300
-    }
-    else if (window.innerWidth >= 320) {
+    } else if (window.innerWidth >= 320) {
       return 270
     }
   }
@@ -96,7 +85,7 @@ export function ViewOccurrenceMap({ position }: MarkAsStolenMapProps) {
       defaultZoom={13}
     >
       <ZoomControl />
-      <Marker width={50} anchor={position} color={"#FF0000"} />
+      <Marker width={50} anchor={position} color={'#FF0000'} />
     </Map>
   )
 }
