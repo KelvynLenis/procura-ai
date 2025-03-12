@@ -6,7 +6,7 @@ import { ImPencil } from 'react-icons/im'
 import Link from 'next/link'
 import type { DeviceProps } from '@/utils/types'
 import { cn } from '@/lib/utils'
-import { Eye, Trash2, X } from 'lucide-react'
+import { Eye, Trash2 } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -14,22 +14,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
 import { MarkAsStolenForm } from '../Forms/MarkAsStolenForm'
 import { toast } from 'react-toastify'
 import { v4 as uuidv4 } from 'uuid'
 import { useState } from 'react'
 import { AlertDetails } from '../AlertDetails'
+import { ConfirmationDialog } from '../ConfirmationDialog'
 
 interface DeviceRowProps {
   id: string // ID do dispositivo
@@ -279,68 +269,66 @@ export function DeviceRow({
               </button>
             </Link>
 
-            <AlertDialog>
-              <AlertDialogTrigger>
-                <button
-                  type="button"
-                  className="hidden md:flex rounded-lg w-10 h-10 group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90"
-                >
-                  <Trash2 size={20} />
-                  <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
-                    Deletar dispositivo
-                  </span>
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Tem certeza que deseja excluir o dispositivo?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Essa ação não pode ser desfeita. Isso excluirá
+            <ConfirmationDialog
+              title="Deseja deletar este dispositivo?"
+              description="Essa ação não pode ser desfeita. Isso excluirá
                     permanentemente o dispositivo e removerá seus dados de
-                    nossos servidores.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel className="bg-white mr-2">
-                    Cancelar
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    className="bg-red-500"
-                    onClick={() => handleDeleteDevice(id)}
-                  >
-                    Confirmar
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                    nossos servidores."
+              onConfirm={() => {
+                handleDeleteDevice(id)
+              }}
+            >
+              <button
+                type="button"
+                className="hidden md:flex rounded-lg w-10 h-10 group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90"
+              >
+                <Trash2 size={20} />
+                <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                  Deletar dispositivo
+                </span>
+              </button>
+            </ConfirmationDialog>
 
             {isStolen ? (
               <>
-                <button
-                  onClick={() => setIsViewAlertModalOpen(true)}
-                  title="Desativar alerta"
-                  type="button"
-                  className={cn(
-                    'w-10 h-10 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white',
-                    status === 'Roubado' &&
-                      'bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500',
-                    status === 'Furtado' &&
-                      'bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500',
-                    status === 'Perdido' &&
-                      'bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500',
-                    status === 'Recuperado' &&
-                      'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500',
-                    status === 'Regular' &&
-                      'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500'
-                  )}
-                >
-                  <IoIosWarning size={28} />
-                  <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
-                    Visualizar alerta
-                  </span>
-                </button>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <button
+                      onClick={() => setIsDialogOpen(true)}
+                      title="Desativar alerta"
+                      type="button"
+                      className={cn(
+                        'w-10 h-10 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white',
+                        status === 'Roubado' &&
+                          'bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500',
+                        status === 'Furtado' &&
+                          'bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500',
+                        status === 'Perdido' &&
+                          'bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500',
+                        status === 'Recuperado' &&
+                          'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500',
+                        status === 'Regular' &&
+                          'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500'
+                      )}
+                    >
+                      <IoIosWarning size={28} />
+                      <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
+                        Visualizar alerta
+                      </span>
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-fit py-8">
+                    <DialogHeader>
+                      <DialogTitle>Preencha as informações</DialogTitle>
+                    </DialogHeader>
+                    <AlertDetails
+                      id={id}
+                      status={status}
+                      handleDeviceRecovery={handleDeviceRecovery}
+                      setModalOpen={setIsDialogOpen}
+                    />
+                  </DialogContent>
+                </Dialog>
               </>
             ) : (
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -373,29 +361,6 @@ export function DeviceRow({
           </div>
         </TableCell>
       </TableRow>
-
-      {isViewAlertModalOpen && (
-        <div className="w-screen h-screen flex items-center justify-center fixed inset-0 z-50 bg-black/60">
-          <div className="flex flex-col gap-2 bg-white p-6 rounded-sm">
-            <div className="flex justify-between">
-              <h1 className="font-bold text-xl">Detalhes do alerta</h1>
-
-              <X
-                className="hover:opacity-50 transition-opacity duration-150 cursor-pointer"
-                onClick={() => setIsViewAlertModalOpen(false)}
-              />
-            </div>
-            <div className="flex gap-2">
-              <AlertDetails
-                id={id}
-                status={status}
-                handleDeviceRecovery={handleDeviceRecovery}
-                setModalOpen={setIsViewAlertModalOpen}
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </>
   )
 }

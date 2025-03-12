@@ -1,20 +1,10 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
-import { Event } from '@/utils/types'
+import type { Event } from '@/utils/types'
 import { useEffect, useState } from 'react'
 import { ViewOccurrenceMap } from './Maps/ViewOccurrenceMap'
 import { cn, formatDateTime } from '@/lib/utils'
 import { IoIosWarning } from 'react-icons/io'
 import ClipLoader from 'react-spinners/ClipLoader'
+import { ConfirmationDialog } from './ConfirmationDialog'
 
 interface AlertDetailsProps {
   id: string
@@ -79,8 +69,8 @@ export function AlertDetails({
     return event
   }
 
-  function handleConfirmDialog() {
-    handleDeviceRecovery(id)
+  async function handleConfirmDialog() {
+    await handleDeviceRecovery(id)
     if (setModalOpen) {
       setModalOpen(false)
     }
@@ -130,57 +120,38 @@ export function AlertDetails({
             </div>
 
             <div className="flex flex-col w-1/3 items-end">
-              <AlertDialog>
-                <AlertDialogTrigger>
-                  <span
-                    title="Desativar alerta"
-                    className={cn(
-                      'w-fit top-5 gap-2 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white',
-                      status === 'Roubado' &&
-                        'bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500',
-                      status === 'Furtado' &&
-                        'bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500',
-                      status === 'Perdido' &&
-                        'bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500',
-                      status === 'Recuperado' &&
-                        'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500',
-                      status === 'Regular' &&
-                        'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500'
-                    )}
-                  >
-                    <IoIosWarning size={28} />
-                    <span className="hidden opacity-0 group-hover:block group-hover:md:hidden group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
-                      Desativar alerta
-                    </span>
-                    <span className="hidden md:block">Desativar</span>
-                  </span>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Tem certeza que deseja marcar o dispositivo como
-                      recuperado?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Ao concordar com esta ação, o dispositivo será removido da
+              <ConfirmationDialog
+                title="Tem certeza que deseja marcar o dispositivo como recuperado?"
+                description="Ao concordar com esta ação, o dispositivo será removido da
                       lista de alertas. Caso a policia encontre o dispositivo
                       não será possível saber a quem ele pertence e nem te
-                      alertar de sua recuperação.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel className="bg-white mr-2">
-                      Cancelar
-                    </AlertDialogCancel>
-                    <AlertDialogAction
-                      className="bg-red-500"
-                      onClick={handleConfirmDialog}
-                    >
-                      Confirmar
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                      alertar de sua recuperação."
+                onConfirm={handleConfirmDialog}
+              >
+                <button
+                  type="button"
+                  title="Desativar alerta"
+                  className={cn(
+                    'w-fit top-5 gap-2 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white',
+                    status === 'Roubado' &&
+                      'bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500',
+                    status === 'Furtado' &&
+                      'bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500',
+                    status === 'Perdido' &&
+                      'bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500',
+                    status === 'Recuperado' &&
+                      'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500',
+                    status === 'Regular' &&
+                      'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500'
+                  )}
+                >
+                  <IoIosWarning size={28} />
+                  <span className="hidden opacity-0 group-hover:block group-hover:md:hidden group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
+                    Desativar alerta
+                  </span>
+                  <span className="hidden md:block">Desativar</span>
+                </button>
+              </ConfirmationDialog>
             </div>
           </div>
 

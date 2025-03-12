@@ -348,7 +348,6 @@ function DeleteDeviceModal({
             <DialogClose asChild>
               <Button
                 variant="white"
-                className="rounded-lg ring-zinc-200 hover:ring-zinc-200"
                 // onClick={() => setModalOpen(false)}
               >
                 Cancelar
@@ -356,11 +355,7 @@ function DeleteDeviceModal({
             </DialogClose>
 
             <DialogClose asChild>
-              <Button
-                variant="red"
-                className="rounded-lg"
-                onClick={() => handleDeleteDevice(id)}
-              >
+              <Button variant="red" onClick={() => handleDeleteDevice(id)}>
                 Confirmar
               </Button>
             </DialogClose>
