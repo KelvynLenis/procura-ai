@@ -38,6 +38,7 @@ import {
 import { toast } from 'react-toastify'
 import { account } from '@/lib/appwrite'
 import { Query } from 'appwrite'
+import { deleteUser } from '@/functions/delete-user'
 
 interface User {
   $id: string
