@@ -53,7 +53,7 @@ export default function ProtectedRoute({
         } = await response.json()
 
         if (userDoc) {
-          if (userDoc.status === 'inactive') {
+          if (userDoc.status === 'Inativo') {
             toast.error('Usuário inativo')
 
             account.deleteSession('current')
