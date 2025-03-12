@@ -4,16 +4,21 @@ import { cn } from '@/lib/utils'
 import { IoIosWarning } from 'react-icons/io'
 import { MarkAsStolenForm } from './Forms/MarkAsStolenForm'
 import type { DeviceProps } from '@/utils/types'
-import { ArrowLeft, Trash2, X } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import { AlertDetails } from './AlertDetails'
 import { toast } from 'react-toastify'
 import { v4 as uuidv4 } from 'uuid'
 import { ImPencil } from 'react-icons/im'
 import { useState } from 'react'
-import Link from 'next/link'
 import Button from './Button'
 import { DeviceForm } from './Forms/DeviceForm'
-import { Modal } from './Modal'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 
 interface DeviceDetailsCardProps {
   id: string // ID do dispositivo
@@ -40,7 +45,6 @@ export function DeviceDetailsCard({
 }: DeviceDetailsCardProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false)
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
   const device = {
@@ -189,36 +193,86 @@ export function DeviceDetailsCard({
     <>
       <div className="flex flex-col w-[88%] h-fit bg-white rounded-xl shadow-md">
         <div className="flex items-center justify-end w-full h-16 bg-primary rounded-t-xl px-4 gap-3">
-          <button
-            type="button"
-            onClick={() => setIsAlertModalOpen(true)}
-            className={cn(
-              'rounded-lg group relative w-10 h-10 ring-1 flex flex-col md:flex-row items-center justify-center',
-              isRegular
-                ? 'ring-zinc-300 bg-white text-red-600 hover:bg-red-300 hover:ring-red-500'
-                : 'ring-red-700 text-white bg-red-600 hover:bg-red-100 hover:text-red-600'
-            )}
-          >
-            <IoIosWarning size={28} />
-          </button>
+          <Dialog open={isAlertModalOpen} onOpenChange={setIsAlertModalOpen}>
+            <DialogTrigger asChild>
+              <button
+                type="button"
+                className={cn(
+                  'rounded-lg group relative w-10 h-10 ring-1 flex flex-col md:flex-row items-center justify-center',
+                  isRegular
+                    ? 'ring-zinc-300 bg-white text-red-600 hover:bg-red-300 hover:ring-red-500'
+                    : 'ring-red-700 text-white bg-red-600 hover:bg-red-100 hover:text-red-600'
+                )}
+              >
+                <IoIosWarning size={28} />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="h-[95%] overflow-scroll flex flex-col w-[85%]">
+              <DialogTitle className="hidden">
+                Marcar como roubado ou visualisar alerta
+              </DialogTitle>
 
-          <button
-            type="button"
-            onClick={() => setIsEditModalOpen(true)}
-            className="flex rounded-lg w-10 h-10 bg-white ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
-          >
-            <ImPencil size={20} />
-          </button>
-          {/* <Link href={`meus-dispositivos/edit/${id}`}>
-          </Link> */}
+              {isStolen ? (
+                <>
+                  <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
+                    Visualizar alerta
+                  </span>
+                  <AlertDetails
+                    id={id}
+                    status={status}
+                    handleDeviceRecovery={handleDeviceRecovery}
+                  />
+                </>
+              ) : (
+                <>
+                  <h2 className="font-bold">Preencha as informações</h2>
+                  <MarkAsStolenForm
+                    id={id}
+                    isStolen={isStolen}
+                    setDevices={setDevices}
+                    setIsDialogOpen={setIsAlertModalOpen}
+                    isPopup
+                  />
+                </>
+              )}
+            </DialogContent>
+          </Dialog>
 
-          <button
-            type="button"
-            onClick={() => setIsDeleteModalOpen(true)}
-            className="flex rounded-lg w-10 h-10 bg-white group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90"
-          >
-            <Trash2 size={20} />
-          </button>
+          <Dialog>
+            <DialogTrigger>
+              <button
+                type="button"
+                className="flex rounded-lg w-10 h-10 bg-white ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
+              >
+                <ImPencil size={20} />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="h-[95%] w-[90%] overflow-scroll flex flex-col">
+              <DialogTitle className="hidden">Editar dispositivo</DialogTitle>
+              <DeviceForm
+                device={device}
+                isPopover
+                setModalOpen={setIsEditModalOpen}
+              />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog>
+            <DialogTrigger>
+              <button
+                type="button"
+                className="flex rounded-lg w-10 h-10 bg-white group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90"
+              >
+                <Trash2 size={20} />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="h-[95%] w-[100%] flex bg-transparent border-none">
+              <DeleteDeviceModal
+                id={id}
+                handleDeleteDevice={handleDeleteDevice}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
 
         <div className="flex w-full h-full">
@@ -263,55 +317,6 @@ export function DeviceDetailsCard({
           </div>
         </div>
       </div>
-
-      {isEditModalOpen && (
-        <Modal setModalOpen={setIsEditModalOpen} title="Editar dispositivo">
-          <DeviceForm
-            device={device}
-            isPopover
-            setModalOpen={setIsEditModalOpen}
-          />
-        </Modal>
-      )}
-
-      {isAlertModalOpen && (
-        <Modal
-          setModalOpen={setIsAlertModalOpen}
-          title={isStolen ? 'Detalhes do alerta' : 'Criar alerta'}
-        >
-          <div className="py-5 pl-4">
-            {isStolen ? (
-              <>
-                <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
-                  Visualizar alerta
-                </span>
-                <AlertDetails
-                  id={id}
-                  status={status}
-                  handleDeviceRecovery={handleDeviceRecovery}
-                />
-              </>
-            ) : (
-              <>
-                <h2 className="font-bold">Preencha as informações</h2>
-                <MarkAsStolenForm
-                  id={id}
-                  isStolen={isStolen}
-                  setDevices={setDevices}
-                />
-              </>
-            )}
-          </div>
-        </Modal>
-      )}
-
-      {isDeleteModalOpen && (
-        <DeleteDeviceModal
-          id={id}
-          handleDeleteDevice={handleDeleteDevice}
-          setModalOpen={setIsDeleteModalOpen}
-        />
-      )}
     </>
   )
 }
@@ -319,7 +324,7 @@ export function DeviceDetailsCard({
 interface DeleteDeviceModalProps {
   id: string
   handleDeleteDevice: (id: string) => void
-  setModalOpen: (value: boolean) => void
+  setModalOpen?: (value: boolean) => void
 }
 
 function DeleteDeviceModal({
@@ -340,20 +345,25 @@ function DeleteDeviceModal({
           </p>
 
           <div className="flex gap-4 items-center justify-center">
-            <Button
-              variant="white"
-              className="rounded-lg ring-zinc-200 hover:ring-zinc-200"
-              onClick={() => setModalOpen(false)}
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant="red"
-              className="rounded-lg"
-              onClick={() => handleDeleteDevice(id)}
-            >
-              Confirmar
-            </Button>
+            <DialogClose asChild>
+              <Button
+                variant="white"
+                className="rounded-lg ring-zinc-200 hover:ring-zinc-200"
+                // onClick={() => setModalOpen(false)}
+              >
+                Cancelar
+              </Button>
+            </DialogClose>
+
+            <DialogClose asChild>
+              <Button
+                variant="red"
+                className="rounded-lg"
+                onClick={() => handleDeleteDevice(id)}
+              >
+                Confirmar
+              </Button>
+            </DialogClose>
           </div>
         </div>
       </div>

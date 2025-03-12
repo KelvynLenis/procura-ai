@@ -276,7 +276,7 @@ export function LoginForm() {
             Esqueceu sua senha?
           </Link>
 
-          <Button className="bg-primary text-white rounded-full w-44 text-lg py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">
+          <Button className="bg-primary text-white rounded-full w-44 text-lg py-4 shadow-none hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">
             Entrar
           </Button>
 
@@ -307,7 +307,7 @@ export function LoginForm() {
                 <Button
                   onClick={showLoadingToast}
                   type="button"
-                  className="bg-white text-primary rounded-full text-lg w-44 py-4 shadow-lg hover:bg-white hover:text-primary ring-1 ring-primary transition-all duration-300"
+                  className="bg-white text-primary rounded-full text-lg w-44 py-4 shadow-none hover:bg-primary hover:text-white ring-1 ring-primary transition-all duration-300"
                 >
                   Cadastre-se
                 </Button>
