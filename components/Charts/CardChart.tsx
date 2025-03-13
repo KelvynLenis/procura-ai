@@ -1,42 +1,47 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils'
 import registeredIcon from '../../assets/icons/registered-icon.png'
 import recoveredIcon from '../../assets/icons/recovered-icon.png'
 import theftIcon from '../../assets/icons/theft-icon.png'
+import lostIcon from '../../assets/icons/lost-icon.png'
+import robIcon from '../../assets/icons/rob-icon.png'
 import cities from '../../assets/icons/cities.png'
-import Image from "next/image";
-import { TiDeviceTablet } from "react-icons/ti";
+import Image from 'next/image'
+import { TiDeviceTablet } from 'react-icons/ti'
 
 interface CardChartProps {
-  variant: 'blue' | 'green' | 'red' | 'yellow' | 'city' | 'orange';
-  number: number;
-  title: string;
+  variant: 'blue' | 'green' | 'red' | 'yellow' | 'city' | 'orange'
+  number: number
+  title: string
 }
 
 export function CardChart({ variant, number, title }: CardChartProps) {
-
   function getIcon() {
     if (variant === 'blue') {
-      return <Image src={registeredIcon} alt="registered-icon" width={44} height={44} />
+      return (
+        <Image
+          src={registeredIcon}
+          alt="registered-icon"
+          width={44}
+          height={44}
+        />
+      )
     } else if (variant === 'green') {
-      return <Image src={recoveredIcon} alt="recovered-icon" width={44} height={44} />
+      return (
+        <Image
+          src={recoveredIcon}
+          alt="recovered-icon"
+          width={44}
+          height={44}
+        />
+      )
     } else if (variant === 'red') {
-      return <div className={cn("rounded-full p-1.5", "bg-red-400/20 text-red-600")}>
-        <TiDeviceTablet size={31} />
-      </div>
+      return <Image src={robIcon} alt="recovered-icon" width={44} height={44} />
     } else if (variant === 'city') {
       return <Image src={cities} alt="cities-icon" width={44} height={44} />
     } else if (variant === 'yellow') {
+      return <Image src={lostIcon} alt="theft-icon" width={44} height={44} />
+    } else if (variant === 'orange') {
       return <Image src={theftIcon} alt="theft-icon" width={44} height={44} />
-    }
-    else if (variant === 'orange') {
-      return <div className={cn("rounded-full p-1.5", "bg-orange-400/30 text-orange-600")}>
-        <TiDeviceTablet size={31} />
-      </div>
-    }
-    else {
-      return <div className={cn("rounded-full p-1.5", "bg-yellow-400/20 text-yellow-600")}>
-        <TiDeviceTablet size={31} />
-      </div>
     }
   }
 
@@ -53,12 +58,8 @@ export function CardChart({ variant, number, title }: CardChartProps) {
         </div> */}
         {getIcon()}
 
-        <span className="flex font-bold text-3xl">
-          {number}
-        </span>
-        <span className="flex w-32 font-semibold text-sm">
-          {title}
-        </span>
+        <span className="flex font-bold text-3xl">{number}</span>
+        <span className="flex w-32 font-semibold text-sm">{title}</span>
       </div>
     </>
   )

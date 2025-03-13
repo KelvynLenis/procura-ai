@@ -143,7 +143,6 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
     if (isFullScreen) {
       return window.innerWidth
     }
-    return 520
   }
 
   function setHeight() {

@@ -76,31 +76,6 @@ export function OccurrencesMap({
   function setWidth() {
     if (isFullScreen) {
       return window.innerWidth
-    } else {
-      if (!isInfoCardOpen) {
-        if (window.innerWidth >= 2560) {
-          return window.innerWidth * 0.9
-        } else if (window.innerWidth < 1200) {
-          return window.innerWidth * 0.85
-        } else if (window.innerWidth < 1440) {
-          return window.innerWidth * 0.9
-        } else if (window.innerWidth < 1700) {
-          return window.innerWidth * 0.9
-        } else if (window.innerWidth < 2560) {
-          return window.innerWidth * 0.8
-        }
-      } else if (isInfoCardOpen) {
-        if (window.innerWidth >= 2560) {
-          return window.innerWidth * 0.9
-        } else if (window.innerWidth < 1200) {
-          return window.innerWidth * 0.4
-        } else if (window.innerWidth <= 1700) {
-          return window.innerWidth * 0.75
-        } else if (window.innerWidth <= 2560) {
-          return window.innerWidth * 0.75
-        }
-      }
-      // return 700
     }
   }
 
