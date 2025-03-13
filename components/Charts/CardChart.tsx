@@ -12,17 +12,22 @@ interface CardChartProps {
   variant: 'blue' | 'green' | 'red' | 'yellow' | 'city' | 'orange'
   number: number
   title: string
+  className?: string
 }
 
-export function CardChart({ variant, number, title }: CardChartProps) {
+export function CardChart({
+  variant,
+  number,
+  title,
+  className,
+}: CardChartProps) {
   function getIcon() {
     if (variant === 'blue') {
       return (
         <Image
           src={registeredIcon}
           alt="registered-icon"
-          width={44}
-          height={44}
+          className="size-10 "
         />
       )
     } else if (variant === 'green') {
@@ -30,24 +35,44 @@ export function CardChart({ variant, number, title }: CardChartProps) {
         <Image
           src={recoveredIcon}
           alt="recovered-icon"
-          width={44}
-          height={44}
+          className="size-10 xl:size-11"
         />
       )
     } else if (variant === 'red') {
-      return <Image src={robIcon} alt="recovered-icon" width={44} height={44} />
+      return (
+        <Image
+          src={robIcon}
+          alt="recovered-icon"
+          className="size-10 xl:size-11"
+        />
+      )
     } else if (variant === 'city') {
-      return <Image src={cities} alt="cities-icon" width={44} height={44} />
+      return (
+        <Image src={cities} alt="cities-icon" className="size-10 xl:size-11" />
+      )
     } else if (variant === 'yellow') {
-      return <Image src={lostIcon} alt="theft-icon" width={44} height={44} />
+      return (
+        <Image src={lostIcon} alt="theft-icon" className="size-10 xl:size-11" />
+      )
     } else if (variant === 'orange') {
-      return <Image src={theftIcon} alt="theft-icon" width={44} height={44} />
+      return (
+        <Image
+          src={theftIcon}
+          alt="theft-icon"
+          className="size-10 xl:size-11"
+        />
+      )
     }
   }
 
   return (
     <>
-      <div className="flex justify-between w-72 h-24 rounded-xl items-center bg-white p-3 text-procura-ai-blue ring-1 ring-zinc-300">
+      <div
+        className={cn(
+          'flex justify-between w-40 h-24 gap-1 xl:gap-2 xl:w-64 2xl:w-72 rounded-xl items-center bg-white p-2 xl:p-4 text-procura-ai-blue ring-1 ring-zinc-300',
+          className
+        )}
+      >
         {/* <div className={cn(
           "rounded-full p-2 ",
           variant === 'blue' && "bg-procura-ai-blue/10 text-procura-ai-blue",
@@ -58,7 +83,7 @@ export function CardChart({ variant, number, title }: CardChartProps) {
         </div> */}
         {getIcon()}
 
-        <span className="flex font-bold text-3xl">{number}</span>
+        <span className="flex font-bold xl:text-3xl text-2xl">{number}</span>
         <span className="flex w-32 font-semibold text-sm">{title}</span>
       </div>
     </>

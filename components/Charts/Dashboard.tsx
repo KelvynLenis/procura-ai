@@ -880,7 +880,7 @@ export function Dashboard() {
           </DialogContent>
         </Dialog> */}
 
-        <div className="relative flex flex-col md:mr-2 self-start md:w-3/5 lg:w-[98%] xl:w-[98%] 2xl:w-[100%] bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center gap-4">
+        <div className="relative flex flex-col md:mr-2 self-start w-[100%] 2xl:w-[100%] bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center gap-4">
           <div className="flex justify-between">
             <h2 className="text-3xxl font-black text-procura-ai-blue">
               Localização de ocorrências
@@ -902,26 +902,30 @@ export function Dashboard() {
         </div>
 
         <div className="flex justify-around w-full">
-          <div className="grid grid-cols-2 w-3/5 self-center gap-11 justify-center">
+          <div className="grid grid-cols-2 w-1/2 self-start gap-1">
             <CardChart
               variant="blue"
               number={numberOfDevicesRegistered}
               title="Dispositivos cadastrados"
+              className="mb-10"
             />
             <CardChart
               variant="green"
               number={numberOfDevicesRecovered}
               title="Dispositivos recuperados"
+              className="mb-10"
             />
             <CardChart
               variant="red"
               number={numberOfDevicesRobbed}
               title="Dispositivos Roubados"
+              className="mb-10"
             />
             <CardChart
               variant="orange"
               number={numbeOfDevicesTheft}
               title="Dispositivos Furtados"
+              className="mb-10"
             />
             <CardChart
               variant="yellow"
@@ -935,7 +939,7 @@ export function Dashboard() {
             />
           </div>
 
-          <div className="flex flex-col gap-2 w-2/5 h-[380px] text-sm bg-white items-center justify-center  ring-1 ring-zinc-300 rounded-lg self-start">
+          <div className="flex flex-col gap-2 w-1/2 h-[380px] text-sm bg-white items-center justify-center  ring-1 ring-zinc-300 rounded-lg self-start">
             <span className="flex flex-col w-full items-start px-4 pt-3 font-semibold text-procura-ai-blue">
               Dispositivos cadastrados
               <span className="font-medium">Status</span>

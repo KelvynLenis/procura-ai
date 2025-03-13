@@ -24,7 +24,7 @@ export default function Button({
   return (
     <button
       className={cn(
-        'rounded-full text-center items-center justify-center flex w-fit px-2 py-2 transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0',
+        'rounded-full drop-shadow text-base font-semibold text-center items-center justify-center flex w-fit px-6 py-2 transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0',
         variant === 'blue' &&
           'bg-procura-ai-blue text-white hover:bg-white hover:text-procura-ai-blue hover:ring-1 hover:ring-procura-ai-blue',
         variant === 'white' &&

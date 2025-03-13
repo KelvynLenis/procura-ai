@@ -6,8 +6,8 @@ import feat1 from '../assets/icons/feat1.svg'
 import feat2 from '../assets/icons/feat2.svg'
 import feat3 from '../assets/icons/feat3.svg'
 import feat4 from '../assets/icons/feat4.svg'
-import { Button } from './ui/button'
 import Link from 'next/link'
+import Button from './Button'
 
 export function Features() {
   return (
@@ -34,7 +34,7 @@ export function Features() {
         <div className="flex flex-col gap-2">
           <span className="font-bold text-primary flex gap-1 text-lg">
             <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">
-              1.
+              1
             </span>
             Crie uma conta
           </span>
@@ -49,7 +49,7 @@ export function Features() {
         <div className="flex flex-col gap-2">
           <span className="font-bold text-primary flex gap-1 text-lg">
             <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">
-              2.
+              2
             </span>
             Cadastre seus dispositivos
           </span>
@@ -64,7 +64,7 @@ export function Features() {
         <div className="flex flex-col gap-2">
           <span className="font-bold text-primary flex gap-1 text-lg">
             <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">
-              3.
+              3
             </span>
             Crie um alerta
           </span>
@@ -80,7 +80,7 @@ export function Features() {
         <div className="flex flex-col gap-2">
           <span className="font-bold text-primary flex gap-1 text-lg">
             <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">
-              4.
+              4
             </span>
             Autoridades são acionadas
           </span>
@@ -96,7 +96,7 @@ export function Features() {
 
       <div className="flex flex-col items-center gap-7">
         <Link href={'/cadastro'}>
-          <Button className="bg-primary w-fit text-white rounded-full text-xl shadow-none px-10 py-7 shadow-zinc-800 hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary">
+          <Button variant="blue" className="self-center px-9 py-4 text-xl">
             Cadastre-se
           </Button>
         </Link>

@@ -6,6 +6,10 @@
   box-shadow: 4px 4px 10px 2px rgba(0, 0, 0, 0.25);
 }
 
+.drop-shadow {
+  box-shadow: 4px 4px 20px 0 rgba(0, 0, 0, 0.25);
+}
+
 .shadow-form {
   box-shadow: 1px 1px 6.5px 2px rgba(0, 0, 0, 0.25);
 }
