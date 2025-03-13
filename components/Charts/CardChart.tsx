@@ -69,7 +69,7 @@ export function CardChart({
     <>
       <div
         className={cn(
-          'flex justify-between w-40 h-24 gap-1 xl:gap-2 xl:w-64 2xl:w-72 rounded-xl items-center bg-white p-2 xl:p-4 text-procura-ai-blue ring-1 ring-zinc-300',
+          'flex justify-between w-40 h-24 gap-1 xl:gap-2 xl:w-56 2xl:w-72 rounded-xl items-center bg-white p-2 xl:p-4 text-procura-ai-blue ring-1 ring-zinc-300',
           className
         )}
       >
