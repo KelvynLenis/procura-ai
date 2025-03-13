@@ -1,7 +1,7 @@
 import Image from 'next/image'
-import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import landingImages from '../assets/images/landing-images.png'
+import Button from './Button'
 
 export function Hero() {
   return (
@@ -27,7 +27,7 @@ export function Hero() {
           agora e fique um passo à frente
         </span>
         <Link href={'/login'} className="self-center flex lg:self-end">
-          <Button className="bg-primary font-semibold text-xl text-white rounded-full w-fit px-8 py-6 self-center shadow-none hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary">
+          <Button variant="blue" className="px-9 py-4 text-xl">
             Entrar
           </Button>
         </Link>

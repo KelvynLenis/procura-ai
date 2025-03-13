@@ -880,7 +880,7 @@ export function Dashboard() {
           </DialogContent>
         </Dialog> */}
 
-        <div className="relative flex flex-col md:mr-2 self-start md:w-3/5 lg:w-[98%] xl:w-[98%] 2xl:w-[98%] bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center gap-3">
+        <div className="relative flex flex-col md:mr-2 self-start w-[100%] 2xl:w-[100%] bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center gap-4">
           <div className="flex justify-between">
             <h2 className="text-3xxl font-black text-procura-ai-blue">
               Localização de ocorrências
@@ -896,46 +896,50 @@ export function Dashboard() {
             </button>
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex w-full gap-4">
             <OccurrencesMap occurences={occurrences} />
           </div>
         </div>
 
-        <div className="flex self-start gap-5 lg:w-[90%] xl:w-[95%] xl:mx-auto 2xl:self-center 2xl:w-full justify-center flex-wrap">
-          <CardChart
-            variant="blue"
-            number={numberOfDevicesRegistered}
-            title="Dispositivos cadastrados"
-          />
-          <CardChart
-            variant="green"
-            number={numberOfDevicesRecovered}
-            title="Dispositivos recuperados"
-          />
-          <CardChart
-            variant="red"
-            number={numberOfDevicesRobbed}
-            title="Dispositivos Roubados"
-          />
-          <CardChart
-            variant="orange"
-            number={numbeOfDevicesTheft}
-            title="Dispositivos Furtados"
-          />
-          <CardChart
-            variant="yellow"
-            number={numberOfDevicesLost}
-            title="Dispositivos Perdidos"
-          />
-          <CardChart
-            variant="city"
-            number={1}
-            title="Municípios monitoriados"
-          />
-        </div>
+        <div className="flex justify-around w-full">
+          <div className="grid grid-cols-2 w-1/2 self-start gap-1">
+            <CardChart
+              variant="blue"
+              number={numberOfDevicesRegistered}
+              title="Dispositivos cadastrados"
+              className="mb-10"
+            />
+            <CardChart
+              variant="green"
+              number={numberOfDevicesRecovered}
+              title="Dispositivos recuperados"
+              className="mb-10"
+            />
+            <CardChart
+              variant="red"
+              number={numberOfDevicesRobbed}
+              title="Dispositivos Roubados"
+              className="mb-10"
+            />
+            <CardChart
+              variant="orange"
+              number={numbeOfDevicesTheft}
+              title="Dispositivos Furtados"
+              className="mb-10"
+            />
+            <CardChart
+              variant="yellow"
+              number={numberOfDevicesLost}
+              title="Dispositivos Perdidos"
+            />
+            <CardChart
+              variant="city"
+              number={1}
+              title="Municípios monitoriados"
+            />
+          </div>
 
-        <div className="flex w-full justify-around flex-wrap gap-5">
-          <div className="flex flex-col gap-2 w-[540px] h-[380px] text-sm bg-white items-center justify-center  ring-1 ring-zinc-300 rounded-lg self-start">
+          <div className="flex flex-col gap-2 w-1/2 h-[380px] text-sm bg-white items-center justify-center  ring-1 ring-zinc-300 rounded-lg self-start">
             <span className="flex flex-col w-full items-start px-4 pt-3 font-semibold text-procura-ai-blue">
               Dispositivos cadastrados
               <span className="font-medium">Status</span>
@@ -948,26 +952,27 @@ export function Dashboard() {
               numbeOfDevicesTheft={numbeOfDevicesTheft}
             />
           </div>
+        </div>
 
-          <div className="flex flex-col gap-2 w-[540px] h-fit p-3 text-sm bg-white items-center justify-center ring-1 ring-zinc-300 rounded-lg self-start">
-            <div className="flex justify-between w-full">
-              <span className="flex flex-col w-full items-start self-start font-semibold text-procura-ai-blue">
-                Ocorrências distribuídas nos bairros de João Pessoa
-              </span>
-              <button
-                type="button"
-                onClick={() => showLoadingToast('map/bairros')}
-                title="Clique para expandir"
-                className="flex text-procura-ai-blue items-center gap-1 text-sm hover:opacity-50"
-              >
-                Expandir
-                <BiExpandAlt size={18} />
-              </button>
-            </div>
+        {/* <div className="flex w-full justify-around flex-wrap gap-5"></div> */}
+        <div className="flex flex-col gap-2 w-full h-fit p-3 text-sm bg-white items-center justify-center ring-1 ring-zinc-300 rounded-lg self-start">
+          <div className="flex justify-between w-full">
+            <span className="flex flex-col w-full items-start self-start font-semibold text-procura-ai-blue">
+              Ocorrências distribuídas nos bairros de João Pessoa
+            </span>
+            <button
+              type="button"
+              onClick={() => showLoadingToast('map/bairros')}
+              title="Clique para expandir"
+              className="flex text-procura-ai-blue items-center gap-1 text-sm hover:opacity-50"
+            >
+              Expandir
+              <BiExpandAlt size={18} />
+            </button>
+          </div>
 
-            <div className="w-full h-full flex items-center justify-center bg-zinc-200 rounded-sm relative">
-              <OccurrencesHeatMap districts={districts} />
-            </div>
+          <div className="w-full h-full flex items-center justify-center bg-zinc-200 rounded-sm relative">
+            <OccurrencesHeatMap districts={districts} />
           </div>
         </div>
       </div>

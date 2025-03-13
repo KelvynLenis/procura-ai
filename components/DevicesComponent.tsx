@@ -115,11 +115,7 @@ export function DevicesComponent() {
           isLoading={isLoading}
         />
         <Link href={'/cadastrar-dispositivo'} className="self-end">
-          <Button
-            onClick={showLoadingToast}
-            variant="blue"
-            className="self-end w-44 my-3"
-          >
+          <Button onClick={showLoadingToast} variant="blue" className="my-3">
             Cadastrar dispositivo
           </Button>
         </Link>

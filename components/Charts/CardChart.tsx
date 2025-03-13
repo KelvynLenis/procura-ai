@@ -1,48 +1,78 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils'
 import registeredIcon from '../../assets/icons/registered-icon.png'
 import recoveredIcon from '../../assets/icons/recovered-icon.png'
 import theftIcon from '../../assets/icons/theft-icon.png'
+import lostIcon from '../../assets/icons/lost-icon.png'
+import robIcon from '../../assets/icons/rob-icon.png'
 import cities from '../../assets/icons/cities.png'
-import Image from "next/image";
-import { TiDeviceTablet } from "react-icons/ti";
+import Image from 'next/image'
+import { TiDeviceTablet } from 'react-icons/ti'
 
 interface CardChartProps {
-  variant: 'blue' | 'green' | 'red' | 'yellow' | 'city' | 'orange';
-  number: number;
-  title: string;
+  variant: 'blue' | 'green' | 'red' | 'yellow' | 'city' | 'orange'
+  number: number
+  title: string
+  className?: string
 }
 
-export function CardChart({ variant, number, title }: CardChartProps) {
-
+export function CardChart({
+  variant,
+  number,
+  title,
+  className,
+}: CardChartProps) {
   function getIcon() {
     if (variant === 'blue') {
-      return <Image src={registeredIcon} alt="registered-icon" width={44} height={44} />
+      return (
+        <Image
+          src={registeredIcon}
+          alt="registered-icon"
+          className="size-10 "
+        />
+      )
     } else if (variant === 'green') {
-      return <Image src={recoveredIcon} alt="recovered-icon" width={44} height={44} />
+      return (
+        <Image
+          src={recoveredIcon}
+          alt="recovered-icon"
+          className="size-10 xl:size-11"
+        />
+      )
     } else if (variant === 'red') {
-      return <div className={cn("rounded-full p-1.5", "bg-red-400/20 text-red-600")}>
-        <TiDeviceTablet size={31} />
-      </div>
+      return (
+        <Image
+          src={robIcon}
+          alt="recovered-icon"
+          className="size-10 xl:size-11"
+        />
+      )
     } else if (variant === 'city') {
-      return <Image src={cities} alt="cities-icon" width={44} height={44} />
+      return (
+        <Image src={cities} alt="cities-icon" className="size-10 xl:size-11" />
+      )
     } else if (variant === 'yellow') {
-      return <Image src={theftIcon} alt="theft-icon" width={44} height={44} />
-    }
-    else if (variant === 'orange') {
-      return <div className={cn("rounded-full p-1.5", "bg-orange-400/30 text-orange-600")}>
-        <TiDeviceTablet size={31} />
-      </div>
-    }
-    else {
-      return <div className={cn("rounded-full p-1.5", "bg-yellow-400/20 text-yellow-600")}>
-        <TiDeviceTablet size={31} />
-      </div>
+      return (
+        <Image src={lostIcon} alt="theft-icon" className="size-10 xl:size-11" />
+      )
+    } else if (variant === 'orange') {
+      return (
+        <Image
+          src={theftIcon}
+          alt="theft-icon"
+          className="size-10 xl:size-11"
+        />
+      )
     }
   }
 
   return (
     <>
-      <div className="flex justify-between w-72 h-24 rounded-xl items-center bg-white p-3 text-procura-ai-blue ring-1 ring-zinc-300">
+      <div
+        className={cn(
+          'flex justify-between xl:justify-center w-40 h-24 gap-1 xl:gap-2 xl:w-56 2xl:w-72 rounded-xl items-center bg-white p-2 xl:p-4 text-procura-ai-blue ring-1 ring-zinc-300',
+          className
+        )}
+      >
         {/* <div className={cn(
           "rounded-full p-2 ",
           variant === 'blue' && "bg-procura-ai-blue/10 text-procura-ai-blue",
@@ -53,12 +83,12 @@ export function CardChart({ variant, number, title }: CardChartProps) {
         </div> */}
         {getIcon()}
 
-        <span className="flex font-bold text-3xl">
-          {number}
-        </span>
-        <span className="flex w-32 font-semibold text-sm">
-          {title}
-        </span>
+        <div className="flex flex-col xl:flex-row items-center w-28 justify-center xl:gap-3">
+          <span className="flex font-bold xl:text-3xl text-2xl">{number}</span>
+          <span className="flex w-32 font-semibold text-sm text-center">
+            {title}
+          </span>
+        </div>
       </div>
     </>
   )

@@ -14,11 +14,11 @@ import Link from 'next/link'
 import { account } from '@/lib/appwrite'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { Button } from '../ui/button'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-toastify'
 import { LoadingToast } from '../LoadingToast'
+import Button from '../Button'
 
 interface LoginFormProps {
   admin?: boolean
@@ -276,7 +276,7 @@ export function LoginForm() {
             Esqueceu sua senha?
           </Link>
 
-          <Button className="bg-primary text-white rounded-full w-44 text-lg py-4 shadow-none hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">
+          <Button type="submit" variant="blue">
             Entrar
           </Button>
 
@@ -304,11 +304,7 @@ export function LoginForm() {
                 href={'/cadastro'}
                 className="flex items-center justify-center"
               >
-                <Button
-                  onClick={showLoadingToast}
-                  type="button"
-                  className="bg-white text-primary rounded-full text-lg w-44 py-4 shadow-none hover:bg-primary hover:text-white ring-1 ring-primary transition-all duration-300"
-                >
+                <Button onClick={showLoadingToast} type="button" variant="blue">
                   Cadastre-se
                 </Button>
               </Link>
