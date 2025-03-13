@@ -69,7 +69,7 @@ export function CardChart({
     <>
       <div
         className={cn(
-          'flex justify-between w-40 h-24 gap-1 xl:gap-2 xl:w-56 2xl:w-72 rounded-xl items-center bg-white p-2 xl:p-4 text-procura-ai-blue ring-1 ring-zinc-300',
+          'flex justify-between xl:justify-center w-40 h-24 gap-1 xl:gap-2 xl:w-56 2xl:w-72 rounded-xl items-center bg-white p-2 xl:p-4 text-procura-ai-blue ring-1 ring-zinc-300',
           className
         )}
       >
@@ -83,8 +83,12 @@ export function CardChart({
         </div> */}
         {getIcon()}
 
-        <span className="flex font-bold xl:text-3xl text-2xl">{number}</span>
-        <span className="flex w-32 font-semibold text-sm">{title}</span>
+        <div className="flex flex-col xl:flex-row items-center w-28 justify-center xl:gap-3">
+          <span className="flex font-bold xl:text-3xl text-2xl">{number}</span>
+          <span className="flex w-32 font-semibold text-sm text-center">
+            {title}
+          </span>
+        </div>
       </div>
     </>
   )

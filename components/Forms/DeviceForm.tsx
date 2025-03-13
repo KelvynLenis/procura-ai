@@ -687,7 +687,7 @@ export function DeviceForm({
           </div>
         ) : (
           <div className="flex justify-between w-full">
-            <Button type="submit" variant="blue" className="px-3">
+            <Button type="submit" variant="blue">
               Cadastrar dispositivo
             </Button>
             {isPopover ? (

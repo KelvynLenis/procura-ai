@@ -67,7 +67,7 @@ export function DevicesList({
             <Button
               onClick={showLoadingToast}
               variant="blue"
-              className="self-end w-44 my-3"
+              className="my-3 text-sm"
             >
               Cadastrar dispositivo
             </Button>
