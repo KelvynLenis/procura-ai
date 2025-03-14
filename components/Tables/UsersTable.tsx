@@ -216,7 +216,7 @@ export function UsersTable() {
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet('Alertas');
 
-      worksheet.addRow(headers).font = {name:'Arial', bold: true };
+      worksheet.addRow(headers).font = {name:'Arial', bold: true ,color: { argb: 'FFFFFF' }};
 
       data.forEach(row => {
         worksheet.addRow(row).font = { name: 'Arial' };
