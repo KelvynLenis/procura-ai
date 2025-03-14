@@ -261,7 +261,7 @@ export function MarkAsStolenMapWithGeocoding({
           type: 'line',
           source: 'paraiba',
           paint: {
-            'line-color': '#ff0000',
+            'line-color': '#002E72',
             'line-width': 3,
           },
         })

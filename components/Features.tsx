@@ -11,7 +11,7 @@ import Button from './Button'
 
 export function Features() {
   return (
-    <section className="w-full h-full lg:h-[700px] gap-20 relative flex flex-col items-center px-4 z-0 py-32">
+    <section className="w-full h-full lg:h-[700px] gap-6 lg:gap-20 relative flex flex-col items-center px-4 z-0 py-10 lg:py-32">
       <Image
         src={shapesLeft}
         alt="formas esquerda"
@@ -24,13 +24,13 @@ export function Features() {
       />
 
       <div className="flex flex-col w-full gap-2">
-        <h1 className="text-4xl text-primary font-medium self-center">
+        <h1 className="text-xl md:text-4xl text-primary font-medium self-center">
           Veja como é fácil se proteger
         </h1>
         <Image src={circlesLine} alt="feat1" className="self-center" />
       </div>
 
-      <div className="flex lg:flex-wrap flex-col lg:flex-row gap-4">
+      <div className="flex md:flex-wrap flex-col items-center justify-center md:flex-row gap-4">
         <div className="flex flex-col gap-2">
           <span className="font-bold text-primary flex gap-1 text-lg">
             <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">
@@ -96,11 +96,14 @@ export function Features() {
 
       <div className="flex flex-col items-center gap-7">
         <Link href={'/cadastro'}>
-          <Button variant="blue" className="self-center px-9 py-4 text-xl">
+          <Button
+            variant="blue"
+            className="self-center px-4 py-2 md:px-9 md:py-4 text-xl"
+          >
             Cadastre-se
           </Button>
         </Link>
-        <span className="text-2xl font-bold text-procura-ai-black">
+        <span className="text-lg md:text-2xl font-bold text-procura-ai-black">
           Disponível em breve nas principais lojas de aplicativos
         </span>
       </div>
