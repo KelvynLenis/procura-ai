@@ -268,13 +268,13 @@ export function LoginForm() {
               </FormItem>
             )}
           />
-          <Link
-            href="/forgot-password"
+          <span
             aria-disabled
-            className="underline aria-disabled:text-zinc-400 self-start pl-10 text-sm "
+            title="Em breve"
+            className="underline cursor-default aria-disabled:text-zinc-400 self-start pl-10 text-sm "
           >
             Esqueceu sua senha?
-          </Link>
+          </span>
 
           <Button type="submit" variant="blue">
             Entrar
