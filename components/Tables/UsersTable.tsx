@@ -19,6 +19,7 @@ import { toast } from 'react-toastify'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog'
 import { LoadingToast } from '@/components/LoadingToast'
 import type { Device } from '@/utils/types'
+import * as ExcelJS from 'exceljs'
 
 interface User {
   $id: string
@@ -118,7 +119,6 @@ export function UsersTable() {
       const limit = 25
       let total = Number.POSITIVE_INFINITY
 
-      // Buscar todos os dispositivos e usuários primeiro
       const [devices, users] = await Promise.all([
         fetchAllDevices(),
         fetchAllUsers(),
@@ -188,7 +188,7 @@ export function UsersTable() {
         'LOCALIZAÇÃO',
         'ID DISTRITO',
       ]
-      const csvData = allAlerts.map(alert => {
+      const data = allAlerts.map(alert => {
         const device = deviceMap[alert.id_device!]
         const user = device ? userMap[device.auth_id] : null
 
@@ -198,8 +198,8 @@ export function UsersTable() {
           alert.description || '',
           alert.time_event
             ? new Date(alert.time_event).toLocaleString('pt-BR', {
-                timeZone: 'UTC',
-              })
+              timeZone: 'UTC',
+            })
             : '',
           alert.is_alert_on ? 'Sim' : 'Não',
           alert.id_device || '',
@@ -213,33 +213,62 @@ export function UsersTable() {
         ]
       })
 
-      const csvContent = [
-        headers.join(';'),
-        ...csvData.map(row => row.join(';')),
-      ].join('\n')
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Alertas');
 
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-      const link = document.createElement('a')
-      const url = URL.createObjectURL(blob)
+      worksheet.addRow(headers).font = {name:'Arial', bold: true ,color: { argb: 'FFFFFF' }};
 
-      link.setAttribute('href', url)
-      link.setAttribute('download', 'alertas.csv')
-      link.style.visibility = 'hidden'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
+      data.forEach(row => {
+        worksheet.addRow(row).font = { name: 'Arial' };
+      });
+
+      worksheet.columns = [
+        { header: 'ID', width: 40 },
+        { header: 'TIPO', width: 20 },
+        { header: 'DESCRIÇÃO', width: 35 },
+        { header: 'DATA', width: 20 },
+        { header: 'ALERTA ATIVO', width: 15 },
+        { header: 'ID DISPOSITIVO', width: 40 },
+        { header: 'MODELO', width: 30 },
+        { header: 'ID USUÁRIO', width: 40 },
+        { header: 'NOME USUÁRIO', width: 30 },
+        { header: 'LOCALIZAÇÃO', width: 40 },
+        { header: 'ID DISTRITO', width: 40 },
+      ];
+
+      worksheet.getRow(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '002e72' }
+      };
+
+      worksheet.views = [{ state: 'frozen', xSplit: 0, ySplit: 1 }];
+
+      worksheet.autoFilter = 'A1:G1';
+
+      const xlsxBuffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([xlsxBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = URL.createObjectURL(blob);
+
 
       setIsExporting(false)
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'alertas.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
       toast.success('Alertas exportados com sucesso!', {
         autoClose: 3000,
-      })
+      });
     } catch (error) {
-      setIsExporting(false)
-      console.error('Erro ao exportar CSV:', error)
-      toast.error('Erro ao exportar CSV. Tente novamente.', {
+      setIsExporting(false);
+      console.error('Erro ao exportar XLSX:', error);
+      toast.error('Erro ao exportar XLSX. Tente novamente.', {
         autoClose: 3000,
-      })
+      });
     }
   }
 
@@ -256,7 +285,7 @@ export function UsersTable() {
         'ACESSADO EM',
         'CRIADO EM',
       ]
-      const csvData = allUsers.map(user => [
+      const data = allUsers.map(user => [
         user.user_id || '',
         user.cpf || '',
         user.name || '',
@@ -264,40 +293,65 @@ export function UsersTable() {
         user.type || '',
         user.accessed_at
           ? new Date(user.accessed_at).toLocaleString('pt-BR', {
-              timeZone: 'UTC',
-            })
+            timeZone: 'UTC',
+          })
           : '',
         user.$createdAt
           ? new Date(user.$createdAt).toLocaleString('pt-BR', {
-              timeZone: 'UTC',
-            })
+            timeZone: 'UTC',
+          })
           : '',
       ])
 
-      const csvContent = [
-        headers.join(';'),
-        ...csvData.map(row => row.join(';')),
-      ].join('\n')
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Usuários');
 
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-      const link = document.createElement('a')
-      const url = URL.createObjectURL(blob)
+      worksheet.addRow(headers).font = {name:'Arial', bold: true, color: { argb: 'FFFFFF' }};
 
-      link.setAttribute('href', url)
-      link.setAttribute('download', 'usuarios.csv')
-      link.style.visibility = 'hidden'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
+      data.forEach(row => {
+        worksheet.addRow(row).font = { name: 'Arial' };
+      });
 
-      setIsExporting(false)
+
+      worksheet.columns = [
+        { header: 'ID', width: 40 },
+        { header: 'CPF', width: 15 },
+        { header: 'NOME', width: 30 },
+        { header: 'EMAIL', width: 35 },
+        { header: 'PERFIL', width: 20 },
+        { header: 'ACESSADO EM', width: 20 },
+        { header: 'CRIADO EM', width: 20 },
+      ];
+
+
+      worksheet.getRow(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '002e72' }
+      };
+
+      worksheet.views = [{ state: 'frozen', xSplit: 0, ySplit: 1 }];
+
+      worksheet.autoFilter = 'A1:G1';
+
+      const xlsxBuffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([xlsxBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'usuarios.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
       toast.success('Usuários exportados com sucesso!', {
         autoClose: 3000,
-      })
+      });
     } catch (error) {
-      console.error('Erro ao exportar CSV:', error)
-      toast.error('Erro ao exportar CSV. Tente novamente.')
+      console.error('Erro ao exportar XLSX:', error);
+      toast.error('Erro ao exportar XLSX. Tente novamente.');
     }
   }
 
