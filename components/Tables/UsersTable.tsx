@@ -239,7 +239,7 @@ export function UsersTable() {
       worksheet.getRow(1).fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: '4472C4' }
+        fgColor: { argb: '002e72' }
       };
 
       worksheet.views = [{ state: 'frozen', xSplit: 0, ySplit: 1 }];
@@ -326,7 +326,7 @@ export function UsersTable() {
       worksheet.getRow(1).fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: '4472C4' }
+        fgColor: { argb: '002e72' }
       };
 
       worksheet.views = [{ state: 'frozen', xSplit: 0, ySplit: 1 }];
