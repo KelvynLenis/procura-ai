@@ -32,7 +32,8 @@ export function NotificationButton({ notifications, setNotifications }: {
 
   const toggleList = () => setIsListVisible((prev) => !prev);
 
-  const filteredNotifications = notifications.filter(n => n.type !== "Recuperado");
+  const filteredNotifications = notifications
+  // const filteredNotifications = notifications.filter(n => n.type !== "Recuperado");
 
 
   return (
