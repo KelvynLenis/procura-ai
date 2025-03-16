@@ -37,6 +37,7 @@
     "cmdk": "^1.0.0",
     "color-scales": "^3.0.2",
     "date-fns": "^4.1.0",
+    "exceljs": "^4.4.0",
     "firebase": "^11.0.2",
     "input-otp": "^1.4.1",
     "leaflet": "^1.9.4",
