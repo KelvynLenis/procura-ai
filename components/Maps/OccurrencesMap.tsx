@@ -84,6 +84,10 @@ export function OccurrencesMap({
       return window.innerHeight
     }
 
+    if (size.width >= 1024) {
+      return 400
+    }
+
     return 340
   }
 

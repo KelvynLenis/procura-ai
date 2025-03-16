@@ -198,8 +198,8 @@ export function UsersTable() {
           alert.description || '',
           alert.time_event
             ? new Date(alert.time_event).toLocaleString('pt-BR', {
-              timeZone: 'UTC',
-            })
+                timeZone: 'UTC',
+              })
             : '',
           alert.is_alert_on ? 'Sim' : 'Não',
           alert.id_device || '',
@@ -213,14 +213,18 @@ export function UsersTable() {
         ]
       })
 
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Alertas');
+      const workbook = new ExcelJS.Workbook()
+      const worksheet = workbook.addWorksheet('Alertas')
 
-      worksheet.addRow(headers).font = {name:'Arial', bold: true ,color: { argb: 'FFFFFF' }};
+      worksheet.addRow(headers).font = {
+        name: 'Arial',
+        bold: true,
+        color: { argb: 'FFFFFF' },
+      }
 
       data.forEach(row => {
-        worksheet.addRow(row).font = { name: 'Arial' };
-      });
+        worksheet.addRow(row).font = { name: 'Arial' }
+      })
 
       worksheet.columns = [
         { header: 'ID', width: 40 },
@@ -234,41 +238,42 @@ export function UsersTable() {
         { header: 'NOME USUÁRIO', width: 30 },
         { header: 'LOCALIZAÇÃO', width: 40 },
         { header: 'ID DISTRITO', width: 40 },
-      ];
+      ]
 
       worksheet.getRow(1).fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: '002e72' }
-      };
+        fgColor: { argb: '002e72' },
+      }
 
-      worksheet.views = [{ state: 'frozen', xSplit: 0, ySplit: 1 }];
+      worksheet.views = [{ state: 'frozen', xSplit: 0, ySplit: 1 }]
 
-      worksheet.autoFilter = 'A1:G1';
+      worksheet.autoFilter = 'A1:G1'
 
-      const xlsxBuffer = await workbook.xlsx.writeBuffer();
-      const blob = new Blob([xlsxBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const url = URL.createObjectURL(blob);
-
+      const xlsxBuffer = await workbook.xlsx.writeBuffer()
+      const blob = new Blob([xlsxBuffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      })
+      const url = URL.createObjectURL(blob)
 
       setIsExporting(false)
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'alertas.xlsx';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      const link = document.createElement('a')
+      link.href = url
+      link.download = 'alertas.xlsx'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
 
       toast.success('Alertas exportados com sucesso!', {
         autoClose: 3000,
-      });
+      })
     } catch (error) {
-      setIsExporting(false);
-      console.error('Erro ao exportar XLSX:', error);
+      setIsExporting(false)
+      console.error('Erro ao exportar XLSX:', error)
       toast.error('Erro ao exportar XLSX. Tente novamente.', {
         autoClose: 3000,
-      });
+      })
     }
   }
 
@@ -293,25 +298,28 @@ export function UsersTable() {
         user.type || '',
         user.accessed_at
           ? new Date(user.accessed_at).toLocaleString('pt-BR', {
-            timeZone: 'UTC',
-          })
+              timeZone: 'UTC',
+            })
           : '',
         user.$createdAt
           ? new Date(user.$createdAt).toLocaleString('pt-BR', {
-            timeZone: 'UTC',
-          })
+              timeZone: 'UTC',
+            })
           : '',
       ])
 
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Usuários');
+      const workbook = new ExcelJS.Workbook()
+      const worksheet = workbook.addWorksheet('Usuários')
 
-      worksheet.addRow(headers).font = {name:'Arial', bold: true, color: { argb: 'FFFFFF' }};
+      worksheet.addRow(headers).font = {
+        name: 'Arial',
+        bold: true,
+        color: { argb: 'FFFFFF' },
+      }
 
       data.forEach(row => {
-        worksheet.addRow(row).font = { name: 'Arial' };
-      });
-
+        worksheet.addRow(row).font = { name: 'Arial' }
+      })
 
       worksheet.columns = [
         { header: 'ID', width: 40 },
@@ -321,37 +329,38 @@ export function UsersTable() {
         { header: 'PERFIL', width: 20 },
         { header: 'ACESSADO EM', width: 20 },
         { header: 'CRIADO EM', width: 20 },
-      ];
-
+      ]
 
       worksheet.getRow(1).fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: '002e72' }
-      };
+        fgColor: { argb: '002e72' },
+      }
 
-      worksheet.views = [{ state: 'frozen', xSplit: 0, ySplit: 1 }];
+      worksheet.views = [{ state: 'frozen', xSplit: 0, ySplit: 1 }]
 
-      worksheet.autoFilter = 'A1:G1';
+      worksheet.autoFilter = 'A1:G1'
 
-      const xlsxBuffer = await workbook.xlsx.writeBuffer();
-      const blob = new Blob([xlsxBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const url = URL.createObjectURL(blob);
+      const xlsxBuffer = await workbook.xlsx.writeBuffer()
+      const blob = new Blob([xlsxBuffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      })
+      const url = URL.createObjectURL(blob)
 
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'usuarios.xlsx';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      const link = document.createElement('a')
+      link.href = url
+      link.download = 'usuarios.xlsx'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
 
       toast.success('Usuários exportados com sucesso!', {
         autoClose: 3000,
-      });
+      })
     } catch (error) {
-      console.error('Erro ao exportar XLSX:', error);
-      toast.error('Erro ao exportar XLSX. Tente novamente.');
+      console.error('Erro ao exportar XLSX:', error)
+      toast.error('Erro ao exportar XLSX. Tente novamente.')
     }
   }
 
