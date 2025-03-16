@@ -70,40 +70,54 @@ export function EventDetails({
           <span className="w-full h-0.5 bg-zinc-300" />
         </div>
 
-        <div className="flex gap-4">
-          <div className={cn('flex flex-col gap-4', fullScreenMap && 'gap-1')}>
-            <span>Tipo: </span>
-            <span>Modelo:</span>
-            <span>Marca:</span>
-            <span>Proprietário:</span>
-            <span>Data e hora:</span>
-            <span>Detalhe:</span>
-          </div>
-
-          <div className={cn('flex flex-col gap-4', fullScreenMap && 'gap-1')}>
-            <span className="font-semibold">
+        <div className={cn('flex flex-col gap-4', fullScreenMap && 'gap-1')}>
+          <div className="flex w-96">
+            <span className="lg:w-24 xl:w-32">Tipo: </span>
+            <span className="font-semibold flex w-1/3 xl:w-1/2 1.5xl:w-3/5 2xl:flex-1">
               {formatType(occurence.event.type)}
             </span>
-            <span className="font-semibold">
+          </div>
+
+          <div className="flex w-96">
+            <span className="lg:w-24 xl:w-32">Modelo:</span>
+            <span className="font-semibold w-1/3 flex">
               {occurence.device.phone_model}
             </span>
-            <span className="font-semibold">{occurence.device.brand}</span>
+          </div>
+
+          <div className="flex w-96">
+            <span className="lg:w-24 xl:w-32">Marca:</span>
+            <span className="font-semibold flex w-1/3 xl:w-1/2 1.5xl:w-3/5 2xl:flex-1">
+              {occurence.device.brand}
+            </span>
+          </div>
+
+          <div className="flex w-96">
+            <span className="lg:w-24 xl:w-32">Proprietário:</span>
             <span
               className={cn(
                 occurence.user.name === 'Usuário excluído'
                   ? 'italic text-zinc-500'
-                  : 'font-semibold'
+                  : 'font-semibold flex w-1/3 xl:w-1/2 1.5xl:w-3/5 2xl:flex-1'
               )}
             >
               {occurence.user.name}
             </span>
-            <span className="font-semibold">
+          </div>
+
+          <div className="flex w-96">
+            <span className="lg:w-24 xl:w-32">Data e hora:</span>
+            <span className="font-semibold flex w-1/3 xl:w-1/2 1.5xl:w-3/5 2xl:flex-1">
               {formatDateTime(occurence.event.time_event)}
             </span>
+          </div>
+
+          <div className="flex w-96">
+            <span className="lg:w-24 xl:w-32">Detalhe:</span>
             <span
               className={cn(
                 occurence.event.description
-                  ? 'font-semibold'
+                  ? 'font-semibold flex w-1/3 xl:w-1/2 1.5xl:w-3/5 2xl:flex-1 text-justify'
                   : 'italic text-zinc-500'
               )}
             >
@@ -113,6 +127,11 @@ export function EventDetails({
             </span>
           </div>
         </div>
+        {/* <div className="flex gap-4">
+          <div
+            className={cn('flex flex-col gap-4', fullScreenMap && 'gap-1')}
+          ></div>
+        </div> */}
       </div>
     </div>
   )
