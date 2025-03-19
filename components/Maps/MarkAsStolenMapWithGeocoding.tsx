@@ -20,10 +20,12 @@ interface MarkAsStolenMapWithGeocodingProps {
 maptilersdk.config.apiKey = process.env.NEXT_PUBLIC_MAPTILER_API_KEY!
 const apiKey = process.env.NEXT_PUBLIC_MAPTILER_API_KEY!
 
-const geoJsonLink =
-  'https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI'
-const geoJsonPB =
-  'https://api.maptiler.com/data/96b36f41-dc19-4a71-a05d-69317764eba8/features.json?key=QKbTJZdA6lXljsicnOEI'
+// const geoJsonLink =
+//   'https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI'
+// const geoJsonPB =
+//   'https://api.maptiler.com/data/96b36f41-dc19-4a71-a05d-69317764eba8/features.json?key=QKbTJZdA6lXljsicnOEI'
+const geoJsonLink = process.env.NEXT_PUBLIC_NEIGHBORHOODS_GEOJSON_URL
+const geoJsonPB = process.env.NEXT_PUBLIC_PARAIBA_GEOJSON_URL
 
 export function MarkAsStolenMapWithGeocoding({
   setPosition,
@@ -105,6 +107,7 @@ export function MarkAsStolenMapWithGeocoding({
       for (const feature of geoJsonData.features) {
         if (turf.booleanPointInPolygon(clickedPoint, feature)) {
           foundFeature = feature
+          console.log(feature)
           break
         }
       }

@@ -7,8 +7,7 @@ interface MarkAsStolenMapProps {
   position: [number, number]
 }
 
-const geoJsonLink =
-  'https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI'
+const geoJsonLink = process.env.NEXT_PUBLIC_NEIGHBORHOODS_GEOJSON_URL
 
 export function ViewOccurrenceMap({ position }: MarkAsStolenMapProps) {
   const [geoJsonData, setGeoJsonData] = useState<any>(null)

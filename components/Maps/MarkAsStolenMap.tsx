@@ -1,9 +1,9 @@
 'use client'
 
-import React, { useEffect, useState } from "react"
-import { GeoJsonLoader, Map, Marker, ZoomControl } from "pigeon-maps"
-import * as turf from "@turf/turf"
-import { toast } from "react-toastify"
+import React, { useEffect, useState } from 'react'
+import { GeoJsonLoader, Map, Marker, ZoomControl } from 'pigeon-maps'
+import * as turf from '@turf/turf'
+import { toast } from 'react-toastify'
 
 interface MarkAsStolenMapProps {
   position?: [number, number] | undefined
@@ -11,10 +11,14 @@ interface MarkAsStolenMapProps {
   setNeighborhoodId: (districtId: string) => void
 }
 
-const geoJsonLink = "https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI"
-const geoJsonPB = "https://api.maptiler.com/data/96b36f41-dc19-4a71-a05d-69317764eba8/features.json?key=QKbTJZdA6lXljsicnOEI"
+const geoJsonLink = process.env.NEXT_PUBLIC_NEIGHBORHOODS_GEOJSON_URL
+const geoJsonPB = process.env.NEXT_PUBLIC_PARAIBA_GEOJSON_URL
 
-export function MarkAsStolenMap({ position, setPosition, setNeighborhoodId }: MarkAsStolenMapProps) {
+export function MarkAsStolenMap({
+  position,
+  setPosition,
+  setNeighborhoodId,
+}: MarkAsStolenMapProps) {
   const [isMarkerOn, setIsMarkerOn] = useState(false)
   const [coordinates, setCoordinates] = useState<[number, number]>([0, 0])
   const [geoJsonData, setGeoJsonData] = useState<any>(null)
@@ -36,9 +40,9 @@ export function MarkAsStolenMap({ position, setPosition, setNeighborhoodId }: Ma
         })
       }
 
-      window.addEventListener("resize", handleResize)
+      window.addEventListener('resize', handleResize)
       handleResize()
-      return () => window.removeEventListener("resize", handleResize)
+      return () => window.removeEventListener('resize', handleResize)
     }, [])
 
     return windowSize
@@ -46,19 +50,19 @@ export function MarkAsStolenMap({ position, setPosition, setNeighborhoodId }: Ma
 
   useEffect(() => {
     fetch(geoJsonLink)
-      .then((res) => res.json())
-      .then((data) => setGeoJsonData(data))
+      .then(res => res.json())
+      .then(data => setGeoJsonData(data))
 
     fetch(geoJsonPB)
-      .then((res) => res.json())
-      .then((data) => setGeoJsonPBData(data))
+      .then(res => res.json())
+      .then(data => setGeoJsonPBData(data))
   }, [])
 
   async function getNeighborhoodId(cod_neighborhood: Number) {
     const params = new URLSearchParams({
-      "queries[0]": JSON.stringify({
-        method: "equal",
-        attribute: "cod_neighborhood",
+      'queries[0]': JSON.stringify({
+        method: 'equal',
+        attribute: 'cod_neighborhood',
         values: [Number(cod_neighborhood)],
       }),
     })
@@ -67,28 +71,33 @@ export function MarkAsStolenMap({ position, setPosition, setNeighborhoodId }: Ma
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DISTRICT}/documents?${params.toString()}`,
         {
-          method: "GET",
+          method: 'GET',
           headers: {
-            "Content-Type": "application/json",
-            "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
           },
-          cache: "no-store",
+          cache: 'no-store',
         }
-      );
+      )
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch stolen devices: ${await response.text()}`);
+        throw new Error(
+          `Failed to fetch stolen devices: ${await response.text()}`
+        )
       }
 
-      const result = await response.json();
+      const result = await response.json()
 
       return result.documents[0].$id
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
   }
 
-  async function handleGetPosition({ event, latLng }: { event: MouseEvent | undefined; latLng: [number, number] }) {
+  async function handleGetPosition({
+    event,
+    latLng,
+  }: { event: MouseEvent | undefined; latLng: [number, number] }) {
     const clickedPoint = turf.point([latLng[1], latLng[0]])
     console.log(clickedPoint)
 
@@ -105,7 +114,7 @@ export function MarkAsStolenMap({ position, setPosition, setNeighborhoodId }: Ma
     }
 
     if (!foundState) {
-      toast.error("O local informado não está dentro da Paraíba")
+      toast.error('O local informado não está dentro da Paraíba')
       return
     }
 
@@ -119,8 +128,9 @@ export function MarkAsStolenMap({ position, setPosition, setNeighborhoodId }: Ma
     }
 
     if (foundFeature) {
-
-      const neighborhoodId = await getNeighborhoodId(Number(foundFeature.properties.cod_bairro))
+      const neighborhoodId = await getNeighborhoodId(
+        Number(foundFeature.properties.cod_bairro)
+      )
       setNeighborhoodId(neighborhoodId)
     }
 
@@ -130,29 +140,21 @@ export function MarkAsStolenMap({ position, setPosition, setNeighborhoodId }: Ma
   }
 
   function setWidth() {
-
     if (window.innerWidth >= 1700) {
       return 1000
-    }
-    else if (window.innerWidth >= 1600) {
+    } else if (window.innerWidth >= 1600) {
       return 600
-    }
-    else if (window.innerWidth >= 1400) {
+    } else if (window.innerWidth >= 1400) {
       return 600
-    }
-    else if (window.innerWidth >= 1200) {
+    } else if (window.innerWidth >= 1200) {
       return 600
-    }
-    else if (window.innerWidth >= 1024) {
+    } else if (window.innerWidth >= 1024) {
       return 600
-    }
-    else if (window.innerWidth >= 768) {
+    } else if (window.innerWidth >= 768) {
       return 420
-    }
-    else if (window.innerWidth >= 425) {
+    } else if (window.innerWidth >= 425) {
       return 280
-    }
-    else {
+    } else {
       return 260
     }
   }
@@ -180,7 +182,9 @@ export function MarkAsStolenMap({ position, setPosition, setNeighborhoodId }: Ma
             : { fill: "#FEFF73", opacity: 0.0, strokeWidth: '2', stroke: '#000' }
         }
       /> */}
-      {isMarkerOn && <Marker width={50} anchor={coordinates} color={"#FF0000"} />}
+      {isMarkerOn && (
+        <Marker width={50} anchor={coordinates} color={'#FF0000'} />
+      )}
     </Map>
   )
 }
