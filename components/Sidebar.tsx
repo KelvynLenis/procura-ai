@@ -32,6 +32,7 @@ import { LoadingToast } from './LoadingToast'
 import { toast } from 'react-toastify'
 import logo from '../assets/icons/logo-text-2.svg'
 import Image from 'next/image'
+import { RiAlarmWarningFill } from 'react-icons/ri'
 
 const devicesGroup = [
   {
