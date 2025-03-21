@@ -5,6 +5,7 @@ import { Pencil, Trash2 } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -14,14 +15,21 @@ import { cn } from '@/lib/utils'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import { deleteContact } from '@/functions/contact/delete-contact'
 import { toast } from 'react-toastify'
+import { ConctactForm } from '../Forms/ConctactForm'
 
 interface ContactRowProps {
   contact: Contact
   index: number
-  setContact: React.Dispatch<React.SetStateAction<Contact[]>>
+  setContacts: React.Dispatch<React.SetStateAction<Contact[]>>
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function ContactRow({ contact, index, setContact }: ContactRowProps) {
+export function ContactRow({
+  contact,
+  index,
+  setContacts,
+  setIsOpen,
+}: ContactRowProps) {
   async function handleDelete() {
     toast.promise(deleteContact(contact.$id), {
       pending: 'Excluindo contato...',
@@ -29,7 +37,7 @@ export function ContactRow({ contact, index, setContact }: ContactRowProps) {
       error: 'Erro ao excluir contato',
     })
 
-    setContact(prevContacts => prevContacts.filter(c => c.$id !== contact.$id))
+    setContacts(prevContacts => prevContacts.filter(c => c.$id !== contact.$id))
   }
 
   return (
@@ -84,14 +92,22 @@ export function ContactRow({ contact, index, setContact }: ContactRowProps) {
                 >
                   <Pencil size={26} />
                   <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
-                    Exibir informações
+                    Editar contato
                   </span>
                 </button>
               </DialogTrigger>
-              <DialogContent className="flex flex-col py-10 gap-10 w-[70%]">
+              <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Detalhes do contato</DialogTitle>
+                  <DialogTitle>Editar contato</DialogTitle>
+                  <DialogDescription>
+                    Edite as informações do contato.
+                  </DialogDescription>
                 </DialogHeader>
+                <ConctactForm
+                  contact={contact}
+                  setContacts={setContacts}
+                  setIsOpen={setIsOpen}
+                />
               </DialogContent>
             </Dialog>
 

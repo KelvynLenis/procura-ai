@@ -26,42 +26,64 @@ import { toast } from 'react-toastify'
 import type { Contact } from '@/types'
 import { listContacts } from '@/functions/contact/list-contacts'
 import { validatePhoneNumber } from '@/lib/utils'
-
-const formSchema = z
-  .object({
-    contact_name: z.string().min(1, {
-      message: 'O nome é obrigatório.',
-    }),
-    email: z.string().email().optional(),
-    contact_number: z.string().min(1, {
-      message: 'O número de contato é obrigatório.',
-    }),
-  })
-  .refine(data => validatePhoneNumber(data.contact_number), {
-    path: ['contact_number'], // Indica onde mostrar o erro
-    message: 'O número de celular deve conter 11 dígitos numéricos.',
-  })
+import { updateContact } from '@/functions/contact/update-contact'
 
 interface ConctactFormProps {
+  contact?: Contact
   setContacts: React.Dispatch<React.SetStateAction<Contact[]>>
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function ConctactForm({ setContacts, setIsOpen }: ConctactFormProps) {
+export function ConctactForm({
+  contact,
+  setContacts,
+  setIsOpen,
+}: ConctactFormProps) {
+  const formSchema = z
+    .object({
+      contact_name: z.string().min(1, {
+        message: 'O nome é obrigatório.',
+      }),
+      email: z.string().email().optional(),
+      contact_number: z.string().min(1, {
+        message: 'O número de contato é obrigatório.',
+      }),
+    })
+    .refine(data => validatePhoneNumber(data.contact_number), {
+      path: ['contact_number'], // Indica onde mostrar o erro
+      message: 'O número de celular deve conter 11 dígitos numéricos.',
+    })
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      datetime: '',
-      description: '',
-      type: '',
-      coordinates: [0, 0],
-      id_district: '',
+      contact_name: contact?.name_contact || '',
+      email: contact?.email || '',
+      contact_number: contact?.number_contact || '',
     },
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: {
+    contact_name: string
+    email?: string
+    contact_number: string
+  }) {
+    console.log(values)
     const callFunction = async () => {
       try {
+        if (contact) {
+          const updatedContact = await updateContact({
+            id: contact.$id,
+            values,
+          })
+
+          if (updatedContact) {
+            setIsOpen(false)
+            toast.success('Contato atualizado com sucesso!')
+          }
+          return
+        }
+
         const contacts = await listContacts()
 
         if (contacts.length >= 3) {
@@ -84,7 +106,7 @@ export function ConctactForm({ setContacts, setIsOpen }: ConctactFormProps) {
     }
 
     toast.promise(callFunction(), {
-      pending: 'Criando contato...',
+      pending: 'Salvando contato...',
     })
   }
 

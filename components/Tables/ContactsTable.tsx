@@ -104,7 +104,8 @@ export function ContactsTable() {
                 key={index}
                 index={index}
                 contact={contact}
-                setContact={setContacts}
+                setContacts={setContacts}
+                setIsOpen={setIsDialogOpen}
               />
             ))
           ) : (
