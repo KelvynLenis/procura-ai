@@ -44,7 +44,7 @@ export function ConctactForm({
       contact_name: z.string().min(1, {
         message: 'O nome é obrigatório.',
       }),
-      email: z.string().email().optional(),
+      contact_email: z.string().optional(),
       contact_number: z.string().min(1, {
         message: 'O número de contato é obrigatório.',
       }),
@@ -58,29 +58,33 @@ export function ConctactForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       contact_name: contact?.name_contact || '',
-      email: contact?.email || '',
+      contact_email: contact?.email_contact || '',
       contact_number: contact?.number_contact || '',
     },
   })
 
-  async function onSubmit(values: {
-    contact_name: string
-    email?: string
-    contact_number: string
-  }) {
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(contact)
+
     const callFunction = async () => {
       try {
         if (contact) {
           const updatedContact = await updateContact({
-            id: contact.$id,
+            id: contact?.$id!,
             values,
           })
 
           if (updatedContact) {
             setIsOpen(false)
             toast.success('Contato atualizado com sucesso!')
+
+            setContacts(prevContacts =>
+              prevContacts.map(c =>
+                c.$id === contact.$id ? updatedContact : c
+              )
+            )
           }
+
           return
         }
 
@@ -101,7 +105,7 @@ export function ConctactForm({
         }
       } catch (error) {
         console.error('Error:', error)
-        toast.error('Erro ao criar contato')
+        toast.error('Erro ao salvar o contato')
       }
     }
 
@@ -220,7 +224,7 @@ export function ConctactForm({
 
           <FormField
             control={form.control}
-            name="type"
+            name="contact_email"
             render={({ field }) => (
               <FormItem className="flex flex-col w-full">
                 <FormLabel className="w-fit text-center items-center flex">

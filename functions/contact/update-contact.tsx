@@ -4,7 +4,7 @@ import { getUserId } from '../user/get-user-id'
 interface UpdateContactProps {
   values: {
     contact_name: string
-    email?: string
+    contact_email?: string
     contact_number: string
   }
   id: string
@@ -21,10 +21,9 @@ export async function updateContact({ values, id }: UpdateContactProps) {
           'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
         },
         body: JSON.stringify({
-          documentId: uuidv4(),
           data: {
             name_contact: values.contact_name,
-            email: values.email,
+            email_contact: values.contact_email,
             number_contact: values.contact_number,
           },
         }),

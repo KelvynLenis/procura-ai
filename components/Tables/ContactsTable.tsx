@@ -3,7 +3,6 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -17,19 +16,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination'
 import { useEffect, useState } from 'react'
 import { Skeleton } from '../ui/skeleton'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import type { Contact } from '@/types'
 import { ContactRow } from './ContactRow'
 import Button from '../Button'
@@ -46,11 +34,13 @@ export function ContactsTable() {
       const contactsResponse = await listContacts()
 
       setContacts(contactsResponse)
+
+      console.log(contactsResponse)
+
+      setLoading(false)
     }
 
     getContacts()
-
-    setLoading(false)
   }, [])
 
   return (
@@ -105,7 +95,6 @@ export function ContactsTable() {
                 index={index}
                 contact={contact}
                 setContacts={setContacts}
-                setIsOpen={setIsDialogOpen}
               />
             ))
           ) : (

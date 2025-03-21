@@ -16,20 +16,17 @@ import { ConfirmationDialog } from '../ConfirmationDialog'
 import { deleteContact } from '@/functions/contact/delete-contact'
 import { toast } from 'react-toastify'
 import { ConctactForm } from '../Forms/ConctactForm'
+import { useState } from 'react'
 
 interface ContactRowProps {
   contact: Contact
   index: number
   setContacts: React.Dispatch<React.SetStateAction<Contact[]>>
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function ContactRow({
-  contact,
-  index,
-  setContacts,
-  setIsOpen,
-}: ContactRowProps) {
+export function ContactRow({ contact, index, setContacts }: ContactRowProps) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+
   async function handleDelete() {
     toast.promise(deleteContact(contact.$id), {
       pending: 'Excluindo contato...',
@@ -52,7 +49,7 @@ export function ContactRow({
           </div>
         </TableCell>
         <TableCell className="font-bold text-lg break-words">
-          {contact.email || 'Não informado'}
+          {contact.email_contact || 'Não informado'}
         </TableCell>
         <TableCell className={cn('font-bold break-words')}>
           <span
@@ -84,7 +81,7 @@ export function ContactRow({
               </DialogContent>
             </Dialog> */}
 
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <button
                   type="button"
@@ -106,7 +103,7 @@ export function ContactRow({
                 <ConctactForm
                   contact={contact}
                   setContacts={setContacts}
-                  setIsOpen={setIsOpen}
+                  setIsOpen={setIsDialogOpen}
                 />
               </DialogContent>
             </Dialog>

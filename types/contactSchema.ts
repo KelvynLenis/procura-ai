@@ -8,7 +8,7 @@ const ContactSchema = z.object({
   $permissions: z.array(z.string()),
   $updatedAt: z.string().datetime(),
   name_contact: z.string(),
-  email: z.string().optional(),
+  email_contact: z.string().optional(),
   number_contact: z.string(),
   user_id: z.string(),
 })

@@ -4,7 +4,7 @@ import { getUserId } from '../user/get-user-id'
 interface CreateContactProps {
   values: {
     contact_name: string
-    email?: string
+    contact_email?: string
     contact_number: string
   }
 }
@@ -24,7 +24,7 @@ export async function createContact({ values }: CreateContactProps) {
           documentId: uuidv4(),
           data: {
             name_contact: values.contact_name,
-            email: values.email,
+            email_contact: values.contact_email,
             number_contact: values.contact_number,
             user_id: userId,
           },
