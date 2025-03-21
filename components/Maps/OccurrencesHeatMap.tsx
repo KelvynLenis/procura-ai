@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import type { District } from '@/utils/types'
+import type { District } from '@/types'
 import { usePathname } from 'next/navigation'
 import { Map, GeoJsonLoader, Overlay } from 'pigeon-maps'
 import { useState } from 'react'

@@ -1,5 +1,5 @@
 import { cn, formatDateTime } from '@/lib/utils'
-import { DeviceProps, type EventProps } from '@/utils/types'
+import { DeviceProps, type EventProps } from '@/types'
 import { X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'

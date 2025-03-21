@@ -9,7 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Skeleton } from '@/components/ui/skeleton'
-import type { DeviceProps } from '@/utils/types'
+import type { DeviceProps } from '@/types'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { DeviceRow } from './DeviceRow'

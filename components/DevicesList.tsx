@@ -1,6 +1,6 @@
 'use client'
 
-import type { DeviceProps } from '@/utils/types'
+import type { DeviceProps } from '@/types'
 import { DeviceItem } from './DeviceItem'
 import { Skeleton } from './ui/skeleton'
 import Link from 'next/link'

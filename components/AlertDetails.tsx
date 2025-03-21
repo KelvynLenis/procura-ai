@@ -1,4 +1,4 @@
-import type { Event } from '@/utils/types'
+import type { Event } from '@/types'
 import { useEffect, useState } from 'react'
 import { ViewOccurrenceMap } from './Maps/ViewOccurrenceMap'
 import { cn, formatDateTime } from '@/lib/utils'

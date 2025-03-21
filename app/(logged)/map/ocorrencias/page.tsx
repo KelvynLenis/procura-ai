@@ -1,5 +1,5 @@
 import { OccurrencesMap } from '@/components/Maps/OccurrencesMap'
-import { Device, Event } from '@/utils/types'
+import { Device, Event } from '@/types'
 import Link from 'next/link'
 import { TbArrowsMinimize } from 'react-icons/tb'
 

@@ -1,4 +1,4 @@
-import type { DeviceProps } from '@/utils/types'
+import type { DeviceProps } from '@/types'
 import { ArrowLeft } from 'lucide-react'
 
 interface ModalProps {

@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils'
 import { IoIosWarning } from 'react-icons/io'
 import { MarkAsStolenForm } from './Forms/MarkAsStolenForm'
-import type { DeviceProps } from '@/utils/types'
+import type { DeviceProps } from '@/types'
 import { Trash2 } from 'lucide-react'
 import { AlertDetails } from './AlertDetails'
 import { toast } from 'react-toastify'

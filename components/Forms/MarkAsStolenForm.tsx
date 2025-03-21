@@ -20,7 +20,7 @@ import {
 import { ChevronDown } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { v4 as uuidv4 } from 'uuid'
-import { DeviceProps } from '@/utils/types'
+import type { DeviceProps } from '@/types'
 import { Textarea } from '../ui/textarea'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -77,6 +77,23 @@ export function MarkAsStolenForm({
 }: MarkAsStolenFormProps) {
   const size = useWindowSize()
 
+  const occurrenceTypes = [
+    { label: 'Furto simples', value: 'Furto simples' },
+    { label: 'Extravio ou Perda', value: 'Extravio ou Perda' },
+    { label: 'Roubo', value: 'Roubo' },
+  ] as const
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      datetime: '',
+      description: '',
+      type: '',
+      coordinates: [0, 0],
+      id_district: '',
+    },
+  })
+
   function useWindowSize() {
     const [windowSize, setWindowSize] = useState({
       width: 0,
@@ -98,23 +115,6 @@ export function MarkAsStolenForm({
 
     return windowSize
   }
-
-  const occurrenceTypes = [
-    { label: 'Furto simples', value: 'Furto simples' },
-    { label: 'Extravio ou Perda', value: 'Extravio ou Perda' },
-    { label: 'Roubo', value: 'Roubo' },
-  ] as const
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      datetime: '',
-      description: '',
-      type: '',
-      coordinates: [0, 0],
-      id_district: '',
-    },
-  })
 
   function handleSetPosition(coordinates: [number, number]) {
     form.setValue('coordinates', coordinates)
