@@ -54,7 +54,7 @@ const devicesGroup = [
 const securityGroup = [
   {
     title: 'Contatos de confiança',
-    url: 'contatos-de-confianca',
+    url: 'criar-alerta',
     icon: <PiUsersThreeFill />,
   },
   {
@@ -85,6 +85,19 @@ const itemsForAdmins = [
     title: 'Usuários cadastrados',
     url: 'usuarios',
     icon: <PiUsersThreeFill />,
+  },
+  {
+    title: 'Alertas de dispositivos',
+    url: 'alertas-de-dispositivos',
+    icon: <RiAlarmWarningFill />,
+  },
+]
+
+const perfilGroup = [
+  {
+    title: 'Editar perfil',
+    url: 'perfil',
+    icon: <Pencil />,
   },
 ]
 
@@ -157,7 +170,7 @@ export function AppSidebar({ admin }: SidebarProps) {
 
           <SidebarGroup className="flex flex-col gap-2 px-2">
             <SidebarGroupLabel className="uppercase">
-              Dispositivos
+              {admin ? 'Gerenciamento' : 'Dispositivos'}
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="flex flex-col gap-1 font-bold">
@@ -168,9 +181,12 @@ export function AppSidebar({ admin }: SidebarProps) {
                           asChild
                           isActive={pathname === item.url}
                         >
-                          <button onClick={() => showLoadingToast(item.url)}>
+                          <button
+                            type="button"
+                            onClick={() => showLoadingToast(item.url)}
+                          >
                             {pathname === item.url && (
-                              <span className="w-0.5 h-full absolute left-0 rounded-xl bg-procura-ai-dark-yellow"></span>
+                              <span className="w-0.5 h-full absolute left-0 rounded-xl bg-procura-ai-dark-yellow" />
                             )}
                             {item.icon}
                             <span>{item.title}</span>
@@ -184,9 +200,12 @@ export function AppSidebar({ admin }: SidebarProps) {
                           asChild
                           isActive={pathname === item.url}
                         >
-                          <button onClick={() => showLoadingToast(item.url)}>
+                          <button
+                            type="button"
+                            onClick={() => showLoadingToast(item.url)}
+                          >
                             {pathname === item.url && (
-                              <span className="w-0.5 h-full absolute left-0 rounded-xl bg-procura-ai-dark-yellow"></span>
+                              <span className="w-0.5 h-full absolute left-0 rounded-xl bg-procura-ai-dark-yellow" />
                             )}
                             {item.icon}
                             <span>{item.title}</span>
@@ -200,29 +219,50 @@ export function AppSidebar({ admin }: SidebarProps) {
 
           <SidebarGroup className="flex flex-col gap-2">
             <SidebarGroupLabel className="uppercase">
-              segurança
+              {admin ? 'Perfil' : 'Segurança'}
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="flex flex-col gap-1 font-bold">
-                {securityGroup.map(item => (
-                  <SidebarMenuItem key={item.title} title="Em breve">
-                    <SidebarMenuButton asChild isActive={pathname === item.url}>
-                      <button
-                        onClick={() => showLoadingToast(item.url)}
-                        disabled={
-                          item.title !== 'Contatos de confiança' ? true : false
-                        }
-                      >
-                        {item.icon}
-                        <span>{item.title}</span>
-                      </button>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {admin
+                  ? perfilGroup.map(item => (
+                      <SidebarMenuItem key={item.title} title="Em breve">
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === item.url}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => showLoadingToast(item.url)}
+                            disabled
+                          >
+                            {item.icon}
+                            <span>{item.title}</span>
+                          </button>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))
+                  : securityGroup.map(item => (
+                      <SidebarMenuItem key={item.title} title="Em breve">
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === item.url}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => showLoadingToast(item.url)}
+                            disabled
+                          >
+                            {item.icon}
+                            <span>{item.title}</span>
+                          </button>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
 
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
                     <button
+                      type="button"
                       onClick={logout}
                       className="text-red-500 flex gap-1 self-start"
                     >
