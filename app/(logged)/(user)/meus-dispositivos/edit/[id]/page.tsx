@@ -1,6 +1,6 @@
 import { DeviceForm } from '@/components/Forms/DeviceForm'
 import ProtectedRoute from '@/components/ProtectedRoute'
-import type { Device } from '@/utils/types'
+import type { Device } from '@/types'
 
 export default async function EditDevice({
   params,

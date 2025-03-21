@@ -6,7 +6,7 @@ import * as maptilersdk from '@maptiler/sdk'
 import * as turf from '@turf/turf'
 import { toast } from 'react-toastify'
 import { GeocodingControl } from '@maptiler/geocoding-control/maplibregl'
-import type { FeatureCollectionSchema } from '@/schemas/featureCollectionSchema'
+import type { FeatureCollectionSchema } from '@/types/featureCollectionSchema'
 import type { z } from 'zod'
 
 import '@maptiler/geocoding-control/style.css'
@@ -107,7 +107,6 @@ export function MarkAsStolenMapWithGeocoding({
       for (const feature of geoJsonData.features) {
         if (turf.booleanPointInPolygon(clickedPoint, feature)) {
           foundFeature = feature
-          console.log(feature)
           break
         }
       }

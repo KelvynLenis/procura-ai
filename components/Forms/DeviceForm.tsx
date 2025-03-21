@@ -43,7 +43,7 @@ import {
 
 import { account } from '@/lib/appwrite'
 import { phoneBrands } from '@/utils/ChartData'
-import { Device, type DeviceProps } from '@/utils/types'
+import { Device, type DeviceProps } from '@/types'
 import { cn, validateIMEI, validatePhoneNumber } from '@/lib/utils'
 
 import { Check, ChevronDown, Search } from 'lucide-react'

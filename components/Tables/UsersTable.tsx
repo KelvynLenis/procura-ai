@@ -18,7 +18,7 @@ import { cn } from '@/lib/utils'
 import { toast } from 'react-toastify'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog'
 import { LoadingToast } from '@/components/LoadingToast'
-import type { Device } from '@/utils/types'
+import type { Device } from '@/types'
 import * as ExcelJS from 'exceljs'
 
 interface User {

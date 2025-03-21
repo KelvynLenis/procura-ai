@@ -22,7 +22,7 @@ import { GoogleMapsEmbed } from '@next/third-parties/google'
 
 import { BiExpandAlt } from 'react-icons/bi'
 
-import type { Device, District, Event, EventProps } from '@/utils/types'
+import type { Device, District, Event, EventProps } from '@/types'
 import { useRouter } from 'next/navigation'
 import { LoadingToast } from '../LoadingToast'
 import PieChartRechart from './PieChartRechart'

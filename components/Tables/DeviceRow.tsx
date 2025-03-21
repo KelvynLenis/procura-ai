@@ -4,7 +4,7 @@ import { TableCell, TableRow } from '../ui/table'
 import { IoIosWarning } from 'react-icons/io'
 import { ImPencil } from 'react-icons/im'
 import Link from 'next/link'
-import type { DeviceProps } from '@/utils/types'
+import type { DeviceProps } from '@/types'
 import { cn } from '@/lib/utils'
 import { Eye, Trash2 } from 'lucide-react'
 import {

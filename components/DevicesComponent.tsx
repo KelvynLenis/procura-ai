@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { DeviceProps } from '@/utils/types'
+import type { DeviceProps } from '@/types'
 import { account } from '@/lib/appwrite'
 import Button from './Button'
 import Link from 'next/link'

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { Map, Marker, GeoJson, Overlay, ZoomControl } from 'pigeon-maps'
-import type { EventProps } from '@/utils/types'
+import type { EventProps } from '@/types'
 import { usePathname } from 'next/navigation'
 import { EventDetails } from '../EventDetails'
 import { Home, Triangle } from 'lucide-react'
