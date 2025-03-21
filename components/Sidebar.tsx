@@ -55,7 +55,7 @@ const devicesGroup = [
 const securityGroup = [
   {
     title: 'Contatos de confiança',
-    url: 'criar-alerta',
+    url: 'contatos-de-confianca',
     icon: <PiUsersThreeFill />,
   },
   {
@@ -234,7 +234,6 @@ export function AppSidebar({ admin }: SidebarProps) {
                           <button
                             type="button"
                             onClick={() => showLoadingToast(item.url)}
-                            disabled
                           >
                             {item.icon}
                             <span>{item.title}</span>
@@ -251,7 +250,7 @@ export function AppSidebar({ admin }: SidebarProps) {
                           <button
                             type="button"
                             onClick={() => showLoadingToast(item.url)}
-                            disabled
+                            disabled={item.url !== 'contatos-de-confianca'}
                           >
                             {item.icon}
                             <span>{item.title}</span>
