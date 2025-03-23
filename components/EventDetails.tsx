@@ -1,11 +1,11 @@
 import { cn, formatDateTime } from '@/lib/utils'
-import { DeviceProps, type EventProps } from '@/types'
+import { DeviceProps, type OccurrencesProps } from '@/types'
 import { X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 interface EventDetailsProps {
-  occurence: EventProps
+  occurence: OccurrencesProps
   closePopup: () => void
   styles?: string
 }

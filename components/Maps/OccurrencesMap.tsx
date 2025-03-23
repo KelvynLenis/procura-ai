@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { Map, Marker, GeoJson, Overlay, ZoomControl } from 'pigeon-maps'
-import type { EventProps } from '@/types'
+import type { OccurrencesProps } from '@/types'
 import { usePathname } from 'next/navigation'
 import { EventDetails } from '../EventDetails'
 import { Home, Triangle } from 'lucide-react'
@@ -20,7 +20,7 @@ interface OccurrencesMapProps {
   height?: number
   defaultCenter?: [number, number]
   defaultZoom?: number
-  occurences?: EventProps[]
+  occurences?: OccurrencesProps[]
 }
 
 export function OccurrencesMap({
@@ -31,13 +31,15 @@ export function OccurrencesMap({
   occurences,
 }: OccurrencesMapProps) {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false)
-  const [occurence, setOccurence] = useState<EventProps>({} as EventProps)
+  const [occurence, setOccurence] = useState<OccurrencesProps>(
+    {} as OccurrencesProps
+  )
   const [isInfoCardOpen, setIsInfoCardOpen] = useState(false)
 
   const pathname = usePathname().slice(1)
   const isFullScreen = pathname === 'map/ocorrencias'
 
-  function handleOpenPopup(event: EventProps) {
+  function handleOpenPopup(event: OccurrencesProps) {
     isFullScreen ? setIsOverlayOpen(true) : setIsInfoCardOpen(true)
     setOccurence(event)
   }

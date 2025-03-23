@@ -22,7 +22,7 @@ import { GoogleMapsEmbed } from '@next/third-parties/google'
 
 import { BiExpandAlt } from 'react-icons/bi'
 
-import type { Device, District, Event, EventProps } from '@/types'
+import type { Device, District, Event, OccurrencesProps } from '@/types'
 import { useRouter } from 'next/navigation'
 import { LoadingToast } from '../LoadingToast'
 import PieChartRechart from './PieChartRechart'
@@ -49,7 +49,7 @@ interface Events {
 }
 
 export function Dashboard() {
-  const [occurrences, setOccurrences] = useState<EventProps[]>([])
+  const [occurrences, setOccurrences] = useState<OccurrencesProps[]>([])
   const [numberOfDevicesRegistered, setNumberOfDevicesRegistered] = useState(0)
   const [numberOfDevicesRecovered, setNumberOfDevicesRecovered] = useState(0)
   const [numberOfDevicesRobbed, setNumberOfDevicesRobbed] = useState(0)

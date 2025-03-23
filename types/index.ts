@@ -16,7 +16,7 @@ export interface DeviceProps {
   status?: string
 }
 
-export interface EventProps {
+export interface OccurrencesProps {
   device: Device
   event: Event
   user: {
