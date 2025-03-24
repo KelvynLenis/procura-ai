@@ -8,11 +8,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+
 import { Skeleton } from '@/components/ui/skeleton'
 import type { DeviceProps, OccurrencesProps } from '@/types'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Check, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AlertRow } from './AlertRow'
+import { Input } from '@/components/Input'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Download, Search, Settings2 } from 'lucide-react'
+import { useState } from 'react'
+import { Label } from '../ui/label'
+import { Combobox } from '../Combobox'
+import { DatePickerWithRange } from '../Datepicker'
 
 interface DevicesTableProps {
   occurrences: OccurrencesProps[]
@@ -31,19 +39,127 @@ export function AlertsTable({
   limit,
   isLoading,
 }: DevicesTableProps) {
-  const data = {
-    phone_model: 'Redmi note 10',
-    brand: 'Xiaomi',
-    owner: 'Joaquim',
-    imei: '123456789012345',
-    status: 'Roubado',
-  }
+  const [isFilterOptionsOpen, setIsFilterOptionsOpen] = useState(false)
+  const [brandFilter, setBrandFilter] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
+  const [isBrandsPopoverOpen, setIsBrandsPopoverOpen] = useState(false)
+
+  const brandsOptions = [
+    { label: 'Apple', value: 'apple' },
+    { label: 'Samsung', value: 'samsung' },
+    { label: 'Xiaomi', value: 'xiaomi' },
+    { label: 'Oppo', value: 'oppo' },
+    { label: 'Vivo', value: 'vivo' },
+    { label: 'Motorola', value: 'motorola' },
+    { label: 'Realme', value: 'realme' },
+    { label: 'Asus', value: 'asus' },
+    { label: 'Huawei', value: 'huawei' },
+    { label: 'Sony', value: 'sony' },
+  ]
+
+  const statusOptions = [
+    { label: 'Regular', value: 'Regular' },
+    { label: 'Recuperado', value: 'Recuperado' },
+    { label: 'Roubado', value: 'Roubado' },
+    { label: 'Furtado', value: 'Furtado' },
+    { label: 'Perdido', value: 'Perdido' },
+  ]
 
   return (
     <>
+      <div className="flex w-full justify-between py-2 px-4">
+        <div className="relative">
+          <Search className="absolute top-5 -translate-y-1/2 left-2 text-[#232323]/90" />
+          <Input
+            placeholder="Pesquise por IMEI ou proprietário"
+            className="w-96 pl-10 ring-[#232323]/20 shadow-none"
+          />
+        </div>
+
+        <div className="flex gap-4">
+          <button
+            type="button"
+            className={cn(
+              'ring-1 ring-[#232323]/30 text-[#232323] flex items-center justify-center gap-3 h-fit px-4 py-2 rounded-lg',
+              isFilterOptionsOpen
+                ? 'bg-zinc-200 hover:bg-white'
+                : 'bg-white hover:bg-zinc-200'
+            )}
+            onClick={() => setIsFilterOptionsOpen(!isFilterOptionsOpen)}
+          >
+            <Settings2 size={18} />
+            Filtar
+          </button>
+
+          <button
+            type="button"
+            className="ring-1 ring-[#232323]/30 bg-white hover:bg-zinc-200 text-[#232323] flex items-center justify-center gap-3 h-fit px-4 py-2 rounded-lg"
+          >
+            <Download size={18} />
+            Exportar .CSV
+          </button>
+
+          <div className="flex items-center gap-2 ">
+            <Checkbox className="shadow-none rounded-[4px] border-[#232323]/90" />
+            Incluir dispositivos recuperados
+          </div>
+        </div>
+      </div>
+
+      {isFilterOptionsOpen && (
+        <div className="flex flex-col gap-4 px-4 py-3">
+          <div className="flex w-ful items-center justify-between">
+            <span>Filtre por</span>
+
+            <button
+              type="button"
+              className="ring-1 ring-[#232323]/30 bg-blue-600/20 hover:bg-zinc-200 text-[#232323] flex items-center justify-center gap-3 h-fit px-4 py-2 rounded-lg"
+              onClick={() => setIsFilterOptionsOpen(!isFilterOptionsOpen)}
+            >
+              <Settings2 size={18} />
+              Filtros
+            </button>
+          </div>
+
+          <div className="flex justify-around gap-10">
+            <div className="flex flex-col gap-2">
+              <Label>Status</Label>
+              <Combobox
+                options={statusOptions}
+                value={statusFilter}
+                onSelect={setStatusFilter}
+                placeholder="Status"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label>Marca do dispositivo</Label>
+              <Combobox
+                options={brandsOptions}
+                value={brandFilter}
+                onSelect={setBrandFilter}
+                placeholder="Marca"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label>Localização</Label>
+              <Combobox
+                options={brandsOptions}
+                value={brandFilter}
+                onSelect={setBrandFilter}
+                placeholder="Localização"
+                disabled
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label>Data</Label>
+              <DatePickerWithRange />
+            </div>
+          </div>
+        </div>
+      )}
       <Table className="bg-white shadow-lg rounded-xl self-center">
         <TableHeader className="bg-zinc-200/60 rounded-xl">
-          <TableRow>
+          <TableRow className="ring-1 ring-zinc-200/60 border-y border-[#232323]/20">
             <TableHead className="text-black/80 text-lg font-medium pl-5">
               ID
             </TableHead>

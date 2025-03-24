@@ -22,6 +22,7 @@ export interface OccurrencesProps {
   user: {
     name: string
     email: string
+    cpf: string
   }
 }
 

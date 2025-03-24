@@ -22,7 +22,8 @@ export async function joinDevicesEventsUsers() {
         event: recentEvent,
         user: {
           name: ownerInfo?.name || 'Usuário excluído',
-          email: ownerInfo?.email || 'N/A',
+          email: ownerInfo?.email || 'Sem email',
+          cpf: ownerInfo?.cpf || 'Sem CPF',
         },
       }
     })
