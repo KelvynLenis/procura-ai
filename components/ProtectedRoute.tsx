@@ -25,7 +25,7 @@ export default function ProtectedRoute({
     const checkUserAuthentication = async () => {
       try {
         const user = await account.get() // Verifica se o usuário está autenticado
-        
+
         // Verifica o status e permissões do usuário
         const userStatus = await checkUserStatus(user.$id)
 
@@ -33,6 +33,12 @@ export default function ProtectedRoute({
         if (admin && !userStatus.isAdmin) {
           toast.error('Acesso negado: Permissão de administrador necessária')
           router.push('/login')
+          return
+        }
+
+        if (!admin && userStatus.isAdmin) {
+          toast.error('Acesso negado: Permissão de usuário necessária')
+          router.push('/dashboard')
           return
         }
 
