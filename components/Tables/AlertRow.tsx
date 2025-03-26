@@ -54,7 +54,7 @@ export function AlertRow({ index, occurrence }: AlertRowProps) {
         <TableCell className="w-24">
           <span
             className={cn(
-              'rounded-md w-20 flex items-center justify-center capitalize',
+              'rounded-md w-24 flex items-center justify-center capitalize',
               occurrence?.device.status === 'Roubado' &&
                 'bg-robbery-bg text-robbery-text p-1',
               occurrence?.device.status === 'Recuperado' &&
@@ -67,9 +67,7 @@ export function AlertRow({ index, occurrence }: AlertRowProps) {
                 'bg-lost-bg text-lost-text p-1'
             )}
           >
-            {occurrence?.device.status === 'Recuperado'
-              ? 'Regular'
-              : occurrence?.device.status.replace(' ', '')}
+            {occurrence?.device.status.replace(' ', '')}
           </span>
         </TableCell>
         <TableCell className="flex gap-2 items-center h-20 py-28 md:py-10 pr-7">

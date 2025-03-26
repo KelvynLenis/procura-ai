@@ -4,6 +4,8 @@ import type DeviceSchema from './deviceSchema'
 import type districtSchema from './districtSchema'
 import type EventSchema from './eventSchema'
 import type ContactSchema from './contactSchema'
+import type { QueryFilterSchema } from './queryFilter'
+import type { UserSchema } from './userSchema'
 
 export interface DeviceProps {
   $id?: string // ID do dispositivo
@@ -31,3 +33,5 @@ export type Event = z.infer<typeof EventSchema>
 export type District = z.infer<typeof districtSchema>
 export type cepSearchResponse = z.infer<typeof cepSearchResponseSchema>
 export type Contact = z.infer<typeof ContactSchema>
+export type QueryFilter = z.infer<typeof QueryFilterSchema>
+export type User = z.infer<typeof UserSchema>

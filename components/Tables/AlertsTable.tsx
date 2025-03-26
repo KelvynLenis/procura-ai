@@ -10,20 +10,23 @@ import {
 } from '@/components/ui/table'
 
 import { Skeleton } from '@/components/ui/skeleton'
-import type { DeviceProps, OccurrencesProps } from '@/types'
+import type { DeviceProps, OccurrencesProps, QueryFilter } from '@/types'
 import { Check, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, validateIMEI } from '@/lib/utils'
 import { AlertRow } from './AlertRow'
 import { Input } from '@/components/Input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Download, Search, Settings2 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Label } from '../ui/label'
 import { Combobox } from '../Combobox'
 import { DatePickerWithRange } from '../Datepicker'
+import {
+  joinDevicesEventsUsers,
+  joinUsersDevicesEvents,
+} from '@/functions/occurences/get-occurrences'
 
 interface DevicesTableProps {
-  occurrences: OccurrencesProps[]
   totalDevices?: number
   page?: number
   pages?: number
@@ -32,17 +35,39 @@ interface DevicesTableProps {
 }
 
 export function AlertsTable({
-  occurrences,
   totalDevices,
   page,
   pages,
   limit,
-  isLoading,
 }: DevicesTableProps) {
+  const [isLoading, setIsLoading] = useState(true)
   const [isFilterOptionsOpen, setIsFilterOptionsOpen] = useState(false)
-  const [brandFilter, setBrandFilter] = useState('')
-  const [statusFilter, setStatusFilter] = useState('')
   const [isBrandsPopoverOpen, setIsBrandsPopoverOpen] = useState(false)
+  const [filterInput, setFilterInput] = useState('')
+  const [countdownId, setcountdownId] = useState<NodeJS.Timeout>()
+  const [brandFilter, setBrandFilter] = useState<QueryFilter>({
+    method: 'equal',
+    attribute: 'brand',
+    values: [],
+  } as QueryFilter)
+  const [statusFilter, setStatusFilter] = useState<QueryFilter>({
+    method: 'equal',
+    attribute: 'status',
+    values: ['Roubado', 'Furtado', 'Perdido'],
+  } as QueryFilter)
+  const [imeiFilter, setImeiFilter] = useState<QueryFilter>({
+    method: 'equal',
+    attribute: 'imei',
+    values: [],
+  } as QueryFilter)
+  const [ownerFilter, setOwnerFilter] = useState({
+    method: 'equal',
+    attribute: 'name',
+    values: [],
+  } as QueryFilter)
+  const [occurrences, setOccurrences] = useState<OccurrencesProps[]>(
+    [] as OccurrencesProps[]
+  )
 
   const brandsOptions = [
     { label: 'Apple', value: 'apple' },
@@ -65,6 +90,107 @@ export function AlertsTable({
     { label: 'Perdido', value: 'Perdido' },
   ]
 
+  function handleSelectBrandsFilter(strings: string[]) {
+    setBrandFilter({
+      method: 'equal',
+      attribute: 'brand',
+      values: strings,
+    })
+  }
+
+  function handleSelectStatusFilter(strings: string[]) {
+    setStatusFilter({
+      method: 'equal',
+      attribute: 'status',
+      values: strings,
+    })
+  }
+
+  function handleInputFilter(value: string) {
+    clearTimeout(countdownId)
+
+    const timerId = setTimeout(() => {
+      if (value.length === 0) {
+        setImeiFilter({
+          method: 'equal',
+          attribute: 'imei',
+          values: [],
+        } as QueryFilter)
+
+        setOwnerFilter({
+          method: 'equal',
+          attribute: 'name',
+          values: [],
+        } as QueryFilter)
+
+        return
+      }
+
+      const isIMEI = /\d/.test(value)
+
+      if (isIMEI) {
+        setImeiFilter({
+          method: 'contains',
+          attribute: 'imei',
+          values: [value],
+        })
+
+        return
+      }
+
+      setOwnerFilter({
+        method: 'contains',
+        attribute: 'name',
+        values: [value],
+      })
+    }, 2000)
+
+    setcountdownId(timerId)
+  }
+
+  useEffect(() => {
+    setIsLoading(true)
+
+    async function getOccurrences() {
+      const deviceActiveFilters = [
+        ...(brandFilter.values.length > 0 ? [brandFilter] : []),
+        ...(statusFilter.values.length > 0 ? [statusFilter] : []),
+        ...(imeiFilter.values.length > 0 ? [imeiFilter] : []),
+      ]
+
+      const usersActiveFilters = [
+        ...(ownerFilter.values.length > 0 ? [ownerFilter] : []),
+      ]
+
+      const filterOptions = {
+        ...(deviceActiveFilters.length > 0
+          ? { devicesFilters: deviceActiveFilters }
+          : {}),
+      }
+
+      const occurrences = await joinDevicesEventsUsers(filterOptions)
+
+      if (ownerFilter.values.length > 0) {
+        const occurrencesFilteredByOwner = occurrences.filter(occurrence => {
+          const user = occurrence.user
+
+          return user.name
+            .toLowerCase()
+            .includes(ownerFilter.values[0].toLowerCase())
+        })
+
+        setOccurrences(occurrencesFilteredByOwner)
+        setIsLoading(false)
+        return
+      }
+
+      setOccurrences(occurrences)
+      setIsLoading(false)
+    }
+
+    getOccurrences()
+  }, [brandFilter, statusFilter, imeiFilter, ownerFilter])
+
   return (
     <>
       <div className="flex w-full justify-between py-2 px-4">
@@ -73,6 +199,7 @@ export function AlertsTable({
           <Input
             placeholder="Pesquise por IMEI ou proprietário"
             className="w-96 pl-10 ring-[#232323]/20 shadow-none"
+            onChange={e => handleInputFilter(e.target.value)}
           />
         </div>
 
@@ -114,7 +241,7 @@ export function AlertsTable({
             <button
               type="button"
               className="ring-1 ring-[#232323]/30 bg-blue-600/20 hover:bg-zinc-200 text-[#232323] flex items-center justify-center gap-3 h-fit px-4 py-2 rounded-lg"
-              onClick={() => setIsFilterOptionsOpen(!isFilterOptionsOpen)}
+              // onClick={() => setIsFilterOptionsOpen(!isFilterOptionsOpen)}
             >
               <Settings2 size={18} />
               Filtros
@@ -126,8 +253,8 @@ export function AlertsTable({
               <Label>Status</Label>
               <Combobox
                 options={statusOptions}
-                value={statusFilter}
-                onSelect={setStatusFilter}
+                values={statusFilter.values}
+                onSelect={handleSelectStatusFilter}
                 placeholder="Status"
               />
             </div>
@@ -135,20 +262,23 @@ export function AlertsTable({
               <Label>Marca do dispositivo</Label>
               <Combobox
                 options={brandsOptions}
-                value={brandFilter}
-                onSelect={setBrandFilter}
+                values={brandFilter ? brandFilter.values : []}
+                onSelect={handleSelectBrandsFilter}
                 placeholder="Marca"
               />
             </div>
             <div className="flex flex-col gap-2">
               <Label>Localização</Label>
-              <Combobox
+              {/* <Combobox
                 options={brandsOptions}
-                value={brandFilter}
+                values={brandFilter.values}
                 onSelect={setBrandFilter}
                 placeholder="Localização"
                 disabled
-              />
+              /> */}
+              <span className="w-40 h-12 cursor-default bg-zinc-200 ring-1 ring-[#232323]/30 text-center flex items-center justify-center text-zinc-400 italic rounded-md">
+                Indisponível
+              </span>
             </div>
             <div className="flex flex-col gap-2">
               <Label>Data</Label>

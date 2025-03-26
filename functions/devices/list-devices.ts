@@ -1,11 +1,17 @@
-import type { QueryFilter, User } from '@/types'
+import type { Device, QueryFilter } from '../../types'
 
-interface GetUserProps {
+// interface QueryFilter {
+//   method: string
+//   attribute: string
+//   values: any[]
+// }
+
+interface ListDevicesProps {
   filters?: QueryFilter[] // Array of filter objects
 }
 
-export async function getUser(props?: GetUserProps): Promise<User[]> {
-  const allUsers = []
+export async function getDevices(props?: ListDevicesProps): Promise<Device[]> {
+  const allDevices: Device[] = []
   const filters = props?.filters || []
 
   let offset = 0
@@ -13,11 +19,26 @@ export async function getUser(props?: GetUserProps): Promise<User[]> {
   let total = Number.POSITIVE_INFINITY
 
   while (offset < total) {
+    // Start with default queries
     const params = new URLSearchParams()
 
-    filters.forEach((filter, index) => {
-      params.append(`queries[${index}]`, JSON.stringify(filter))
-    })
+    // Add the stolen filter by default if no filters provided
+    if (filters.length === 0) {
+      params.append(
+        'queries[0]',
+        JSON.stringify({
+          method: 'equal',
+          attribute: 'is_stolen',
+          values: [true],
+        })
+      )
+    } else {
+      // Add all custom filters
+      filters.forEach((filter, index) => {
+        params.append(`queries[${index}]`, JSON.stringify(filter))
+      })
+    }
+
     // Add pagination queries
     params.append(
       `queries[${filters.length > 0 ? filters.length : 1}]`,
@@ -34,9 +55,10 @@ export async function getUser(props?: GetUserProps): Promise<User[]> {
         values: [offset],
       })
     )
+
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
         {
           method: 'GET',
           headers: {
@@ -48,11 +70,14 @@ export async function getUser(props?: GetUserProps): Promise<User[]> {
       )
 
       if (!response.ok) {
-        const error = await response.text()
-        throw new Error(`Failed to fetch user info: ${error}`)
+        throw new Error(
+          `Failed to fetch stolen devices: ${await response.text()}`
+        )
       }
+
       const { documents, total: fetchedTotal } = await response.json()
-      allUsers.push(...documents)
+
+      allDevices.push(...documents)
       total = fetchedTotal
       offset += limit
     } catch (error) {
@@ -60,5 +85,6 @@ export async function getUser(props?: GetUserProps): Promise<User[]> {
       break
     }
   }
-  return allUsers
+
+  return allDevices
 }
