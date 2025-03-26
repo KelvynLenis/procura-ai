@@ -5,6 +5,8 @@ import { cn, formatDateTime } from '@/lib/utils'
 import { IoIosWarning } from 'react-icons/io'
 import ClipLoader from 'react-spinners/ClipLoader'
 import { ConfirmationDialog } from './ConfirmationDialog'
+import { getDeviceEvents } from '@/functions/event/get-device-events'
+import { toast } from 'react-toastify'
 
 interface AlertDetailsProps {
   id: string
@@ -19,55 +21,8 @@ export function AlertDetails({
   handleDeviceRecovery,
   setModalOpen,
 }: AlertDetailsProps) {
-  const [event, setEvent] = useState({} as Event)
+  const [event, setEvent] = useState<Event | undefined>()
   const [isLoading, setIsLoading] = useState(true)
-
-  async function fetchEvent(): Promise<Event[]> {
-    const event: Event[] = []
-
-    const params = new URLSearchParams({
-      'queries[0]': JSON.stringify({
-        method: 'equal',
-        attribute: 'id_device',
-        values: [`${id}`],
-      }),
-      'queries[1]': JSON.stringify({
-        method: 'equal',
-        attribute: 'is_alert_on',
-        values: [true],
-      }),
-    })
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents?${params.toString()}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project':
-              process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || '',
-          },
-          cache: 'no-store',
-        }
-      )
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch events: ${await response.text()}`)
-      }
-
-      const { documents } = await response.json()
-
-      event.push(
-        documents.sort(
-          (a, b) =>
-            new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
-        )[0]
-      )
-    } catch (error) {
-      console.error(error)
-    }
-    return event
-  }
 
   async function handleConfirmDialog() {
     await handleDeviceRecovery(id)
@@ -78,12 +33,18 @@ export function AlertDetails({
 
   useEffect(() => {
     const fetchData = async () => {
-      const events = await fetchEvent()
-      setEvent(events[0])
-      setIsLoading(false)
+      try {
+        const events = await getDeviceEvents(id)
+        setEvent(events[0])
+      } catch (error) {
+        console.error('Erro ao buscar eventos:', error)
+        toast.error('Erro ao buscar detalhes do alerta. Tente novamente.')
+      } finally {
+        setIsLoading(false)
+      }
     }
     fetchData()
-  }, [])
+  }, [id])
 
   return (
     <>

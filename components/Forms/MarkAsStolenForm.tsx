@@ -19,7 +19,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { ChevronDown } from 'lucide-react'
 import { toast } from 'react-toastify'
-import { v4 as uuidv4 } from 'uuid'
 import type { DeviceProps } from '@/types'
 import { Textarea } from '../ui/textarea'
 import { z } from 'zod'
@@ -28,7 +27,10 @@ import { useEffect, useState } from 'react'
 import { MarkAsStolenMapWithGeocoding } from '../Maps/MarkAsStolenMapWithGeocoding'
 import dynamic from 'next/dynamic'
 import { validateCoordinates } from '@/lib/utils'
-import { DialogClose } from '../ui/dialog'
+import { getNeighborhood } from '@/functions/district/get-neighborhood'
+import { updateDistrict, UpdateDistrictData } from '@/functions/district/update-district'
+import { createEvent } from '@/functions/event/create-event'
+import { updateDeviceStatus, getDeviceStatus } from '@/functions/device/update-device-status'
 
 interface MarkAsStolenFormProps {
   id: string
@@ -124,100 +126,7 @@ export function MarkAsStolenForm({
     form.setValue('id_district', districtId)
   }
 
-  async function getNeighborhood(districtId: string) {
-    const params = new URLSearchParams({
-      'queries[0]': JSON.stringify({
-        method: 'equal',
-        attribute: '$id',
-        values: [districtId],
-      }),
-    })
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DISTRICT}/documents?${params.toString()}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-          },
-          cache: 'no-store',
-        }
-      )
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch stolen devices: ${await response.text()}`
-        )
-      }
-
-      const result = await response.json()
-
-      return result.documents[0]
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  async function updateDistrict(districtId: string) {
-    try {
-      const neighborhood = await getNeighborhood(districtId)
-      let data
-
-      if (form.getValues('type') === 'Furto simples') {
-        data = {
-          theft_counter: neighborhood.theft_counter + 1,
-        }
-      } else if (form.getValues('type') === 'Extravio ou Perda') {
-        data = {
-          lost_counter: neighborhood.lost_counter + 1,
-        }
-      } else if (form.getValues('type') === 'Roubo') {
-        data = {
-          robbery_counter: neighborhood.robbery_counter + 1,
-        }
-      }
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DISTRICT}/documents/${neighborhood.$id}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-          },
-          body: JSON.stringify({
-            data,
-          }),
-          cache: 'no-store',
-        }
-      )
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch stolen devices: ${await response.text()}`
-        )
-      }
-
-      const result = await response.json()
-      return result
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  async function onSubmit(values: any) {
-    const getStatus = (type: string) => {
-      if (type === 'Furto simples') {
-        return 'Furtado'
-      } else if (type === 'Extravio ou Perda') {
-        return 'Perdido'
-      } else if (type === 'Roubo') {
-        return 'Roubado'
-      }
-    }
-
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const dataAtual = new Date()
       const dataEvento = new Date(values.datetime)
@@ -230,71 +139,64 @@ export function MarkAsStolenForm({
         throw new Error('Não é possível cadastrar alertas com data futura')
       }
 
-      const eventId = uuidv4()
       const callFunction = async () => {
         try {
-          await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents/`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-              },
-              body: JSON.stringify({
-                documentId: eventId,
-                data: {
-                  id_device: id,
-                  time_event: values.datetime,
-                  description: values.description,
-                  type: values.type,
-                  is_alert_on: true,
-                  last_location: values.coordinates,
-                  id_district: values.id_district.toString(),
-                },
-              }),
-            }
-          )
+          await createEvent({
+            id_device: id,
+            time_event: values.datetime,
+            description: values.description ?? '',
+            type: values.type,
+            is_alert_on: true,
+            last_location: values.coordinates as [number, number],
+            id_district: values.id_district || '',
+          })
 
-          await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
-            {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-              },
-              body: JSON.stringify({
-                data: {
-                  is_stolen: true,
-                  status: getStatus(values.type),
-                },
-              }),
-            }
-          )
+          await updateDeviceStatus(id, {
+            is_stolen: true,
+            status: getDeviceStatus(values.type),
+          })
 
-          if (values.id_district !== '') {
-            await updateDistrict(values.id_district)
+          if (values.id_district) {
+            const neighborhood = await getNeighborhood(values.id_district)
+            let data: UpdateDistrictData = {}
+
+            if (values.type === 'Furto simples') {
+              data = {
+                theft_counter: neighborhood.theft_counter + 1,
+              }
+            } else if (values.type === 'Extravio ou Perda') {
+              data = {
+                lost_counter: neighborhood.lost_counter + 1,
+              }
+            } else if (values.type === 'Roubo') {
+              data = {
+                robbery_counter: neighborhood.robbery_counter + 1,
+              }
+            }
+
+            if (Object.keys(data).length > 0) {
+              await updateDistrict(values.id_district, data)
+            }
           }
 
-          return true // Return success flag
+          return true
         } catch (error) {
           console.error('Ocorreu um erro em uma das operações:', error)
-          return false // Return failure flag
+          return false
         }
       }
 
       const success = await toast.promise(callFunction, {
-        pending: `Marcando como ${getStatus(values.type)}...`,
-        success: `Marcado como ${getStatus(values.type)}!`,
-        error: `Erro ao marcar como ${getStatus(values.type)}!`,
+        pending: `Marcando como ${getDeviceStatus(values.type)}...`,
+        success: `Marcado como ${getDeviceStatus(values.type)}!`,
+        error: `Erro ao marcar como ${getDeviceStatus(values.type)}!`,
       })
 
       if (success) {
         setDevices(prevDevices =>
           prevDevices.map(device =>
             device.$id === id
-              ? { ...device, is_stolen: true, status: getStatus(values.type) }
+              ? { ...device, is_stolen: true, status: getDeviceStatus(values.type) }
               : device
           )
         )

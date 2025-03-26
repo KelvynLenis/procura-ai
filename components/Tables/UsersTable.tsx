@@ -18,37 +18,16 @@ import { cn } from '@/lib/utils'
 import { toast } from 'react-toastify'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog'
 import { LoadingToast } from '@/components/LoadingToast'
-import type { Device } from '@/types'
-import * as ExcelJS from 'exceljs'
-
-interface User {
-  $id: string
-  user_id: string
-  name?: string
-  cpf?: string
-  email?: string
-  type: string
-  status: string
-  accessed_at?: string
-  $createdAt?: string
-}
-interface Events {
-  $id?: string
-  time_event?: string
-  description?: string
-  type?: string
-  is_alert_on?: boolean
-  id_device?: string
-  last_location?: []
-  id_district?: string
-}
+import { listUsers } from '@/functions/user/list-users'
+import { exportUsers } from '@/functions/export/export-users'
+import { exportAlerts } from '@/functions/export/export-alerts'
+import { User } from '@/types'
 
 export function UsersTable() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [pages, setPages] = useState(1)
-
   const [totalUsers, setTotalUsers] = useState(0)
   const limit = 10
 
@@ -57,22 +36,7 @@ export function UsersTable() {
     users: true,
     alerts: false,
   })
-
   const [isExporting, setIsExporting] = useState(false)
-
-  async function buildParams() {
-    const params = new URLSearchParams({
-      'queries[0]': JSON.stringify({
-        method: 'limit',
-        values: [limit],
-      }),
-      'queries[1]': JSON.stringify({
-        method: 'offset',
-        values: [(page - 1) * limit],
-      }),
-    })
-    return params
-  }
 
   function handleGoToNextPage() {
     if (page < pages) {
@@ -102,358 +66,20 @@ export function UsersTable() {
   }
 
   const handleConfirmExport = async () => {
-    if (exportOptions.users) {
-      await handleUsersExportCSV()
-    }
-    if (exportOptions.alerts) {
-      await handleAlertsExportCSV()
-    }
-    setIsExportDialogOpen(false)
-  }
-
-  const handleAlertsExportCSV = async () => {
+    setIsExporting(true)
     try {
-      setIsExporting(true)
-      const allAlerts: Events[] = []
-      let offset = 0
-      const limit = 25
-      let total = Number.POSITIVE_INFINITY
-
-      const [devices, users] = await Promise.all([
-        fetchAllDevices(),
-        fetchAllUsers(),
-      ])
-
-      const deviceMap = devices.reduce(
-        (acc, device) => {
-          acc[device.$id] = device
-          return acc
-        },
-        {} as Record<string, Device>
-      )
-
-      const userMap = users.reduce(
-        (acc, user) => {
-          acc[user.user_id] = user
-          return acc
-        },
-        {} as Record<string, User>
-      )
-
-      while (offset < total) {
-        const params = new URLSearchParams({
-          'queries[0]': JSON.stringify({
-            method: 'limit',
-            values: [limit],
-          }),
-          'queries[1]': JSON.stringify({
-            method: 'offset',
-            values: [offset],
-          }),
-        })
-
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents?${params.toString()}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project':
-                process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || '',
-            },
-            cache: 'no-store',
-          }
-        )
-
-        if (!response.ok) {
-          throw new Error(`Falha ao buscar alertas: ${await response.text()}`)
-        }
-
-        const { documents, total: fetchedTotal } = await response.json()
-        allAlerts.push(...documents)
-        total = fetchedTotal
-        offset += limit
+      if (exportOptions.users) {
+        await exportUsers()
       }
-
-      const headers = [
-        'ID',
-        'TIPO',
-        'DESCRIÇÃO',
-        'DATA',
-        'ALERTA ATIVO',
-        'ID DISPOSITIVO',
-        'MODELO',
-        'ID USUÁRIO',
-        'NOME USUÁRIO',
-        'LOCALIZAÇÃO',
-        'ID DISTRITO',
-      ]
-      const data = allAlerts.map(alert => {
-        const device = deviceMap[alert.id_device!]
-        const user = device ? userMap[device.auth_id] : null
-
-        return [
-          alert.$id || '',
-          alert.type || '',
-          alert.description || '',
-          alert.time_event
-            ? new Date(alert.time_event).toLocaleString('pt-BR', {
-                timeZone: 'UTC',
-              })
-            : '',
-          alert.is_alert_on ? 'Sim' : 'Não',
-          alert.id_device || '',
-          device?.phone_model || '',
-          device?.auth_id || '',
-          user?.name || '',
-          Array.isArray(alert.last_location)
-            ? `${alert.last_location[0]},${alert.last_location[1]}`
-            : '',
-          alert.id_district || '',
-        ]
-      })
-
-      const workbook = new ExcelJS.Workbook()
-      const worksheet = workbook.addWorksheet('Alertas')
-
-      worksheet.addRow(headers).font = {
-        name: 'Arial',
-        bold: true,
-        color: { argb: 'FFFFFF' },
+      if (exportOptions.alerts) {
+        await exportAlerts()
       }
-
-      data.forEach(row => {
-        worksheet.addRow(row).font = { name: 'Arial' }
-      })
-
-      worksheet.columns = [
-        { header: 'ID', width: 40 },
-        { header: 'TIPO', width: 20 },
-        { header: 'DESCRIÇÃO', width: 35 },
-        { header: 'DATA', width: 20 },
-        { header: 'ALERTA ATIVO', width: 15 },
-        { header: 'ID DISPOSITIVO', width: 40 },
-        { header: 'MODELO', width: 30 },
-        { header: 'ID USUÁRIO', width: 40 },
-        { header: 'NOME USUÁRIO', width: 30 },
-        { header: 'LOCALIZAÇÃO', width: 40 },
-        { header: 'ID DISTRITO', width: 40 },
-      ]
-
-      worksheet.getRow(1).fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: '002e72' },
-      }
-
-      worksheet.views = [{ state: 'frozen', xSplit: 0, ySplit: 1 }]
-
-      worksheet.autoFilter = 'A1:G1'
-
-      const xlsxBuffer = await workbook.xlsx.writeBuffer()
-      const blob = new Blob([xlsxBuffer], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      })
-      const url = URL.createObjectURL(blob)
-
-      setIsExporting(false)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = 'alertas.xlsx'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
-
-      toast.success('Alertas exportados com sucesso!', {
-        autoClose: 3000,
-      })
     } catch (error) {
+      console.error('Erro ao exportar:', error)
+    } finally {
       setIsExporting(false)
-      console.error('Erro ao exportar XLSX:', error)
-      toast.error('Erro ao exportar XLSX. Tente novamente.', {
-        autoClose: 3000,
-      })
+      setIsExportDialogOpen(false)
     }
-  }
-
-  const handleUsersExportCSV = async () => {
-    try {
-      const allUsers = await fetchAllUsers()
-
-      const headers = [
-        'ID',
-        'CPF',
-        'NOME',
-        'EMAIL',
-        'PERFIL',
-        'ACESSADO EM',
-        'CRIADO EM',
-      ]
-      const data = allUsers.map(user => [
-        user.user_id || '',
-        user.cpf || '',
-        user.name || '',
-        user.email || '',
-        user.type || '',
-        user.accessed_at
-          ? new Date(user.accessed_at).toLocaleString('pt-BR', {
-              timeZone: 'UTC',
-            })
-          : '',
-        user.$createdAt
-          ? new Date(user.$createdAt).toLocaleString('pt-BR', {
-              timeZone: 'UTC',
-            })
-          : '',
-      ])
-
-      const workbook = new ExcelJS.Workbook()
-      const worksheet = workbook.addWorksheet('Usuários')
-
-      worksheet.addRow(headers).font = {
-        name: 'Arial',
-        bold: true,
-        color: { argb: 'FFFFFF' },
-      }
-
-      data.forEach(row => {
-        worksheet.addRow(row).font = { name: 'Arial' }
-      })
-
-      worksheet.columns = [
-        { header: 'ID', width: 40 },
-        { header: 'CPF', width: 15 },
-        { header: 'NOME', width: 30 },
-        { header: 'EMAIL', width: 35 },
-        { header: 'PERFIL', width: 20 },
-        { header: 'ACESSADO EM', width: 20 },
-        { header: 'CRIADO EM', width: 20 },
-      ]
-
-      worksheet.getRow(1).fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: '002e72' },
-      }
-
-      worksheet.views = [{ state: 'frozen', xSplit: 0, ySplit: 1 }]
-
-      worksheet.autoFilter = 'A1:G1'
-
-      const xlsxBuffer = await workbook.xlsx.writeBuffer()
-      const blob = new Blob([xlsxBuffer], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      })
-      const url = URL.createObjectURL(blob)
-
-      const link = document.createElement('a')
-      link.href = url
-      link.download = 'usuarios.xlsx'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
-
-      toast.success('Usuários exportados com sucesso!', {
-        autoClose: 3000,
-      })
-    } catch (error) {
-      console.error('Erro ao exportar XLSX:', error)
-      toast.error('Erro ao exportar XLSX. Tente novamente.')
-    }
-  }
-
-  async function fetchAllDevices() {
-    const allDevices: Device[] = []
-    let offset = 0
-    const limit = 25
-    let total = Number.POSITIVE_INFINITY
-    while (offset < total) {
-      const params = new URLSearchParams({
-        'queries[0]': JSON.stringify({
-          method: 'limit',
-          values: [limit],
-        }),
-        'queries[1]': JSON.stringify({
-          method: 'offset',
-          values: [offset],
-        }),
-      })
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-            },
-            cache: 'no-store',
-          }
-        )
-
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch stolen devices: ${await response.text()}`
-          )
-        }
-
-        const { documents, total: fetchedTotal } = await response.json()
-
-        allDevices.push(...documents)
-        total = fetchedTotal
-        offset += limit
-      } catch (error) {
-        console.error(error)
-        break
-      }
-    }
-    return allDevices
-  }
-
-  async function fetchAllUsers() {
-    const allUsers: User[] = []
-    let offset = 0
-    const limit = 25
-    let total = Number.POSITIVE_INFINITY
-
-    while (offset < total) {
-      const params = new URLSearchParams({
-        'queries[0]': JSON.stringify({
-          method: 'limit',
-          values: [limit],
-        }),
-        'queries[1]': JSON.stringify({
-          method: 'offset',
-          values: [offset],
-        }),
-      })
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project':
-              process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || '',
-          },
-          cache: 'no-store',
-        }
-      )
-
-      if (!response.ok) {
-        throw new Error(`Falha ao buscar usuários: ${await response.text()}`)
-      }
-
-      const { documents, total: fetchedTotal } = await response.json()
-      allUsers.push(...documents)
-      total = fetchedTotal
-      offset += limit
-    }
-
-    return allUsers
   }
 
   useEffect(() => {
@@ -461,32 +87,15 @@ export function UsersTable() {
       setLoading(true)
 
       try {
-        const params = await buildParams()
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project':
-                process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || '',
-            },
-          }
-        )
-
-        if (!response.ok) {
-          const error = await response.text()
-          throw new Error(`Error: ${error}`)
-        }
-
-        const result = await response.json()
+        const result = await listUsers(page, limit)
         const totalPages = Math.ceil(result.total / limit)
 
         setUsers(result.documents || [])
         setTotalUsers(result.total || 0)
         setPages(totalPages)
       } catch (error) {
-        console.error('Failed to fetch users:', error)
+        console.error('Erro ao buscar usuários:', error)
+        toast.error('Erro ao buscar usuários. Tente novamente.')
       } finally {
         setLoading(false)
       }

@@ -1,6 +1,3 @@
-import { v4 as uuidv4 } from 'uuid'
-import { getUserId } from '../user/get-user-id'
-
 interface UpdateContactProps {
   values: {
     contact_name: string

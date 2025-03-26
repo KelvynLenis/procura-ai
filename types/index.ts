@@ -17,12 +17,24 @@ export interface DeviceProps {
 }
 
 export interface EventProps {
-  device: Device
-  event: Event
+  device: z.infer<typeof DeviceSchema>
+  event: z.infer<typeof EventSchema>
   user: {
     name: string
     email: string
   }
+}
+
+export interface User {
+  $id: string
+  user_id: string
+  name?: string
+  cpf?: string
+  email?: string
+  type: string
+  status: string
+  accessed_at?: string
+  $createdAt?: string
 }
 
 export type Device = z.infer<typeof DeviceSchema>

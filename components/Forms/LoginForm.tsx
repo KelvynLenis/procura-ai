@@ -19,14 +19,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-toastify'
 import { LoadingToast } from '../LoadingToast'
 import Button from '../Button'
-
-interface LoginFormProps {
-  admin?: boolean
-}
+import { login } from '@/functions/auth/login' 
+import { updateLastAccess } from '@/functions/auth/update-last-access'
 
 const formSchema = z.object({
-  email: z.string(),
-  password: z.string(),
+  email: z.string().email('Email inválido'),
+  password: z.string().min(1, 'A senha é obrigatória'),
 })
 
 export function LoginForm() {
@@ -41,104 +39,44 @@ export function LoginForm() {
     },
   })
 
-  async function onSubmit(values: { email: string; password: string }) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const callFunction = async () => {
         try {
-          const promise = await account.createEmailPasswordSession(
-            values.email,
-            values.password
-          )
-        } catch (error) {
-          if (error.message.match(/password/)) {
+          const { isAdmin, userId, userStatus } = await login(values.email, values.password)
+
+          if (userStatus === 'Inativo') {
+            toast.error('Esse usuário foi desativado.')
+            await account.deleteSession('current')
+            return
+          }
+
+          await updateLastAccess(userId)
+
+          setIsLoading(true)
+          router.push(isAdmin ? '/dashboard' : '/meus-dispositivos')
+          toast.success('Logado com sucesso')
+        } catch (error: any) {
+          if (error.message?.match(/password/)) {
             form.setError('email', { message: 'Email ou senha incorretos' })
             form.setError('password', { message: 'Email ou senha incorretos' })
             toast.error('Email ou senha incorretos')
-
             return
           }
 
-          toast.error('Erro ao logar')
-
-          console.error('Erro ao logar: ', error.message)
+          toast.error('Erro ao fazer login')
+          console.error('Erro ao fazer login:', error.message)
         }
-
-        const user = await account.get()
-        const isAdmin = user.labels[0] === 'admin'
-
-        const params = new URLSearchParams({
-          'queries[0]': JSON.stringify({
-            method: 'equal',
-            attribute: 'user_id',
-            values: [`${user.$id}`],
-          }),
-        })
-
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-            },
-          }
-        )
-
-        const {
-          documents: [userDoc],
-        } = await response.json()
-
-        if (userDoc) {
-          if (userDoc.status === 'Inativo') {
-            toast.error('Esse usuário foi desativado.')
-
-            account.deleteSession('current')
-            return
-          }
-
-          await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents/${userDoc.$id}`,
-            {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-              },
-              body: JSON.stringify({
-                data: {
-                  accessed_at: new Date().toISOString(),
-                },
-              }),
-            }
-          ).catch(err => {
-            console.error('Erro ao atualizar último acesso:', err)
-          })
-        }
-
-        if (isAdmin) {
-          setIsLoading(true)
-          router.push('/dashboard')
-        } else {
-          setIsLoading(true)
-          router.push('/meus-dispositivos')
-        }
-
-        toast.success('Logado com sucesso')
       }
 
-      // callFunction()
-
-      toast.promise(callFunction, {
+      toast.promise(callFunction(), {
         pending: 'Logando...',
       })
-    } catch (error) {
+    } catch (error: any) {
       form.setError('email', { message: 'Email ou senha incorretos' })
       form.setError('password', { message: 'Email ou senha incorretos' })
-
-      toast.error(`Error: ${error}`)
-
-      console.error('Erro ao logar: ', error)
+      toast.error(`Error: ${error.message}`)
+      console.error('Erro ao fazer login:', error)
     }
   }
 
@@ -149,66 +87,12 @@ export function LoginForm() {
   useEffect(() => {
     const getSession = async () => {
       try {
-        const callFunction = async () => {
-          const sessions = await account.get()
-
-          // const params = new URLSearchParams({
-          //   'queries[0]': JSON.stringify({
-          //     method: 'equal',
-          //     attribute: 'user_id',
-          //     values: [`${sessions.$id}`],
-          //   }),
-          // })
-
-          // const response = await fetch(
-          //   `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
-          //   {
-          //     method: 'GET',
-          //     headers: {
-          //       'Content-Type': 'application/json',
-          //       'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-          //     },
-          //   }
-          // )
-
-          // const {
-          //   documents: [userDoc],
-          // } = await response.json()
-
-          // if (userDoc) {
-          //   await fetch(
-          //     `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents/${userDoc.$id}`,
-          //     {
-          //       method: 'PATCH',
-          //       headers: {
-          //         'Content-Type': 'application/json',
-          //         'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-          //       },
-          //       body: JSON.stringify({
-          //         data: {
-          //           accessed_at: new Date().toISOString(),
-          //         },
-          //       }),
-          //     }
-          //   ).catch(err => {
-          //     console.error('Erro ao atualizar último acesso:', err)
-          //   })
-          // }
-
-          if (sessions.status) {
-            await account.deleteSession('current')
-            // setIsLoading(true)
-            // sessions.labels[0] == "admin" ? router.push('/dashboard') : router.push('/meus-dispositivos')
-          }
+        const sessions = await account.get()
+        if (sessions.status) {
+          await account.deleteSession('current')
         }
-
-        callFunction()
-
-        // toast.promise(callFunction, {
-        //   success: 'Sessão encontrada'
-        // })
-      } catch (error) {
-        console.error('Erro: ', error)
+      } catch (error: any) {
+        console.error('Erro:', error.message)
       }
     }
 
@@ -222,7 +106,6 @@ export function LoginForm() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full md:w-[500px] h-[700px] flex flex-col gap-4 bg-zinc-50 items-center px-10 py-5"
         >
-          {/* <Image src={logo} alt="logo" width={200} height={100} /> */}
           <h3 className="text-center">
             Para acessar o Procura.Aí faça login abaixo:
           </h3>

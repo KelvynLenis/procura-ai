@@ -4,31 +4,46 @@ import { client } from '@/lib/appwrite'
 import { Bell } from 'lucide-react'
 import { useEffect, useState, useCallback } from 'react'
 
+interface Notification {
+  $id: string
+  type: string
+  description: string
+  time_event: string
+  id_device: string
+  is_alert_on: boolean
+}
+
+interface NotificationResponse {
+  payload: Notification
+}
+
+interface NotificationButtonProps {
+  notifications: Notification[]
+  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>
+}
+
 export function NotificationButton({
   notifications,
   setNotifications,
-}: {
-  notifications: never[]
-  setNotifications: React.Dispatch<React.SetStateAction<never[]>>
-}) {
+}: NotificationButtonProps) {
   const [isListVisible, setIsListVisible] = useState(false)
 
-  const handleNewNotification = useCallback(response => {
+  const handleNewNotification = useCallback((response: NotificationResponse) => {
     const { payload } = response
-    const isRelevant = [
+    const relevantTypes = [
       'Furto simples',
       'Extravio ou Perda',
       'Roubo',
       'Recuperado',
-    ].includes(payload.type)
-    if (isRelevant) {
-      // if (payload?.type === "Furto simples" || payload?.type === "Extravio ou Perda" || payload?.type === "Roubo"|| payload?.type === "Recuperado") {
+    ]
+
+    if (relevantTypes.includes(payload.type)) {
       setNotifications(prevNotifications => {
         const exists = prevNotifications.some(n => n.$id === payload.$id)
         return exists ? prevNotifications : [...prevNotifications, payload]
       })
     }
-  }, [])
+  }, [setNotifications])
 
   useEffect(() => {
     const unsubscribe = client.subscribe(
@@ -39,14 +54,11 @@ export function NotificationButton({
     return () => unsubscribe()
   }, [handleNewNotification])
 
-  const toggleList = () => setIsListVisible((prev) => !prev);
+  const toggleList = () => setIsListVisible(prev => !prev)
 
-  const filteredNotifications = notifications
-  // const filteredNotifications = notifications.filter(n => n.type !== "Recuperado");
-
-  // const filteredNotifications = notifications.filter(
-  //   n => n.type !== 'Recuperado'
-  // )
+  const filteredNotifications = notifications.sort((a, b) => 
+    new Date(b.time_event).getTime() - new Date(a.time_event).getTime()
+  )
 
   return (
     <>
@@ -62,22 +74,25 @@ export function NotificationButton({
         )}
       </button>
       {isListVisible && (
-        <div className="absolute right-0 top-12 bg-white shadow-lg rounded-md w-64 border z-100">
+        <div className="absolute right-0 top-12 bg-white shadow-lg rounded-md w-80 border z-100">
           <div className="p-2 text-gray-700 font-semibold border-b w-full flex justify-center">
             Notificações
           </div>
-          <div className="max-h-60 overflow-y-auto flex flex-col items-center justify-center py-2 px-4">
-            {notifications.length > 0 ? (
-              notifications.map(notification => (
+          <div className="max-h-96 overflow-y-auto flex flex-col items-center justify-center py-2 px-4">
+            {filteredNotifications.length > 0 ? (
+              filteredNotifications.map(notification => (
                 <div
                   key={notification.$id}
-                  className="py-3 w-full hover:bg-zinc-100 flex items-center justify-center flex-col"
+                  className="py-3 w-full hover:bg-zinc-100 flex items-center justify-center flex-col gap-1 border-b last:border-b-0"
                 >
                   <h1 className="font-bold">Novo {notification.type}</h1>
                   <p className="text-sm text-gray-600 text-justify">
                     <span className="font-semibold">Descrição: </span>
                     {notification.description}
                   </p>
+                  <span className="text-xs text-gray-400">
+                    {new Date(notification.time_event).toLocaleString('pt-BR')}
+                  </span>
                 </div>
               ))
             ) : (
