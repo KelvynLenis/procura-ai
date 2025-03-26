@@ -8,9 +8,10 @@ import { toast } from 'react-toastify'
 import { GeocodingControl } from '@maptiler/geocoding-control/maplibregl'
 import type { FeatureCollectionSchema } from '@/types/featureCollectionSchema'
 import type { z } from 'zod'
-
+import { getNeighborhoodId } from '@/functions/district/get-neighborhood-id'  
 import '@maptiler/geocoding-control/style.css'
 import 'maplibre-gl/dist/maplibre-gl.css'
+import { getGeoJsonData } from '@/functions/district/getGeoJsonData'
 
 interface MarkAsStolenMapWithGeocodingProps {
   setPosition: (coordinates: [number, number]) => void
@@ -40,41 +41,41 @@ export function MarkAsStolenMapWithGeocoding({
   let geoJsonData: geojsonType = {} as geojsonType
   let geoJsonPBData: geojsonType = {} as geojsonType
 
-  async function getNeighborhoodId(cod_neighborhood: string) {
-    const params = new URLSearchParams({
-      'queries[0]': JSON.stringify({
-        method: 'equal',
-        attribute: 'cod_neighborhood',
-        values: [Number(cod_neighborhood)],
-      }),
-    })
+  // async function getNeighborhoodId(cod_neighborhood: string) {
+  //   const params = new URLSearchParams({
+  //     'queries[0]': JSON.stringify({
+  //       method: 'equal',
+  //       attribute: 'cod_neighborhood',
+  //       values: [Number(cod_neighborhood)],
+  //     }),
+  //   })
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DISTRICT}/documents?${params.toString()}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-          },
-          cache: 'no-store',
-        }
-      )
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DISTRICT}/documents?${params.toString()}`,
+  //       {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+  //         },
+  //         cache: 'no-store',
+  //       }
+  //     )
 
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch stolen devices: ${await response.text()}`
-        )
-      }
+  //     if (!response.ok) {
+  //       throw new Error(
+  //         `Failed to fetch stolen devices: ${await response.text()}`
+  //       )
+  //     }
 
-      const result = await response.json()
+  //     const result = await response.json()
 
-      return result.documents[0].$id
-    } catch (error) {
-      console.error(error)
-    }
-  }
+  //     return result.documents[0].$id
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }
 
   async function handleGetPosition({
     event,
@@ -103,7 +104,7 @@ export function MarkAsStolenMapWithGeocoding({
     //   return
     // }
 
-    if (geoJsonData) {
+    if (geoJsonData && geoJsonData.features) {
       for (const feature of geoJsonData.features) {
         if (turf.booleanPointInPolygon(clickedPoint, feature)) {
           foundFeature = feature
@@ -114,7 +115,7 @@ export function MarkAsStolenMapWithGeocoding({
 
     if (foundFeature) {
       const neighborhoodId = await getNeighborhoodId(
-        foundFeature?.properties?.cod_bairro
+        Number(foundFeature?.properties?.cod_bairro)
       )
       setNeighborhoodId(neighborhoodId)
     }
@@ -130,7 +131,7 @@ export function MarkAsStolenMapWithGeocoding({
 
     let foundState = null
 
-    if (geoJsonPBData) {
+    if (geoJsonPBData && geoJsonPBData.features) {
       for (const feature of geoJsonPBData.features) {
         if (turf.booleanPointInPolygon(clickedPoint, feature)) {
           foundState = feature
@@ -208,86 +209,108 @@ export function MarkAsStolenMapWithGeocoding({
   }
 
   useEffect(() => {
-    Promise.all([
-      fetch(geoJsonLink)
-        .then(res => res.json())
-        .then(data => {
-          // setGeoJsonData(data)
-          geoJsonData = data
-          return data
-        }),
-      fetch(geoJsonPB)
-        .then(res => res.json())
-        .then(data => {
-          //  setGeoJsonPBData(data)
-          geoJsonPBData = data
-          return data
-        }),
-    ]).then(results => {
-      if (!mapContainer.current) return
+    if (geoJsonLink && geoJsonPB) {
+      Promise.all([
+        getGeoJsonData(geoJsonLink)
+          .then(data => {
+            geoJsonData = data
+            return data
+          }),
+        getGeoJsonData(geoJsonPB)
+          .then(data => {
+            geoJsonPBData = data
+            return data
+          }),
+      ]).then(results => {
+        if (!mapContainer.current) return
 
-      const map = new maplibregl.Map({
-        container: 'geocoding-control',
-        style:
-          'https://api.maptiler.com/maps/streets-v2/style.json?key=' + apiKey,
-        center: [-34.8446769, -7.1509317],
-        zoom: 12,
-        maxBounds: [-38.9, -8.5, -34.5, -5.7],
-      })
+        const map = new maplibregl.Map({
+          container: 'geocoding-control',
+          style:
+            'https://api.maptiler.com/maps/streets-v2/style.json?key=' + apiKey,
+          center: [-34.8446769, -7.1509317],
+          zoom: 12,
+          maxBounds: [-38.9, -8.5, -34.5, -5.7],
+        })
 
-      const gc = new GeocodingControl({
-        apiKey,
-        placeholder: 'Digite o endereço ou CEP',
-      })
+        const gc = new GeocodingControl({
+          apiKey,
+          placeholder: 'Digite o endereço ou CEP',
+        })
 
-      const getGeoJsonBounds = (geoJson: any) => {
-        const bounds = new LngLatBounds()
+        const getGeoJsonBounds = (geoJson: any) => {
+          const bounds = new LngLatBounds()
 
-        geoJson.features.forEach((feature: any) => {
-          feature.geometry.coordinates[0].forEach((coord: any) => {
-            bounds.extend(coord as [number, number])
+          geoJson.features.forEach((feature: any) => {
+            feature.geometry.coordinates[0].forEach((coord: any) => {
+              bounds.extend(coord as [number, number])
+            })
           })
+
+          return bounds
+        }
+
+        map.on('load', () => {
+          map.addSource('paraiba', {
+            type: 'geojson',
+            data: geoJsonPB!,
+          })
+
+          map.addLayer({
+            id: 'paraiba-layer',
+            type: 'line',
+            source: 'paraiba',
+            paint: {
+              'line-color': '#002E72',
+              'line-width': 3,
+            },
+          })
+
+          const bounds = getGeoJsonBounds(geoJsonPB)
+
+          // Limitar o mapa
+          map.setMaxBounds(bounds)
+          map.fitBounds(bounds, { padding: 20 })
         })
 
-        return bounds
-      }
+        map.addControl(gc, 'top-left')
 
-      map.on('load', () => {
-        map.addSource('paraiba', {
-          type: 'geojson',
-          data: geoJsonPB,
+        gc.on('pick', e => {
+          if (e.feature?.center) {
+            const isPointInParaiba = checkIfPointIsInParaiba({
+              latLng: [e.feature.center[1], e.feature.center[0]],
+            })
+
+            if (!isPointInParaiba) return
+
+            handleGetPosition({
+              event: e,
+              latLng: [e.feature.center[1], e.feature.center[0]],
+              map,
+            })
+
+            if (markerRef.current) {
+              markerRef.current.remove()
+            }
+
+            markerRef.current = new Marker({
+              color: '#002E72',
+            })
+              .setLngLat([e.feature?.center[0], e.feature?.center[1]])
+              .addTo(map)
+          }
         })
 
-        map.addLayer({
-          id: 'paraiba-layer',
-          type: 'line',
-          source: 'paraiba',
-          paint: {
-            'line-color': '#002E72',
-            'line-width': 3,
-          },
-        })
-
-        const bounds = getGeoJsonBounds(geoJsonPB)
-
-        // Limitar o mapa
-        map.setMaxBounds(bounds)
-        map.fitBounds(bounds, { padding: 20 })
-      })
-
-      map.addControl(gc, 'top-left')
-
-      gc.on('pick', e => {
-        if (e.feature?.center) {
+        map.on('click', e => {
           const isPointInParaiba = checkIfPointIsInParaiba({
-            latLng: [e.feature.center[1], e.feature.center[0]],
+            latLng: [e.lngLat.lat, e.lngLat.lng],
           })
 
           if (!isPointInParaiba) return
 
           handleGetPosition({
             event: e,
-            latLng: [e.feature.center[1], e.feature.center[0]],
+            latLng: [e.lngLat.lat, e.lngLat.lng],
             map,
           })
 
@@ -298,37 +321,13 @@ export function MarkAsStolenMapWithGeocoding({
           markerRef.current = new Marker({
             color: '#002E72',
           })
-            .setLngLat([e.feature?.center[0], e.feature?.center[1]])
+            .setLngLat([e.lngLat.lng, e.lngLat.lat])
             .addTo(map)
-        }
+        })
+
+        return () => map.remove()
       })
-
-      map.on('click', e => {
-        const isPointInParaiba = checkIfPointIsInParaiba({
-          latLng: [e.lngLat.lat, e.lngLat.lng],
-        })
-
-        if (!isPointInParaiba) return
-
-        handleGetPosition({
-          event: e,
-          latLng: [e.lngLat.lat, e.lngLat.lng],
-          map,
-        })
-
-        if (markerRef.current) {
-          markerRef.current.remove()
-        }
-
-        markerRef.current = new Marker({
-          color: '#002E72',
-        })
-          .setLngLat([e.lngLat.lng, e.lngLat.lat])
-          .addTo(map)
-      })
-
-      return () => map.remove()
-    })
+    }
   }, [])
 
   return (

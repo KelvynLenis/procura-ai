@@ -16,10 +16,11 @@ import {
 } from '@/components/ui/dialog'
 import { MarkAsStolenForm } from '../Forms/MarkAsStolenForm'
 import { toast } from 'react-toastify'
-import { v4 as uuidv4 } from 'uuid'
 import { useState } from 'react'
 import { AlertDetails } from '../AlertDetails'
 import { ConfirmationDialog } from '../ConfirmationDialog'
+import { deleteDevice } from '@/functions/device/delete-device'
+import { recoverDevice } from '@/functions/device/recover-device'
 
 interface DeviceRowProps {
   id: string // ID do dispositivo
@@ -51,31 +52,12 @@ export function DeviceRow({
   async function handleDeleteDevice(id: string) {
     try {
       const callFunction = async () => {
-        const promise = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
-          {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-            },
-          }
-        )
-          .then(async response => {
-            if (!response.ok) {
-              const error = await response.text()
-              throw new Error(`Error: ${error}`)
-            }
-            setDevices(prevDevices =>
-              prevDevices.filter(device => device.$id !== id)
-            )
-
-            return response
-          })
-          .catch(err => {
-            console.error(`Fetch error: ${err}`)
-            return null
-          })
+        const response = await deleteDevice(id);
+        if (response) {
+          setDevices(prevDevices =>
+            prevDevices.filter(device => device.$id !== id)
+          );
+        }
       }
 
       toast.promise(callFunction(), {
@@ -90,75 +72,7 @@ export function DeviceRow({
 
   async function handleDeviceRecovery(id: string) {
     try {
-      const eventId = uuidv4()
-      const x = new Date().toISOString()
-
-      const callFunction = async () => {
-        try {
-          const createEvent = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents/`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-              },
-              body: JSON.stringify({
-                documentId: eventId,
-                data: {
-                  id_device: id,
-                  time_event: new Date().toISOString(),
-                  last_location: [0, 0],
-                  description: 'Recuperado',
-                  type: 'Recuperado',
-                  is_alert_on: false,
-                },
-              }),
-            }
-          )
-            .then(async response => {
-              if (!response.ok) {
-                const error = await response.text()
-                throw new Error(`Error: ${error}`)
-              }
-              return response.json()
-            })
-            .catch(err => {
-              console.error(`Fetch error: ${err.message}`)
-              return null
-            })
-
-          const updateDeviceStatus = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
-            {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-              },
-              body: JSON.stringify({
-                data: {
-                  is_stolen: false,
-                  status: 'Recuperado',
-                },
-              }),
-            }
-          )
-
-          return true // Return success flag
-        } catch (error) {
-          console.error('Ocorreu um erro em uma das operações:', error)
-          return false // Return failure flag
-        }
-      }
-
-      // setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device, } : device));
-
-      const success = await toast.promise(callFunction, {
-        pending: 'Recuperando Dispositivo...',
-        success: 'Recuperado',
-        error: 'Erro ao recuperar',
-      })
+      const success = await recoverDevice(id);
 
       if (success) {
         setDevices(prevDevices =>

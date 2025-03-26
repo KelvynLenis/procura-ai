@@ -18,7 +18,7 @@ import {
 import { useForm } from 'react-hook-form'
 import { Input } from '../Input'
 import Link from 'next/link'
-import { account, databases, ID } from '@/lib/appwrite'
+import { account } from '@/lib/appwrite'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import logo from '../../assets/icons/procura-ai-logo-header.svg'
@@ -29,8 +29,10 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { v4 as uuidv4 } from 'uuid'
 import { toast } from 'react-toastify'
-import ClipLoader from 'react-spinners/ClipLoader'
 import { LoadingToast } from '../LoadingToast'
+import { createUser } from '@/functions/user/create-user'
+import { validateUserCpf } from '@/functions/user/validate-user-cpf'
+import { validateUserEmail } from '@/functions/user/validate-user-email'
 
 interface RegisterFormProps {
   admin?: boolean
@@ -65,38 +67,9 @@ const formSchema = z
   })
   .refine(
     async data => {
-      const params = new URLSearchParams({
-        'queries[0]': JSON.stringify({
-          method: 'equal',
-          attribute: 'cpf',
-          values: [data.cpf],
-        }),
-      })
-
       try {
-        const cpfCheckResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-            },
-          }
-        )
-        if (!cpfCheckResponse.ok) {
-          toast.error('Erro ao verificar CPF. Tente novamente.')
-          return false
-        }
-
-        const existingUsers = await cpfCheckResponse.json()
-        const cpfExists = existingUsers.documents.some(
-          (existingUser: any) => existingUser.cpf === data.cpf
-        )
-
-        return !cpfExists
+        return await validateUserCpf(data.cpf)
       } catch (error) {
-        console.error('Erro ao verificar CPF: ', error)
         toast.error('Erro ao verificar CPF. Tente novamente.')
         return false
       }
@@ -108,38 +81,9 @@ const formSchema = z
   )
   .refine(
     async data => {
-      const params = new URLSearchParams({
-        'queries[0]': JSON.stringify({
-          method: 'equal',
-          attribute: 'email',
-          values: [data.email],
-        }),
-      })
-
       try {
-        const emailCheckResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-            },
-          }
-        )
-        if (!emailCheckResponse.ok) {
-          toast.error('Erro ao verificar e-mail. Tente novamente.')
-          return false
-        }
-
-        const existingUsers = await emailCheckResponse.json()
-        const emailExists = existingUsers.documents.some(
-          (existingUser: any) => existingUser.email === data.email
-        )
-
-        return !emailExists
+        return await validateUserEmail(data.email)
       } catch (error) {
-        console.error('Erro ao verificar e-mail: ', error)
         toast.error('Erro ao verificar e-mail. Tente novamente.')
         return false
       }
@@ -166,14 +110,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
     },
   })
 
-  async function onSubmit(values: {
-    name: string
-    cpf: string
-    email: string
-    confirmEmail: string
-    password: string
-    confirmPassword: string
-  }) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       if (values.email !== values.confirmEmail) {
         toast.error('Os e-mails precisam ser iguais.')
@@ -192,83 +129,26 @@ export function RegisterForm({ admin }: RegisterFormProps) {
 
       if (!isValidCPF) {
         toast.error('O CPF deve conter exatamente 11 dígitos numéricos.')
-
         return
       }
+
       const userId = uuidv4()
 
-      const callFunction = async () => {
-        const createdUser = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/account`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-            },
-            body: JSON.stringify({
-              userId,
-              email: values.email,
-              password: values.password,
-            }),
-          }
-        )
-          .then(async response => {
-            if (!response.ok) {
-              const error = await response.text()
-              throw new Error(`Error: ${error}`)
-            }
-            return response.json()
-          })
-          .catch(err => {
-            console.error(`Fetch error: ${err.message}`)
-            return null
-          })
+      const promise = createUser({
+        userId,
+        name: values.name,
+        cpf: values.cpf,
+        email: values.email,
+        password: values.password,
+      })
 
-        const documentId = uuidv4()
-        const insertData = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-            },
-            body: JSON.stringify({
-              documentId,
-              data: {
-                user_id: createdUser.$id,
-                name: values.name,
-                cpf: values.cpf,
-                email: values.email,
-              },
-              // permissions: [
-              //   `read(\"user:"${createdUser.$id}"\")`,
-              //   `update(\"user:"${createdUser.$id}"\")`,
-              //   `delete(\"user:"${createdUser.$id}"\")`
-              // ]
-            }),
-          }
-        )
-          .then(async response => {
-            if (!response.ok) {
-              const error = await response.text()
-              throw new Error(`Error: ${error}`)
-            }
-            return response.json()
-          })
-          .catch(err => {
-            console.error(`Fetch error: ${err.message}`)
-            return null
-          })
-      }
-
-      toast.promise(callFunction(), {
+      toast.promise(promise, {
         pending: 'Cadastrando...',
         success: 'Cadastro realizado com sucesso.',
         error: 'Erro no cadastro.',
       })
 
+      await promise
       setIsLoading(true)
       admin ? router.push('/admin-login') : router.push('/login')
     } catch (error) {
@@ -408,8 +288,6 @@ export function RegisterForm({ admin }: RegisterFormProps) {
                       />
                     </InputOTPGroup>
                   </InputOTP>
-
-                  {/* <Input type="text" placeholder="cpf" {...field} className="rounded-xl" /> */}
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -499,8 +377,6 @@ export function RegisterForm({ admin }: RegisterFormProps) {
               </FormItem>
             )}
           />
-
-          {/* <Link href="/forgot-password" className="underline self-start hover:opacity-50 text-sm">Esqueceu sua senha?</Link> */}
 
           <Button className="bg-primary text-white rounded-full text-lg px-12 py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">
             Criar conta

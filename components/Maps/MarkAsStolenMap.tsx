@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { GeoJsonLoader, Map, Marker, ZoomControl } from 'pigeon-maps'
 import * as turf from '@turf/turf'
 import { toast } from 'react-toastify'
+import { getNeighborhoodId } from '../../functions/district/get-neighborhood-id'
 
 interface MarkAsStolenMapProps {
   position?: [number, number] | undefined
@@ -48,52 +49,6 @@ export function MarkAsStolenMap({
     return windowSize
   }
 
-  useEffect(() => {
-    fetch(geoJsonLink)
-      .then(res => res.json())
-      .then(data => setGeoJsonData(data))
-
-    fetch(geoJsonPB)
-      .then(res => res.json())
-      .then(data => setGeoJsonPBData(data))
-  }, [])
-
-  async function getNeighborhoodId(cod_neighborhood: Number) {
-    const params = new URLSearchParams({
-      'queries[0]': JSON.stringify({
-        method: 'equal',
-        attribute: 'cod_neighborhood',
-        values: [Number(cod_neighborhood)],
-      }),
-    })
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DISTRICT}/documents?${params.toString()}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-          },
-          cache: 'no-store',
-        }
-      )
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch stolen devices: ${await response.text()}`
-        )
-      }
-
-      const result = await response.json()
-
-      return result.documents[0].$id
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
   async function handleGetPosition({
     event,
     latLng,
@@ -127,15 +82,14 @@ export function MarkAsStolenMap({
     }
 
     if (foundFeature) {
+      setIsMarkerOn(true)
+      setCoordinates(latLng)
+      setPosition(latLng)
       const neighborhoodId = await getNeighborhoodId(
         Number(foundFeature.properties.cod_bairro)
       )
       setNeighborhoodId(neighborhoodId)
     }
-
-    setIsMarkerOn(true)
-    setCoordinates(latLng)
-    setPosition(latLng)
   }
 
   function setWidth() {

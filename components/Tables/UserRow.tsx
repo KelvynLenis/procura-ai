@@ -22,7 +22,10 @@ import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { toast } from 'react-toastify'
-import { deleteUser } from '@/functions/delete-user'
+import { deleteUser } from '@/functions/user/delete-user'
+import { updateUserStatus } from '@/functions/user/update-user-status'
+import { deleteUserSession } from '@/functions/user/delete-user'
+import { listUserDevices } from '@/functions/device/list-user-devices'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 
 interface User {
@@ -62,109 +65,70 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
 
   async function handleDeleteUser(userAuthid: string, userDocumentId: string) {
     try {
-      await deleteUser(userAuthid)
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents/${userDocumentId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project':
-              process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || '',
-          },
-        }
-      )
-
-      if (!response.ok) {
-        throw new Error(`Failed to delete user: ${await response.text()}`)
-      }
-
+      await deleteUser(userAuthid, userDocumentId)
+      
       setUsers(prevUsers =>
         prevUsers.filter(prevUser => prevUser.$id !== userDocumentId)
-      )
-
-      toast.success('Usuário deletado com sucesso!')
+      );
+      toast.success('Usuário deletado com sucesso!');
     } catch (error) {
-      toast.error('Erro ao deletar usuário. Tente novamente.')
-      console.error('Erro ao deletar usuário:', error)
+      toast.error('Erro ao deletar usuário. Tente novamente.');
+      console.error('Erro ao deletar usuário:', error);
     }
   }
 
   async function handleDeactivateUser() {
     try {
-      const updatedUser = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents/${user.$id}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-          },
-          body: JSON.stringify({
-            data: {
-              status: user.status === 'Ativo' ? 'Inativo' : 'Ativo',
-            },
-          }),
-        }
-      )
+      const newStatus = user.status === 'Ativo' ? 'Inativo' : 'Ativo';
+      
+      const updatedUser = await updateUserStatus(user.$id, {
+        status: newStatus,
+      });
 
-      toast.success('Usuário desativado com sucesso!')
+      if (updatedUser) {
+        setUsers(prevUsers =>
+          prevUsers.map(prevUser => {
+            if (prevUser.$id === user.$id) {
+              return {
+                ...prevUser,
+                status: newStatus,
+              }
+            }
+            return prevUser
+          })
+        );
+
+        try {
+          await deleteUserSession(user.user_id);
+        } catch (error) {
+          console.error('Erro ao deletar sessão do usuário:', error);
+          // Não vamos interromper o fluxo se falhar ao deletar a sessão
+        }
+
+        toast.success(`Usuário ${newStatus === 'Ativo' ? 'ativado' : 'desativado'} com sucesso!`);
+      }
     } catch (error) {
-      toast.error('Erro ao desativar usuário. Tente novamente.')
-      console.error('Erro ao desativar usuário:', error)
+      toast.error(`Erro ao ${user.status === 'Ativo' ? 'desativar' : 'ativar'} usuário. Tente novamente.`);
+      console.error(`Erro ao ${user.status === 'Ativo' ? 'desativar' : 'ativar'} usuário:`, error);
     }
-
-    setUsers(prevUsers =>
-      prevUsers.map(prevUser => {
-        if (prevUser.$id === user.$id) {
-          return {
-            ...prevUser,
-            status: prevUser.status === 'Ativo' ? 'Inativo' : 'Ativo',
-          }
-        }
-        return prevUser
-      })
-    )
-
-    deleteUserSession(user.user_id!)
   }
 
   useEffect(() => {
     const getDevices = async () => {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
-        const params = await buildParams()
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-            },
-          }
-        )
-
-        if (!response.ok) {
-          const error = await response.text()
-          throw new Error(`Error: ${error}`)
-        }
-
-        const result = await response.json()
-
-        setDevices(result.documents || [])
-      } catch (err) {
-        console.error(`Fetch error: ${err}`)
+        const userDevices = await listUserDevices(user.user_id);
+        setDevices(userDevices);
+      } catch (error) {
+        console.error('Erro ao buscar dispositivos:', error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    getDevices()
-
-    getRandomProfileColor()
-  }, [])
+    getDevices();
+    getRandomProfileColor();
+  }, [user.user_id]);
 
   function getRandomProfileColor() {
     const colors = [

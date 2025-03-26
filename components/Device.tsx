@@ -10,6 +10,8 @@ import {
 import { DeviceForm } from './Forms/DeviceForm'
 import { useToast } from '@/hooks/use-toast'
 import { Trash } from 'lucide-react'
+import { deleteDevice } from '@/functions/device/delete-device'
+
 export function Device({
   phone_model,
   phone_number,
@@ -24,33 +26,19 @@ export function Device({
 
   async function handleDeleteDevice(id: string) {
     try {
-      const promise = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-          },
-        }
-      )
-        .then(async response => {
-          if (!response.ok) {
-            const error = await response.text()
-            throw new Error(`Error: ${error}`)
-          }
-          setDevices(prevDevices =>
-            prevDevices.filter(device => device.$id !== id)
-          )
-
-          return response
-        })
-        .catch(err => {
-          console.error(`Fetch error: ${err}`)
-          return null
-        })
+      await deleteDevice(id)
+      setDevices(prevDevices => prevDevices.filter(device => device.$id !== id))
+      toast({
+        title: 'Dispositivo excluído com sucesso!',
+        variant: 'default',
+      })
     } catch (error) {
-      console.error(error)
+      console.error('Erro ao deletar dispositivo:', error)
+      toast({
+        title: 'Erro ao excluir dispositivo',
+        description: 'Tente novamente mais tarde.',
+        variant: 'destructive',
+      })
     }
   }
 

@@ -44,10 +44,14 @@ import {
 import { account } from '@/lib/appwrite'
 import { phoneBrands } from '@/utils/ChartData'
 import { Device, type DeviceProps } from '@/types'
-import { cn, validateIMEI, validatePhoneNumber } from '@/lib/utils'
+import { cn, validatePhoneNumber, validateImeiFormat, validateImeiWithLuhn } from '@/lib/utils'
 
 import { Check, ChevronDown, Search } from 'lucide-react'
 import { DialogClose } from '@radix-ui/react-dialog'
+
+import { createDevice } from '@/functions/device/create-device'
+import { updateDevice } from '@/functions/device/update-device'
+import { checkImei } from '@/functions/device/check-imei'
 
 interface AddDeviceFormProps {
   device?: DeviceProps
@@ -77,56 +81,27 @@ export function DeviceForm({
       brand: z.string().min(1, {
         message: 'A marca do dispositivo é obrigatória.',
       }),
-      imei: z.string().min(15, {
-        message: 'O IMEI deve conter exatamente 15 dígitos numéricos.',
-      }),
+      imei: z.string(),
     })
-    .refine(data => validateIMEI(data.imei), {
+    .refine(data => validateImeiFormat(data.imei), {
+      path: ['imei'],
+      message: 'O IMEI deve conter exatamente 15 dígitos numéricos.',
+    })
+    .refine(data => validateImeiWithLuhn(data.imei), {
       path: ['imei'],
       message: 'IMEI inválido. Por favor, verifique o número.',
     })
     .refine(data => validatePhoneNumber(data.phone_number), {
-      path: ['phone_number'], // Indica onde mostrar o erro
-      message:
-        'O número de celular deve conter exatamente 11 dígitos numéricos.',
+      path: ['phone_number'],
+      message: 'O número de celular deve conter exatamente 11 dígitos numéricos.',
     })
     .refine(
       async data => {
         if (device) {
           return true
         }
-
-        const params = new URLSearchParams({
-          'queries[0]': JSON.stringify({
-            method: 'equal',
-            attribute: 'imei',
-            values: [data.imei],
-          }),
-        })
-
         try {
-          const imeiCheckResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
-            {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-              },
-            }
-          )
-
-          if (!imeiCheckResponse.ok) {
-            toast.error('Erro ao verificar IMEI. Tente novamente.')
-            return false
-          }
-
-          const existingDevices = await imeiCheckResponse.json()
-          const imeiExists = existingDevices.documents.some(
-            (existingDevice: DeviceProps) => existingDevice.imei === data.imei
-          )
-
-          return !imeiExists
+          return await checkImei(data.imei)
         } catch (error) {
           console.error('Erro ao verificar IMEI:', error)
           toast.error('Erro ao verificar IMEI. Tente novamente.')
@@ -136,40 +111,6 @@ export function DeviceForm({
       {
         path: ['imei'],
         message: 'Este IMEI já está cadastrado no sistema.',
-      }
-    )
-    .refine(
-      data => {
-        // Validação básica: IMEI deve ter 15 dígitos numéricos
-        if (!/^\d{15}$/.test(data.imei)) {
-          return false
-        }
-
-        // Algoritmo de Luhn para validação de IMEI
-        let sum = 0
-        const imeiArray = data.imei.split('').map(Number)
-
-        for (let i = 0; i < 15; i++) {
-          let digit = imeiArray[i]
-
-          // Dobra os dígitos em posições pares (índice ímpar, pois começamos do 0)
-          if (i % 2 !== 0) {
-            digit *= 2
-            if (digit > 9) {
-              digit -= 9
-            }
-          }
-
-          sum += digit
-        }
-
-        // O IMEI é válido se a soma for divisível por 10
-        return sum % 10 === 0
-      },
-      {
-        path: ['imei'],
-        message:
-          'IMEI inválido. O número deve ter 15 dígitos e ser um IMEI válido.',
       }
     )
 
@@ -214,51 +155,21 @@ export function DeviceForm({
       const deviceId = uuidv4()
 
       const callFunction = async () => {
-        const promise = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-            },
-            body: JSON.stringify({
-              documentId: deviceId,
-              data: {
-                phone_number: values.phone_number,
-                phone_model: values.phone_model,
-                brand: values.brand,
-                imei: values.imei,
-                is_stolen: false,
-                auth_id: userId,
-              },
-            }),
-          }
-        )
-          .then(async response => {
-            if (!response.ok) {
-              const error = await response.text()
-              throw new Error(`Error: ${error}`)
-            }
-            form.reset()
-
-            return response.json()
-          })
-          .catch(err => {
-            console.error(`Fetch error: ${err.message}`)
-            return null
-          })
-
-        return promise
+        try {
+          await createDevice(deviceId, values as Device, userId)
+          form.reset()
+          router.push('/meus-dispositivos')
+        } catch (error) {
+          console.error(`Erro ao criar dispositivo: ${error}`)
+          throw error
+        }
       }
 
       toast.promise(callFunction(), {
         pending: 'Criando dispositivo...',
         success: 'Dispositivo criado com sucesso!',
-        error: 'Erro ao atualizar dispositivo.',
+        error: 'Erro ao criar dispositivo.',
       })
-
-      router.push('/meus-dispositivos')
     } catch (error) {
       console.error(error)
       toast.error('Erro ao processar a operação.')
@@ -270,32 +181,13 @@ export function DeviceForm({
       const { $id: userId } = await account.get()
 
       const callFunction = async () => {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
-          {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-            },
-            body: JSON.stringify({
-              data: {
-                auth_id: userId,
-                phone_number: values.phone_number,
-                phone_model: values.phone_model,
-                brand: values.brand,
-                imei: values.imei,
-                is_stolen: false,
-              },
-            }),
-          }
-        )
-
-        if (!response.ok) {
-          throw new Error(await response.text())
+        try {
+          await updateDevice(id, values as Device, userId)
+          route.push('/meus-dispositivos')
+        } catch (error) {
+          console.error('Erro ao atualizar dispositivo:', error)
+          throw error
         }
-
-        return response.json()
       }
 
       await toast.promise(callFunction(), {
@@ -303,8 +195,6 @@ export function DeviceForm({
         success: 'Dispositivo atualizado com sucesso!',
         error: 'Erro ao atualizar dispositivo.',
       })
-
-      route.push('/meus-dispositivos')
     } catch (error) {
       console.error('Erro ao atualizar dispositivo:', error)
       toast.error('Erro ao atualizar dispositivo. Tente novamente.')
