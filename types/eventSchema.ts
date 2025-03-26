@@ -13,6 +13,7 @@ const EventSchema = z.object({
   last_location: z.tuple([z.number(), z.number()]),
   time_event: z.string().datetime(),
   type: z.string(),
+  id_district: z.string().optional(),
 });
 
 export default EventSchema;

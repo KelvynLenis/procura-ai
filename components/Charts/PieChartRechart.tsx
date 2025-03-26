@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { PieChart, Pie, Sector, ResponsiveContainer, Cell } from 'recharts';
 
-const renderActiveShape = (props) => {
+const renderActiveShape = (props: any) => {
   const RADIAN = Math.PI / 180;
   const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
   const sin = Math.sin(-RADIAN * midAngle);
@@ -60,7 +60,7 @@ interface ChartProps {
 const PieChartRechart = ({ numberOfDevicesRecovered, numberOfDevicesRobbed, numbeOfDevicesTheft, numberOfDevicesLost, numberOfDevicesRegistered }: ChartProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const onPieEnter = (_, index) => {
+  const onPieEnter = (_: any, index: number) => {
     setActiveIndex(index);
   };
 

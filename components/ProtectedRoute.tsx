@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { ReactNode, useEffect, useState } from 'react'
 import ClipLoader from 'react-spinners/ClipLoader'
 import { toast } from 'react-toastify'
+import { checkUserStatus } from '@/functions/user/check-user-status'
+import { deleteUserSession } from '@/functions/user/delete-user'
 
 interface ProtectedRouteProps {
   admin?: boolean
@@ -23,49 +25,34 @@ export default function ProtectedRoute({
     const checkUserAuthentication = async () => {
       try {
         const user = await account.get() // Verifica se o usuário está autenticado
-        const isAdmin = user.labels[0] === 'admin'
 
-        if (admin && !isAdmin) {
-          throw new Error('Acesso negado')
+        // Verifica o status e permissões do usuário
+        const userStatus = await checkUserStatus(user.$id)
+
+        // Verifica se é rota de admin e usuário não é admin
+        if (admin && !userStatus.isAdmin) {
+          toast.error('Acesso negado: Permissão de administrador necessária')
+          router.push('/login')
+          return
         }
 
-        const params = new URLSearchParams({
-          'queries[0]': JSON.stringify({
-            method: 'equal',
-            attribute: 'user_id',
-            values: [`${user.$id}`],
-          }),
-        })
+        if (!admin && userStatus.isAdmin) {
+          toast.error('Acesso negado: Permissão de usuário necessária')
+          router.push('/dashboard')
+          return
+        }
 
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-            },
-          }
-        )
-
-        const {
-          documents: [userDoc],
-        } = await response.json()
-
-        if (userDoc) {
-          if (userDoc.status === 'Inativo') {
-            toast.error('Usuário inativo')
-
-            account.deleteSession('current')
-            // router.back()
-            router.push('/login')
-            return
-          }
+        // Verifica se usuário está inativo
+        if (userStatus.status === 'Inativo') {
+          toast.error('Usuário inativo')
+          await deleteUserSession(user.$id)
+          router.push('/login')
+          return
         }
 
         setIsAuthenticated(true)
       } catch (error) {
-        // router.back()
+        console.error('Erro na autenticação:', error)
         router.push('/login')
       } finally {
         setIsLoading(false)
@@ -73,7 +60,7 @@ export default function ProtectedRoute({
     }
 
     checkUserAuthentication()
-  }, [router])
+  }, [router, admin])
 
   if (isLoading) {
     return (

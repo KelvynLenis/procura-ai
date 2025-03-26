@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils'
 import { DevicesList } from './DevicesList'
 import { Pagination, PaginationContent, PaginationItem } from './ui/pagination'
 import { DevicesTable } from './Tables/DevicesTable'
+import { listDevices } from '@/functions/device/list-devices'
 
 export function DevicesComponent() {
   const [devices, setDevices] = useState<DeviceProps[]>([])
@@ -23,26 +24,6 @@ export function DevicesComponent() {
   async function getUserId() {
     const { $id: userId } = await account.get()
     return userId
-  }
-
-  async function buildParams() {
-    const userId = await getUserId()
-    const params = new URLSearchParams({
-      'queries[0]': JSON.stringify({
-        method: 'equal',
-        attribute: 'auth_id',
-        values: [userId],
-      }),
-      'queries[1]': JSON.stringify({
-        method: 'limit',
-        values: [limit],
-      }),
-      'queries[2]': JSON.stringify({
-        method: 'offset',
-        values: [(page - 1) * limit],
-      }),
-    })
-    return params
   }
 
   function handleGoToNextPage() {
@@ -69,38 +50,22 @@ export function DevicesComponent() {
     const getDevices = async () => {
       setIsLoading(true)
       try {
-        const params = await buildParams()
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-            },
-          }
-        )
-
-        if (!response.ok) {
-          const error = await response.text()
-          throw new Error(`Error: ${error}`)
-        }
-
-        const result = await response.json()
+        const userId = await getUserId()
+        const result = await listDevices({ userId, limit, page })
 
         const totalPages = Math.ceil(result.total / limit)
         setDevices(result.documents || [])
         setTotalDevices(result.total || 0)
         setPages(totalPages)
       } catch (err) {
-        console.error(`Fetch error: ${err}`)
+        console.error('Erro ao buscar dispositivos:', err)
       } finally {
         setIsLoading(false)
       }
     }
 
     getDevices()
-  }, [page])
+  }, [page, limit])
 
   return (
     <>

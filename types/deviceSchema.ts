@@ -1,7 +1,9 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 // Schema para validar as permissões
-const PermissionsSchema = z.array(z.string().regex(/^(read|update|delete)\("user:.+"\)$/));
+const PermissionsSchema = z.array(
+  z.string().regex(/^(read|update|delete)\("user:.+"\)$/)
+)
 
 // Schema principal
 const DeviceSchema = z.object({
@@ -14,9 +16,11 @@ const DeviceSchema = z.object({
   auth_id: z.string(),
   brand: z.string(), // Marca do dispositivo
   imei: z.string(), // IMEI do dispositivo
-  isStolen: z.boolean(), // Indica se o dispositivo é roubado
+  is_stolen: z.boolean(), // Indica se o dispositivo é roubado
   phone_model: z.string(), // Modelo do telefone
   phone_number: z.string(), // Número de telefone
-});
+  status: z.string(), // Status do dispositivo
+  operator_id: z.string(),
+})
 
-export default DeviceSchema;
+export default DeviceSchema

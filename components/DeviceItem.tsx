@@ -11,6 +11,8 @@ import { v4 as uuidv4 } from 'uuid'
 import { useState } from 'react'
 import { DeviceDetailsCard } from './DeviceDetailsCard'
 import { Modal } from './Modal'
+import { createEvent } from '@/functions/event/create-event'
+import { updateDeviceStatus } from '@/functions/device/update-device-status'
 
 import {
   Dialog,
@@ -52,69 +54,29 @@ export function DeviceItem({
 
   async function handleDeviceRecovery(id: string) {
     try {
-      const eventId = uuidv4()
-      const x = new Date().toISOString()
-
       const callFunction = async () => {
         try {
-          const createEvent = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}/documents/`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-              },
-              body: JSON.stringify({
-                documentId: eventId,
-                data: {
-                  id_device: id,
-                  time_event: new Date().toISOString(),
-                  last_location: [0, 0],
-                  description: 'Recuperado',
-                  type: 'Recuperado',
-                  is_alert_on: false,
-                },
-              }),
-            }
-          )
-            .then(async response => {
-              if (!response.ok) {
-                const error = await response.text()
-                throw new Error(`Error: ${error}`)
-              }
-              return response.json()
-            })
-            .catch(err => {
-              console.error(`Fetch error: ${err.message}`)
-              return null
-            })
+          await createEvent({
+            id_device: id,
+            time_event: new Date().toISOString(),
+            last_location: [0, 0],
+            description: 'Recuperado',
+            type: 'Recuperado',
+            is_alert_on: false,
+            id_district: '',
+          })
 
-          const updateDeviceStatus = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
-            {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-              },
-              body: JSON.stringify({
-                data: {
-                  is_stolen: false,
-                  status: 'Recuperado',
-                },
-              }),
-            }
-          )
+          await updateDeviceStatus(id, {
+            is_stolen: false,
+            status: 'Recuperado',
+          })
 
-          return true // Return success flag
+          return true
         } catch (error) {
           console.error('Ocorreu um erro em uma das operações:', error)
-          return false // Return failure flag
+          return false
         }
       }
-
-      // setDevices((prevDevices) => prevDevices.map((device) => device.$id === id ? { ...device,  } : device));
 
       const success = await toast.promise(callFunction, {
         pending: 'Recuperando Dispositivo...',
@@ -132,7 +94,7 @@ export function DeviceItem({
         )
       }
     } catch (error) {
-      console.error(error)
+      console.error('Erro ao recuperar dispositivo:', error)
     }
   }
 
@@ -173,7 +135,7 @@ export function DeviceItem({
                 <IoIosWarning size={18} />
               </button>
             </DialogTrigger>
-            <DialogContent className="h-[90%] overflow-scroll flex flex-col w-[85%]">
+            <DialogContent className="h-[90%] overflow-scroll flex flex-col w-[93%]">
               {isStolen ? (
                 <>
                   <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">

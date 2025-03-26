@@ -17,17 +17,14 @@ import {
 import { useForm } from 'react-hook-form'
 import { Input } from '../Input'
 import Button from '../Button'
-import { useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { createContact } from '@/functions/contact/create-contact'
-import { getUserId } from '@/functions/user/get-user-id'
-import { toast } from 'react-toastify'
 import type { Contact } from '@/types'
 import { listContacts } from '@/functions/contact/list-contacts'
 import { validatePhoneNumber } from '@/lib/utils'
 import { updateContact } from '@/functions/contact/update-contact'
-
+import { toast } from 'react-toastify'
 interface ConctactFormProps {
   contact?: Contact
   setContacts: React.Dispatch<React.SetStateAction<Contact[]>>
