@@ -97,7 +97,7 @@ const itemsForAdmins = [
 const perfilGroup = [
   {
     title: 'Editar perfil',
-    url: 'perfil',
+    url: 'perfil-admin',
     icon: <Pencil />,
   },
 ]
