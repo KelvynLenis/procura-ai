@@ -23,9 +23,10 @@ interface ComboboxProps {
   values: string[]
   options: { label: string; value: string }[]
   onSelect: (options: string[]) => void
-  placeholder: string
+  placeholder?: string
   disabled?: boolean
   maxSelections?: number
+  className?: string
 }
 
 export function Combobox({
@@ -35,6 +36,7 @@ export function Combobox({
   placeholder,
   disabled,
   maxSelections,
+  className,
 }: ComboboxProps) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
@@ -48,18 +50,18 @@ export function Combobox({
       // Add if not selected and check max selections
       if (maxSelections && values?.length >= maxSelections) {
         // Replace the last item if max reached
-        newValues = [...values?.slice(0, maxSelections - 1), option]
+        newValues = [...values.slice(0, maxSelections - 1), option]
       } else {
         newValues = [...values, option]
       }
     }
 
-    onSelect(newValues)
+    onSelect?.(newValues)
   }
 
   const removeValue = (value: string, e: React.MouseEvent) => {
     e.stopPropagation()
-    onSelect(values?.filter(val => val !== value))
+    onSelect?.(values?.filter(val => val !== value))
   }
 
   return (
@@ -77,7 +79,8 @@ export function Combobox({
               type="button"
               disabled={disabled}
               className={cn(
-                'w-56 min-h-[48px] p-2 text-base gap-2 justify-between bg-white ring-1 ring-[#232323]/20 shadow-none flex flex-wrap overflow-y-scroll custom-scroll'
+                'w-56 min-h-[48px] p-2 text-base gap-2 justify-between bg-white ring-1 ring-[#232323]/20 shadow-none flex flex-wrap overflow-y-scroll custom-scroll',
+                className
               )}
             >
               {values?.length > 0 ? (

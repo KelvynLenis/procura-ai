@@ -1,12 +1,11 @@
 'use client'
 
 import { TableCell, TableRow } from '../ui/table'
-import { IoIosWarning } from 'react-icons/io'
+import recoveryIcon from '../../assets/icons/recover.png'
 import { ImPencil } from 'react-icons/im'
-import Link from 'next/link'
-import type { DeviceProps, OccurrencesProps } from '@/types'
+import type { OccurrencesProps } from '@/types'
 import { cn, formatDateTime } from '@/lib/utils'
-import { Eye, Trash2 } from 'lucide-react'
+import { CloudUpload, Eye } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -14,12 +13,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { MarkAsStolenForm } from '../Forms/MarkAsStolenForm'
-import { toast } from 'react-toastify'
-import { v4 as uuidv4 } from 'uuid'
 import { useState } from 'react'
-import { AlertDetails } from '../AlertDetails'
-import { ConfirmationDialog } from '../ConfirmationDialog'
+import Image from 'next/image'
+import { Label } from '../ui/label'
+import { Textarea } from '../ui/textarea'
+import { Combobox } from '../Combobox'
+import { Checkbox } from '../ui/checkbox'
+import { Input } from '../Input'
+import Button from '../Button'
 
 interface AlertRowProps {
   index: number
@@ -28,7 +29,33 @@ interface AlertRowProps {
 
 export function AlertRow({ index, occurrence }: AlertRowProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const [isRecoverDeviceDialogOpen, setIsRecoverDeviceDialogOpen] =
+    useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [entity, setEntity] = useState('')
+  const [sector, setSector] = useState('')
+  const [deviceLocation, setDeviceLocation] = useState('')
+
+  const options = [
+    { label: 'Recover', value: 'recover' },
+    { label: 'Ignore', value: 'ignore' },
+    { label: 'Block', value: 'block' },
+  ]
+
+  function handleSelectEntity(option: string | string[]) {
+    setEntity(typeof option === 'string' ? option : '')
+    console.log(option)
+  }
+
+  function handleSelectSector(option: string | string[]) {
+    setSector(typeof option === 'string' ? option : '')
+    console.log(option)
+  }
+
+  function handleSelectDeviceLocation(option: string | string[]) {
+    setDeviceLocation(typeof option === 'string' ? option : '')
+    console.log(option)
+  }
 
   function showLoadingToast() {
     setIsLoading(true)
@@ -203,34 +230,126 @@ export function AlertRow({ index, occurrence }: AlertRowProps) {
               </DialogContent>
             </Dialog>
 
-            <button
-              type="button"
-              onClick={showLoadingToast}
-              className="hidden md:flex rounded-lg w-10 h-10 ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
+            <Dialog
+              open={isRecoverDeviceDialogOpen}
+              onOpenChange={setIsRecoverDeviceDialogOpen}
             >
-              <ImPencil size={16} />
-              <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
-                Editar dispositivo
-              </span>
-            </button>
+              <DialogTrigger asChild>
+                <button
+                  type="button"
+                  onClick={showLoadingToast}
+                  className="hidden md:flex rounded-lg w-10 h-10 ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
+                >
+                  <Image alt="recuperar dispositivo" src={recoveryIcon} />
+                  <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                    Recuperar dispositivo
+                  </span>
+                </button>
+              </DialogTrigger>
+              <DialogContent className="flex flex-col gap-3 p-0 w-[840px]">
+                <DialogHeader>
+                  <DialogTitle className="text-xl text-procura-ai-blue bg-sky-100/40 rounded-md py-5 px-6">
+                    Dispositivo recuperado
+                  </DialogTitle>
+                </DialogHeader>
 
-            {/* <ConfirmationDialog
-              title="Deseja deletar este dispositivo?"
-              description="Essa ação não pode ser desfeita. Isso excluirá
-                    permanentemente o dispositivo e removerá seus dados de
-                    nossos servidores."
-              onConfirm={() => {}}
-            >
-              <button
-                type="button"
-                className="hidden md:flex rounded-lg w-10 h-10 group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90"
-              >
-                <Trash2 size={20} />
-                <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
-                  Deletar dispositivo
-                </span>
-              </button>
-            </ConfirmationDialog> */}
+                <div className="flex flex-col gap-4 p-4">
+                  <div className="flex flex-col gap-2">
+                    <Label className="font-medium text-base">
+                      Informações gerais / Descrição
+                    </Label>
+                    <Textarea className="w-full" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-x-20 gap-y-4 justify-between">
+                    <div className="flex flex-col gap-2">
+                      <Label className="font-medium text-base">
+                        Orgão responsável pela recuperação
+                      </Label>
+                      <select
+                        name=""
+                        id=""
+                        className="bg-zinc-100 w-full h-12 rounded-md ring-1 ring-zinc-300 px-2 font-medium"
+                      >
+                        <option value="">{entity}</option>
+                        {options.map((option, index) => (
+                          <option key={index} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <Label className="font-medium text-base">Setor</Label>
+                      <select
+                        name=""
+                        id=""
+                        className="bg-zinc-100 w-full h-12 rounded-md ring-1 ring-zinc-300 px-2 font-medium"
+                      >
+                        <option value="">{entity}</option>
+                        {options.map((option, index) => (
+                          <option key={index} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <Label className="font-medium text-base">
+                        Local para retirada do dispositivo
+                      </Label>
+                      <select
+                        name=""
+                        id=""
+                        className="bg-zinc-100 w-full h-12 rounded-md ring-1 ring-zinc-300 px-2 font-medium"
+                      >
+                        <option value="">{entity}</option>
+                        {options.map((option, index) => (
+                          <option key={index} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2 font-medium">
+                      <Checkbox className="shadow-none rounded-sm border-[#232323]/90 font-medium" />
+                      Notificar proprietário através de e-mail e SMS
+                    </div>
+                    <div className="flex items-center text-base gap-2 font-medium">
+                      <Checkbox className="shadow-none rounded-sm border-[#232323]/90 font-medium" />
+                      <span className="text-base">
+                        Notificar contatos de confiança
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Label className="font-medium text-base">
+                      Anexar documentos
+                    </Label>
+                    <div className="flex flex-col w-full h-32 bg-zinc-100 items-center justify-center rounded-md cursor-pointer hover:bg-zinc-300 transition-colors duration-200 ease-in">
+                      <CloudUpload size={60} className="text-zinc-500" />
+                      <span className="text-zinc-500">
+                        Clique aqui ou arraste e solte arquivos para anexá-los
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between w-full">
+                    <Button variant="blue">Salvar Alterações</Button>
+                    <Button
+                      onClick={() => setIsRecoverDeviceDialogOpen(false)}
+                      variant="red"
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </TableCell>
       </TableRow>
