@@ -12,6 +12,10 @@ export async function getDeviceEvents(deviceId: string): Promise<Event[]> {
       attribute: 'is_alert_on',
       values: [true],
     }),
+    'queries[2]': JSON.stringify({
+      method: 'orderDesc',
+      attribute: '$createdAt',
+    }),
   })
 
   try {
@@ -33,11 +37,7 @@ export async function getDeviceEvents(deviceId: string): Promise<Event[]> {
 
     const { documents } = await response.json()
 
-    // Ordena os eventos por data de criação (mais recente primeiro)
-    return documents.sort(
-      (a: Event, b: Event) =>
-        new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
-    )
+    return documents
   } catch (error) {
     console.error('Erro ao buscar eventos:', error)
     throw error
