@@ -24,6 +24,7 @@ interface Notification {
 export default function Dashboard() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [occurencesData, setOccurencesData] = useState<OccurrencesProps[]>([])
+  const [selectedLocation, setSelectedLocation] = useState<[number, number] | undefined>()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,18 +59,34 @@ export default function Dashboard() {
     fetchData()
   }, [notifications])
 
+  const handleNotificationClick = (notification: Notification) => {
+    const relatedOccurrence = occurencesData.find(
+      occ => occ.device.$id === notification.id_device
+    )
+    
+    if (relatedOccurrence?.event?.last_location) {
+      // Reseta a localização antes de definir a nova para garantir que o useEffect seja disparado
+      setSelectedLocation(undefined)
+      setTimeout(() => {
+        setSelectedLocation(relatedOccurrence.event.last_location)
+      }, 0)
+    }
+  }
+
   return (
     <div className="flex flex-col">
       <div className="absolute top-0 right-16 z-10">
         <NotificationButton
           notifications={notifications}
           setNotifications={setNotifications}
+          onNotificationClick={handleNotificationClick}
         />
       </div>
       <OccurrencesMap 
         occurences={occurencesData} 
         notifications={notifications}
         setNotifications={setNotifications}
+        selectedLocation={selectedLocation}
       />
       <Link href={'/dashboard'}>
         <TbArrowsMinimize

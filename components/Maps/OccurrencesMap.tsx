@@ -34,26 +34,45 @@ interface OccurrencesMapProps {
   occurences?: OccurrencesProps[]
   notifications?: Notification[]
   setNotifications?: React.Dispatch<React.SetStateAction<Notification[]>>
+  selectedLocation?: [number, number]
 }
 
 export function OccurrencesMap({
   width,
   height,
-  defaultCenter,
-  defaultZoom,
+  defaultCenter = [-7.1509317, -34.8446769],
+  defaultZoom = 11,
   occurences,
   notifications,
   setNotifications,
+  selectedLocation,
 }: OccurrencesMapProps) {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false)
-  const [occurence, setOccurence] = useState<OccurrencesProps>(
-    {} as OccurrencesProps
-  )
+  const [occurence, setOccurence] = useState<OccurrencesProps>({} as OccurrencesProps)
   const [isInfoCardOpen, setIsInfoCardOpen] = useState(false)
   const [localOccurrences, setLocalOccurrences] = useState<OccurrencesProps[]>(occurences || [])
+  const [center, setCenter] = useState<[number, number]>(defaultCenter)
+  const [zoom, setZoom] = useState(defaultZoom)
 
   const pathname = usePathname().slice(1)
   const isFullScreen = pathname === 'map/ocorrencias'
+
+  // Atualiza o centro do mapa e abre o popup quando uma localização é selecionada
+  useEffect(() => {
+    if (selectedLocation && occurences) {
+      const selectedOccurence = occurences.find(
+        occ => occ.event?.last_location?.[0] === selectedLocation[0] && 
+              occ.event?.last_location?.[1] === selectedLocation[1]
+      )
+
+      if (selectedOccurence) {
+        setCenter(selectedLocation)
+        setZoom(15)
+        setOccurence(selectedOccurence)
+        isFullScreen ? setIsOverlayOpen(true) : setIsInfoCardOpen(true)
+      }
+    }
+  }, [selectedLocation, occurences, isFullScreen])
 
   // Atualiza os dados iniciais quando as props mudarem
   useEffect(() => {
@@ -154,8 +173,12 @@ export function OccurrencesMap({
         onClick={() => closePopup()}
         width={setWidth()}
         height={setHeight()}
-        defaultCenter={[-7.1509317, -34.8446769]}
-        defaultZoom={11}
+        center={center}
+        zoom={zoom}
+        onBoundsChanged={({ center, zoom }) => {
+          setCenter(center)
+          setZoom(zoom)
+        }}
       >
         {localOccurrences &&
           localOccurrences.map(
