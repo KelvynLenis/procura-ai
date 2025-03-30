@@ -14,6 +14,17 @@ import alarm from '../../assets/icons/alarm.png'
 import robbery from '../../assets/icons/robbery.png'
 import interrogation from '../../assets/icons/interrogation.png'
 import lost from '../../assets/icons/lost.svg'
+import { joinDevicesEventsUsers } from '@/functions/occurences/get-occurrences'
+import { toast } from 'react-toastify'
+
+interface Notification {
+  $id: string
+  type: string
+  description: string
+  time_event: string
+  id_device: string
+  is_alert_on: boolean
+}
 
 interface OccurrencesMapProps {
   width?: number
@@ -21,6 +32,8 @@ interface OccurrencesMapProps {
   defaultCenter?: [number, number]
   defaultZoom?: number
   occurences?: OccurrencesProps[]
+  notifications?: Notification[]
+  setNotifications?: React.Dispatch<React.SetStateAction<Notification[]>>
 }
 
 export function OccurrencesMap({
@@ -29,15 +42,25 @@ export function OccurrencesMap({
   defaultCenter,
   defaultZoom,
   occurences,
+  notifications,
+  setNotifications,
 }: OccurrencesMapProps) {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false)
   const [occurence, setOccurence] = useState<OccurrencesProps>(
     {} as OccurrencesProps
   )
   const [isInfoCardOpen, setIsInfoCardOpen] = useState(false)
+  const [localOccurrences, setLocalOccurrences] = useState<OccurrencesProps[]>(occurences || [])
 
   const pathname = usePathname().slice(1)
   const isFullScreen = pathname === 'map/ocorrencias'
+
+  // Atualiza os dados iniciais quando as props mudarem
+  useEffect(() => {
+    if (occurences) {
+      setLocalOccurrences(occurences)
+    }
+  }, [occurences])
 
   function handleOpenPopup(event: OccurrencesProps) {
     isFullScreen ? setIsOverlayOpen(true) : setIsInfoCardOpen(true)
@@ -134,9 +157,8 @@ export function OccurrencesMap({
         defaultCenter={[-7.1509317, -34.8446769]}
         defaultZoom={11}
       >
-        {/* biome-ignore lint/complexity/useOptionalChain: <explanation> */}
-        {occurences &&
-          occurences.map(
+        {localOccurrences &&
+          localOccurrences.map(
             (occurence, index) =>
               occurence.event?.last_location && (
                 <Marker
