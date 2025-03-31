@@ -85,7 +85,7 @@ export function ConctactForm({
           return
         }
 
-        const contacts = await listContacts()
+        const contacts = await listContacts({})
 
         if (contacts.length >= 3) {
           toast.error('Limite de contatos atingido')

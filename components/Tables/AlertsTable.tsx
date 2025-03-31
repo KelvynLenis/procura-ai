@@ -43,6 +43,7 @@ export function AlertsTable({
   const [isLoading, setIsLoading] = useState(true)
   const [isFilterOptionsOpen, setIsFilterOptionsOpen] = useState(false)
   const [isBrandsPopoverOpen, setIsBrandsPopoverOpen] = useState(false)
+  const [totalFilters, setTotalFilters] = useState(3)
   const [filterInput, setFilterInput] = useState('')
   const [countdownId, setcountdownId] = useState<NodeJS.Timeout>()
   const [brandFilter, setBrandFilter] = useState<QueryFilter>({
@@ -148,6 +149,26 @@ export function AlertsTable({
     setcountdownId(timerId)
   }
 
+  function clearFilters() {
+    setBrandFilter({
+      method: 'equal',
+      attribute: 'brand',
+      values: [],
+    })
+
+    setStatusFilter({
+      method: 'equal',
+      attribute: 'status',
+      values: [],
+    })
+
+    setImeiFilter({
+      method: 'equal',
+      attribute: 'imei',
+      values: [],
+    })
+  }
+
   useEffect(() => {
     setIsLoading(true)
 
@@ -189,6 +210,8 @@ export function AlertsTable({
     }
 
     getOccurrences()
+
+    setTotalFilters(brandFilter.values.length + statusFilter.values.length)
   }, [brandFilter, statusFilter, imeiFilter, ownerFilter])
 
   return (
@@ -225,11 +248,6 @@ export function AlertsTable({
             <Download size={18} />
             Exportar .CSV
           </button>
-
-          <div className="flex items-center gap-2 ">
-            <Checkbox className="shadow-none rounded-[4px] border-[#232323]/90" />
-            Incluir dispositivos recuperados
-          </div>
         </div>
       </div>
 
@@ -238,14 +256,24 @@ export function AlertsTable({
           <div className="flex w-ful items-center justify-between">
             <span>Filtre por</span>
 
-            <button
-              type="button"
-              className="ring-1 ring-[#232323]/30 bg-blue-600/20 hover:bg-zinc-200 text-[#232323] flex items-center justify-center gap-3 h-fit px-4 py-2 rounded-lg"
-              // onClick={() => setIsFilterOptionsOpen(!isFilterOptionsOpen)}
-            >
-              <Settings2 size={18} />
-              Filtros
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                className="ring-1 ring-[#232323]/30 font-medium bg-blue-600/20 hover:bg-zinc-200 text-procura-ai-zinc flex items-center justify-center gap-3 h-fit px-4 py-2 rounded-lg"
+                // onClick={() => setIsFilterOptionsOpen(!isFilterOptionsOpen)}
+              >
+                <Settings2 size={18} />
+                Filtros{' - '}
+                {totalFilters}
+              </button>
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="text-primary font-medium"
+              >
+                Limpar filtros
+              </button>
+            </div>
           </div>
 
           <div className="flex justify-around gap-10">
@@ -313,28 +341,27 @@ export function AlertsTable({
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell className="hidden md:table-cell">
+              <TableCell className="">
                 <Skeleton className="h-8 w-full" />
               </TableCell>
 
-              <TableCell className="hidden md:table-cell">
+              <TableCell className="">
                 <Skeleton className="h-8 w-full" />
               </TableCell>
 
-              <TableCell className="hidden lg:table-cell">
+              <TableCell className="">
                 <Skeleton className="h-8 w-full" />
               </TableCell>
 
-              <TableCell>
-                <Skeleton className="h-8 w-full" />
+              <TableCell className="w-56">
+                <Skeleton className="h-8" />
               </TableCell>
 
-              <TableCell>
-                <Skeleton className="h-8 w-20" />
+              <TableCell className="w-10">
+                <Skeleton className="h-8" />
               </TableCell>
 
-              <TableCell className=" flex flex-col items-center gap-0.5">
-                <Skeleton className="h-10 w-10" />
+              <TableCell className="flex items-center gap-2 mr-5">
                 <Skeleton className="h-10 w-10" />
                 <Skeleton className="h-10 w-10" />
               </TableCell>

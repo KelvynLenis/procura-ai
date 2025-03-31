@@ -8,7 +8,7 @@ import { toast } from 'react-toastify'
 import { GeocodingControl } from '@maptiler/geocoding-control/maplibregl'
 import type { FeatureCollectionSchema } from '@/types/featureCollectionSchema'
 import type { z } from 'zod'
-import { getNeighborhoodId } from '@/functions/district/get-neighborhood-id'  
+import { getNeighborhoodId } from '@/functions/district/get-neighborhood-id'
 import '@maptiler/geocoding-control/style.css'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { getGeoJsonData } from '@/functions/district/getGeoJsonData'
@@ -184,11 +184,11 @@ export function MarkAsStolenMapWithGeocoding({
     } else if (window.innerWidth >= 768) {
       return 420
     } else if (window.innerWidth >= 425) {
-      return 280
+      return 330
     } else if (window.innerWidth >= 375) {
-      return 270
+      return 290
     } else {
-      return 230
+      return 250
     }
   }
 
@@ -211,16 +211,14 @@ export function MarkAsStolenMapWithGeocoding({
   useEffect(() => {
     if (geoJsonLink && geoJsonPB) {
       Promise.all([
-        getGeoJsonData(geoJsonLink)
-          .then(data => {
-            geoJsonData = data
-            return data
-          }),
-        getGeoJsonData(geoJsonPB)
-          .then(data => {
-            geoJsonPBData = data
-            return data
-          }),
+        getGeoJsonData(geoJsonLink).then(data => {
+          geoJsonData = data
+          return data
+        }),
+        getGeoJsonData(geoJsonPB).then(data => {
+          geoJsonPBData = data
+          return data
+        }),
       ]).then(results => {
         if (!mapContainer.current) return
 
