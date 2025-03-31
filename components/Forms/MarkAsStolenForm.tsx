@@ -17,7 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, CircleHelp } from 'lucide-react'
 import { toast } from 'react-toastify'
 import type { DeviceProps } from '@/types'
 import { Textarea } from '../ui/textarea'
@@ -28,9 +28,16 @@ import { MarkAsStolenMapWithGeocoding } from '../Maps/MarkAsStolenMapWithGeocodi
 import dynamic from 'next/dynamic'
 import { validateCoordinates } from '@/lib/utils'
 import { getNeighborhood } from '@/functions/district/get-neighborhood'
-import { updateDistrict, UpdateDistrictData } from '@/functions/district/update-district'
+// biome-ignore lint/style/useImportType: <explanation>
+import {
+  updateDistrict,
+  UpdateDistrictData,
+} from '@/functions/district/update-district'
 import { createEvent } from '@/functions/event/create-event'
-import { updateDeviceStatus, getDeviceStatus } from '@/functions/device/update-device-status'
+import {
+  updateDeviceStatus,
+  getDeviceStatus,
+} from '@/functions/device/update-device-status'
 
 interface MarkAsStolenFormProps {
   id: string
@@ -65,9 +72,9 @@ const formSchema = z
     message: 'Selecione um local no mapa.',
   })
 
-const Map = dynamic(() => import('../Maps/Map/DynamicMap'), {
-  ssr: false,
-})
+// const Map = dynamic(() => import('../Maps/Map/DynamicMap'), {
+//   ssr: false,
+// })
 
 export function MarkAsStolenForm({
   id,
@@ -78,6 +85,7 @@ export function MarkAsStolenForm({
   isPopup,
 }: MarkAsStolenFormProps) {
   const size = useWindowSize()
+  const [isHintOpen, setIsHintOpen] = useState(false)
 
   const occurrenceTypes = [
     { label: 'Furto simples', value: 'Furto simples' },
@@ -196,7 +204,11 @@ export function MarkAsStolenForm({
         setDevices(prevDevices =>
           prevDevices.map(device =>
             device.$id === id
-              ? { ...device, is_stolen: true, status: getDeviceStatus(values.type) }
+              ? {
+                  ...device,
+                  is_stolen: true,
+                  status: getDeviceStatus(values.type),
+                }
               : device
           )
         )
@@ -264,11 +276,68 @@ export function MarkAsStolenForm({
               name="type"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
-                  <FormLabel className="w-fit text-center items-center flex">
-                    <span className="text-red-500 h-6 flex align-text-bottom">
-                      *
-                    </span>
-                    Tipo de ocorrência
+                  <FormLabel className="w-full text-center items-center flex flex-col">
+                    <div className="flex justify-between w-full">
+                      <div className="flex items-center">
+                        <span className="text-red-500 h-6 flex align-text-bottom">
+                          *
+                        </span>
+                        Tipo de ocorrência
+                      </div>
+                      <button type="button" className="text-red-500 text-xs">
+                        <CircleHelp
+                          size={22}
+                          className="fill-primary text-white"
+                          onClick={() => setIsHintOpen(!isHintOpen)}
+                        />
+                      </button>
+                    </div>
+                    {isHintOpen && (
+                      <div className="flex flex-col gap-2 bg-[#D8A912]/30 font-normal p-2 rounded-md text-justify leading-5">
+                        <p>
+                          Entenda a diferença entre{' '}
+                          <span className="font-semibold">
+                            os tipos de ocorrência
+                          </span>
+                        </p>
+                        <p>
+                          O <span className="font-semibold">furto</span> ocorre
+                          quando há a subtração de coisas alheias móveis, sem o
+                          consentimento do proprietário, com o intuito de ficar
+                          com elas para si, porém{' '}
+                          <span className="font-semibold underline">
+                            sem violência ou grave ameaça
+                          </span>
+                          .
+                          <br /> Exemplo: subtrair um telefone celular de uma
+                          bolsa enquanto a dona não estava vendo
+                        </p>
+                        <p>
+                          Já o <span className="font-semibold">roubo</span>{' '}
+                          ocorre com a subtração de coisas alheias móveis{' '}
+                          <span className="font-semibold underline">
+                            com a utilização de violência ou grave ameaça contra
+                            a pessoa
+                          </span>
+                          .
+                          <br /> Exemplo: um indivíduo com a intenção de
+                          subtrair um telefone celular, aponta uma arma de fogo
+                          contra a vítima e ameaça atirar contra ela caso o
+                          aparelho não seja entregue.
+                        </p>
+                        <p>
+                          Entretanto,{' '}
+                          <span className="font-semibold">
+                            o extravio ou perda
+                          </span>{' '}
+                          é caracterizado pelo{' '}
+                          <span className="font-semibold underline">
+                            desaparecimento ou sumiço de algo
+                          </span>
+                          .{' '}
+                        </p>
+                      </div>
+                    )}
                   </FormLabel>
                   <DropdownMenu>
                     <DropdownMenuTrigger className="w-full flex items-center rounded-lg text-xs gap-0 p-2 md:text-base lg:gap-2 justify-between bg-zinc-100">

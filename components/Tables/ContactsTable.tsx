@@ -31,7 +31,7 @@ export function ContactsTable() {
 
   useEffect(() => {
     const getContacts = async () => {
-      const contactsResponse = await listContacts()
+      const contactsResponse = await listContacts({})
 
       setContacts(contactsResponse)
 

@@ -341,27 +341,27 @@ export function AlertsTable({
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell className="hidden md:table-cell">
+              <TableCell className="">
                 <Skeleton className="h-8 w-full" />
               </TableCell>
 
-              <TableCell className="hidden md:table-cell">
+              <TableCell className="">
                 <Skeleton className="h-8 w-full" />
               </TableCell>
 
-              <TableCell className="hidden lg:table-cell">
+              <TableCell className="">
                 <Skeleton className="h-8 w-full" />
               </TableCell>
 
-              <TableCell>
-                <Skeleton className="h-8 w-full" />
+              <TableCell className="w-56">
+                <Skeleton className="h-8" />
               </TableCell>
 
-              <TableCell>
-                <Skeleton className="h-8 w-20" />
+              <TableCell className="w-10">
+                <Skeleton className="h-8" />
               </TableCell>
 
-              <TableCell className=" flex flex-col items-center gap-0.5">
+              <TableCell className="flex items-center gap-2 mr-5">
                 <Skeleton className="h-10 w-10" />
                 <Skeleton className="h-10 w-10" />
               </TableCell>

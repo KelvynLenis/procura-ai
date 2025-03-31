@@ -111,7 +111,7 @@ export function Combobox({
         <PopoverContent className="w-[200px] p-0">
           <Command>
             <CommandInput placeholder="Digite para buscar" />
-            <CommandList>
+            <CommandList className="custom-scroll">
               <CommandEmpty>Nenhuma opção encontrada.</CommandEmpty>
               <CommandGroup>
                 {options.map(option => (

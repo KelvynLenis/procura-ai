@@ -1,8 +1,12 @@
 import { getUserId } from '../user/get-user-id'
 
-export async function listContacts() {
+interface listContactoParams {
+  userIdParam?: string
+}
+
+export async function listContacts(props: listContactoParams) {
   try {
-    const userId = await getUserId()
+    const userId = props.userIdParam ? props.userIdParam : await getUserId()
     const params = new URLSearchParams({
       'queries[0]': JSON.stringify({
         method: 'equal',
