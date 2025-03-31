@@ -14,6 +14,17 @@ import alarm from '../../assets/icons/alarm.png'
 import robbery from '../../assets/icons/robbery.png'
 import interrogation from '../../assets/icons/interrogation.png'
 import lost from '../../assets/icons/lost.svg'
+import { joinDevicesEventsUsers } from '@/functions/occurences/get-occurrences'
+import { toast } from 'react-toastify'
+
+interface Notification {
+  $id: string
+  type: string
+  description: string
+  time_event: string
+  id_device: string
+  is_alert_on: boolean
+}
 
 interface OccurrencesMapProps {
   width?: number
@@ -21,23 +32,54 @@ interface OccurrencesMapProps {
   defaultCenter?: [number, number]
   defaultZoom?: number
   occurences?: OccurrencesProps[]
+  notifications?: Notification[]
+  setNotifications?: React.Dispatch<React.SetStateAction<Notification[]>>
+  selectedLocation?: [number, number]
 }
 
 export function OccurrencesMap({
   width,
   height,
-  defaultCenter,
-  defaultZoom,
+  defaultCenter = [-7.1509317, -34.8446769],
+  defaultZoom = 11,
   occurences,
+  notifications,
+  setNotifications,
+  selectedLocation,
 }: OccurrencesMapProps) {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false)
-  const [occurence, setOccurence] = useState<OccurrencesProps>(
-    {} as OccurrencesProps
-  )
+  const [occurence, setOccurence] = useState<OccurrencesProps>({} as OccurrencesProps)
   const [isInfoCardOpen, setIsInfoCardOpen] = useState(false)
+  const [localOccurrences, setLocalOccurrences] = useState<OccurrencesProps[]>(occurences || [])
+  const [center, setCenter] = useState<[number, number]>(defaultCenter)
+  const [zoom, setZoom] = useState(defaultZoom)
 
   const pathname = usePathname().slice(1)
   const isFullScreen = pathname === 'map/ocorrencias'
+
+  // Atualiza o centro do mapa e abre o popup quando uma localização é selecionada
+  useEffect(() => {
+    if (selectedLocation && occurences) {
+      const selectedOccurence = occurences.find(
+        occ => occ.event?.last_location?.[0] === selectedLocation[0] && 
+              occ.event?.last_location?.[1] === selectedLocation[1]
+      )
+
+      if (selectedOccurence) {
+        setCenter(selectedLocation)
+        setZoom(15)
+        setOccurence(selectedOccurence)
+        isFullScreen ? setIsOverlayOpen(true) : setIsInfoCardOpen(true)
+      }
+    }
+  }, [selectedLocation, occurences, isFullScreen])
+
+  // Atualiza os dados iniciais quando as props mudarem
+  useEffect(() => {
+    if (occurences) {
+      setLocalOccurrences(occurences)
+    }
+  }, [occurences])
 
   function handleOpenPopup(event: OccurrencesProps) {
     isFullScreen ? setIsOverlayOpen(true) : setIsInfoCardOpen(true)
@@ -131,12 +173,15 @@ export function OccurrencesMap({
         onClick={() => closePopup()}
         width={setWidth()}
         height={setHeight()}
-        defaultCenter={[-7.1509317, -34.8446769]}
-        defaultZoom={11}
+        center={center}
+        zoom={zoom}
+        onBoundsChanged={({ center, zoom }) => {
+          setCenter(center)
+          setZoom(zoom)
+        }}
       >
-        {/* biome-ignore lint/complexity/useOptionalChain: <explanation> */}
-        {occurences &&
-          occurences.map(
+        {localOccurrences &&
+          localOccurrences.map(
             (occurence, index) =>
               occurence.event?.last_location && (
                 <Marker

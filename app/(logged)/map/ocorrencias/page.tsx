@@ -1,60 +1,93 @@
+'use client'
+
 import { OccurrencesMap } from '@/components/Maps/OccurrencesMap'
-import { Device, Event } from '@/types'
+import { Device, Event, OccurrencesProps } from '@/types'
 import Link from 'next/link'
 import { TbArrowsMinimize } from 'react-icons/tb'
-import { listStolenDevices } from '@/functions/device/list-stolen-devices'
-import { listEvents } from '@/functions/event/list-events'
-import { getUserInfo } from '@/functions/user/get-user-info'
+import { NotificationButton } from '@/components/NotificationButton'
+import { useEffect, useState } from 'react'
+import { joinDevicesEventsUsers } from '@/functions/occurences/get-occurrences'
+import { toast } from 'react-toastify'
+import { account } from '@/lib/appwrite'
+import { listDevicesByStatus } from '@/functions/device/list-devices-by-status'
+import { listDevices } from '@/functions/device/list-devices'
 
-export default async function Dashboard() {
-  async function getDashboardData() {
-    try {
-      const [devicesData, fetchedEvents] = await Promise.all([
-        listStolenDevices(),
-        listEvents()
-      ])
+interface Notification {
+  $id: string
+  type: string
+  description: string
+  time_event: string
+  id_device: string
+  is_alert_on: boolean
+}
 
-      if (devicesData.length === 0) return []
+export default function Dashboard() {
+  const [notifications, setNotifications] = useState<Notification[]>([])
+  const [occurencesData, setOccurencesData] = useState<OccurrencesProps[]>([])
+  const [selectedLocation, setSelectedLocation] = useState<[number, number] | undefined>()
 
-      const enrichDevice = async (device: Device) => {
-        const recentEvent = fetchedEvents
-          .filter((event: Event) => event.id_device === device.$id)
-          .sort((a: Event, b: Event) =>
-            new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
-          )[0]
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const authUser = await account.get()
+        const userId = authUser.$id
+        const isAdmin = authUser.labels?.[0] === 'admin'
 
-        const ownerResponse = await getUserInfo(device.auth_id!)
-        const ownerInfo = ownerResponse?.[0]
+        const [
+          dashboardData,
+          recoveredDevices,
+          lostDevices,
+          robbedDevices,
+          theftDevices,
+          allDevices,
+        ] = await Promise.all([
+          joinDevicesEventsUsers(),
+          listDevicesByStatus({ status: 'Recuperado', userId, isAdmin }),
+          listDevicesByStatus({ status: 'Perdido', userId, isAdmin }),
+          listDevicesByStatus({ status: 'Roubado', userId, isAdmin }),
+          listDevicesByStatus({ status: 'Furtado', userId, isAdmin }),
+          listDevices({ userId, limit: 100, page: 1, isAdmin }),
+        ])
 
-        return {
-          device: { ...device },
-          event: recentEvent,
-          user: {
-            name: ownerInfo?.name || 'Usuário excluído',
-            email: ownerInfo?.email || 'N/A',
-          },
-        }
+        setOccurencesData(dashboardData)
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error)
+        toast.error('Erro ao carregar dados do mapa')
       }
-
-      return await Promise.all(devicesData.map(enrichDevice))
-    } catch (error) {
-      console.error('Erro ao carregar dados do dashboard:', error)
-      throw error
     }
-  }
 
-  let occurencesData
+    fetchData()
+  }, [notifications])
 
-  try {
-    const dashboardData = await getDashboardData()
-    occurencesData = dashboardData
-  } catch (error) {
-    console.error(error)
+  const handleNotificationClick = (notification: Notification) => {
+    const relatedOccurrence = occurencesData.find(
+      occ => occ.device.$id === notification.id_device
+    )
+    
+    if (relatedOccurrence?.event?.last_location) {
+      // Reseta a localização antes de definir a nova para garantir que o useEffect seja disparado
+      setSelectedLocation(undefined)
+      setTimeout(() => {
+        setSelectedLocation(relatedOccurrence.event.last_location)
+      }, 0)
+    }
   }
 
   return (
     <div className="flex flex-col">
-      <OccurrencesMap occurences={occurencesData} />
+      <div className="absolute top-0 right-16 z-10">
+        <NotificationButton
+          notifications={notifications}
+          setNotifications={setNotifications}
+          onNotificationClick={handleNotificationClick}
+        />
+      </div>
+      <OccurrencesMap 
+        occurences={occurencesData} 
+        notifications={notifications}
+        setNotifications={setNotifications}
+        selectedLocation={selectedLocation}
+      />
       <Link href={'/dashboard'}>
         <TbArrowsMinimize
           size={38}

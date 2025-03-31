@@ -1,7 +1,7 @@
 'use client'
 
 import { client } from '@/lib/appwrite'
-import { Bell } from 'lucide-react'
+import { Bell, X } from 'lucide-react'
 import { useEffect, useState, useCallback } from 'react'
 
 interface Notification {
@@ -20,11 +20,13 @@ interface NotificationResponse {
 interface NotificationButtonProps {
   notifications: Notification[]
   setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>
+  onNotificationClick?: (notification: Notification) => void
 }
 
 export function NotificationButton({
   notifications,
   setNotifications,
+  onNotificationClick,
 }: NotificationButtonProps) {
   const [isListVisible, setIsListVisible] = useState(false)
 
@@ -60,6 +62,65 @@ export function NotificationButton({
     new Date(b.time_event).getTime() - new Date(a.time_event).getTime()
   )
 
+  function handleNotificationClick(notification: Notification) {
+    if (notification.type === 'Recuperado') return
+
+    if (onNotificationClick) {
+      onNotificationClick(notification)
+    }
+  }
+
+  function handleCloseNotification(e: React.MouseEvent, notificationId: string) {
+    e.stopPropagation()
+    setNotifications(prev => prev.filter(n => n.$id !== notificationId))
+    
+    if (filteredNotifications.length === 1) {
+      setIsListVisible(false)
+    }
+  }
+
+  function renderNotification(notification: Notification) {
+    const isRecovered = notification.type === 'Recuperado'
+    const baseClassName = "py-3 w-full flex items-center justify-center flex-col gap-1 border-b last:border-b-0 relative"
+    const className = isRecovered 
+      ? baseClassName
+      : `${baseClassName} hover:bg-zinc-100 cursor-pointer`
+
+    const content = (
+      <>
+        <button
+          onClick={(e) => handleCloseNotification(e, notification.$id)}
+          className="absolute top-2 right-2 p-1 hover:bg-zinc-200 rounded-full transition-colors"
+          title="Fechar notificação"
+        >
+          <X size={16} />
+        </button>
+        <h1 className="font-bold">Novo {notification.type}</h1>
+        <p className="text-sm text-gray-600 text-justify">
+          <span className="font-semibold">Descrição: </span>
+          {notification.description}
+        </p>
+        <span className="text-xs text-gray-400">
+          {new Date(notification.time_event).toLocaleString('pt-BR')}
+        </span>
+      </>
+    )
+
+    return isRecovered ? (
+      <div key={notification.$id} className={className}>
+        {content}
+      </div>
+    ) : (
+      <button
+        key={notification.$id}
+        onClick={() => handleNotificationClick(notification)}
+        className={className}
+      >
+        {content}
+      </button>
+    )
+  }
+
   return (
     <>
       <button
@@ -80,21 +141,7 @@ export function NotificationButton({
           </div>
           <div className="max-h-96 overflow-y-auto flex flex-col items-center justify-center py-2 px-4">
             {filteredNotifications.length > 0 ? (
-              filteredNotifications.map(notification => (
-                <div
-                  key={notification.$id}
-                  className="py-3 w-full hover:bg-zinc-100 flex items-center justify-center flex-col gap-1 border-b last:border-b-0"
-                >
-                  <h1 className="font-bold">Novo {notification.type}</h1>
-                  <p className="text-sm text-gray-600 text-justify">
-                    <span className="font-semibold">Descrição: </span>
-                    {notification.description}
-                  </p>
-                  <span className="text-xs text-gray-400">
-                    {new Date(notification.time_event).toLocaleString('pt-BR')}
-                  </span>
-                </div>
-              ))
+              filteredNotifications.map(notification => renderNotification(notification))
             ) : (
               <p className="p-3 text-gray-500 text-sm">Nenhuma notificação</p>
             )}
