@@ -2,6 +2,7 @@ import * as ExcelJS from 'exceljs'
 import { User } from '@/types'
 import { listAllUsers } from '../user/list-all-users'
 import { toast } from 'react-toastify'
+import { formatDateTime } from '@/lib/utils'
 
 export async function exportUsers() {
   try {
@@ -22,16 +23,8 @@ export async function exportUsers() {
       user.name || '',
       user.email || '',
       user.type || '',
-      user.accessed_at
-        ? new Date(user.accessed_at).toLocaleString('pt-BR', {
-            timeZone: 'UTC',
-          })
-        : '',
-      user.$createdAt
-        ? new Date(user.$createdAt).toLocaleString('pt-BR', {
-            timeZone: 'UTC',
-          })
-        : '',
+      user.accessed_at ? formatDateTime(user.accessed_at) : '',
+      user.$createdAt ? formatDateTime(user.$createdAt) : '',
     ])
 
     const workbook = new ExcelJS.Workbook()

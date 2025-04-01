@@ -1,6 +1,8 @@
 'use client'
 
 import { client } from '@/lib/appwrite'
+import { formatDateTime } from '@/lib/utils'
+import { toZonedTime } from 'date-fns-tz'
 import { Bell, X } from 'lucide-react'
 import { useEffect, useState, useCallback } from 'react'
 
@@ -100,8 +102,8 @@ export function NotificationButton({
           <span className="font-semibold">Descrição: </span>
           {notification.description}
         </p>
-        <span className="text-xs text-gray-400">
-          {new Date(notification.time_event).toLocaleString('pt-BR')}
+        <span className="text-xs text-zinc-500">
+          {formatDateTime(notification.time_event)}
         </span>
       </>
     )
