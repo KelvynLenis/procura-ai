@@ -126,23 +126,29 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                 <div className="flex">
                   <span className="w-40 font-medium">ID</span>
                   <span className="w-full">
-                    {occurrence?.event.$id.slice(0, 5)}
+                    {occurrence?.event
+                      ? occurrence?.event?.$id.slice(0, 5)
+                      : 'Este evento não existe.'}
                   </span>
                 </div>
                 <div className="flex">
                   <span className="w-40 font-medium">Data e horário</span>
                   <span className="w-full">
-                    {formatDateTime(occurrence?.event.time_event!)}
+                    {occurrence?.event
+                      ? formatDateTime(occurrence?.event?.time_event!)
+                      : 'Este evento não existe.'}
                   </span>
                 </div>
                 <div className="flex">
                   <span className="w-40 font-medium">Tipo</span>
-                  <span className="w-full">{occurrence?.event.type}</span>
+                  <span className="w-full">{occurrence?.event?.type}</span>
                 </div>
                 <div className="flex">
                   <span className="w-40 font-medium">Descrição</span>
                   <span className="w-full">
-                    {occurrence?.event.description || 'Não informado'}
+                    {occurrence?.event
+                      ? occurrence?.event?.description || 'Não informado'
+                      : 'Este evento não existe.'}
                   </span>
                 </div>
               </div>
