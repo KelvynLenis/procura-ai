@@ -17,6 +17,13 @@ export async function joinDevicesEventsUsers(props?: joinProps) {
     const stolenDevices = await getDevices({
       filters: devicesFilters && devicesFilters,
     })
+
+    // console.log(stolenDevices)
+
+    if (stolenDevices.length === 0) {
+      return []
+    }
+
     const activeAlertsEvents = await getEvents()
 
     const enrichedDevices = await Promise.all(

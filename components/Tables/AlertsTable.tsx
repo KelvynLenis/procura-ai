@@ -172,6 +172,8 @@ export function AlertsTable({
   useEffect(() => {
     setIsLoading(true)
 
+    console.log(statusFilter)
+
     async function getOccurrences() {
       const deviceActiveFilters = [
         ...(brandFilter.values.length > 0 ? [brandFilter] : []),
