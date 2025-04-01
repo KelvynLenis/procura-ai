@@ -39,6 +39,8 @@ export async function joinDevicesEventsUsers(props?: joinProps) {
               new Date(a.$createdAt).getTime()
           )[0]
 
+        console.log(recentEvent)
+
         const userFilter = {
           method: 'equal',
           attribute: 'user_id',
