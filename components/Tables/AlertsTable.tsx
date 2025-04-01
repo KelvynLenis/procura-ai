@@ -200,7 +200,7 @@ export function AlertsTable({
             .includes(ownerFilter.values[0].toLowerCase())
         })
 
-        setOccurrences(occurrencesFilteredByOwner)
+        setOccurrences(occurrencesFilteredByOwner || [])
         setIsLoading(false)
         return
       }
