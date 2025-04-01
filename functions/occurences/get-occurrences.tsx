@@ -11,43 +11,48 @@ interface joinProps {
 }
 
 export async function joinDevicesEventsUsers(props?: joinProps) {
-  const devicesFilters = props?.devicesFilters || []
+  try {
+    const devicesFilters = props?.devicesFilters || []
 
-  const stolenDevices = await getDevices({
-    filters: devicesFilters && devicesFilters,
-  })
-  const activeAlertsEvents = await getEvents()
-
-  const enrichedDevices = await Promise.all(
-    stolenDevices.map(async device => {
-      const recentEvent = activeAlertsEvents
-        .filter(event => event.id_device === device.$id)
-        .sort(
-          (a, b) =>
-            new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
-        )[0]
-
-      const userFilter = {
-        method: 'equal',
-        attribute: 'user_id',
-        values: [device.auth_id],
-      }
-
-      const ownerResponse = await getUser({ filters: [userFilter] })
-      const ownerInfo = ownerResponse?.[0]
-      return {
-        device: { ...device },
-        event: recentEvent,
-        user: {
-          name: ownerInfo?.name || 'Usuário excluído',
-          email: ownerInfo?.email || 'Sem email',
-          cpf: ownerInfo?.cpf || 'Sem CPF',
-        },
-      }
+    const stolenDevices = await getDevices({
+      filters: devicesFilters && devicesFilters,
     })
-  )
+    const activeAlertsEvents = await getEvents()
 
-  return enrichedDevices
+    const enrichedDevices = await Promise.all(
+      stolenDevices.map(async device => {
+        const recentEvent = activeAlertsEvents
+          .filter(event => event.id_device === device.$id)
+          .sort(
+            (a, b) =>
+              new Date(b.$createdAt).getTime() -
+              new Date(a.$createdAt).getTime()
+          )[0]
+
+        const userFilter = {
+          method: 'equal',
+          attribute: 'user_id',
+          values: [device.auth_id],
+        }
+
+        const ownerResponse = await getUser({ filters: [userFilter] })
+        const ownerInfo = ownerResponse?.[0]
+        return {
+          device: { ...device },
+          event: recentEvent,
+          user: {
+            name: ownerInfo?.name || 'Usuário excluído',
+            email: ownerInfo?.email || 'Sem email',
+            cpf: ownerInfo?.cpf || 'Sem CPF',
+          },
+        }
+      })
+    )
+
+    return enrichedDevices
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 // unused function
