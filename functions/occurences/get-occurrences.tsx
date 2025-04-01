@@ -18,16 +18,11 @@ export async function joinDevicesEventsUsers(props?: joinProps) {
       filters: devicesFilters && devicesFilters,
     })
 
-    console.log(stolenDevices.length === 0)
-    console.log(stolenDevices)
-
     if (stolenDevices.length === 0) {
       return []
     }
 
     const activeAlertsEvents = await getEvents()
-
-    console.log(activeAlertsEvents)
 
     const enrichedDevices = await Promise.all(
       stolenDevices.map(async device => {
@@ -39,8 +34,6 @@ export async function joinDevicesEventsUsers(props?: joinProps) {
               new Date(a.$createdAt).getTime()
           )[0]
 
-        console.log(recentEvent)
-
         const userFilter = {
           method: 'equal',
           attribute: 'user_id',
@@ -51,7 +44,7 @@ export async function joinDevicesEventsUsers(props?: joinProps) {
         const ownerInfo = ownerResponse?.[0]
         return {
           device: { ...device },
-          event: recentEvent || {},
+          event: recentEvent,
           user: {
             name: ownerInfo?.name || 'Usuário excluído',
             email: ownerInfo?.email || 'Sem email',
