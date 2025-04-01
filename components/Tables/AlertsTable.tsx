@@ -192,7 +192,7 @@ export function AlertsTable({
       const occurrences = await joinDevicesEventsUsers(filterOptions)
 
       if (ownerFilter.values.length > 0) {
-        const occurrencesFilteredByOwner = occurrences.filter(occurrence => {
+        const occurrencesFilteredByOwner = occurrences?.filter(occurrence => {
           const user = occurrence.user
 
           return user.name
@@ -205,7 +205,7 @@ export function AlertsTable({
         return
       }
 
-      setOccurrences(occurrences)
+      setOccurrences(occurrences || [])
       setIsLoading(false)
     }
 

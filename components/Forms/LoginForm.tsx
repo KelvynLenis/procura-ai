@@ -19,7 +19,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-toastify'
 import { LoadingToast } from '../LoadingToast'
 import Button from '../Button'
-import { login } from '@/functions/auth/login' 
+import { login } from '@/functions/auth/login'
 import { updateLastAccess } from '@/functions/auth/update-last-access'
 
 const formSchema = z.object({
@@ -43,7 +43,10 @@ export function LoginForm() {
     try {
       const callFunction = async () => {
         try {
-          const { isAdmin, userId, userStatus } = await login(values.email, values.password)
+          const { isAdmin, userId, userStatus } = await login(
+            values.email,
+            values.password
+          )
 
           if (userStatus === 'Inativo') {
             toast.error('Esse usuário foi desativado.')
@@ -170,13 +173,13 @@ export function LoginForm() {
               <span className="font-bold self-center">
                 Se preferir, acesse pela conta Gov.br
               </span>
-              <Link
-                href={'/login-gov'}
+              <span
                 aria-disabled
-                className="underline self-center text-primary font-semibold aria-disabled: hover:opacity-50"
+                title="Em breve"
+                className="underline cursor-default aria-disabled:text-zinc-400 self-start pl-10 text-sm "
               >
                 Entrar com Gov.br
-              </Link>
+              </span>
             </div>
 
             <span className="w-full h-[1px] rounded-full bg-secondary" />
