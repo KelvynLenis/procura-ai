@@ -27,6 +27,8 @@ export async function joinDevicesEventsUsers(props?: joinProps) {
 
     const activeAlertsEvents = await getEvents()
 
+    console.log(activeAlertsEvents)
+
     const enrichedDevices = await Promise.all(
       stolenDevices.map(async device => {
         const recentEvent = activeAlertsEvents
