@@ -19,6 +19,7 @@ export async function joinDevicesEventsUsers(props?: joinProps) {
     })
 
     console.log(stolenDevices.length === 0)
+    console.log(stolenDevices)
 
     if (stolenDevices.length === 0) {
       return []
