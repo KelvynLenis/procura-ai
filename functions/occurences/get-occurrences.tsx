@@ -51,7 +51,7 @@ export async function joinDevicesEventsUsers(props?: joinProps) {
         const ownerInfo = ownerResponse?.[0]
         return {
           device: { ...device },
-          event: recentEvent,
+          event: recentEvent || {},
           user: {
             name: ownerInfo?.name || 'Usuário excluído',
             email: ownerInfo?.email || 'Sem email',
