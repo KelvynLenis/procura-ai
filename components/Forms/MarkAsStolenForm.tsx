@@ -341,8 +341,8 @@ export function MarkAsStolenForm({
                       </button>
                     </div>
                     {isHintOpen && (
-                      <div className="flex w-full flex-col md:absolute md:flex z-[100] md:right-[8rem] -right-[21rem] md:top-[5rem] md:bg-[#D8A912] lg:z-[100] lg:left-1/3 lg:w-80 lg:top-20 gap-2 bg-[#D8A912]/30 lg:bg-[#D8A912]/100 font-normal p-2 rounded-md text-justify leading-5">
-                        <Triangle className="hidden md:flex md:absolute md:top-[16.5rem] md:-left-[1rem] z-[100] top-[45%] -rotate-90 -left-4 fill-[#D8A912] text-[#D8A912]" />
+                      <div className="flex w-full flex-col md:absolute md:flex z-[100] md:right-[8rem] -right-[21rem] md:top-[5rem] md:bg-[#D8A912] lg:z-[100] lg:left-1/3 lg:w-80 lg:top-20 gap-2 bg-[#D8A912]/30 lg:bg-yellow-200 font-normal p-2 rounded-md text-justify leading-5">
+                        <Triangle className="hidden md:flex md:absolute md:top-[16.5rem] md:-left-[1rem] z-[100] top-[45%] -rotate-90 -left-4 fill-[#D8A912] text-[#D8A912] lg:fill-yellow-200 lg:text-yellow-200" />
                         <p>
                           Entenda a diferença entre{' '}
                           <span className="font-semibold">
