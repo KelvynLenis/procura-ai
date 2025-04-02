@@ -74,7 +74,7 @@ export function AlertDetails({
                 Data e hora da ocorrência:{' '}
                 <span className="font-normal">
                   {event?.time_event
-                    ? formatDateTime(event?.time_event)
+                    ? formatDateTime(event.time_event)
                     : 'Data não registrada'}
                 </span>
               </span>

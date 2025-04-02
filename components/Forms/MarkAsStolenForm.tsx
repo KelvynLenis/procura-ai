@@ -55,8 +55,12 @@ const formSchema = z
       .min(1, {
         message: 'A data e hora da ocorrência é obrigatória.',
       })
-      .refine(date => new Date(date) <= new Date(), {
-        message: 'A data não pode ser no futuro.',
+      .refine(date => {
+        const dataEvento = new Date(date)
+        const dataAtual = new Date()
+        return !isNaN(dataEvento.getTime()) && dataEvento <= dataAtual
+      }, {
+        message: 'Data inválida ou no futuro.',
       }),
     description: z.string().optional(),
     type: z.string().min(1, {
@@ -136,22 +140,15 @@ export function MarkAsStolenForm({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const dataAtual = new Date()
-      const dataEvento = new Date(values.datetime)
-
-      if (dataEvento > dataAtual) {
-        form.setError('datetime', {
-          message: 'Não é possível cadastrar alertas com data futura',
-        })
-        toast.error('Não é possível cadastrar alertas com data futura')
-        throw new Error('Não é possível cadastrar alertas com data futura')
-      }
-
       const callFunction = async () => {
         try {
+          const dataEvento = new Date(values.datetime)
+          const timeZone = 'America/Sao_Paulo'
+          const dataEventoISO = dataEvento.toISOString()
+
           await createEvent({
             id_device: id,
-            time_event: values.datetime,
+            time_event: dataEventoISO,
             description: values.description ?? '',
             type: values.type,
             is_alert_on: true,

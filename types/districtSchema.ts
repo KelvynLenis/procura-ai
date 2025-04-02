@@ -7,7 +7,7 @@ const districtSchema = z.object({
   $id: z.string().uuid(),
   $permissions: z.array(z.string()),
   $updatedAt: z.string().datetime(),
-  area_km2: z.string(), // Pode ser transformado para número se necessário
+  area_km2: z.string(),
   cod_UF: z.number(),
   cod_district: z.number(),
   cod_municipality: z.number(),

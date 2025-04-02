@@ -5,11 +5,11 @@ const PermissionsSchema = z.array(
 )
 
 export const UserSchema = z.object({
-  $collectionId: z.string(), // ID da coleção
-  $createdAt: z.string().datetime(), // Data de criação (ISO 8601)
-  $databaseId: z.string(), // ID do banco de dados
-  $id: z.string(), // ID único do documento
-  $permissions: PermissionsSchema, // Lista de permissões no formato especificado
+  $collectionId: z.string(), 
+  $createdAt: z.string().datetime(), 
+  $databaseId: z.string(),
+  $id: z.string(),
+  $permissions: PermissionsSchema,
   $updatedAt: z.string().datetime(),
   user_id: z.string(),
   name: z.string(),

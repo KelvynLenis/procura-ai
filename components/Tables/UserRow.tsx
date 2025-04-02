@@ -18,9 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { cn } from '@/lib/utils'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { cn, formatDateTime } from '@/lib/utils'
 import { toast } from 'react-toastify'
 import { deleteUser } from '@/functions/user/delete-user'
 import { updateUserStatus } from '@/functions/user/update-user-status'
@@ -233,26 +231,14 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                   <div className="flex flex-col items-start justify-center">
                     <span className="font-bold">Último acesso</span>
                     <span>
-                      {user.accessed_at
-                        ? format(
-                            new Date(user.accessed_at),
-                            'dd/MM/yyyy - HH:mm',
-                            { locale: ptBR }
-                          )
-                        : 'N/A'}
+                      {user.accessed_at ? formatDateTime(user.accessed_at) : 'N/A'}
                     </span>
                   </div>
 
                   <div className="flex flex-col items-start justify-center">
                     <span className="font-bold">Registrado em</span>
                     <span>
-                      {user.$createdAt
-                        ? format(
-                            new Date(user.$createdAt),
-                            'dd/MM/yyyy - HH:mm',
-                            { locale: ptBR }
-                          )
-                        : 'N/A'}
+                      {user.$createdAt ? formatDateTime(user.$createdAt) : 'N/A'}
                     </span>
                   </div>
                 </div>
