@@ -136,7 +136,7 @@ export function ContactsTable() {
             contacts.length >= 3 && 'text-red-500'
           )}
         >
-          Limite máximo de 3 contatos. Você cadastrou {contacts.length}{' '}
+          Você cadastrou {contacts.length} contatos. Limite máximo de 3
           contatos.
         </span>
       </div>
