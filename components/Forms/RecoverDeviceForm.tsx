@@ -104,7 +104,7 @@ export function RecoverDeviceForm({ occurrence }: RecoverDeviceFormProps) {
               className="flex flex-col gap-4 p-4"
             >
               <div className="bg-zinc-200/60 rounded-lg flex flex-col gap-2 p-4">
-                <h2 className="font-medium text-lg">Reusmo da ocorrência</h2>
+                <h2 className="font-medium text-lg">Resumo da ocorrência</h2>
                 <div className="flex flex-col gap-5">
                   <div className="flex gap-2">
                     <span className="font-medium w-44">Dispositivo</span>

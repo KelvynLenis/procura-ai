@@ -181,7 +181,9 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                   <span className="w-full">{occurrence?.device.imei}</span>
                 </div>
                 <div className="flex">
-                  <span className="w-28 font-medium">Status</span>
+                  <span className="w-28 font-medium">
+                    Contatos de confiança
+                  </span>
                   <div className="w-full flex gap-14">
                     {contacts.length > 0 ? (
                       contacts.map(contact => (

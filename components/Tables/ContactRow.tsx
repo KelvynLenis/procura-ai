@@ -57,7 +57,7 @@ export function ContactRow({ contact, index, setContacts }: ContactRowProps) {
               'font-bold text-lg break-words p-2 rounded-md capitalize'
             )}
           >
-            {contact.number_contact}
+            {`(${contact.number_contact.slice(0, 2)}) ${contact.number_contact.slice(2, 7)}-${contact.number_contact.slice(7, 11)}`}
           </span>
         </TableCell>
         <TableCell className="w-28 p-0 m-0">
