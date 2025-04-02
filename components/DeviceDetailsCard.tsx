@@ -155,7 +155,7 @@ export function DeviceDetailsCard({
                 <IoIosWarning size={28} />
               </button>
             </DialogTrigger>
-            <DialogContent className="h-[95%] overflow-scroll flex flex-col w-[85%]">
+            <DialogContent className="h-[95%] overflow-scroll flex flex-col w-[93%]">
               <DialogTitle className="hidden">
                 Marcar como roubado ou visualisar alerta
               </DialogTitle>

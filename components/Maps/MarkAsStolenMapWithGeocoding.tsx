@@ -184,11 +184,11 @@ export function MarkAsStolenMapWithGeocoding({
     } else if (window.innerWidth >= 768) {
       return 420
     } else if (window.innerWidth >= 425) {
-      return 330
+      return 360
     } else if (window.innerWidth >= 375) {
-      return 290
+      return 310
     } else {
-      return 250
+      return 260
     }
   }
 

@@ -16,6 +16,7 @@ import { updateDeviceStatus } from '@/functions/device/update-device-status'
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -121,7 +122,7 @@ export function DeviceItem({
           </span>
         </div>
         <div className="flex justify-center gap-2">
-          <Dialog>
+          <Dialog open={isAlertModalOpen} onOpenChange={setIsAlertModalOpen}>
             <DialogTrigger asChild>
               <button
                 type="button"
@@ -135,7 +136,7 @@ export function DeviceItem({
                 <IoIosWarning size={18} />
               </button>
             </DialogTrigger>
-            <DialogContent className="h-[90%] overflow-scroll flex flex-col w-[93%] rounded-md">
+            <DialogContent className="h-fit max-h-[90%] overflow-scroll flex flex-col w-[93%] rounded-md py-6 px-4">
               {isStolen ? (
                 <>
                   <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
@@ -145,6 +146,7 @@ export function DeviceItem({
                     id={id}
                     status={status}
                     handleDeviceRecovery={handleDeviceRecovery}
+                    setModalOpen={setIsAlertModalOpen}
                   />
                 </>
               ) : (
@@ -154,6 +156,7 @@ export function DeviceItem({
                     id={id}
                     isStolen={isStolen}
                     setDevices={setDevices}
+                    setIsDialogOpen={setIsAlertModalOpen}
                     isPopup
                   />
                 </>
@@ -214,7 +217,7 @@ export function DeviceItem({
           </button> */}
         </div>
       </div>
-      {isViewDeviceDetailsCardOpen && (
+      {/* {isViewDeviceDetailsCardOpen && (
         <ViewDeviceInfoModal
           id={id}
           isStolen={isStolen}
@@ -259,7 +262,7 @@ export function DeviceItem({
             )}
           </div>
         </Modal>
-      )}
+      )} */}
     </>
   )
 }
