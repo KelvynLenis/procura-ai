@@ -172,7 +172,7 @@ export function MarkAsStolenMapWithGeocoding({
 
   function setWidth() {
     if (window.innerWidth >= 1700) {
-      return 1000
+      return 500
     } else if (window.innerWidth >= 1600) {
       return 500
     } else if (window.innerWidth >= 1400) {

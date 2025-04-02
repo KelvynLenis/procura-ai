@@ -52,11 +52,11 @@ export function DeviceRow({
   async function handleDeleteDevice(id: string) {
     try {
       const callFunction = async () => {
-        const response = await deleteDevice(id);
+        const response = await deleteDevice(id)
         if (response) {
           setDevices(prevDevices =>
             prevDevices.filter(device => device.$id !== id)
-          );
+          )
         }
       }
 
@@ -72,7 +72,7 @@ export function DeviceRow({
 
   async function handleDeviceRecovery(id: string) {
     try {
-      const success = await recoverDevice(id);
+      const success = await recoverDevice(id)
 
       if (success) {
         setDevices(prevDevices =>
@@ -268,6 +268,7 @@ export function DeviceRow({
                     isStolen={isStolen}
                     setDevices={setDevices}
                     setIsDialogOpen={setIsDialogOpen}
+                    isPopup
                   />
                 </DialogContent>
               </Dialog>
