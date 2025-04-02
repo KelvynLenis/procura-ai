@@ -172,7 +172,7 @@ export function MarkAsStolenMapWithGeocoding({
 
   function setWidth() {
     if (window.innerWidth >= 1700) {
-      return 1000
+      return 500
     } else if (window.innerWidth >= 1600) {
       return 500
     } else if (window.innerWidth >= 1400) {
@@ -184,11 +184,15 @@ export function MarkAsStolenMapWithGeocoding({
     } else if (window.innerWidth >= 768) {
       return 420
     } else if (window.innerWidth >= 425) {
-      return 330
+      return 360
+    } else if (window.innerWidth >= 412) {
+      return 350
     } else if (window.innerWidth >= 375) {
-      return 290
+      return 310
+    } else if (window.innerWidth >= 360) {
+      return 300
     } else {
-      return 250
+      return 260
     }
   }
 

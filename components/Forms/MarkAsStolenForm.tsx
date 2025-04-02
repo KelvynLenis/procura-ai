@@ -17,7 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ChevronDown, CircleHelp } from 'lucide-react'
+import { ChevronDown, CircleHelp, Triangle } from 'lucide-react'
 import { toast } from 'react-toastify'
 import type { DeviceProps } from '@/types'
 import { Textarea } from '../ui/textarea'
@@ -38,6 +38,7 @@ import {
   updateDeviceStatus,
   getDeviceStatus,
 } from '@/functions/device/update-device-status'
+import { DialogClose } from '@radix-ui/react-dialog'
 
 interface MarkAsStolenFormProps {
   id: string
@@ -216,14 +217,16 @@ export function MarkAsStolenForm({
       if (setModalOpen) {
         setModalOpen(false)
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error('Ocorreu um erro:', error)
+    }
   }
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-4 text-zinc-900 self-center items-center justify-between rounded-lg"
+        className="flex w-full flex-col gap-4 text-zinc-900 self-center items-center justify-between rounded-lg"
       >
         <div className="w-full flex flex-col md:flex-row justify-between gap-4">
           <div className="flex flex-col gap-5 w-full md:w-48 lg:w-56">
@@ -274,23 +277,69 @@ export function MarkAsStolenForm({
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
                   <FormLabel className="w-full text-center items-center flex flex-col">
-                    <div className="flex justify-between w-full">
+                    <div className="flex justify-between w-full relative">
                       <div className="flex items-center">
                         <span className="text-red-500 h-6 flex align-text-bottom">
                           *
                         </span>
                         Tipo de ocorrência
                       </div>
-                      <button type="button" className="text-red-500 text-xs">
+                      <button type="button" className="text-xs group">
                         <CircleHelp
                           size={22}
                           className="fill-primary text-white"
                           onClick={() => setIsHintOpen(!isHintOpen)}
                         />
+                        {/* <div className="group hidden flex-col md:group-hover:absolute md:group-hover:flex group-hover:z-[100] group-hover:-right-[21rem] group-hover:w-80 md:-top-[10rem] md:bg-[#D8A912] gap-2 bg-[#D8A912]/30 font-normal p-2 rounded-md text-justify leading-5">
+                          <Triangle className="hidden md:absolute top-[45%] -rotate-90 -left-4 fill-[#D8A912] text-[#D8A912]" />
+                          <p>
+                            Entenda a diferença entre{' '}
+                            <span className="font-semibold">
+                              os tipos de ocorrência
+                            </span>
+                          </p>
+                          <p>
+                            O <span className="font-semibold">furto</span>{' '}
+                            ocorre quando há a subtração de coisas alheias
+                            móveis, sem o consentimento do proprietário, com o
+                            intuito de ficar com elas para si, porém{' '}
+                            <span className="font-semibold underline">
+                              sem violência ou grave ameaça
+                            </span>
+                            .
+                            <br /> Exemplo: subtrair um telefone celular de uma
+                            bolsa enquanto a dona não estava vendo
+                          </p>
+                          <p>
+                            Já o <span className="font-semibold">roubo</span>{' '}
+                            ocorre com a subtração de coisas alheias móveis{' '}
+                            <span className="font-semibold underline">
+                              com a utilização de violência ou grave ameaça
+                              contra a pessoa
+                            </span>
+                            .
+                            <br /> Exemplo: um indivíduo com a intenção de
+                            subtrair um telefone celular, aponta uma arma de
+                            fogo contra a vítima e ameaça atirar contra ela caso
+                            o aparelho não seja entregue.
+                          </p>
+                          <p>
+                            Entretanto,{' '}
+                            <span className="font-semibold">
+                              o extravio ou perda
+                            </span>{' '}
+                            é caracterizado pelo{' '}
+                            <span className="font-semibold underline">
+                              desaparecimento ou sumiço de algo
+                            </span>
+                            .{' '}
+                          </p>
+                        </div> */}
                       </button>
                     </div>
                     {isHintOpen && (
-                      <div className="flex flex-col gap-2 bg-[#D8A912]/30 font-normal p-2 rounded-md text-justify leading-5">
+                      <div className="flex w-full flex-col md:absolute md:flex z-[100] md:right-[8rem] -right-[21rem] md:top-[5rem] md:bg-[#D8A912] lg:z-[100] lg:left-1/3 lg:w-80 lg:top-20 gap-2 bg-[#D8A912]/30 lg:bg-yellow-200 font-normal p-2 rounded-md text-justify leading-5">
+                        <Triangle className="hidden md:flex md:absolute md:top-[16.5rem] md:-left-[1rem] z-[100] top-[45%] -rotate-90 -left-4 fill-[#D8A912] text-[#D8A912] lg:fill-yellow-200 lg:text-yellow-200" />
                         <p>
                           Entenda a diferença entre{' '}
                           <span className="font-semibold">
@@ -394,13 +443,22 @@ export function MarkAsStolenForm({
           </div>
         </div>
 
-        <Button
-          variant="blue"
-          type="submit"
-          className="w-fit px-5 h-10 flex items-center justify-center text-xl text-white self-center"
-        >
-          Salvar
-        </Button>
+        <div className="flex justify-between w-full">
+          <Button
+            variant="blue"
+            type="submit"
+            className="w-fit px-5 h-10 flex items-center justify-center text-xl text-white self-center"
+          >
+            Salvar
+          </Button>
+          {isPopup && (
+            <DialogClose asChild>
+              <Button type="button" variant="red">
+                Cancelar
+              </Button>
+            </DialogClose>
+          )}
+        </div>
       </form>
     </Form>
   )
