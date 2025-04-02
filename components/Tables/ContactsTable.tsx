@@ -23,6 +23,7 @@ import { ContactRow } from './ContactRow'
 import Button from '../Button'
 import { ConctactForm } from '../Forms/ConctactForm'
 import { listContacts } from '@/functions/contact/list-contacts'
+import { cn } from '@/lib/utils'
 
 export function ContactsTable() {
   const [contacts, setContacts] = useState<Contact[]>([])
@@ -107,23 +108,38 @@ export function ContactsTable() {
         </TableBody>
       </Table>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogTrigger>
-          <Button type="button" variant="blue" className="self-start mt-4">
-            Adicionar contato
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Cadastrar contato</DialogTitle>
-            <DialogDescription className="w-64 text-justify">
-              Adicione um contato de confiança para eventuais contatos de
-              emergência.
-            </DialogDescription>
-          </DialogHeader>
-          <ConctactForm setContacts={setContacts} setIsOpen={setIsDialogOpen} />
-        </DialogContent>
-      </Dialog>
+      <div className="w-full flex justify-between">
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger className="w-fit">
+            <Button type="button" variant="blue" className="self-start mt-4">
+              Adicionar contato
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Cadastrar contato</DialogTitle>
+              <DialogDescription className="w-64 text-justify">
+                Adicione um contato de confiança para eventuais contatos de
+                emergência.
+              </DialogDescription>
+            </DialogHeader>
+            <ConctactForm
+              setContacts={setContacts}
+              setIsOpen={setIsDialogOpen}
+            />
+          </DialogContent>
+        </Dialog>
+
+        <span
+          className={cn(
+            'flex self-end font-medium',
+            contacts.length >= 3 && 'text-red-500'
+          )}
+        >
+          Você cadastrou {contacts.length} contatos. Limite máximo de 3
+          contatos.
+        </span>
+      </div>
     </>
   )
 }
