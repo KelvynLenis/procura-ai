@@ -9,7 +9,7 @@ export function OccurrenceTypeDescription() {
 
   return (
     <>
-      <div className="flex justify-between w-full relative">
+      <div className="flex justify-between w-full relative md:hidden">
         <div className="flex items-center">
           <span className="text-red-500 h-6 flex align-text-bottom">*</span>
           Tipo de ocorrência

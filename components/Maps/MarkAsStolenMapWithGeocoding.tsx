@@ -74,6 +74,9 @@ export function MarkAsStolenMapWithGeocoding({
   function checkIfPointIsInParaiba({ latLng }: { latLng: [number, number] }) {
     const clickedPoint = turf.point([latLng[1], latLng[0]])
 
+    console.log(latLng)
+    console.log(clickedPoint)
+
     let foundState = null
 
     if (geoJsonPBData && geoJsonPBData.features) {
@@ -139,6 +142,7 @@ export function MarkAsStolenMapWithGeocoding({
     if (!mapRef.current) return
 
     const isPointInParaiba = checkIfPointIsInParaiba({ latLng })
+
     if (!isPointInParaiba) return
 
     handleGetPosition({

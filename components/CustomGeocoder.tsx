@@ -44,7 +44,6 @@ export function CustomGeocodingControl({
 
   const handleResultClick = (feature: any) => {
     if (feature.center) {
-      console.log('Selected feature:', feature)
       // Convert to [lat, lng] format as expected by the original component
       onLocationSelect([feature.center[1], feature.center[0]])
       setShowResults(false)
