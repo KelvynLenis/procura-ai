@@ -39,6 +39,8 @@ import {
   getDeviceStatus,
 } from '@/functions/device/update-device-status'
 import { DialogClose } from '@radix-ui/react-dialog'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import { OccurrenceTypeDescription } from '../OccurrenceTypeDescription'
 
 interface MarkAsStolenFormProps {
   id: string
@@ -280,113 +282,15 @@ export function MarkAsStolenForm({
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
                   <FormLabel className="w-full text-center items-center flex flex-col">
-                    <div className="flex justify-between w-full relative">
+                    {/* <div className="flex justify-between w-full relative">
                       <div className="flex items-center">
                         <span className="text-red-500 h-6 flex align-text-bottom">
                           *
                         </span>
                         Tipo de ocorrência
                       </div>
-                      <button type="button" className="text-xs group">
-                        <CircleHelp
-                          size={22}
-                          className="fill-primary text-white"
-                          onClick={() => setIsHintOpen(!isHintOpen)}
-                        />
-                        {/* <div className="group hidden flex-col md:group-hover:absolute md:group-hover:flex group-hover:z-[100] group-hover:-right-[21rem] group-hover:w-80 md:-top-[10rem] md:bg-[#D8A912] gap-2 bg-[#D8A912]/30 font-normal p-2 rounded-md text-justify leading-5">
-                          <Triangle className="hidden md:absolute top-[45%] -rotate-90 -left-4 fill-[#D8A912] text-[#D8A912]" />
-                          <p>
-                            Entenda a diferença entre{' '}
-                            <span className="font-semibold">
-                              os tipos de ocorrência
-                            </span>
-                          </p>
-                          <p>
-                            O <span className="font-semibold">furto</span>{' '}
-                            ocorre quando há a subtração de coisas alheias
-                            móveis, sem o consentimento do proprietário, com o
-                            intuito de ficar com elas para si, porém{' '}
-                            <span className="font-semibold underline">
-                              sem violência ou grave ameaça
-                            </span>
-                            .
-                            <br /> Exemplo: subtrair um telefone celular de uma
-                            bolsa enquanto a dona não estava vendo
-                          </p>
-                          <p>
-                            Já o <span className="font-semibold">roubo</span>{' '}
-                            ocorre com a subtração de coisas alheias móveis{' '}
-                            <span className="font-semibold underline">
-                              com a utilização de violência ou grave ameaça
-                              contra a pessoa
-                            </span>
-                            .
-                            <br /> Exemplo: um indivíduo com a intenção de
-                            subtrair um telefone celular, aponta uma arma de
-                            fogo contra a vítima e ameaça atirar contra ela caso
-                            o aparelho não seja entregue.
-                          </p>
-                          <p>
-                            Entretanto,{' '}
-                            <span className="font-semibold">
-                              o extravio ou perda
-                            </span>{' '}
-                            é caracterizado pelo{' '}
-                            <span className="font-semibold underline">
-                              desaparecimento ou sumiço de algo
-                            </span>
-                            .{' '}
-                          </p>
-                        </div> */}
-                      </button>
-                    </div>
-                    {isHintOpen && (
-                      <div className="flex w-full flex-col md:absolute md:flex z-[100] md:right-[8rem] -right-[21rem] md:top-[5rem] md:bg-[#D8A912] lg:z-[100] lg:left-1/3 lg:w-80 lg:top-20 gap-2 bg-[#D8A912]/30 lg:bg-yellow-200 font-normal p-2 rounded-md text-justify leading-5">
-                        <Triangle className="hidden md:flex md:absolute md:top-[16.5rem] md:-left-[1rem] z-[100] top-[45%] -rotate-90 -left-4 fill-[#D8A912] text-[#D8A912] lg:fill-yellow-200 lg:text-yellow-200" />
-                        <p>
-                          Entenda a diferença entre{' '}
-                          <span className="font-semibold">
-                            os tipos de ocorrência
-                          </span>
-                        </p>
-                        <p>
-                          O <span className="font-semibold">furto</span> ocorre
-                          quando há a subtração de coisas alheias móveis, sem o
-                          consentimento do proprietário, com o intuito de ficar
-                          com elas para si, porém{' '}
-                          <span className="font-semibold underline">
-                            sem violência ou grave ameaça
-                          </span>
-                          .
-                          <br /> Exemplo: subtrair um telefone celular de uma
-                          bolsa enquanto a dona não estava vendo
-                        </p>
-                        <p>
-                          Já o <span className="font-semibold">roubo</span>{' '}
-                          ocorre com a subtração de coisas alheias móveis{' '}
-                          <span className="font-semibold underline">
-                            com a utilização de violência ou grave ameaça contra
-                            a pessoa
-                          </span>
-                          .
-                          <br /> Exemplo: um indivíduo com a intenção de
-                          subtrair um telefone celular, aponta uma arma de fogo
-                          contra a vítima e ameaça atirar contra ela caso o
-                          aparelho não seja entregue.
-                        </p>
-                        <p>
-                          Entretanto,{' '}
-                          <span className="font-semibold">
-                            o extravio ou perda
-                          </span>{' '}
-                          é caracterizado pelo{' '}
-                          <span className="font-semibold underline">
-                            desaparecimento ou sumiço de algo
-                          </span>
-                          .{' '}
-                        </p>
-                      </div>
-                    )}
+                    </div> */}
+                    <OccurrenceTypeDescription />
                   </FormLabel>
                   <DropdownMenu>
                     <DropdownMenuTrigger className="w-full flex items-center rounded-lg text-xs gap-0 p-2 md:text-base lg:gap-2 justify-between bg-zinc-100">
