@@ -1,6 +1,12 @@
 'use client'
 
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form'
 import { useForm } from 'react-hook-form'
 import { Input } from '../Input'
 import { z } from 'zod'
@@ -22,19 +28,24 @@ import {
   InputOTPSlot,
 } from '@/components/ui/input-otp'
 import { validateCPF } from '@/lib/utils'
+import { updatePassword } from '@/functions/auth/update-password'
 
 const formSchema = z
   .object({
     name: z.string().min(1, 'O nome é obrigatório'),
     email: z.string().email('Email inválido'),
     // newPassword: z.string().min(1, 'A senha é obrigatória'),
-    // repeatedNewPassword: z.string().min(1, 'A senha é obrigatória'),
+    // confirmNewPassword: z.string().min(1, 'A senha é obrigatória'),
     cpf: z.string().min(1, 'O CPF é obrigatório'),
   })
   .refine(data => validateCPF(data.cpf), {
     path: ['cpf'],
     message: 'O CPF deve conter exatamente 11 dígitos numéricos.',
   })
+// .refine(data => data.newPassword === data.confirmNewPassword, {
+//   path: ['confirmPassword'], // Indica onde mostrar o erro
+//   message: 'As senhas precisam ser iguais',
+// })
 
 export function EditProfileForm() {
   const [preview, setPreview] = useState<string | null>(null)
@@ -48,7 +59,7 @@ export function EditProfileForm() {
       email: '',
       cpf: '',
       // newPassword: '',
-      // repeatedNewPassword: '',
+      // confirmNewPassword: '',
     },
   })
 
@@ -67,6 +78,8 @@ export function EditProfileForm() {
           email: values.email,
           cpf: values.cpf,
         })
+
+        // await updatePassword(values.newPassword)
       }
       toast.promise(callFunction(), {
         pending: 'Atualizando perfil...',
@@ -197,6 +210,7 @@ export function EditProfileForm() {
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -293,6 +307,7 @@ export function EditProfileForm() {
                       </InputOTPGroup>
                     </InputOTP>
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -305,15 +320,16 @@ export function EditProfileForm() {
               <FormItem className="flex flex-col w-full">
                 <Label className="">Nova senha</Label>
                 <FormControl>
-                  <Input type="text" placeholder="nova senha" {...field} />
+                  <Input type="password" placeholder="nova senha" {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
 
           <FormField
             control={form.control}
-            name="repeatedNewPassword"
+            name="confirmNewPassword"
             render={({ field }) => (
               <FormItem className="flex flex-col w-full">
                 <Label className="">Endereço</Label>
@@ -324,6 +340,7 @@ export function EditProfileForm() {
                     {...field}
                   />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           /> */}
