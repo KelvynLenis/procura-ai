@@ -1,69 +1,184 @@
-"use client"
+'use client'
 
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form"
-import { useForm } from "react-hook-form"
-import { Input } from "../Input"
-import { z } from "zod"
-import { useToast } from "@/hooks/use-toast"
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
+import { useForm } from 'react-hook-form'
+import { Input } from '../Input'
+import { z } from 'zod'
+import { Label } from '../ui/label'
+import Button from '../Button'
+import { useEffect, useState } from 'react'
+import { getUserId } from '@/functions/user/get-user-id'
+import { getUser } from '@/functions/user/get-user'
+import Image from 'next/image'
+import { Upload } from 'lucide-react'
+import type { User } from '@/types'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { updateUser } from '@/functions/user/update-user'
+import { toast } from 'react-toastify'
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from '@/components/ui/input-otp'
+import { validateCPF } from '@/lib/utils'
 
-interface EditPerfilProps {
-  name: string;
-  email: string;
-  cellphone: string;
-  newPassword: string;
-  cpf: string;
-  address: string;
-}
+const formSchema = z
+  .object({
+    name: z.string().min(1, 'O nome é obrigatório'),
+    email: z.string().email('Email inválido'),
+    // newPassword: z.string().min(1, 'A senha é obrigatória'),
+    // repeatedNewPassword: z.string().min(1, 'A senha é obrigatória'),
+    cpf: z.string().min(1, 'O CPF é obrigatório'),
+  })
+  .refine(data => validateCPF(data.cpf), {
+    path: ['cpf'],
+    message: 'O CPF deve conter exatamente 11 dígitos numéricos.',
+  })
 
 export function EditProfileForm() {
-  const { toast } = useToast()
+  const [preview, setPreview] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [user, setUser] = useState<User>({} as User)
 
   const form = useForm({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       email: '',
-      cellphone: '',
-      newPassword: '',
       cpf: '',
-      address: ''
-    }
+      // newPassword: '',
+      // repeatedNewPassword: '',
+    },
   })
 
-  async function onSubmit(values: EditPerfilProps) {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setPreview(URL.createObjectURL(file))
+    }
+  }
 
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      // @Glaymar TODO
-      // Lógica para editar o perfil do usuário
-
-      toast({
-        variant: 'warning',
-        title: 'TODO',
-        description: 'Lógica para editar o perfil do usuário',
-        duration: 3000
+      const callFunction = async () => {
+        await updateUser(user.$id, {
+          name: values.name,
+          email: values.email,
+          cpf: values.cpf,
+        })
+      }
+      toast.promise(callFunction(), {
+        pending: 'Atualizando perfil...',
+        success: 'Perfil atualizado com sucesso!',
+        error: 'Erro ao atualizar perfil',
       })
-
-
     } catch (error) {
       console.error(error)
     }
   }
 
-  return (
+  useEffect(() => {
+    async function getUserData() {
+      const userId = await getUserId()
+
+      const userFilter = {
+        method: 'equal',
+        attribute: 'user_id',
+        values: [userId],
+      }
+
+      const userData = await getUser({ filters: [userFilter] })
+
+      console.log(userData)
+
+      setUser(userData[0])
+
+      form.setValue('name', userData[0].name)
+      form.setValue('email', userData[0].email)
+      // form.setValue('cellphone', userData.cellphone)
+      form.setValue('cpf', userData[0].cpf)
+
+      setIsLoading(false)
+    }
+
+    getUserData()
+  }, [])
+
+  return isLoading ? (
+    <p>Carregando...</p>
+  ) : (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col p-10 py-4 gap-4 text-zinc-900 self-center items-center justify-center rounded-lg shadow-form">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col -ml-2 md:ml-0 px-5 md:p-10 py-4 gap-4 bg-white w-full text-zinc-900 self-center  justify-center rounded-lg shadow-form"
+      >
         <div>
           <h1 className="text-2xl">Editar Conta</h1>
         </div>
+
+        <div className="flex items-center gap-4">
+          {preview ? (
+            <Image
+              src={preview}
+              alt="Preview"
+              width={96}
+              height={96}
+              className="w-24 h-24 rounded-full object-cover"
+            />
+          ) : (
+            <div className="md:w-24 md:h-24 w-16 h-16 p-10 rounded-full flex items-center justify-center text-[48px] font-medium text-white bg-primary">
+              {user.name.split(' ').length > 1
+                ? user.name.split(' ')[0][0] + user.name.split(' ')[1][0]
+                : user.name.split(' ')[0][0]}
+            </div>
+          )}
+
+          <div className="flex flex-col gap-4">
+            <div className="flex gap-4">
+              <label
+                htmlFor="file"
+                className="bg-zinc-100 rounded-xl cursor-pointer w-fit items-center justify-center text-sm md:text-base flex gap-3 px-4 py-3 ring-1 ring-[#232323]/30 hover:opacity-70"
+              >
+                <input
+                  id="file"
+                  type="file"
+                  className="hidden"
+                  accept="image/png, image/jpeg"
+                  onChange={handleFileChange}
+                />
+                <Upload className="w-5 h-5 md:w-6 md:h-6" />
+                Selecionar imagem
+              </label>
+              {preview && (
+                <button
+                  type="button"
+                  onClick={() => setPreview(null)}
+                  className="text-procura-ai-zinc rounded-lg px-4 py-2 ring-1 ring-[#232323]/30"
+                >
+                  Remover
+                </button>
+              )}
+            </div>
+            <span className="text-sm md:text-base">
+              * São suportadas imagens nos formatos .png .jpg de até 10 mb
+            </span>
+          </div>
+        </div>
         <div className="flex flex-col gap-4">
-          <div className="flex gap-4">
+          <div className="flex md:flex-row flex-col gap-4">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
-                  <label className="">Nome</label>
+                  <Label className="">Nome</Label>
                   <FormControl>
-                    <Input type="text" placeholder="Fulano Beltrano de Cicrano" {...field} />
+                    <Input
+                      type="text"
+                      placeholder="Fulano Beltrano de Cicrano"
+                      {...field}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -74,50 +189,121 @@ export function EditProfileForm() {
               name="email"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
-                  <label className="">Email</label>
+                  <Label className="">Email</Label>
                   <FormControl>
-                    <Input type="text" placeholder="email@mail.com" {...field} />
+                    <Input
+                      type="text"
+                      placeholder="email@mail.com"
+                      {...field}
+                    />
                   </FormControl>
                 </FormItem>
               )}
             />
           </div>
 
-          <div className="flex gap-4">
-            <FormField
+          <div className="flex md:flex-row flex-col gap-4">
+            {/* <FormField
               control={form.control}
-              name="cellphone"
+              name="status"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
-                  <label className="">Tel</label>
+                  <Label className="">Status da conta</Label>
                   <FormControl>
-                    <Input type="text" placeholder="+5588999999999" {...field} />
+                    <Input
+                          type="text"
+                          placeholder="+5588999999999"
+                          {...field}
+                        />
                   </FormControl>
                 </FormItem>
               )}
-            />
+            /> */}
+            <span className="px-4 py-1 mt-6 shadow-md rounded-md flex items-center w-full ring-1 ring-primary/60 h-10">
+              {user.status}
+            </span>
 
             <FormField
               control={form.control}
               name="cpf"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
-                  <label className="">CPF</label>
+                  <Label className="">CPF</Label>
                   <FormControl>
-                    <Input type="text" placeholder="11262269474" {...field} />
+                    <InputOTP
+                      maxLength={11}
+                      {...field}
+                      containerClassName="ring-1 ring-secondary/60"
+                      className="w-full flex justify-center items-center"
+                    >
+                      <InputOTPGroup>
+                        <InputOTPSlot
+                          className="w-3 md:w-4 h-5 border-t-0 border-r-0 border-black  shadow-transparent"
+                          index={0}
+                        />
+                        <InputOTPSlot
+                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          index={1}
+                        />
+                        <InputOTPSlot
+                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          index={2}
+                        />
+                      </InputOTPGroup>
+                      <InputOTPSeparator className="relative -bottom-2" />
+                      <InputOTPGroup>
+                        <InputOTPSlot
+                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          index={3}
+                        />
+                        <InputOTPSlot
+                          className="w-3 md:w-4 h-5 border-t-0 border-r-0 border-black shadow-transparent"
+                          index={4}
+                        />
+                        <InputOTPSlot
+                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          index={5}
+                        />
+                      </InputOTPGroup>
+                      <InputOTPSeparator className="relative -bottom-2" />
+                      <InputOTPGroup>
+                        <InputOTPSlot
+                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          index={6}
+                        />
+                        <InputOTPSlot
+                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          index={7}
+                        />
+                        <InputOTPSlot
+                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          index={8}
+                        />
+                      </InputOTPGroup>
+                      <InputOTPSeparator data-dash />
+                      <InputOTPGroup>
+                        <InputOTPSlot
+                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          index={9}
+                        />
+                        <InputOTPSlot
+                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          index={10}
+                        />
+                      </InputOTPGroup>
+                    </InputOTP>
                   </FormControl>
                 </FormItem>
               )}
             />
-
           </div>
 
-          <FormField
+          {/* <FormField
             control={form.control}
             name="newPassword"
             render={({ field }) => (
               <FormItem className="flex flex-col w-full">
-                <label className="">Nova senha</label>
+                <Label className="">Nova senha</Label>
                 <FormControl>
                   <Input type="text" placeholder="nova senha" {...field} />
                 </FormControl>
@@ -127,18 +313,29 @@ export function EditProfileForm() {
 
           <FormField
             control={form.control}
-            name="address"
+            name="repeatedNewPassword"
             render={({ field }) => (
               <FormItem className="flex flex-col w-full">
-                <label className="">Endereço</label>
+                <Label className="">Endereço</Label>
                 <FormControl>
-                  <Input type="text" placeholder="Rua Presidente Fulano Beltrano" {...field} />
+                  <Input
+                    type="password"
+                    placeholder="repita a nova senha"
+                    {...field}
+                  />
                 </FormControl>
               </FormItem>
             )}
-          />
+          /> */}
         </div>
-        <button type="submit" className="w-full h-10 flex items-center justify-center text-xl text-white self-center rounded-xl bg-primary  hover:opacity-60">Salvar</button>
+        <div className="flex w-full justify-between">
+          <Button variant="blue" type="submit">
+            Salvar alterações
+          </Button>
+          <Button variant="red" type="button">
+            Cancelar
+          </Button>
+        </div>
       </form>
     </Form>
   )

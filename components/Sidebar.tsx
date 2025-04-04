@@ -58,16 +58,16 @@ const securityGroup = [
     url: 'contatos-de-confianca',
     icon: <PiUsersThreeFill />,
   },
-  {
-    title: 'Alertar autoridades',
-    url: 'meus-alertas',
-    icon: <Siren />,
-  },
-  {
-    title: 'Criar boletim de ocorrência',
-    url: 'perfil',
-    icon: <FileWarning />,
-  },
+  // {
+  //   title: 'Alertar autoridades',
+  //   url: 'meus-alertas',
+  //   icon: <Siren />,
+  // },
+  // {
+  //   title: 'Criar boletim de ocorrência',
+  //   url: 'criar-boletim-de-ocorrencia',
+  //   icon: <FileWarning />,
+  // },
 
   {
     title: 'Editar perfil',
@@ -250,7 +250,6 @@ export function AppSidebar({ admin }: SidebarProps) {
                           <button
                             type="button"
                             onClick={() => showLoadingToast(item.url)}
-                            disabled={item.url !== 'contatos-de-confianca'}
                           >
                             {item.icon}
                             <span>{item.title}</span>
