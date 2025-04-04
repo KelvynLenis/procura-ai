@@ -49,7 +49,14 @@ export function MarkAsStolenMapWithGeocoding({
 
     let foundFeature = null
 
-    if (geoJsonData && geoJsonData.features) {
+    const data = await getGeoJsonData(geoJsonLink!).then(data => {
+      geoJsonPBData = data
+      return data
+    })
+
+    const geoJsonData = data
+
+    if (geoJsonData?.features) {
       for (const feature of geoJsonData.features) {
         if (turf.booleanPointInPolygon(clickedPoint, feature)) {
           foundFeature = feature
@@ -71,11 +78,17 @@ export function MarkAsStolenMapWithGeocoding({
     return
   }
 
-  function checkIfPointIsInParaiba({ latLng }: { latLng: [number, number] }) {
+  async function checkIfPointIsInParaiba({
+    latLng,
+  }: { latLng: [number, number] }) {
     const clickedPoint = turf.point([latLng[1], latLng[0]])
 
-    console.log(latLng)
-    console.log(clickedPoint)
+    const data = await getGeoJsonData(geoJsonPB!).then(data => {
+      geoJsonPBData = data
+      return data
+    })
+
+    geoJsonPBData = data
 
     let foundState = null
 
