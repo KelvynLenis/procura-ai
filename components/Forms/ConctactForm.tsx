@@ -61,8 +61,6 @@ export function ConctactForm({
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(contact)
-
     const callFunction = async () => {
       try {
         if (contact) {
