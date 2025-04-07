@@ -21,6 +21,7 @@ import type { User } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { updateUser } from '@/functions/user/update-user'
 import { toast } from 'react-toastify'
+import { v4 as uuidv4 } from 'uuid'
 import {
   InputOTP,
   InputOTPGroup,
@@ -29,6 +30,7 @@ import {
 } from '@/components/ui/input-otp'
 import { validateCPF } from '@/lib/utils'
 import { updatePassword } from '@/functions/auth/update-password'
+import { storage } from '@/lib/appwrite'
 
 const formSchema = z
   .object({
@@ -51,6 +53,7 @@ export function EditProfileForm() {
   const [preview, setPreview] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [user, setUser] = useState<User>({} as User)
+  const [file, setFile] = useState<File>({} as File)
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -67,12 +70,21 @@ export function EditProfileForm() {
     const file = e.target.files?.[0]
     if (file) {
       setPreview(URL.createObjectURL(file))
+      setFile(file)
     }
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const callFunction = async () => {
+        // const fileCreated = await storage.createFile(
+        //   process.env.NEXT_PUBLIC_APP_WRITE_STORAGE_ID!,
+        //   uuidv4(),
+        //   document.getElementById('uploader')!.files[0]
+        // )
+
+        // fileCreatedId = fileCreated.$id
+
         await updateUser(user.$id, {
           name: values.name,
           email: values.email,
@@ -233,16 +245,21 @@ export function EditProfileForm() {
                 </FormItem>
               )}
             /> */}
-            <span className="px-4 py-1 mt-6 shadow-md rounded-md flex items-center w-full ring-1 ring-primary/60 h-10">
-              {user.status}
-            </span>
+            <div className="flex flex-col gap-1 w-full">
+              <span className="font-medium text-start -mt-0.5 mb-0.5">
+                Status do usuário
+              </span>
+              <span className="px-4 py-1 shadow-md rounded-md flex items-center w-full ring-1 ring-primary/60 h-10">
+                {user.status}
+              </span>
+            </div>
 
             <FormField
               control={form.control}
               name="cpf"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
-                  <Label className="">CPF</Label>
+                  <Label className="mb-0.5">CPF</Label>
                   <FormControl>
                     <InputOTP
                       maxLength={11}
