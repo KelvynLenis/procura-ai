@@ -21,39 +21,41 @@ import type { User } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { updateUser } from '@/functions/user/update-user'
 import { toast } from 'react-toastify'
-import { v4 as uuidv4 } from 'uuid'
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
 } from '@/components/ui/input-otp'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { validateCPF } from '@/lib/utils'
-import { updatePassword } from '@/functions/auth/update-password'
-import { storage } from '@/lib/appwrite'
+import { uploadImage } from '@/functions/storage/upload-image'
+import { EditPassword } from './EditPassword'
 
 const formSchema = z
   .object({
     name: z.string().min(1, 'O nome é obrigatório'),
     email: z.string().email('Email inválido'),
-    // newPassword: z.string().min(1, 'A senha é obrigatória'),
-    // confirmNewPassword: z.string().min(1, 'A senha é obrigatória'),
     cpf: z.string().min(1, 'O CPF é obrigatório'),
   })
   .refine(data => validateCPF(data.cpf), {
     path: ['cpf'],
     message: 'O CPF deve conter exatamente 11 dígitos numéricos.',
   })
-// .refine(data => data.newPassword === data.confirmNewPassword, {
-//   path: ['confirmPassword'], // Indica onde mostrar o erro
-//   message: 'As senhas precisam ser iguais',
-// })
 
 export function EditProfileForm() {
   const [preview, setPreview] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [user, setUser] = useState<User>({} as User)
-  const [file, setFile] = useState<File>({} as File)
+  const [file, setFile] = useState<File>()
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -61,8 +63,6 @@ export function EditProfileForm() {
       name: '',
       email: '',
       cpf: '',
-      // newPassword: '',
-      // confirmNewPassword: '',
     },
   })
 
@@ -77,21 +77,25 @@ export function EditProfileForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const callFunction = async () => {
-        // const fileCreated = await storage.createFile(
-        //   process.env.NEXT_PUBLIC_APP_WRITE_STORAGE_ID!,
-        //   uuidv4(),
-        //   document.getElementById('uploader')!.files[0]
-        // )
+        if (file) {
+          console.log('file', file)
+          const url = await uploadImage(file || null)
 
-        // fileCreatedId = fileCreated.$id
+          await updateUser(user.$id, {
+            name: values.name,
+            email: values.email,
+            cpf: values.cpf,
+            img_url: url,
+          })
+
+          return
+        }
 
         await updateUser(user.$id, {
           name: values.name,
           email: values.email,
           cpf: values.cpf,
         })
-
-        // await updatePassword(values.newPassword)
       }
       toast.promise(callFunction(), {
         pending: 'Atualizando perfil...',
@@ -115,13 +119,14 @@ export function EditProfileForm() {
 
       const userData = await getUser({ filters: [userFilter] })
 
-      console.log(userData)
-
       setUser(userData[0])
+
+      if (userData[0].img_url) {
+        setPreview(userData[0].img_url)
+      }
 
       form.setValue('name', userData[0].name)
       form.setValue('email', userData[0].email)
-      // form.setValue('cellphone', userData.cellphone)
       form.setValue('cpf', userData[0].cpf)
 
       setIsLoading(false)
@@ -329,38 +334,6 @@ export function EditProfileForm() {
               )}
             />
           </div>
-
-          {/* <FormField
-            control={form.control}
-            name="newPassword"
-            render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
-                <Label className="">Nova senha</Label>
-                <FormControl>
-                  <Input type="password" placeholder="nova senha" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="confirmNewPassword"
-            render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
-                <Label className="">Endereço</Label>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="repita a nova senha"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
         </div>
         <div className="flex w-full justify-between">
           <Button variant="blue" type="submit">
@@ -371,6 +344,19 @@ export function EditProfileForm() {
           </Button>
         </div>
       </form>
+      <Dialog>
+        <DialogTrigger asChild className="mt-5">
+          <Button variant="blue" type="button">
+            Editar senha
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Editar senha</DialogTitle>
+          </DialogHeader>
+          <EditPassword />
+        </DialogContent>
+      </Dialog>
     </Form>
   )
 }

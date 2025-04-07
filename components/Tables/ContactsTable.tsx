@@ -36,8 +36,6 @@ export function ContactsTable() {
 
       setContacts(contactsResponse)
 
-      console.log(contactsResponse)
-
       setLoading(false)
     }
 

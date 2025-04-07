@@ -2,6 +2,7 @@ interface UpdateUserStatusData {
   name: string
   email: string
   cpf: string
+  img_url?: string
 }
 
 export async function updateUser(userId: string, data: UpdateUserStatusData) {
