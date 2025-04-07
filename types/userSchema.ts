@@ -5,8 +5,8 @@ const PermissionsSchema = z.array(
 )
 
 export const UserSchema = z.object({
-  $collectionId: z.string(), 
-  $createdAt: z.string().datetime(), 
+  $collectionId: z.string(),
+  $createdAt: z.string().datetime(),
   $databaseId: z.string(),
   $id: z.string(),
   $permissions: PermissionsSchema,
@@ -18,4 +18,5 @@ export const UserSchema = z.object({
   type: z.string(),
   accessed_at: z.string().datetime(),
   status: z.string(),
+  img_url: z.string().url(),
 })
