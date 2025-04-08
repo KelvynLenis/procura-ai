@@ -84,7 +84,6 @@ export function AlertsTable({
   ]
 
   const statusOptions = [
-    { label: 'Regular', value: 'Regular' },
     { label: 'Recuperado', value: 'Recuperado' },
     { label: 'Roubado', value: 'Roubado' },
     { label: 'Furtado', value: 'Furtado' },
@@ -304,7 +303,7 @@ export function AlertsTable({
                 placeholder="Localização"
                 disabled
               /> */}
-              <span className="w-40 h-12 cursor-default bg-zinc-200 ring-1 ring-[#232323]/30 text-center flex items-center justify-center text-zinc-400 italic rounded-md">
+              <span className="w-40 h-20 cursor-default bg-zinc-200 ring-1 ring-[#232323]/30 text-center flex items-center justify-center text-zinc-400 italic rounded-md">
                 Indisponível
               </span>
             </div>

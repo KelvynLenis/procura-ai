@@ -79,7 +79,7 @@ export function Combobox({
               type="button"
               disabled={disabled}
               className={cn(
-                'w-56 min-h-[48px] p-2 text-base gap-2 justify-between bg-white ring-1 ring-[#232323]/20 shadow-none flex flex-wrap overflow-y-scroll custom-scroll',
+                'w-56 h-20 p-2 text-base gap-2 justify-between bg-white ring-1 ring-[#232323]/20 shadow-none flex flex-wrap overflow-y-scroll custom-scroll',
                 className
               )}
             >
