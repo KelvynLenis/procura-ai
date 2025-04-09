@@ -101,7 +101,7 @@ export function DeviceForm({
           return true
         }
         try {
-          return await checkImei(data.imei)
+          return await checkImei(data.imei, data.brand, data.phone_model)
         } catch (error) {
           console.error('Erro ao verificar IMEI:', error)
           toast.error('Erro ao verificar IMEI. Tente novamente.')
@@ -110,7 +110,7 @@ export function DeviceForm({
       },
       {
         path: ['imei'],
-        message: 'Este IMEI já está cadastrado no sistema.',
+        message: 'IMEI inválido ou já cadastrado, ou não corresponde à marca/modelo informados.',
       }
     )
 
