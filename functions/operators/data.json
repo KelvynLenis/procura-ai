@@ -1,0 +1,77 @@
+[{
+ "documentId":"cf999525-434b-48b4-8a4b-15d350a04778",
+  "data": {
+		"name_operator": "Vivo",
+    "cnpj_operator": "02.558.157/0001-62",
+    "reason_operator": "Telefônica Brasil S.A",
+    "head_operator": "São Paulo, SP, Brasil",
+		"cod_operator": "15"
+			},
+	"permissions": ["read(\"any\")"]
+	
+	
+},{
+   "documentId":"cc66c5a1-6596-403e-8121-041237b95c3a",
+  "data": {
+		"name_operator": "Algar",
+    "cnpj_operator": "71.208.516/0001-74",
+    "reason_operator": "ALGAR Telecom S/A",
+    "head_operator": "Uberlândia, MG, Brasil",
+		"cod_operator": "12"
+			},
+	"permissions": ["read(\"any\")"]
+	
+	
+},
+{"documentId":"b3422ef6-e424-4441-be04-1a1a7d3f54ec",
+"data": {
+      "name_operator": "Datora",
+  "cnpj_operator": "18.384.930/0004-02",
+  "reason_operator": "DATORA MOBILE TELECOMUNICACOES S.A",
+  "head_operator": "São Paulo, SP, Brasil",
+      "cod_operator": "81"
+          },
+  "permissions": ["read(\"any\")"]
+  
+  
+},
+{"documentId":"30572422-5332-435c-8d4b-d53b4890ae26",
+"data": {
+      "name_operator": "Surf",
+  "cnpj_operator": "10.455.746/0020-06",
+  "reason_operator": "SURF TELECOM SA",
+  "head_operator": "São Paulo, SP, Brasil"
+          },
+  "permissions": ["read(\"any\")"]
+  
+  
+},
+
+{"documentId":"2b10b9c9-3bef-4d5e-abc1-15bd81b12789",
+"data": {
+      "name_operator": "TIM",
+  "cnpj_operator": "04.206.050/0090-56",
+  "reason_operator": "TIM CELULAR S.A.",
+  "head_operator": "Rio de Janeiro, RJ, Brasil",
+  "cod_operator": "41"
+          },
+  "permissions": ["read(\"any\")"]
+  
+  
+},
+
+{"documentId":"55202772-4b28-436e-815f-b3adc9335c02",
+"data": {
+      "name_operator": "Claro",
+  "cnpj_operator": "40.432.544/0001-47",
+  "reason_operator": "CLARO S.A.",
+  "head_operator": "São Paulo, SP, Brasil",
+  "cod_operator": "21"
+          },
+  "permissions": ["read(\"any\")"]
+  
+  
+}
+
+
+]

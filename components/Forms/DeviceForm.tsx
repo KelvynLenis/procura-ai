@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react';
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
@@ -52,6 +52,31 @@ import { DialogClose } from '@radix-ui/react-dialog'
 import { createDevice } from '@/functions/device/create-device'
 import { updateDevice } from '@/functions/device/update-device'
 import { checkImei } from '@/functions/device/check-imei'
+import { listOperators } from '@/functions/operators/list-operators'
+import { Operator } from '@/types'
+
+
+
+
+
+
+
+async function getOperatorOptions(): Promise<{ label: string; value: string }[]> {
+  try {
+    const operators = await listOperators();
+    return operators.map((operator: Operator) => ({
+      label: operator.name_operator,
+      value: operator.$id,
+    }));
+  } catch (error) {
+    console.error("Failed to fetch operator options:", error);
+    
+    return []; 
+
+  }
+}
+
+
 
 interface AddDeviceFormProps {
   device?: DeviceProps
@@ -66,9 +91,16 @@ export function DeviceForm({
 }: AddDeviceFormProps) {
   const [open, setOpen] = useState(false)
   const [isBrandsPopoverOpen, setIsBrandsPopoverOpen] = useState(false)
+  const [isOperatorPopoverOpen, setIsOperatorPopoverOpen] = useState(false);
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [operatorOptions, setOperatorOptions] = useState<{label: string, value: string}[]>([]);
   const route = useRouter()
 
+  // const defaultOperatorLabel = operatorOptions.find(
+  //   op => op.value === device?.operator_id
+  // )?.label || '';
+  
   const formSchema = z
     .object({
       phone_model: z.string().min(1, {
@@ -81,6 +113,7 @@ export function DeviceForm({
       brand: z.string().min(1, {
         message: 'A marca do dispositivo é obrigatória.',
       }),
+      operator_id: z.string(),
       imei: z.string(),
     })
     .refine(data => validateImeiFormat(data.imei), {
@@ -127,17 +160,32 @@ export function DeviceForm({
     { label: 'Sony', value: 'sony' },
   ] as const
 
-  const form = useForm<z.infer<typeof formSchema>>({
+   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       phone_number: device?.phone_number || '',
       phone_model: device?.phone_model || '',
+      // operator_id: '',
       brand: device?.brand || '',
       imei: device?.imei || '',
     },
   })
 
-  const router = useRouter()
+  useEffect(() => {
+    const loadOperators = async () => {
+      const options = await getOperatorOptions();
+      setOperatorOptions(options);
+  
+      if (device?.operator_id) {
+        form.setValue('operator_id', device.operator_id); 
+      }
+    }
+  
+    loadOperators();
+  }, [device, form]);
+
+  
+const router = useRouter()
 
   function goBack() {
     router.back()
@@ -378,6 +426,77 @@ export function DeviceForm({
             </FormItem>
           )}
         />
+
+              <FormField
+                control={form.control}
+                name="operator_id"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col w-full md:w-fit self-start">
+                    <FormLabel className="text-lg w-fit text-center items-start flex">
+                      Operadora do dispositivo
+                    </FormLabel>
+                    <Popover open={isOperatorPopoverOpen} onOpenChange={setIsOperatorPopoverOpen}>
+                        <PopoverTrigger asChild>
+                          <div className="self-start w-full md:w-fit">
+                          <FormControl>
+                          <ButtonShadcn
+                            variant="outline"
+                            role="combobox"
+                            type="button"
+                            className={cn(
+                              'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100',
+                              !field.value && 'text-muted-foreground text-zinc-500'
+                              )}
+                            >
+                            <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
+                            {field.value
+                              ? operatorOptions.find(op => op.value === field.value)?.label
+                              : 'Pesquise a operadora do dispositivo'}
+                            <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </ButtonShadcn>
+                        </FormControl>
+                        <FormMessage />
+                          </div>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[200px] p-0">
+                        <Command>
+                      <CommandInput
+                          placeholder="Digite a operadora."
+                          value={searchQuery}
+                          onValueChange={setSearchQuery}/>
+                  <CommandList>
+                      <CommandEmpty>Nenhuma operadora encontrada.</CommandEmpty>
+                      <CommandGroup>
+                      {operatorOptions
+                        .filter(operator => operator.label.toLowerCase().includes(searchQuery.toLowerCase()))
+                          .map(operator => (
+                        <CommandItem
+                            value={operator.label}  
+                            key={operator.value}    
+                            onSelect={() => {
+                              form.setValue('operator_id', operator.value) 
+                                setIsOperatorPopoverOpen(false)
+                            }}
+                      >
+                          {operator.label}
+                          <Check
+                            className={cn(
+                          'ml-auto',
+                          operator.value === field.value
+                            ? 'opacity-100'
+                            : 'opacity-0'
+                          )}
+                        />
+                      </CommandItem>
+                     ))}
+                     </CommandGroup>
+                      </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </FormItem>
+              )}
+            />
 
         <FormField
           control={form.control}
