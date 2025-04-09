@@ -58,17 +58,6 @@ const securityGroup = [
     url: 'contatos-de-confianca',
     icon: <PiUsersThreeFill />,
   },
-  // {
-  //   title: 'Alertar autoridades',
-  //   url: 'meus-alertas',
-  //   icon: <Siren />,
-  // },
-  // {
-  //   title: 'Criar boletim de ocorrência',
-  //   url: 'criar-boletim-de-ocorrencia',
-  //   icon: <FileWarning />,
-  // },
-
   {
     title: 'Editar perfil',
     url: 'perfil',
@@ -88,8 +77,8 @@ const itemsForAdmins = [
     icon: <PiUsersThreeFill />,
   },
   {
-    title: 'Alertas de dispositivos',
-    url: 'alertas-de-dispositivos',
+    title: 'Dispositivos notificados',
+    url: 'dispositivos-notificados',
     icon: <RiAlarmWarningFill />,
   },
 ]

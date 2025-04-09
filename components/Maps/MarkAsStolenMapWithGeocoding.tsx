@@ -11,6 +11,7 @@ import { getNeighborhoodId } from '@/functions/district/get-neighborhood-id'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { getGeoJsonData } from '@/functions/district/getGeoJsonData'
 import { CustomGeocodingControl } from '../CustomGeocoder'
+import { GeocodingControl } from '@maptiler/geocoding-control/maplibregl'
 
 interface MarkAsStolenMapWithGeocodingProps {
   setPosition: (coordinates: [number, number]) => void
@@ -239,13 +240,28 @@ export function MarkAsStolenMapWithGeocoding({
           map.setMaxBounds(bounds)
           map.fitBounds(bounds, { padding: 20 })
 
+          const bbox = [
+            bounds.getWest(),
+            bounds.getSouth(),
+            bounds.getEast(),
+            bounds.getNorth(),
+          ]
+
+          const gc = new GeocodingControl({
+            bbox: bbox,
+          })
+
+          map.addControl(gc, 'top-left')
+
           setMapLoaded(true)
         })
 
-        map.on('click', e => {
-          const isPointInParaiba = checkIfPointIsInParaiba({
+        map.on('click', async e => {
+          const isPointInParaiba = await checkIfPointIsInParaiba({
             latLng: [e.lngLat.lat, e.lngLat.lng],
           })
+
+          console.log(isPointInParaiba)
 
           if (!isPointInParaiba) return
 
