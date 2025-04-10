@@ -25,22 +25,13 @@ import { ConctactForm } from '../Forms/ConctactForm'
 import { listContacts } from '@/functions/contact/list-contacts'
 import { cn } from '@/lib/utils'
 
-export function ContactsTable() {
-  const [contacts, setContacts] = useState<Contact[]>([])
-  const [loading, setLoading] = useState(true)
+interface ContactsTableProps {
+  contacts: Contact[]
+  setContacts: React.Dispatch<React.SetStateAction<Contact[]>>
+}
+
+export function ContactsTable({ contacts, setContacts }: ContactsTableProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-
-  useEffect(() => {
-    const getContacts = async () => {
-      const contactsResponse = await listContacts({})
-
-      setContacts(contactsResponse)
-
-      setLoading(false)
-    }
-
-    getContacts()
-  }, [])
 
   return (
     <>
@@ -65,29 +56,7 @@ export function ContactsTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {loading ? (
-            <TableRow className="w-full  gap-5 px-7 pt-7">
-              <TableCell className="w-1/4">
-                <Skeleton className="h-8 w-full" />
-              </TableCell>
-
-              <TableCell className="w-1/4">
-                <Skeleton className="h-8 w-full" />
-              </TableCell>
-
-              <TableCell className="w-1/4">
-                <Skeleton className="h-8 w-full" />
-              </TableCell>
-
-              <TableCell className="w-1/4">
-                <Skeleton className="h-8 w-full" />
-              </TableCell>
-
-              <TableCell className="w-1/4">
-                <Skeleton className="h-8 w-full" />
-              </TableCell>
-            </TableRow>
-          ) : contacts.length > 0 ? (
+          {contacts.length > 0 ? (
             contacts.map((contact, index) => (
               <ContactRow
                 key={index}
@@ -127,16 +96,6 @@ export function ContactsTable() {
             />
           </DialogContent>
         </Dialog>
-
-        <span
-          className={cn(
-            'flex self-end font-medium',
-            contacts.length >= 3 && 'text-red-500'
-          )}
-        >
-          Você cadastrou {contacts.length} contatos. Limite máximo de 3
-          contatos.
-        </span>
       </div>
     </>
   )

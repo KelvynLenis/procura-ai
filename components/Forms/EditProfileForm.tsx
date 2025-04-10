@@ -142,14 +142,14 @@ export function EditProfileForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col -mr-6 px-5 md:p-10 py-4 gap-4 bg-white w-full text-zinc-900 self-center  justify-center rounded-lg drop-shadow-sm"
       >
-        <div className="flex flex-col md:flex-row items-center gap-4">
+        <div className="flex flex-row md:flex-row items-center gap-4">
           {preview ? (
             <Image
               src={preview}
               alt="Preview"
-              width={96}
-              height={96}
-              className="w-24 h-24 rounded-full object-cover"
+              width={128}
+              height={128}
+              className="w-24 h-24 lg:w-24 lg:h-24 rounded-full object-cover"
             />
           ) : (
             <div className="md:w-24 md:h-24 w-16 h-16 p-10 rounded-full flex items-center justify-center text-[48px] font-medium text-white bg-primary">
@@ -163,7 +163,7 @@ export function EditProfileForm() {
             <div className="flex flex-col md:flex-row gap-4">
               <label
                 htmlFor="file"
-                className="bg-zinc-100 rounded-xl cursor-pointer w-full max-w-48 max-h-11 items-center justify-center text-sm flex gap-3 px-4 py-3 ring-1 ring-[#232323]/30 hover:opacity-70"
+                className="bg-zinc-100 rounded-xl cursor-pointer w-full max-w-48 max-h-11 items-center justify-center text-xs lg:text-sm flex gap-3 px-4 py-3 ring-1 ring-[#232323]/30 hover:opacity-70"
               >
                 <input
                   id="file"
@@ -179,14 +179,14 @@ export function EditProfileForm() {
                 <button
                   type="button"
                   onClick={() => setPreview(null)}
-                  className="text-procura-ai-zinc bg-zinc-100 max-w-48 max-h-11 rounded-lg px-4 py-2 ring-1 ring-[#232323]/30"
+                  className="text-procura-ai-zinc bg-zinc-100 max-w-48 max-h-11 rounded-lg px-4 py-2 ring-1 text-xs lg:text-sm ring-[#232323]/30"
                 >
                   Remover
                 </button>
               )}
             </div>
-            <span className="text-sm md:text-base">
-              * São suportadas imagens nos formatos .png .jpg de até 10 mb
+            <span className="text-xs md:text-base">
+              * São suportadas imagens nos formatos .png .jpg de até 50 mb
             </span>
           </div>
         </div>
@@ -319,7 +319,7 @@ export function EditProfileForm() {
         </div>
         <div className="flex w-full justify-between">
           <Button variant="blue" type="submit">
-            Salvar alterações
+            Salvar
           </Button>
           <Button variant="red" type="button">
             Cancelar
