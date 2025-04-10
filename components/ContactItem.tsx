@@ -1,63 +1,83 @@
 'use client'
 
-import { cn } from '@/lib/utils'
-import { IoIosWarning } from 'react-icons/io'
-import { MarkAsStolenForm } from './Forms/MarkAsStolenForm'
-import type { Contact, DeviceProps } from '@/types'
-import { Eye, Trash2, X } from 'lucide-react'
-import { AlertDetails } from './AlertDetails'
+import type { Contact } from '@/types'
+import { Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'react-toastify'
-import { v4 as uuidv4 } from 'uuid'
 import { useState } from 'react'
-import { DeviceDetailsCard } from './DeviceDetailsCard'
-import { Modal } from './Modal'
-import { createEvent } from '@/functions/event/create-event'
-import { updateDeviceStatus } from '@/functions/device/update-device-status'
 
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { ImPencil } from 'react-icons/im'
 import { ConfirmationDialog } from './ConfirmationDialog'
+import { ConctactForm } from './Forms/ConctactForm'
+import { deleteContact } from '@/functions/contact/delete-contact'
 
 interface ContactItemProps {
   contact: Contact
+  setContacts: React.Dispatch<React.SetStateAction<Contact[]>>
 }
 
-export function ContacItem({ contact }: ContactItemProps) {
+export function ContacItem({ contact, setContacts }: ContactItemProps) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+  async function handleDelete() {
+    toast.promise(deleteContact(contact.$id), {
+      pending: 'Excluindo contato...',
+      success: 'Contato excluido com sucesso!',
+      error: 'Erro ao excluir contato',
+    })
+
+    setContacts(prevContacts => prevContacts.filter(c => c.$id !== contact.$id))
+  }
+
   return (
     <>
       <div className="flex flex-col w-full h-fit bg-white rounded-xl shadow-md">
         <div className="flex items-center justify-end w-full h-12 bg-primary rounded-t-xl px-4 gap-3">
-          <Dialog>
-            <DialogTrigger>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
               <button
                 type="button"
-                className="flex rounded-lg w-8 h-8 bg-white ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
+                className="rounded-lg w-8 h-8 flex ring-1 ring-zinc-300 group relative bg-white hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
               >
-                <ImPencil size={20} />
+                <Pencil size={26} />
+                <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                  Editar contato
+                </span>
               </button>
             </DialogTrigger>
-            <DialogContent className="h-[95%] w-[90%] overflow-scroll flex flex-col">
-              <DialogTitle className="hidden">Editar dispositivo</DialogTitle>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Editar contato</DialogTitle>
+                <DialogDescription>
+                  Edite as informações do contato.
+                </DialogDescription>
+              </DialogHeader>
+              <ConctactForm
+                contact={contact}
+                setContacts={setContacts}
+                setIsOpen={setIsDialogOpen}
+              />
             </DialogContent>
           </Dialog>
           <ConfirmationDialog
-            onConfirm={() => {}}
-            title="Excluir contato"
-            description="Tem certeza que deseja excluir esse contato?"
+            title="Tem certeza que deseja deletar o contato?"
+            description="Ao concordar com esta ação, o contato será removido da lista de contatos. Caso a policia encontre o dispositivo não será possível saber a quem ele pertence e nem te alertar de sua recuperação."
+            onConfirm={handleDelete}
           >
             <button
               type="button"
-              className="flex rounded-lg w-8 h-8 bg-white group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90"
+              className="bg-white flex rounded-lg w-8 h-8 group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90"
             >
               <Trash2 size={20} />
+              <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                Deletar contato
+              </span>
             </button>
           </ConfirmationDialog>
         </div>

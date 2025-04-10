@@ -13,7 +13,7 @@ export function ContactsList({ contacts, setContacts }: ContactsListProps) {
     <>
       <div className="flex flex-col items-center justify-center w-full ml-1 self-center gap-2 rounded-xl">
         {contacts.map((contact, index) => (
-          <ContacItem key={index} contact={contact} />
+          <ContacItem key={index} contact={contact} setContacts={setContacts} />
         ))}
       </div>
     </>
