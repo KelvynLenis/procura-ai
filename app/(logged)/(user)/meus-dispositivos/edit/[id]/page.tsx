@@ -41,14 +41,12 @@ export default async function EditDevice({
     console.error('Erro ao buscar dados do dispositivo:', error)
     return <div>Erro ao carregar os dados do dispositivo.</div>
   }
-  const { brand, phone_model, phone_number, imei } = result
+  const { brand, phone_model, phone_number, imei, operator_id } = result
 
   return (
     <ProtectedRoute>
       <div className="w-full flex flex-col items-center justify-center pr-20 my-5">
-        <DeviceForm
-          device={{ $id: id, brand, phone_model, phone_number, imei }}
-        />
+        <DeviceForm device={result} />
       </div>
     </ProtectedRoute>
   )

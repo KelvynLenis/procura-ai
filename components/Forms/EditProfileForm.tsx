@@ -78,7 +78,6 @@ export function EditProfileForm() {
     try {
       const callFunction = async () => {
         if (file) {
-          console.log('file', file)
           const url = await uploadImage(file || null)
 
           await updateUser(user.$id, {
