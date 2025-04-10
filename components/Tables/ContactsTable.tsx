@@ -8,14 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
+
 import { useEffect, useState } from 'react'
 import { Skeleton } from '../ui/skeleton'
 import type { Contact } from '@/types'
@@ -25,22 +18,13 @@ import { ConctactForm } from '../Forms/ConctactForm'
 import { listContacts } from '@/functions/contact/list-contacts'
 import { cn } from '@/lib/utils'
 
-export function ContactsTable() {
-  const [contacts, setContacts] = useState<Contact[]>([])
-  const [loading, setLoading] = useState(true)
+interface ContactsTableProps {
+  contacts: Contact[]
+  setContacts: React.Dispatch<React.SetStateAction<Contact[]>>
+}
+
+export function ContactsTable({ contacts, setContacts }: ContactsTableProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-
-  useEffect(() => {
-    const getContacts = async () => {
-      const contactsResponse = await listContacts({})
-
-      setContacts(contactsResponse)
-
-      setLoading(false)
-    }
-
-    getContacts()
-  }, [])
 
   return (
     <>
@@ -65,29 +49,7 @@ export function ContactsTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {loading ? (
-            <TableRow className="w-full  gap-5 px-7 pt-7">
-              <TableCell className="w-1/4">
-                <Skeleton className="h-8 w-full" />
-              </TableCell>
-
-              <TableCell className="w-1/4">
-                <Skeleton className="h-8 w-full" />
-              </TableCell>
-
-              <TableCell className="w-1/4">
-                <Skeleton className="h-8 w-full" />
-              </TableCell>
-
-              <TableCell className="w-1/4">
-                <Skeleton className="h-8 w-full" />
-              </TableCell>
-
-              <TableCell className="w-1/4">
-                <Skeleton className="h-8 w-full" />
-              </TableCell>
-            </TableRow>
-          ) : contacts.length > 0 ? (
+          {contacts.length > 0 ? (
             contacts.map((contact, index) => (
               <ContactRow
                 key={index}
@@ -105,39 +67,6 @@ export function ContactsTable() {
           )}
         </TableBody>
       </Table>
-
-      <div className="w-full flex justify-between">
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger className="w-fit">
-            <Button type="button" variant="blue" className="self-start mt-4">
-              Adicionar contato
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Cadastrar contato</DialogTitle>
-              <DialogDescription className="w-64 text-justify">
-                Adicione um contato de confiança para eventuais contatos de
-                emergência.
-              </DialogDescription>
-            </DialogHeader>
-            <ConctactForm
-              setContacts={setContacts}
-              setIsOpen={setIsDialogOpen}
-            />
-          </DialogContent>
-        </Dialog>
-
-        <span
-          className={cn(
-            'flex self-end font-medium',
-            contacts.length >= 3 && 'text-red-500'
-          )}
-        >
-          Você cadastrou {contacts.length} contatos. Limite máximo de 3
-          contatos.
-        </span>
-      </div>
     </>
   )
 }
