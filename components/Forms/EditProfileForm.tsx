@@ -164,7 +164,7 @@ export function EditProfileForm() {
             <div className="flex flex-col md:flex-row gap-4">
               <label
                 htmlFor="file"
-                className="bg-zinc-100 rounded-xl cursor-pointer w-full max-w-48 items-center justify-center text-sm lg:text-base flex gap-3 px-4 py-3 ring-1 ring-[#232323]/30 hover:opacity-70"
+                className="bg-zinc-100 rounded-xl cursor-pointer w-full max-w-48 max-h-11 items-center justify-center text-sm flex gap-3 px-4 py-3 ring-1 ring-[#232323]/30 hover:opacity-70"
               >
                 <input
                   id="file"
@@ -180,7 +180,7 @@ export function EditProfileForm() {
                 <button
                   type="button"
                   onClick={() => setPreview(null)}
-                  className="text-procura-ai-zinc bg-zinc-100 max-w-48 rounded-lg px-4 py-2 ring-1 ring-[#232323]/30"
+                  className="text-procura-ai-zinc bg-zinc-100 max-w-48 max-h-11 rounded-lg px-4 py-2 ring-1 ring-[#232323]/30"
                 >
                   Remover
                 </button>
