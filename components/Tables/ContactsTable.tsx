@@ -8,14 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
+
 import { useEffect, useState } from 'react'
 import { Skeleton } from '../ui/skeleton'
 import type { Contact } from '@/types'
@@ -74,29 +67,6 @@ export function ContactsTable({ contacts, setContacts }: ContactsTableProps) {
           )}
         </TableBody>
       </Table>
-
-      <div className="w-full flex justify-between">
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger className="w-fit">
-            <Button type="button" variant="blue" className="self-start mt-4">
-              Adicionar contato
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Cadastrar contato</DialogTitle>
-              <DialogDescription className="w-64 text-justify">
-                Adicione um contato de confiança para eventuais contatos de
-                emergência.
-              </DialogDescription>
-            </DialogHeader>
-            <ConctactForm
-              setContacts={setContacts}
-              setIsOpen={setIsDialogOpen}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
     </>
   )
 }
