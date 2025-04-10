@@ -288,6 +288,7 @@ export function DeviceForm({
                     <FormControl>
                       <ButtonShadcn
                         variant="outline"
+                        // biome-ignore lint/a11y/useSemanticElements: <explanation>
                         role="combobox"
                         type="button"
                         className={cn(
@@ -306,7 +307,10 @@ export function DeviceForm({
                     <FormMessage />
                   </div>
                 </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
+                <PopoverContent
+                  side="bottom"
+                  className="w-[200px] p-0 fixed left-1/2 -translate-x-1/2"
+                >
                   <Command>
                     <CommandInput placeholder="Digite a marca" />
                     <CommandList>
@@ -357,6 +361,7 @@ export function DeviceForm({
                     <FormControl>
                       <ButtonShadcn
                         variant="outline"
+                        // biome-ignore lint/a11y/useSemanticElements: <explanation>
                         role="combobox"
                         type="button"
                         className={cn(
@@ -375,7 +380,7 @@ export function DeviceForm({
                   </div>
                 </PopoverTrigger>
                 <PopoverContent className="w-[200px] p-0">
-                  <Command>
+                  <Command className="top-10">
                     <CommandInput
                       placeholder="Digite o modelo."
                       value={field.value}

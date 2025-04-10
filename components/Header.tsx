@@ -37,8 +37,16 @@ export function Header() {
       value: 'Editar perfil',
     },
     {
+      name: 'perfil-admin',
+      value: 'Editar perfil',
+    },
+    {
       name: 'contatos-de-confianca',
       value: 'Contatos de confiança',
+    },
+    {
+      name: 'dispositivos-notificados',
+      value: 'Dispositivos notificados',
     },
   ]
   const regex = /^meus-dispositivos\/edit/
@@ -48,10 +56,13 @@ export function Header() {
 
   return (
     !isFullScreen && (
-      <header className="flex items-center drop-shadow-md bg-procura-ai-blue self-end w-full h-16">
-        <div className="w-1/5 md:w-[35%] lg:w-[26%] xl:w-1/5 h-1" />
-        <span className="text-xl text-white">{matchedRoute}</span>
-      </header>
+      <>
+        <div className="absolute w-full bg-primary inset-0 z-0 h-16" />
+        <header className="flex items-center drop-shadow-md  w-full h-16">
+          {/* <div className="w-1/5 md:w-[35%] lg:w-[26%] xl:w-1/5 h-1" /> */}
+          <span className="text-xl text-white lg:-ml-4">{matchedRoute}</span>
+        </header>
+      </>
     )
   )
 }

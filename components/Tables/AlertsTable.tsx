@@ -283,6 +283,7 @@ export function AlertsTable({
                 values={statusFilter.values}
                 onSelect={handleSelectStatusFilter}
                 placeholder="Status"
+                className="min-h-10 h-fit"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -292,6 +293,7 @@ export function AlertsTable({
                 values={brandFilter ? brandFilter.values : []}
                 onSelect={handleSelectBrandsFilter}
                 placeholder="Marca"
+                className="min-h-10 h-fit"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -303,7 +305,7 @@ export function AlertsTable({
                 placeholder="Localização"
                 disabled
               /> */}
-              <span className="w-40 h-20 cursor-default bg-zinc-200 ring-1 ring-[#232323]/30 text-center flex items-center justify-center text-zinc-400 italic rounded-md">
+              <span className="w-40 h-10 cursor-default bg-zinc-200 ring-1 ring-[#232323]/30 text-center flex items-center justify-center text-zinc-400 italic rounded-md">
                 Indisponível
               </span>
             </div>

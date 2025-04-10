@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react'
 import { getUserId } from '@/functions/user/get-user-id'
 import { getUser } from '@/functions/user/get-user'
 import Image from 'next/image'
-import { Upload } from 'lucide-react'
+import { Pencil, Upload } from 'lucide-react'
 import type { User } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { updateUser } from '@/functions/user/update-user'
@@ -36,7 +36,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { validateCPF } from '@/lib/utils'
+import { formatCPF, validateCPF } from '@/lib/utils'
 import { uploadImage } from '@/functions/storage/upload-image'
 import { EditPassword } from './EditPassword'
 
@@ -140,13 +140,9 @@ export function EditProfileForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col -ml-2 md:ml-0 px-5 md:p-10 py-4 gap-4 bg-white w-full text-zinc-900 self-center  justify-center rounded-lg shadow-form"
+        className="flex flex-col -mr-6 px-5 md:p-10 py-4 gap-4 bg-white w-full text-zinc-900 self-center  justify-center rounded-lg drop-shadow-sm"
       >
-        <div>
-          <h1 className="text-2xl">Editar Conta</h1>
-        </div>
-
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col md:flex-row items-center gap-4">
           {preview ? (
             <Image
               src={preview}
@@ -163,11 +159,11 @@ export function EditProfileForm() {
             </div>
           )}
 
-          <div className="flex flex-col gap-4">
-            <div className="flex gap-4">
+          <div className="flex flex-col items-center md:items-start gap-4">
+            <div className="flex flex-col md:flex-row gap-4">
               <label
                 htmlFor="file"
-                className="bg-zinc-100 rounded-xl cursor-pointer w-fit items-center justify-center text-sm md:text-base flex gap-3 px-4 py-3 ring-1 ring-[#232323]/30 hover:opacity-70"
+                className="bg-zinc-100 rounded-xl cursor-pointer w-full max-w-48 max-h-11 items-center justify-center text-sm flex gap-3 px-4 py-3 ring-1 ring-[#232323]/30 hover:opacity-70"
               >
                 <input
                   id="file"
@@ -176,14 +172,14 @@ export function EditProfileForm() {
                   accept="image/png, image/jpeg"
                   onChange={handleFileChange}
                 />
-                <Upload className="w-5 h-5 md:w-6 md:h-6" />
+                <Upload className="w-5 h-5 lg:w-6 lg:h-6" />
                 Selecionar imagem
               </label>
               {preview && (
                 <button
                   type="button"
                   onClick={() => setPreview(null)}
-                  className="text-procura-ai-zinc rounded-lg px-4 py-2 ring-1 ring-[#232323]/30"
+                  className="text-procura-ai-zinc bg-zinc-100 max-w-48 max-h-11 rounded-lg px-4 py-2 ring-1 ring-[#232323]/30"
                 >
                   Remover
                 </button>
@@ -195,20 +191,24 @@ export function EditProfileForm() {
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <div className="flex md:flex-row flex-col gap-4">
+          <div className="flex flex-col gap-4">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <Label className="">Nome</Label>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="Fulano Beltrano de Cicrano"
-                      {...field}
-                    />
-                  </FormControl>
+                <FormItem className="flex flex-col w-full max-w-80">
+                  <Label className="text-base">Nome</Label>
+                  <div className="flex items-center gap-2">
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="Fulano Beltrano de Cicrano"
+                        className="bg-zinc-100 ring-0 shadow-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <Pencil className="w-4 h-4" />
+                  </div>
                 </FormItem>
               )}
             />
@@ -217,59 +217,38 @@ export function EditProfileForm() {
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <Label className="">Email</Label>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="email@mail.com"
-                      {...field}
-                    />
-                  </FormControl>
+                <FormItem className="flex flex-col w-full max-w-80">
+                  <Label className="text-base">Email</Label>
+                  <div className="flex items-center gap-2">
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="email@mail.com"
+                        className="bg-zinc-100 ring-0 shadow-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <Pencil className="w-4 h-4" />
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
 
-          <div className="flex md:flex-row flex-col gap-4">
+          <div className="flex flex-col gap-1">
             {/* <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <Label className="">Status da conta</Label>
-                  <FormControl>
-                    <Input
-                          type="text"
-                          placeholder="+5588999999999"
-                          {...field}
-                        />
-                  </FormControl>
-                </FormItem>
-              )}
-            /> */}
-            <div className="flex flex-col gap-1 w-full">
-              <span className="font-medium text-start -mt-0.5 mb-0.5">
-                Status do usuário
-              </span>
-              <span className="px-4 py-1 shadow-md rounded-md flex items-center w-full ring-1 ring-primary/60 h-10">
-                {user.status}
-              </span>
-            </div>
-
-            <FormField
               control={form.control}
               name="cpf"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
+                <FormItem className="flex flex-col w-full max-w-80">
                   <Label className="mb-0.5">CPF</Label>
                   <FormControl>
                     <InputOTP
                       maxLength={11}
                       {...field}
                       containerClassName="ring-1 ring-secondary/60"
-                      className="w-full flex justify-center items-center"
+                      className="w-full flex justify-center items-center bg-white"
                     >
                       <InputOTPGroup>
                         <InputOTPSlot
@@ -331,7 +310,11 @@ export function EditProfileForm() {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
+            <span className="text-base font-medium">CPF</span>
+            <span className="bg-zinc-100 rounded-md p-2 w-full max-w-fit">
+              {formatCPF(user.cpf)}
+            </span>
           </div>
         </div>
         <div className="flex w-full justify-between">
