@@ -31,10 +31,10 @@ export function ContactsComponent() {
         <ClipLoader color="#0F2498" size={25} />
       ) : (
         <>
-          <div className="hidden lg:flex lg:flex-col">
+          <div className="hidden md:flex md:flex-col">
             <ContactsTable contacts={contacts} setContacts={setContacts} />
           </div>
-          <div className="flex lg:hidden">
+          <div className="flex md:hidden">
             <ContactsList contacts={contacts} setContacts={setContacts} />
           </div>
           <span
