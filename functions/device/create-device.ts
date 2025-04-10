@@ -18,6 +18,7 @@ export async function createDevice(deviceId: string, values: Device, userId: str
           imei: values.imei,
           is_stolen: false,
           auth_id: userId,
+          operator_id: values.operator_id
         },
       }),
     }

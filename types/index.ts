@@ -6,6 +6,7 @@ import type EventSchema from './eventSchema'
 import type ContactSchema from './contactSchema'
 import type { QueryFilterSchema } from './queryFilter'
 import type { UserSchema } from './userSchema'
+import type OperatorSchema from './operatorSchema'
 
 export interface DeviceProps {
   $id?: string // ID do dispositivo
@@ -14,6 +15,7 @@ export interface DeviceProps {
   brand: string // Marca do telefone
   imei: string // IMEI do telefone
   is_stolen?: boolean // Status de "roubado" (true/false)
+  operator_id?: string
   auth_id?: string
   status?: string
 }
@@ -35,3 +37,4 @@ export type cepSearchResponse = z.infer<typeof cepSearchResponseSchema>
 export type Contact = z.infer<typeof ContactSchema>
 export type QueryFilter = z.infer<typeof QueryFilterSchema>
 export type User = z.infer<typeof UserSchema>
+export type Operator = z.infer<typeof OperatorSchema>

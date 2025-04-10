@@ -99,6 +99,7 @@ export function DevicesTable({
                 imei={device.imei}
                 isStolen={device.is_stolen!}
                 status={device.status!}
+                operator_id={device.operator_id!}
                 setDevices={setDevices}
               />
             ))
