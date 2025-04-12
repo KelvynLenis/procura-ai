@@ -82,7 +82,7 @@ export function DeviceForm({
           'O número de celular deve conter exatamente 11 dígitos numéricos.',
       }),
       brand: z.string().min(1, {
-        message: 'A marca do dispositivo é obrigatória.',
+        message: 'O fabricante do dispositivo é obrigatório.',
       }),
       imei: z.string(),
     })
@@ -227,12 +227,9 @@ export function DeviceForm({
               <FormItem className="flex flex-col w-full md:w-fit self-start">
                 <FormLabel className="text-lg w-fit text-center items-start flex">
                   <span className="text-red-500 text-base">*</span>
-                  Marca
+                    Fabricante
                 </FormLabel>
-                <Popover
-                  open={isBrandsPopoverOpen}
-                  onOpenChange={setIsBrandsPopoverOpen}
-                >
+                <Popover open={isBrandsPopoverOpen} onOpenChange={setIsBrandsPopoverOpen}>
                   <PopoverTrigger asChild>
                     <div className="self-start w-full md:w-fit">
                       <FormControl>
@@ -246,10 +243,7 @@ export function DeviceForm({
                           )}
                         >
                           <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
-                          {field.value
-                            ? brands.find(brand => brand.label === field.value)
-                                ?.label
-                            : 'Pesquise a marca do dispositivo'}
+                            {field.value || 'Pesquise o fabricante do dispositivo'}
                           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </ButtonShadcn>
                       </FormControl>
@@ -258,17 +252,44 @@ export function DeviceForm({
                   </PopoverTrigger>
                   <PopoverContent className="w-[200px] p-0">
                     <Command>
-                      <CommandInput placeholder="Digite a marca" />
+                      <CommandInput 
+                        placeholder="Digite o fabricante"
+                        value={field.value}
+                        onValueChange={value => {
+                          if (value === '') {
+                            form.setValue('brand', '')
+                          }
+                          form.setValue('brand', value)
+                        }}
+                      />
                       <CommandList>
-                        <CommandEmpty>Nenhuma marca encontrada.</CommandEmpty>
+                        <CommandEmpty>Nenhum fabricante encontrado.</CommandEmpty>
                         <CommandGroup>
+                          {field.value && !brands.some(brand => brand.label.toLowerCase() === field.value.toLowerCase()) && (
+                            <CommandItem
+                              value={field.value}
+                              onSelect={() => {
+                                form.setValue('brand', field.value)
+                                setIsBrandsPopoverOpen(false)
+                              }}
+                            >
+                              {field.value}
+                              <Check
+                                className={cn(
+                                  'ml-auto',
+                                  field.value === field.value
+                                    ? 'opacity-100'
+                                    : 'opacity-0'
+                                )}
+                              />
+                            </CommandItem>
+                          )}
                           {brands.map(brand => (
                             <CommandItem
                               value={brand.label}
                               key={brand.value}
                               onSelect={() => {
                                 form.setValue('brand', brand.label)
-                                form.setValue('phone_model', '')
                                 setIsBrandsPopoverOpen(false)
                               }}
                             >
@@ -276,7 +297,7 @@ export function DeviceForm({
                               <Check
                                 className={cn(
                                   'ml-auto',
-                                  brand.value === field.value
+                                  brand.label === field.value
                                     ? 'opacity-100'
                                     : 'opacity-0'
                                 )}
@@ -315,9 +336,7 @@ export function DeviceForm({
                           )}
                         >
                           <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
-                          {field.value
-                            ? field.value
-                            : 'Pesquise o modelo do dispositivo'}
+                          {field.value || 'Pesquise o modelo do dispositivo'}
                           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </ButtonShadcn>
                       </FormControl>
@@ -339,6 +358,28 @@ export function DeviceForm({
                       <CommandList>
                         <CommandEmpty>Nenhum modelo encontrado.</CommandEmpty>
                         <CommandGroup>
+                          {field.value && !phoneBrands.find(
+                            brand =>
+                              brand.brand === form.control._formValues.brand
+                          )?.models.some(model => model.toLowerCase() === field.value.toLowerCase()) && (
+                            <CommandItem
+                              value={field.value}
+                              onSelect={() => {
+                                form.setValue('phone_model', field.value)
+                                setOpen(false)
+                              }}
+                            >
+                              {field.value}
+                              <Check
+                                className={cn(
+                                  'ml-auto',
+                                  field.value === field.value
+                                    ? 'opacity-100'
+                                    : 'opacity-0'
+                                )}
+                              />
+                            </CommandItem>
+                          )}
                           {phoneBrands.find(
                             brand =>
                               brand.brand === form.control._formValues.brand

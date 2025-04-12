@@ -86,7 +86,7 @@ export function EventDetails({
           </div>
 
           <div className="flex w-96">
-            <span className="lg:w-24 xl:w-32">Marca:</span>
+            <span className="lg:w-24 xl:w-32">Fabricante:</span>
             <span className="font-semibold flex w-1/3 xl:w-1/2 1.5xl:w-3/5 2xl:flex-1">
               {occurence.device.brand}
             </span>

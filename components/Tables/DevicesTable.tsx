@@ -45,7 +45,7 @@ export function DevicesTable({
               Modelo
             </TableHead>
             <TableHead className="text-black/80 text-lg font-medium hidden md:table-cell lg:w-32">
-              Marca
+              Fabricante 
             </TableHead>
             <TableHead className="text-black/80 text-lg font-medium hidden md:table-cell lg:w-1/4">
               IMEI

@@ -286,12 +286,12 @@ export function AlertsTable({
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label>Marca do dispositivo</Label>
+              <Label>Fabricante  do dispositivo</Label>
               <Combobox
                 options={brandsOptions}
                 values={brandFilter ? brandFilter.values : []}
                 onSelect={handleSelectBrandsFilter}
-                placeholder="Marca"
+                placeholder="Fabricante"
               />
             </div>
             <div className="flex flex-col gap-2">

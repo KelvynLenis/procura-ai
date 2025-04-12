@@ -27,7 +27,7 @@ interface DeviceDetailsCardProps {
   id: string // ID do dispositivo
   phone_number: string // Número de telefone
   phone_model: string // Modelo do telefone
-  brand: string // Marca do telefone
+  brand: string // Fabricante  do telefone
   imei: string // IMEI do telefone
   isStolen: boolean // Status de "roubado" (true/false)
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
@@ -228,7 +228,7 @@ export function DeviceDetailsCard({
             <span className="">Modelo</span>
             <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
 
-            <span className="">Marca</span>
+            <span className="">Fabricante</span>
             <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
 
             <span className="">IMEI</span>

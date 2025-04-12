@@ -44,10 +44,10 @@ async function validateImeiWithExternalApi(imei: string, brand: string, model: s
     const normalizedApiBrand = data.object.brand.toLowerCase().trim()
     
     if (normalizedBrand !== normalizedApiBrand) {
-      console.error(`Marca informada (${brand}) não corresponde ao IMEI (${data.object.brand})`)
+      console.error(`O Fabricante informado (${brand}) não corresponde ao IMEI (${data.object.brand})`)
       return {
         isValid: false,
-        error: 'A marca informada não corresponde ao IMEI.'
+        error: 'O Fabricante informado não corresponde ao IMEI.'
       }
     }
 
@@ -70,8 +70,8 @@ async function validateImeiWithExternalApi(imei: string, brand: string, model: s
     }
 
     console.log('IMEI validado com sucesso:', {
-      informado: { marca: brand, modelo: model },
-      api: { marca: data.object.brand, modelo: data.object.name, modelNumber: data.object.model }
+      informado: { fabricante: brand, modelo: model },
+      api: { fabricante: data.object.brand, modelo: data.object.name, modelNumber: data.object.model }
     })
 
     return { isValid: true }
