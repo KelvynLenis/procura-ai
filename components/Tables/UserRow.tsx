@@ -249,7 +249,7 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                     <TableHeader>
                       <TableRow>
                         <TableHead className="w-[100px]">IMEI</TableHead>
-                        <TableHead>Marca</TableHead>
+                        <TableHead>Fabricante</TableHead>
                         <TableHead>Modelo</TableHead>
                         <TableHead className="text-right">Número</TableHead>
                       </TableRow>

@@ -26,7 +26,7 @@ interface DeviceRowProps {
   id: string // ID do dispositivo
   phone_number: string // Número de telefone
   phone_model: string // Modelo do telefone
-  brand: string // Marca do telefone
+  brand: string // Fabricante do telefone
   imei: string // IMEI do telefone
   isStolen: boolean // Status de "roubado" (true/false)
   operator_id: string // ID do operador
@@ -155,7 +155,7 @@ export function DeviceRow({
                   </div>
 
                   <div className="flex flex-col gap-2 items-center justify-start">
-                    <span className="font-bold">Marca</span>
+                    <span className="font-bold">Fabricante</span>
                     <span>{brand}</span>
                   </div>
 

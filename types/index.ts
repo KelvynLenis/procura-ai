@@ -12,7 +12,7 @@ export interface DeviceProps {
   $id?: string // ID do dispositivo
   phone_number: string // Número de telefone
   phone_model: string // Modelo do telefone
-  brand: string // Marca do telefone
+  brand: string // Fabricante do telefone
   imei: string // IMEI do telefone
   is_stolen?: boolean // Status de "roubado" (true/false)
   operator_id?: string

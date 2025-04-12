@@ -50,7 +50,7 @@ export function Device({
             Modelo: <span className="font-semibold">{phone_model}</span>
           </span>
           <span>
-            Marca: <span className="font-semibold">{brand}</span>
+            Fabricante: <span className="font-semibold">{brand}</span>
           </span>
           <span>
             IMEI: <span className="font-semibold">{imei}</span>
