@@ -29,6 +29,7 @@ interface DeviceRowProps {
   brand: string // Fabricante do telefone
   imei: string // IMEI do telefone
   isStolen: boolean // Status de "roubado" (true/false)
+  operator_id: string // ID do operador
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
   index: number
   status: string
@@ -42,6 +43,7 @@ export function DeviceRow({
   imei,
   isStolen,
   status,
+  operator_id,
   setDevices,
   index,
 }: DeviceRowProps) {
