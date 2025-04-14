@@ -81,7 +81,7 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                   </span>
                 </div>
                 <div className="flex">
-                  <span className="w-28 font-medium">Marca</span>
+                  <span className="w-28 font-medium">Fabricante</span>
                   <span className="w-full">{occurrence?.device.brand}</span>
                 </div>
                 <div className="flex">
