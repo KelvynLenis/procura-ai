@@ -54,15 +54,15 @@ const formSchema = z
     }),
   })
   .refine(data => validateCPF(data.cpf), {
-    path: ['cpf'], // Indica onde mostrar o erro
-    message: 'O CPF deve conter exatamente 11 dígitos numéricos.',
+    path: ['cpf'],
+    message: 'CPF inválido. Por favor, verifique os dígitos informados.',
   })
   .refine(data => data.password === data.confirmPassword, {
-    path: ['confirmPassword'], // Indica onde mostrar o erro
+    path: ['confirmPassword'],
     message: 'As senhas precisam ser iguais',
   })
   .refine(data => data.email === data.confirmEmail, {
-    path: ['confirmEmail'], // Indica onde mostrar o erro
+    path: ['confirmEmail'],
     message: 'Os e-mails precisam ser iguais',
   })
   .refine(
