@@ -41,6 +41,7 @@ import {
 import { DialogClose } from '@radix-ui/react-dialog'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { OccurrenceTypeDescription } from '../OccurrenceTypeDescription'
+import { MarkAsStolenMapWithGeocoding2 } from '../Maps/MarkAsStolenMapWithGeocoding2'
 
 interface MarkAsStolenFormProps {
   id: string
@@ -58,13 +59,16 @@ const formSchema = z
       .min(1, {
         message: 'A data e hora da ocorrência é obrigatória.',
       })
-      .refine(date => {
-        const dataEvento = new Date(date)
-        const dataAtual = new Date()
-        return !isNaN(dataEvento.getTime()) && dataEvento <= dataAtual
-      }, {
-        message: 'Data inválida ou no futuro.',
-      }),
+      .refine(
+        date => {
+          const dataEvento = new Date(date)
+          const dataAtual = new Date()
+          return !isNaN(dataEvento.getTime()) && dataEvento <= dataAtual
+        },
+        {
+          message: 'Data inválida ou no futuro.',
+        }
+      ),
     description: z.string().optional(),
     type: z.string().min(1, {
       message: 'O tipo da ocorrência é obrigatório.',

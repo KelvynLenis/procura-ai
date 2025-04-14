@@ -5,13 +5,13 @@ import maplibregl, { LngLatBounds, Marker } from 'maplibre-gl'
 import * as maptilersdk from '@maptiler/sdk'
 import * as turf from '@turf/turf'
 import { toast } from 'react-toastify'
+import { GeocodingControl } from '@maptiler/geocoding-control/maplibregl'
 import type { FeatureCollectionSchema } from '@/types/featureCollectionSchema'
 import type { z } from 'zod'
 import { getNeighborhoodId } from '@/functions/district/get-neighborhood-id'
+import '@maptiler/geocoding-control/style.css'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { getGeoJsonData } from '@/functions/district/getGeoJsonData'
-import { CustomGeocodingControl } from '../CustomGeocoder'
-import { GeocodingControl } from '@maptiler/geocoding-control/maplibregl'
 
 interface MarkAsStolenMapWithGeocodingProps {
   setPosition: (coordinates: [number, number]) => void
@@ -21,28 +21,68 @@ interface MarkAsStolenMapWithGeocodingProps {
 maptilersdk.config.apiKey = process.env.NEXT_PUBLIC_MAPTILER_API_KEY!
 const apiKey = process.env.NEXT_PUBLIC_MAPTILER_API_KEY!
 
+// const geoJsonLink =
+//   'https://api.maptiler.com/data/d0a45dfa-6e28-49a1-9f1b-0c19e9a78960/features.json?key=QKbTJZdA6lXljsicnOEI'
+// const geoJsonPB =
+//   'https://api.maptiler.com/data/96b36f41-dc19-4a71-a05d-69317764eba8/features.json?key=QKbTJZdA6lXljsicnOEI'
 const geoJsonLink = process.env.NEXT_PUBLIC_NEIGHBORHOODS_GEOJSON_URL
 const geoJsonPB = process.env.NEXT_PUBLIC_PARAIBA_GEOJSON_URL
 
-export function MarkAsStolenMapWithGeocoding({
+export function MarkAsStolenMapWithGeocoding2({
   setPosition,
   setNeighborhoodId,
 }: MarkAsStolenMapWithGeocodingProps) {
   const mapContainer = useRef<HTMLDivElement>(null)
-  const mapRef = useRef<maplibregl.Map | null>(null)
   const markerRef = useRef<Marker | null>(null)
   const [coordinates, setCoordinates] = useState<[number, number]>([0, 0])
-  const [mapLoaded, setMapLoaded] = useState(false)
 
   type geojsonType = z.infer<typeof FeatureCollectionSchema>
 
   let geoJsonData: geojsonType = {} as geojsonType
   let geoJsonPBData: geojsonType = {} as geojsonType
 
+  // async function getNeighborhoodId(cod_neighborhood: string) {
+  //   const params = new URLSearchParams({
+  //     'queries[0]': JSON.stringify({
+  //       method: 'equal',
+  //       attribute: 'cod_neighborhood',
+  //       values: [Number(cod_neighborhood)],
+  //     }),
+  //   })
+
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DISTRICT}/documents?${params.toString()}`,
+  //       {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+  //         },
+  //         cache: 'no-store',
+  //       }
+  //     )
+
+  //     if (!response.ok) {
+  //       throw new Error(
+  //         `Failed to fetch stolen devices: ${await response.text()}`
+  //       )
+  //     }
+
+  //     const result = await response.json()
+
+  //     return result.documents[0].$id
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }
+
   async function handleGetPosition({
+    event,
     latLng,
     map,
   }: {
+    event: any
     latLng: [number, number]
     map: maplibregl.Map
   }) {
@@ -50,14 +90,21 @@ export function MarkAsStolenMapWithGeocoding({
 
     let foundFeature = null
 
-    const data = await getGeoJsonData(geoJsonLink!).then(data => {
-      geoJsonPBData = data
-      return data
-    })
+    // let foundState = null
+    // if (geoJsonPBData) {
+    //   for (const feature of geoJsonPBData.features) {
+    //     if (turf.booleanPointInPolygon(clickedPoint, feature)) {
+    //       foundState = feature
+    //       break
+    //     }
+    //   }
+    // }
+    // if (!foundState) {
+    //   toast.error("O local informado não está dentro da Paraíba")
+    //   return
+    // }
 
-    const geoJsonData = data
-
-    if (geoJsonData?.features) {
+    if (geoJsonData && geoJsonData.features) {
       for (const feature of geoJsonData.features) {
         if (turf.booleanPointInPolygon(clickedPoint, feature)) {
           foundFeature = feature
@@ -79,17 +126,8 @@ export function MarkAsStolenMapWithGeocoding({
     return
   }
 
-  async function checkIfPointIsInParaiba({
-    latLng,
-  }: { latLng: [number, number] }) {
+  function checkIfPointIsInParaiba({ latLng }: { latLng: [number, number] }) {
     const clickedPoint = turf.point([latLng[1], latLng[0]])
-
-    const data = await getGeoJsonData(geoJsonPB!).then(data => {
-      geoJsonPBData = data
-      return data
-    })
-
-    geoJsonPBData = data
 
     let foundState = null
 
@@ -108,6 +146,28 @@ export function MarkAsStolenMapWithGeocoding({
     }
 
     return true
+  }
+
+  function useWindowSize() {
+    const [windowSize, setWindowSize] = useState({
+      width: 0,
+      height: 0,
+    })
+
+    useEffect(() => {
+      function handleResize() {
+        setWindowSize({
+          width: window.innerWidth,
+          height: window.innerHeight,
+        })
+      }
+
+      window.addEventListener('resize', handleResize)
+      handleResize()
+      return () => window.removeEventListener('resize', handleResize)
+    }, [])
+
+    return windowSize
   }
 
   function setWidth() {
@@ -152,37 +212,6 @@ export function MarkAsStolenMapWithGeocoding({
     }
   }
 
-  const handleLocationSelect = async (latLng: [number, number]) => {
-    if (!mapRef.current) return
-
-    const isPointInParaiba = await checkIfPointIsInParaiba({ latLng })
-
-    console.log(isPointInParaiba)
-
-    if (!isPointInParaiba) return
-
-    handleGetPosition({
-      latLng,
-      map: mapRef.current,
-    })
-
-    if (markerRef.current) {
-      markerRef.current.remove()
-    }
-
-    markerRef.current = new Marker({
-      color: '#002E72',
-    })
-      .setLngLat([latLng[1], latLng[0]])
-      .addTo(mapRef.current)
-
-    // Center map on the selected location
-    mapRef.current.flyTo({
-      center: [latLng[1], latLng[0]],
-      zoom: 15,
-    })
-  }
-
   useEffect(() => {
     if (geoJsonLink && geoJsonPB) {
       Promise.all([
@@ -198,15 +227,13 @@ export function MarkAsStolenMapWithGeocoding({
         if (!mapContainer.current) return
 
         const map = new maplibregl.Map({
-          container: 'map-container',
+          container: 'geocoding-control',
           style:
             'https://api.maptiler.com/maps/streets-v2/style.json?key=' + apiKey,
           center: [-34.8446769, -7.1509317],
           zoom: 12,
           maxBounds: [-38.9, -8.5, -34.5, -5.7],
         })
-
-        mapRef.current = map
 
         const getGeoJsonBounds = (geoJson: any) => {
           const bounds = new LngLatBounds()
@@ -219,6 +246,20 @@ export function MarkAsStolenMapWithGeocoding({
 
           return bounds
         }
+
+        // const bounds = getGeoJsonBounds(geoJsonPB)
+        // const bbox = [
+        //   bounds.getWest(),
+        //   bounds.getSouth(),
+        //   bounds.getEast(),
+        //   bounds.getNorth(),
+        // ]
+
+        const gc = new GeocodingControl({
+          apiKey,
+          placeholder: 'Digite o endereço ou CEP',
+          bbox: [-38.8, -8.5, -34.5, -5.7],
+        })
 
         map.on('load', () => {
           map.addSource('paraiba', {
@@ -236,23 +277,50 @@ export function MarkAsStolenMapWithGeocoding({
             },
           })
 
-          const gc = new GeocodingControl()
+          const bounds = getGeoJsonBounds(geoJsonPB)
 
-          map.addControl(gc, 'top-left')
-
-          setMapLoaded(true)
+          // Limitar o mapa
+          map.setMaxBounds(bounds)
+          map.fitBounds(bounds, { padding: 20 })
         })
 
-        map.on('click', async e => {
-          const isPointInParaiba = await checkIfPointIsInParaiba({
+        map.addControl(gc, 'top-left')
+
+        gc.on('pick', e => {
+          if (e.feature?.center) {
+            const isPointInParaiba = checkIfPointIsInParaiba({
+              latLng: [e.feature.center[1], e.feature.center[0]],
+            })
+
+            if (!isPointInParaiba) return
+
+            handleGetPosition({
+              event: e,
+              latLng: [e.feature.center[1], e.feature.center[0]],
+              map,
+            })
+
+            if (markerRef.current) {
+              markerRef.current.remove()
+            }
+
+            markerRef.current = new Marker({
+              color: '#002E72',
+            })
+              .setLngLat([e.feature?.center[0], e.feature?.center[1]])
+              .addTo(map)
+          }
+        })
+
+        map.on('click', e => {
+          const isPointInParaiba = checkIfPointIsInParaiba({
             latLng: [e.lngLat.lat, e.lngLat.lng],
           })
-
-          console.log(isPointInParaiba)
 
           if (!isPointInParaiba) return
 
           handleGetPosition({
+            event: e,
             latLng: [e.lngLat.lat, e.lngLat.lng],
             map,
           })
@@ -274,21 +342,15 @@ export function MarkAsStolenMapWithGeocoding({
   }, [])
 
   return (
-    <div className="flex flex-col gap-3">
-      <CustomGeocodingControl
-        onLocationSelect={handleLocationSelect}
-        apiKey={apiKey}
-      />
+    <div
+      className="relative"
+      style={{ width: setWidth(), height: setHeight() }}
+    >
       <div
-        className="relative"
-        style={{ width: setWidth(), height: setHeight() }}
-      >
-        <div
-          ref={mapContainer}
-          id="map-container"
-          className="w-full h-full absolute cursor-pointer"
-        />
-      </div>
+        ref={mapContainer}
+        id="geocoding-control"
+        className="w-full h-full absolute cursor-pointer"
+      />
     </div>
   )
 }
