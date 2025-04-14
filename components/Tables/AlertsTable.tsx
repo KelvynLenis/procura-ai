@@ -292,7 +292,7 @@ export function AlertsTable({
                 options={brandsOptions}
                 values={brandFilter ? brandFilter.values : []}
                 onSelect={handleSelectBrandsFilter}
-                placeholder="Marca"
+                placeholder="Fabricante"
                 className="min-h-10 h-fit"
               />
             </div>

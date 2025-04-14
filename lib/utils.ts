@@ -1,4 +1,3 @@
-import { cpfSchema } from '@/types/cpfSchema'
 import { imeiSchema } from '@/types/imeiSchema'
 import { phoneNumberSchema } from '@/types/phoneNumberSchema'
 import { clsx, type ClassValue } from 'clsx'
@@ -11,33 +10,66 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function validateCPF(cpf: string) {
+export function validateCPF(cpf: string): boolean {
   try {
-    const validCPF = cpfSchema.parse(cpf.trim())
-    return true // CPF válido
-  } catch (error: any) {
-    console.error(
-      'Erro na validação do CPF:',
-      error.errors[0]?.message || error.message
-    )
-    return false // CPF inválido
+    // Remove caracteres não numéricos
+    const cleanCPF = cpf.replace(/\D/g, '')
+
+    // Verifica se tem 11 dígitos
+    if (cleanCPF.length !== 11) {
+      return false
+    }
+
+    // Verifica se todos os dígitos são iguais
+    if (/^(\d)\1{10}$/.test(cleanCPF)) {
+      return false
+    }
+
+    // Validação do primeiro dígito verificador
+    let sum = 0
+    for (let i = 0; i < 9; i++) {
+      sum += parseInt(cleanCPF.charAt(i)) * (10 - i)
+    }
+    let digit = 11 - (sum % 11)
+    if (digit >= 10) digit = 0
+    if (digit !== parseInt(cleanCPF.charAt(9))) {
+      return false
+    }
+
+    // Validação do segundo dígito verificador
+    sum = 0
+    for (let i = 0; i < 10; i++) {
+      sum += parseInt(cleanCPF.charAt(i)) * (11 - i)
+    }
+    digit = 11 - (sum % 11)
+    if (digit >= 10) digit = 0
+    if (digit !== parseInt(cleanCPF.charAt(10))) {
+      return false
+    }
+
+    return true
+  } catch (error) {
+    console.error('Erro na validação do CPF:', error)
+    return false
   }
 }
 
-/**
- * Valida se o IMEI tem exatamente 15 dígitos numéricos
- * @param imei - O número IMEI a ser validado
- * @returns boolean - true se o IMEI tiver 15 dígitos numéricos, false caso contrário
- */
+
+export function formatCPF(cpf: string): string {
+  try {
+    const cleanCPF = cpf.replace(/\D/g, '')
+    return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+  } catch (error) {
+    console.error('Erro ao formatar CPF:', error)
+    return cpf
+  }
+}
+
+
 export function validateImeiFormat(imei: string): boolean {
   return /^\d{15}$/.test(imei)
 }
 
-/**
- * Valida um número IMEI usando o Algoritmo de Luhn
- * @param imei - O número IMEI a ser validado
- * @returns boolean - true se o IMEI for válido, false caso contrário
- */
 export function validateImeiWithLuhn(imei: string): boolean {
   // Converte o IMEI em um array de números
   const digits = imei.split('').map(Number)
@@ -83,13 +115,13 @@ export function validateIMEI(imei: string) {
 export function validatePhoneNumber(phoneNumber: string) {
   try {
     const isValidPhoneNumber = phoneNumberSchema.parse(phoneNumber.trim())
-    return true // Número de celular válido
+    return true
   } catch (error: any) {
     console.error(
       'Erro na validação do número de celular:',
       error.errors[0]?.message || error.message
     )
-    return false // Número de celular inválido
+    return false
   }
 }
 
@@ -115,8 +147,4 @@ export function validateCoordinates(coordinates: number[]) {
   const [latitude, longitude] = coordinates
 
   return latitude !== 0 && longitude !== 0
-}
-
-export function formatCPF(cpf: string) {
-  return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
-}
+} 
