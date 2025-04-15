@@ -32,7 +32,7 @@ interface DeviceRowProps {
   brand: string // Fabricante do telefone
   imei: string // IMEI do telefone
   isStolen: boolean // Status de "roubado" (true/false)
-  operator_id: string // ID do operador
+  operator_id: string | undefined // ID do operador
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
   index: number
   status: string
