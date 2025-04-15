@@ -13,16 +13,19 @@ import occurrenceInfo from '../assets/icons/occurrence-info.png'
 import ownerInfo from '../assets/icons/owner-info.png'
 import { cn, formatDateTime } from '@/lib/utils'
 
-import type { Contact, OccurrencesProps } from '@/types'
+import type { Contact, OccurrencesProps, Operator } from '@/types'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { listContacts } from '@/functions/contact/list-contacts'
+import { getOperator } from '@/functions/operators/get-operator'
 
 interface RecoverDeviceFormProps {
   occurrence?: OccurrencesProps
 }
 export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
   const [contacts, setContacts] = useState<Contact[]>([])
+  const [operator, setOperator] = useState<Operator>()
+
   async function getContacts() {
     const contacts = await listContacts({
       userIdParam: occurrence?.device.auth_id,
@@ -33,8 +36,21 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
     return contacts
   }
 
+  async function fetchOperator() {
+    try {
+      const operator = await getOperator(occurrence?.device.operator_id)
+
+      setOperator(operator)
+
+      return operator
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   useEffect(() => {
     getContacts()
+    fetchOperator()
   }, [])
 
   return (
@@ -72,6 +88,12 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                   <span className="w-28 font-medium">Número</span>
                   <span className="w-full">
                     {occurrence?.device.phone_number}
+                  </span>
+                </div>
+                <div className="flex">
+                  <span className="w-28 font-medium">Operadora</span>
+                  <span className="w-full">
+                    {operator?.name_operator ?? 'Não informado'}
                   </span>
                 </div>
                 <div className="flex">
