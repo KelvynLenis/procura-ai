@@ -4,7 +4,7 @@ import { TableCell, TableRow } from '../ui/table'
 import { IoIosWarning } from 'react-icons/io'
 import { ImPencil } from 'react-icons/im'
 import Link from 'next/link'
-import type { DeviceProps } from '@/types'
+import type { DeviceProps, Operator } from '@/types'
 import { cn } from '@/lib/utils'
 import { Eye, Trash2 } from 'lucide-react'
 import {
@@ -16,11 +16,14 @@ import {
 } from '@/components/ui/dialog'
 import { MarkAsStolenForm } from '../Forms/MarkAsStolenForm'
 import { toast } from 'react-toastify'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AlertDetails } from '../AlertDetails'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import { deleteDevice } from '@/functions/device/delete-device'
 import { recoverDevice } from '@/functions/device/recover-device'
+import { getOperator } from '@/functions/operators/get-operator'
+import deviceInfo from '../../assets/icons/device-info.png'
+import Image from 'next/image'
 
 interface DeviceRowProps {
   id: string // ID do dispositivo
@@ -29,7 +32,7 @@ interface DeviceRowProps {
   brand: string // Fabricante do telefone
   imei: string // IMEI do telefone
   isStolen: boolean // Status de "roubado" (true/false)
-  operator_id: string // ID do operador
+  operator_id: string | undefined // ID do operador
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
   index: number
   status: string
@@ -50,6 +53,7 @@ export function DeviceRow({
   const [isLoading, setIsLoading] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isViewAlertModalOpen, setIsViewAlertModalOpen] = useState(false)
+  const [operator, setOperator] = useState<Operator>()
 
   async function handleDeleteDevice(id: string) {
     try {
@@ -90,9 +94,25 @@ export function DeviceRow({
     }
   }
 
+  async function fetchOperator() {
+    try {
+      const operator = await getOperator(operator_id)
+
+      setOperator(operator)
+
+      return operator
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   function showLoadingToast() {
     setIsLoading(true)
   }
+
+  useEffect(() => {
+    fetchOperator()
+  }, [])
 
   return (
     <>
@@ -138,35 +158,65 @@ export function DeviceRow({
                   </span>
                 </button>
               </DialogTrigger>
-              <DialogContent className="flex flex-col py-10 gap-10">
-                <DialogHeader>
-                  <DialogTitle>Detalhes do dispositivo</DialogTitle>
+              <DialogContent className="flex flex-col p-0 gap-0 w-[40%] h-fit">
+                <DialogHeader className="flex items-start justify-center px-5 w-full h-20 text-lg font-medium bg-zinc-100 rounded-t-lg  border-zinc-200 gap-3">
+                  <DialogTitle className="flex gap-2 items-center justify-start">
+                    <Image
+                      src={deviceInfo}
+                      alt="device-info"
+                      className="w-12 h-12"
+                    />
+                    Informações do dispositivo
+                  </DialogTitle>
                 </DialogHeader>
-
-                <div className="flex gap-8">
-                  <div className="flex flex-col items-start justify-center">
-                    <span className="font-bold">Número</span>
-                    <span className="break-words">{phone_number}</span>
-                  </div>
-
-                  <div className="flex flex-col items-start justify-center">
-                    <span className="font-bold">Modelo</span>
-                    <span>{phone_model}</span>
-                  </div>
-
-                  <div className="flex flex-col gap-2 items-center justify-start">
-                    <span className="font-bold">Fabricante</span>
-                    <span>{brand}</span>
-                  </div>
-
-                  <div className="flex flex-col gap-2 items-center justify-start">
-                    <span className="font-bold">IMEI</span>
-                    <span>{imei}</span>
-                  </div>
-
-                  <div className="flex flex-col gap-2 items-center justify-start">
-                    <span className="font-bold">Status</span>
-                    <span>{status}</span>
+                <div className="flex flex-col gap-2">
+                  <div className="flex flex-col">
+                    <div className="flex flex-col gap-2 border border-zinc-200 p-4 rounded-b-lg drop-shadow-sm">
+                      <div className="flex">
+                        <span className="w-28 font-medium">Número</span>
+                        <span className="w-full">{phone_number}</span>
+                      </div>
+                      <div className="flex">
+                        <span className="w-28 font-medium">Operadora</span>
+                        <span className="w-full">
+                          {operator?.name_operator ?? 'Não informado'}
+                        </span>
+                      </div>
+                      <div className="flex">
+                        <span className="w-28 font-medium">Modelo</span>
+                        <span className="w-full">{phone_model}</span>
+                      </div>
+                      <div className="flex">
+                        <span className="w-28 font-medium">Fabricante</span>
+                        <span className="w-full">{brand}</span>
+                      </div>
+                      <div className="flex">
+                        <span className="w-28 font-medium">IMEI</span>
+                        <span className="w-full">{imei}</span>
+                      </div>
+                      <div className="flex">
+                        <span className="w-28 font-medium">Status</span>
+                        <div className="w-full">
+                          <span
+                            className={cn(
+                              'w-fit rounded-sm flex items-center justify-center hover:bg-white',
+                              status === 'Roubado' &&
+                                'bg-robbery-bg text-red-600 px-3 py-1 ring-red-500',
+                              status === 'Furtado' &&
+                                'bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500',
+                              status === 'Perdido' &&
+                                'bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500',
+                              status === 'Recuperado' &&
+                                'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500',
+                              status === 'Regular' &&
+                                'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500'
+                            )}
+                          >
+                            {status}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </DialogContent>

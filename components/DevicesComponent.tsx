@@ -53,6 +53,8 @@ export function DevicesComponent() {
         const userId = await getUserId()
         const result = await listDevices({ userId, limit, page })
 
+        console.log(result)
+
         const totalPages = Math.ceil(result.total / limit)
         setDevices(result.documents || [])
         setTotalDevices(result.total || 0)

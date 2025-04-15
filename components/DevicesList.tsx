@@ -56,6 +56,7 @@ export function DevicesList({
                 phone_number={device.phone_number}
                 phone_model={device.phone_model}
                 brand={device.brand}
+                operator_id={device.operator_id}
                 imei={device.imei}
                 isStolen={device.is_stolen!}
                 status={device.status!}

@@ -45,7 +45,7 @@ export function DevicesTable({
               Modelo
             </TableHead>
             <TableHead className="text-black/80 text-lg font-medium hidden md:table-cell lg:w-32">
-              Fabricante 
+              Fabricante
             </TableHead>
             <TableHead className="text-black/80 text-lg font-medium hidden md:table-cell lg:w-1/4">
               IMEI
@@ -81,7 +81,7 @@ export function DevicesTable({
                 <Skeleton className="h-8 w-20" />
               </TableCell>
 
-              <TableCell className=" flex flex-col items-center gap-0.5">
+              <TableCell className=" flex items-center gap-0.5">
                 <Skeleton className="h-10 w-10" />
                 <Skeleton className="h-10 w-10" />
                 <Skeleton className="h-10 w-10" />
@@ -99,7 +99,7 @@ export function DevicesTable({
                 imei={device.imei}
                 isStolen={device.is_stolen!}
                 status={device.status!}
-                operator_id={device.operator_id!}
+                operator_id={device.operator_id}
                 setDevices={setDevices}
               />
             ))
