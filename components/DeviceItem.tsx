@@ -7,28 +7,19 @@ import type { DeviceProps } from '@/types'
 import { Eye, X } from 'lucide-react'
 import { AlertDetails } from './AlertDetails'
 import { toast } from 'react-toastify'
-import { v4 as uuidv4 } from 'uuid'
 import { useState } from 'react'
 import { DeviceDetailsCard } from './DeviceDetailsCard'
-import { Modal } from './Modal'
 import { createEvent } from '@/functions/event/create-event'
 import { updateDeviceStatus } from '@/functions/device/update-device-status'
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 
 interface DeviceItemProps {
   id: string // ID do dispositivo
   phone_number: string // Número de telefone
   phone_model: string // Modelo do telefone
   brand: string // Fabricante do telefone
+  operator_id: string | undefined // ID do operador
   imei: string // IMEI do telefone
   isStolen: boolean // Status de "roubado" (true/false)
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
@@ -42,6 +33,7 @@ export function DeviceItem({
   phone_model,
   brand,
   imei,
+  operator_id,
   isStolen,
   status,
   setDevices,
@@ -163,27 +155,6 @@ export function DeviceItem({
               )}
             </DialogContent>
           </Dialog>
-          {/* {isRegular ? (
-            <button
-              type="button"
-              onClick={() => setIsAlertModalOpen(true)}
-              className={cn(
-                'rounded-lg group relative w-6 h-6 ring-1 ring-zinc-300 flex flex-col md:flex-row items-center justify-center text-red-600 hover:bg-red-300 hover:ring-red-500'
-              )}
-            >
-              <IoIosWarning size={18} />
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setIsAlertModalOpen(true)}
-              className={cn(
-                'rounded-lg group relative w-6 h-6 ring-1 ring-red-700 flex flex-col md:flex-row items-center justify-center text-white bg-red-600 hover:bg-red-100 hover:text-red-600'
-              )}
-            >
-              <IoIosWarning size={18} />
-            </button>
-          )} */}
 
           <Dialog>
             <DialogTrigger asChild>
@@ -202,67 +173,15 @@ export function DeviceItem({
                 index={index}
                 phone_model={phone_model}
                 phone_number={phone_number}
+                operator_id={operator_id}
                 brand={brand}
                 imei={imei}
                 status={status}
               />
             </DialogContent>
           </Dialog>
-          {/* <button
-            type="button"
-            onClick={handleViewDevice}
-            className="rounded-lg w-6 h-6 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
-          >
-            <Eye size={18} />
-          </button> */}
         </div>
       </div>
-      {/* {isViewDeviceDetailsCardOpen && (
-        <ViewDeviceInfoModal
-          id={id}
-          isStolen={isStolen}
-          setDevices={setDevices}
-          index={index}
-          phone_model={phone_model}
-          phone_number={phone_number}
-          brand={brand}
-          imei={imei}
-          status={status}
-          setModalOpen={setIsViewDeviceDetailsCardOpen}
-        />
-      )}
-      {isAlertModalOpen && (
-        <Modal
-          setModalOpen={setIsAlertModalOpen}
-          title={isStolen ? 'Detalhes do alerta' : 'Criar alerta'}
-        >
-          <div className="py-5 pl-4">
-            {isStolen ? (
-              <>
-                <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
-                  Visualizar alerta
-                </span>
-                <AlertDetails
-                  id={id}
-                  status={status}
-                  handleDeviceRecovery={handleDeviceRecovery}
-                  setModalOpen={setIsAlertModalOpen}
-                />
-              </>
-            ) : (
-              <>
-                <h2 className="font-bold">Preencha as informações</h2>
-                <MarkAsStolenForm
-                  id={id}
-                  isStolen={isStolen}
-                  setDevices={setDevices}
-                  setModalOpen={setIsAlertModalOpen}
-                />
-              </>
-            )}
-          </div>
-        </Modal>
-      )} */}
     </>
   )
 }
@@ -274,7 +193,7 @@ interface ModalProps {
   imei: string
   status: string
   setModalOpen: (value: boolean) => void
-
+  operator_id: string
   id: string // ID do dispositivo
   isStolen: boolean // Status de "roubado" (true/false)
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
@@ -288,6 +207,7 @@ function ViewDeviceInfoModal({
   imei,
   status,
   setModalOpen,
+  operator_id,
   id,
   isStolen,
   setDevices,
@@ -314,6 +234,7 @@ function ViewDeviceInfoModal({
           index={index}
           phone_model={phone_model}
           phone_number={phone_number}
+          operator_id={operator_id}
           brand={brand}
           imei={imei}
           status={status}

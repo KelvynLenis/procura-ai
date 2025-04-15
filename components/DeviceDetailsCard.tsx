@@ -3,13 +3,13 @@
 import { cn } from '@/lib/utils'
 import { IoIosWarning } from 'react-icons/io'
 import { MarkAsStolenForm } from './Forms/MarkAsStolenForm'
-import type { DeviceProps } from '@/types'
+import type { DeviceProps, Operator } from '@/types'
 import { Trash2 } from 'lucide-react'
 import { AlertDetails } from './AlertDetails'
 import { toast } from 'react-toastify'
 import { v4 as uuidv4 } from 'uuid'
 import { ImPencil } from 'react-icons/im'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from './Button'
 import { DeviceForm } from './Forms/DeviceForm'
 import { deleteDevice } from '@/functions/device/delete-device'
@@ -22,6 +22,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { getOperator } from '@/functions/operators/get-operator'
 
 interface DeviceDetailsCardProps {
   id: string // ID do dispositivo
@@ -30,6 +31,7 @@ interface DeviceDetailsCardProps {
   brand: string // Fabricante  do telefone
   imei: string // IMEI do telefone
   isStolen: boolean // Status de "roubado" (true/false)
+  operator_id: string | undefined // ID do operador
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
   index: number
   status: string
@@ -39,6 +41,7 @@ export function DeviceDetailsCard({
   id,
   phone_number,
   phone_model,
+  operator_id,
   brand,
   imei,
   isStolen,
@@ -49,12 +52,14 @@ export function DeviceDetailsCard({
   const [isLoading, setIsLoading] = useState(false)
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [operator, setOperator] = useState<Operator>()
 
   const device = {
     id,
     phone_number,
     phone_model,
     brand,
+    operator_id,
     imei,
     isStolen,
     status,
@@ -136,6 +141,22 @@ export function DeviceDetailsCard({
       console.error('Erro ao deletar dispositivo:', error)
     }
   }
+
+  async function fetchOperator() {
+    try {
+      const operator = await getOperator(operator_id)
+
+      setOperator(operator)
+
+      return operator
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchOperator()
+  }, [])
 
   return (
     <>
@@ -224,7 +245,7 @@ export function DeviceDetailsCard({
         </div>
 
         <div className="flex w-full h-full">
-          <div className="flex flex-col items-start justify-center gap-2 bg-procura-ai-zinc/10 px-4 pt-4 pb-6 h-full">
+          <div className="flex flex-col items-start justify-center gap-2 bg-procura-ai-zinc/10 px-4 pt-4 pb-6">
             <span className="">Modelo</span>
             <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
 
