@@ -1,7 +1,7 @@
 import * as ExcelJS from 'exceljs'
 import { Device, Event, User } from '@/types'
 import { listAllEvents } from '../event/list-all-events'
-import { listDevices } from '../device/list-devices'
+import { getDevices } from '../devices/list-devices'
 import { listAllUsers } from '../user/list-all-users'
 import { toast } from 'react-toastify'
 
@@ -9,7 +9,7 @@ export async function exportAlerts() {
   try {
     const [allEvents, devices, users] = await Promise.all([
       listAllEvents(),
-      listDevices(),
+      getDevices(),
       listAllUsers(),
     ])
 
