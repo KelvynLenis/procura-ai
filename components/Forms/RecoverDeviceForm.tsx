@@ -67,20 +67,21 @@ export function RecoverDeviceForm({
     try {
       const callFunction = async () => {
         try {
-          // await createEvent({
-          //   id_device: occurrence?.device.$id!,
-          //   time_event: new Date().toISOString(),
-          //   last_location: [0, 0],
-          //   description: 'Recuperado',
-          //   type: 'Recuperado',
-          //   is_alert_on: false,
-          //   id_district: '',
-          // })
+          await createEvent({
+            id_device: occurrence?.device.$id!,
+            time_event: new Date().toISOString(),
+            last_location: [0, 0],
+            description: 'Recuperado',
+            type: 'Recuperado',
+            is_alert_on: false,
+            id_district: '',
+          })
 
-          // await updateDeviceStatus(occurrence?.device.$id!, {
-          //   is_stolen: false,
-          //   status: 'Recuperado',
-          // })
+          await updateDeviceStatus(occurrence?.device.$id!, {
+            is_stolen: false,
+            status: 'Recuperado',
+          })
+
           setOccurrences(prevOccurrences =>
             prevOccurrences.map(prevOccurrence =>
               prevOccurrence.device.$id === occurrence.device.$id
