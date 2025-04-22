@@ -11,9 +11,10 @@ import Image from 'next/image'
 interface AlertRowProps {
   index: number
   occurrence?: OccurrencesProps
+  setOccurrences: React.Dispatch<React.SetStateAction<OccurrencesProps[]>>
 }
 
-export function AlertRow({ index, occurrence }: AlertRowProps) {
+export function AlertRow({ index, occurrence, setOccurrences }: AlertRowProps) {
   return (
     <>
       <TableRow className="text-base">
@@ -54,7 +55,10 @@ export function AlertRow({ index, occurrence }: AlertRowProps) {
           <div className="flex flex-col md:flex-row items-center w-full gap-2">
             <OccurrenceDetails occurrence={occurrence} />
             {occurrence?.event ? (
-              <RecoverDeviceForm occurrence={occurrence} />
+              <RecoverDeviceForm
+                occurrence={occurrence}
+                setOccurrences={setOccurrences}
+              />
             ) : (
               <button
                 type="button"

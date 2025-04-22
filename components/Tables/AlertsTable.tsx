@@ -287,7 +287,7 @@ export function AlertsTable({
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label>Fabricante  do dispositivo</Label>
+              <Label>Fabricante do dispositivo</Label>
               <Combobox
                 options={brandsOptions}
                 values={brandFilter ? brandFilter.values : []}
@@ -369,7 +369,12 @@ export function AlertsTable({
             </TableRow>
           ) : occurrences?.length! > 0 ? (
             occurrences?.map((occurence, index) => (
-              <AlertRow key={index} index={index} occurrence={occurence} />
+              <AlertRow
+                key={index}
+                index={index}
+                occurrence={occurence}
+                setOccurrences={setOccurrences}
+              />
             ))
           ) : (
             <TableRow>

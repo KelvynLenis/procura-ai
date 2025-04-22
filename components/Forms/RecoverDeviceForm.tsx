@@ -28,30 +28,31 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import type { OccurrencesProps } from '@/types'
+import { createEvent } from '@/functions/event/create-event'
+import { updateDeviceStatus } from '@/functions/device/update-device-status'
+import { toast } from 'react-toastify'
 
 interface RecoverDeviceFormProps {
-  occurrence?: OccurrencesProps
+  occurrence: OccurrencesProps
+  setOccurrences: React.Dispatch<React.SetStateAction<OccurrencesProps[]>>
 }
 
-export function RecoverDeviceForm({ occurrence }: RecoverDeviceFormProps) {
+export function RecoverDeviceForm({
+  occurrence,
+  setOccurrences,
+}: RecoverDeviceFormProps) {
   const [isRecoverDeviceDialogOpen, setIsRecoverDeviceDialogOpen] =
     useState(false)
-  const [entity, setEntity] = useState('')
-  const [sector, setSector] = useState('')
 
   const formSchema = z.object({
-    description: z.string().min(1),
-    entity: z.string().min(1),
-    sector: z.string().min(1),
-    location: z.string().min(1),
+    description: z.string(),
+    location: z.string(),
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       description: '',
-      entity: '',
-      sector: '',
       location: '',
     },
   })
@@ -64,7 +65,52 @@ export function RecoverDeviceForm({ occurrence }: RecoverDeviceFormProps) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-    } catch (error) {}
+      const callFunction = async () => {
+        try {
+          // await createEvent({
+          //   id_device: occurrence?.device.$id!,
+          //   time_event: new Date().toISOString(),
+          //   last_location: [0, 0],
+          //   description: 'Recuperado',
+          //   type: 'Recuperado',
+          //   is_alert_on: false,
+          //   id_district: '',
+          // })
+
+          // await updateDeviceStatus(occurrence?.device.$id!, {
+          //   is_stolen: false,
+          //   status: 'Recuperado',
+          // })
+          setOccurrences(prevOccurrences =>
+            prevOccurrences.map(prevOccurrence =>
+              prevOccurrence.device.$id === occurrence.device.$id
+                ? {
+                    ...prevOccurrence,
+                    device: {
+                      ...prevOccurrence.device,
+                      is_stolen: false,
+                      status: 'Recuperado',
+                    },
+                  }
+                : prevOccurrence
+            )
+          )
+
+          return true
+        } catch (error) {
+          console.error('Ocorreu um erro em uma das operações:', error)
+          return false
+        }
+      }
+
+      const success = await toast.promise(callFunction, {
+        pending: 'Recuperando Dispositivo...',
+        success: 'Recuperado',
+        error: 'Erro ao recuperar',
+      })
+    } catch (error) {
+      console.error('Erro ao recuperar dispositivo:', error)
+    }
   }
 
   return (
@@ -123,7 +169,7 @@ export function RecoverDeviceForm({ occurrence }: RecoverDeviceFormProps) {
                     <span className="font-medium w-44">Descrição</span>
 
                     <span className="w-full">
-                      {occurrence?.event.description}
+                      {occurrence?.event.description || 'Sem descrição'}
                     </span>
                   </div>
                   <div className="flex">
@@ -158,7 +204,7 @@ export function RecoverDeviceForm({ occurrence }: RecoverDeviceFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="font-medium text-base">
-                        Informações gerais / Descrição
+                        Informações gerais / Descrição da recuperação
                       </FormLabel>
 
                       <FormControl>
@@ -171,64 +217,6 @@ export function RecoverDeviceForm({ occurrence }: RecoverDeviceFormProps) {
               </div>
 
               <div className="grid grid-cols-2 gap-x-20 gap-y-4 justify-between">
-                <FormField
-                  control={form.control}
-                  name="entity"
-                  className="flex flex-col gap-2"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-medium text-base">
-                        Orgão responsável pela recuperação
-                      </FormLabel>
-
-                      <FormControl>
-                        <select
-                          name=""
-                          id=""
-                          className="bg-zinc-100 w-full h-12 rounded-md ring-1 ring-zinc-300 px-2 font-medium"
-                          {...field}
-                        >
-                          <option value="">{entity}</option>
-                          {options.map((option, index) => (
-                            <option key={index} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="sector"
-                  className="flex flex-col gap-2"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-medium text-base">
-                        Setor
-                      </FormLabel>
-
-                      <FormControl>
-                        <select
-                          className="bg-zinc-100 w-full h-12 rounded-md ring-1 ring-zinc-300 px-2 font-medium"
-                          {...field}
-                        >
-                          <option value="">{entity}</option>
-                          {options.map((option, index) => (
-                            <option key={index} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 <FormField
                   control={form.control}
                   name="location"
@@ -244,7 +232,7 @@ export function RecoverDeviceForm({ occurrence }: RecoverDeviceFormProps) {
                           className="bg-zinc-100 w-full h-12 rounded-md ring-1 ring-zinc-300 px-2 font-medium"
                           {...field}
                         >
-                          <option value="">{entity}</option>
+                          <option value="">Selecione um local</option>
                           {options.map((option, index) => (
                             <option key={index} value={option.value}>
                               {option.label}
@@ -269,7 +257,7 @@ export function RecoverDeviceForm({ occurrence }: RecoverDeviceFormProps) {
                   </span>
                 </div>
               </div>
-              <div className="flex flex-col gap-2">
+              {/* <div className="flex flex-col gap-2">
                 <Label className="font-medium text-base">
                   Anexar documentos
                 </Label>
@@ -279,7 +267,7 @@ export function RecoverDeviceForm({ occurrence }: RecoverDeviceFormProps) {
                     Clique aqui ou arraste e solte arquivos para anexá-los
                   </span>
                 </div>
-              </div>
+              </div> */}
 
               <div className="flex justify-between w-full">
                 <Button variant="blue">Salvar Alterações</Button>
