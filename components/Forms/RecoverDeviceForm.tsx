@@ -12,6 +12,13 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import Image from 'next/image'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Label } from '../ui/label'
 import { Textarea } from '../ui/textarea'
 import { Checkbox } from '../ui/checkbox'
@@ -58,22 +65,25 @@ export function RecoverDeviceForm({
   })
 
   const options = [
-    { label: 'Recover', value: 'recover' },
-    { label: 'Ignore', value: 'ignore' },
-    { label: 'Block', value: 'block' },
+    { label: 'Central da Policia Civil', value: [-7.1717726, -34.8739053] },
+    { label: '2° DP da Policia Civil', value: [-7.1186101, -34.8746099] },
+    { label: '9° DP da Policia Civil', value: [-7.1713252, -34.8392121] },
   ]
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const callFunction = async () => {
+        const location = options.find(
+          option => option.label === values.location
+        )
         try {
           await createEvent({
             id_device: occurrence?.device.$id!,
             time_event: new Date().toISOString(),
-            last_location: [0, 0],
-            description: 'Recuperado',
+            last_location: location?.value as [number, number],
+            description: `Retirar o dispositivo no(a) ${values.location}`,
             type: 'Recuperado',
-            is_alert_on: false,
+            is_alert_on: true,
             id_district: '',
           })
 
@@ -227,20 +237,23 @@ export function RecoverDeviceForm({
                       <FormLabel className="font-medium text-base">
                         Local para retirada do dispositivo
                       </FormLabel>
-
-                      <FormControl>
-                        <select
-                          className="bg-zinc-100 w-full h-12 rounded-md ring-1 ring-zinc-300 px-2 font-medium"
-                          {...field}
-                        >
-                          <option value="">Selecione um local</option>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="bg-zinc-100 w-full h-12 rounded-md ring-1 ring-zinc-300 px-2 font-medium">
+                            <SelectValue placeholder="Selecione uma opção" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
                           {options.map((option, index) => (
-                            <option key={index} value={option.value}>
+                            <SelectItem key={index} value={option.label}>
                               {option.label}
-                            </option>
+                            </SelectItem>
                           ))}
-                        </select>
-                      </FormControl>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -251,12 +264,12 @@ export function RecoverDeviceForm({
                   <Checkbox className="shadow-none rounded-sm border-[#232323]/90 font-medium" />
                   Notificar proprietário através de e-mail e SMS
                 </div>
-                <div className="flex items-center text-base gap-2 font-medium">
+                {/* <div className="flex items-center text-base gap-2 font-medium">
                   <Checkbox className="shadow-none rounded-sm border-[#232323]/90 font-medium" />
                   <span className="text-base">
                     Notificar contatos de confiança
                   </span>
-                </div>
+                </div> */}
               </div>
               {/* <div className="flex flex-col gap-2">
                 <Label className="font-medium text-base">
