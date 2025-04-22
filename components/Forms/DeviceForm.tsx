@@ -128,7 +128,7 @@ export function DeviceForm({
       path: ['phone_number'],
       message: 'O número de celular deve conter exatamente 11 dígitos numéricos.',
     })
-    
+
 
   const brands = [
     { label: 'Apple', value: 'apple' },
@@ -166,6 +166,40 @@ export function DeviceForm({
 
     loadOperators()
   }, [device, form])
+
+  useEffect(() => {
+    const imeiValue = form.watch('imei');
+    
+    if (imeiValue && imeiValue.length === 15) {
+      const validateAndFillForm = async () => {
+        try {
+          setIsLoading(true);
+          const response = await fetch(`https://alpha.imeicheck.com/api/modelBrandName?imei=${imeiValue}&format=json`);
+          
+          if (!response.ok) {
+            toast.error('Erro ao validar IMEI. Por favor, tente novamente.');
+            return;
+          }
+
+          const data = await response.json();
+          
+          if (data.status === 'succes' && data.object) {
+            form.setValue('brand', data.object.brand);
+            form.setValue('phone_model', data.object.name);
+          } else {
+            toast.error('Não foi possível obter informações do IMEI.');
+          }
+        } catch (error) {
+          console.error('Erro ao validar IMEI:', error);
+          toast.error('Erro ao validar IMEI. Por favor, tente novamente.');
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      validateAndFillForm();
+    }
+  }, [form.watch('imei')]);
 
   const router = useRouter()
 
@@ -267,299 +301,12 @@ export function DeviceForm({
 
           <FormField
             control={form.control}
-            name="brand"
-            render={({ field }) => (
-              <FormItem className="flex flex-col w-full md:w-fit self-start">
-                <FormLabel className="text-lg w-fit text-center items-start flex">
-                  <span className="text-red-500 text-base">*</span>
-                  Fabricante
-                </FormLabel>
-                <Popover
-                  open={isBrandsPopoverOpen}
-                  onOpenChange={setIsBrandsPopoverOpen}
-                >
-                  <PopoverTrigger asChild>
-                    <div className="self-start w-full md:w-fit">
-                      <FormControl>
-                        <ButtonShadcn
-                          variant="outline"
-                          // biome-ignore lint/a11y/useSemanticElements: <explanation>
-                          role="combobox"
-                          type="button"
-                          className={cn(
-                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100',
-                            !field.value && 'text-muted-foreground text-zinc-500'
-                          )}
-                        >
-                          <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
-                          {field.value || 'Pesquise o fabricante do dispositivo'}
-                          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </ButtonShadcn>
-                      </FormControl>
-                      <FormMessage />
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    side="bottom"
-                    className="w-[200px] p-0 fixed left-1/2 -translate-x-1/2"
-                  >
-                    <Command>
-                    <CommandInput 
-                        placeholder="Digite o fabricante"
-                        value={field.value}
-                        onValueChange={value => {
-                          if (value === '') {
-                            form.setValue('brand', '')
-                          }
-                          form.setValue('brand', value)
-                        }}
-                      />
-                      <CommandList>
-                        <CommandEmpty>Nenhum fabricante encontrado.</CommandEmpty>
-                        <CommandGroup>
-                        {field.value && !brands.some(brand => brand.label.toLowerCase() === field.value.toLowerCase()) && (
-                            <CommandItem
-                              value={field.value}
-                              onSelect={() => {
-                                form.setValue('brand', field.value)
-                                setIsBrandsPopoverOpen(false)
-                              }}
-                            >
-                              {field.value}
-                              <Check
-                                className={cn(
-                                  'ml-auto',
-                                  field.value === field.value
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                            </CommandItem>
-                          )}
-                          {brands.map(brand => (
-                            <CommandItem
-                              value={brand.label}
-                              key={brand.value}
-                              onSelect={() => {
-                                form.setValue('brand', brand.label)
-                                setIsBrandsPopoverOpen(false)
-                              }}
-                            >
-                              {brand.label}
-                              <Check
-                                className={cn(
-                                  'ml-auto',
-                                  brand.label === field.value
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                            </CommandItem>
-                          ))}                          
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="phone_model"
-            render={({ field }) => (
-              <FormItem className="flex flex-col w-full md:w-fit self-start">
-                <FormLabel className="text-lg w-fit text-center items-start flex">
-                  <span className="text-red-500 text-base">*</span>
-                  Modelo do dispositivo
-                </FormLabel>
-                <Popover open={open} onOpenChange={setOpen}>
-                  <PopoverTrigger asChild>
-                    <div className="self-start w-full md:w-fit">
-                      <FormControl>
-                        <ButtonShadcn
-                          variant="outline"
-                          // biome-ignore lint/a11y/useSemanticElements: <explanation>
-                          role="combobox"
-                          type="button"
-                          className={cn(
-                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100',
-                            !field.value && 'text-muted-foreground text-zinc-500'
-                          )}
-                        >
-                          <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
-                          {field.value
-                            ? field.value
-                            : 'Pesquise o modelo do dispositivo'}
-                          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </ButtonShadcn>
-                      </FormControl>
-                      <FormMessage />
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command className="top-10">
-                      <CommandInput
-                        placeholder="Digite o modelo."
-                        value={field.value}
-                        onValueChange={value => {
-                          if (value === '') {
-                            form.setValue('phone_model', '')
-                          }
-                          form.setValue('phone_model', value)
-                        }}
-                      />
-                      <CommandList>
-                        <CommandEmpty>Nenhum modelo encontrado.</CommandEmpty>
-                        <CommandGroup>
-                          {field.value && !phoneBrands.find(
-                            brand =>
-                              brand.brand === form.control._formValues.brand
-                          )?.models.some(model => model.toLowerCase() === field.value.toLowerCase()) && (
-                            <CommandItem
-                              value={field.value}
-                              onSelect={() => {
-                                form.setValue('phone_model', field.value)
-                                setOpen(false)
-                              }}
-                            >
-                              {field.value}
-                              <Check
-                                className={cn(
-                                  'ml-auto',
-                                  field.value === field.value
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                            </CommandItem>
-                          )}
-                          {phoneBrands.find(
-                            brand =>
-                              brand.brand === form.control._formValues.brand
-                          ) &&
-                            phoneBrands
-                              .find(
-                                brand =>
-                                  brand.brand === form.control._formValues.brand
-                              )!
-                              .models.map((model: string) => (
-                                <CommandItem
-                                  value={model}
-                                  key={model}
-                                  onSelect={() => {
-                                    form.setValue('phone_model', model)
-                                    setOpen(false)
-                                  }}
-                                >
-                                  {model}
-                                  <Check
-                                    className={cn(
-                                      'ml-auto',
-                                      model === field.value
-                                        ? 'opacity-100'
-                                        : 'opacity-0'
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="operator_id"
-            render={({ field }) => (
-              <FormItem className="flex flex-col w-full md:w-fit self-start">
-                <FormLabel className="text-lg w-fit text-center items-start flex">
-                  Operadora do dispositivo
-                </FormLabel>
-                <Popover
-                  open={isOperatorPopoverOpen}
-                  onOpenChange={setIsOperatorPopoverOpen}
-                >
-                  <PopoverTrigger asChild>
-                    <div className="self-start w-full md:w-fit">
-                      <FormControl>
-                        <ButtonShadcn
-                          variant="outline"
-                          role="combobox"
-                          type="button"
-                          className={cn(
-                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100',
-                            !field.value && 'text-muted-foreground text-zinc-500'
-                          )}
-                        >
-                          <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
-                          {field.value
-                            ? operatorOptions.find(op => op.value === field.value)
-                                ?.label
-                            : 'Pesquise a operadora do dispositivo'}
-                          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </ButtonShadcn>
-                      </FormControl>
-                      <FormMessage />
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                      <CommandInput
-                        placeholder="Digite a operadora."
-                        value={searchQuery}
-                        onValueChange={setSearchQuery}
-                      />
-                      <CommandList>
-                        <CommandEmpty>Nenhuma operadora encontrada.</CommandEmpty>
-                        <CommandGroup>
-                          {operatorOptions
-                            .filter(operator =>
-                              operator.label
-                                .toLowerCase()
-                                .includes(searchQuery.toLowerCase())
-                            )
-                            .map(operator => (
-                              <CommandItem
-                                value={operator.label}
-                                key={operator.value}
-                                onSelect={() => {
-                                  form.setValue('operator_id', operator.value)
-                                  setIsOperatorPopoverOpen(false)
-                                }}
-                              >
-                                {operator.label}
-                                <Check
-                                  className={cn(
-                                    'ml-auto',
-                                    operator.value === field.value
-                                      ? 'opacity-100'
-                                      : 'opacity-0'
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
             name="imei"
             render={({ field }) => (
               <FormItem className="flex flex-col md:flex-row gap-5 w-full">
                 <div>
                   <FormLabel className="text-lg w-fit text-center items-start flex">
+                    
                     <span className="text-red-500 text-base">*</span>
                     IMEI
                   </FormLabel>
@@ -652,6 +399,79 @@ export function DeviceForm({
 
           <FormField
             control={form.control}
+            name="brand"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full md:w-fit self-start">
+                <FormLabel className="text-lg w-fit text-center items-start flex">
+                  <span className="text-red-500 text-base">*</span>
+                  Fabricante
+                </FormLabel>
+                <Popover
+                  open={isBrandsPopoverOpen}
+                  onOpenChange={setIsBrandsPopoverOpen}
+                >
+                  <PopoverTrigger asChild disabled>
+                    <div className="self-start w-full md:w-fit">
+                      <FormControl>
+                        <ButtonShadcn
+                          variant="outline"
+                          role="combobox"
+                          type="button"
+                          disabled
+                          className={cn(
+                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100',
+                            !field.value && 'text-muted-foreground text-zinc-500',
+                            'cursor-not-allowed opacity-50'
+                          )}
+                        >
+                          {field.value || 'Aguardando IMEI...'}
+                        </ButtonShadcn>
+                      </FormControl>
+                      <FormMessage />
+                    </div>
+                  </PopoverTrigger>
+                </Popover>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="phone_model"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full md:w-fit self-start">
+                <FormLabel className="text-lg w-fit text-center items-start flex">
+                  <span className="text-red-500 text-base">*</span>
+                  Modelo do dispositivo
+                </FormLabel>
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild disabled>
+                    <div className="self-start w-full md:w-fit">
+                      <FormControl>
+                        <ButtonShadcn
+                          variant="outline"
+                          role="combobox"
+                          type="button"
+                          disabled
+                          className={cn(
+                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100',
+                            !field.value && 'text-muted-foreground text-zinc-500',
+                            'cursor-not-allowed opacity-50'
+                          )}
+                        >
+                          {field.value || 'Aguardando IMEI...'}
+                        </ButtonShadcn>
+                      </FormControl>
+                      <FormMessage />
+                    </div>
+                  </PopoverTrigger>
+                </Popover>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="phone_number"
             render={({ field }) => (
               <FormItem className="flex flex-col md:w-fit self-start">
@@ -725,6 +545,88 @@ export function DeviceForm({
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="operator_id"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full md:w-fit self-start">
+                <FormLabel className="text-lg w-fit text-center items-start flex">
+                  Operadora do dispositivo
+                </FormLabel>
+                <Popover
+                  open={isOperatorPopoverOpen}
+                  onOpenChange={setIsOperatorPopoverOpen}
+                >
+                  <PopoverTrigger asChild>
+                    <div className="self-start w-full md:w-fit">
+                      <FormControl>
+                        <ButtonShadcn
+                          variant="outline"
+                          role="combobox"
+                          type="button"
+                          className={cn(
+                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100',
+                            !field.value && 'text-muted-foreground text-zinc-500'
+                          )}
+                        >
+                          <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
+                          {field.value
+                            ? operatorOptions.find(op => op.value === field.value)
+                              ?.label
+                            : 'Pesquise a operadora do dispositivo'}
+                          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </ButtonShadcn>
+                      </FormControl>
+                      <FormMessage />
+                    </div>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      <CommandInput
+                        placeholder="Digite a operadora."
+                        value={searchQuery}
+                        onValueChange={setSearchQuery}
+                      />
+                      <CommandList>
+                        <CommandEmpty>Nenhuma operadora encontrada.</CommandEmpty>
+                        <CommandGroup>
+                          {operatorOptions
+                            .filter(operator =>
+                              operator.label
+                                .toLowerCase()
+                                .includes(searchQuery.toLowerCase())
+                            )
+                            .map(operator => (
+                              <CommandItem
+                                value={operator.label}
+                                key={operator.value}
+                                onSelect={() => {
+                                  form.setValue('operator_id', operator.value)
+                                  setIsOperatorPopoverOpen(false)
+                                }}
+                              >
+                                {operator.label}
+                                <Check
+                                  className={cn(
+                                    'ml-auto',
+                                    operator.value === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </FormItem>
+            )}
+          />
+
+
 
           {device ? (
             <div className="flex justify-between w-full">
