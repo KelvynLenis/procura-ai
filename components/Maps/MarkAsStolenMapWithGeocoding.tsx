@@ -157,8 +157,6 @@ export function MarkAsStolenMapWithGeocoding({
 
     const isPointInParaiba = await checkIfPointIsInParaiba({ latLng })
 
-    console.log(isPointInParaiba)
-
     if (!isPointInParaiba) return
 
     handleGetPosition({
@@ -247,8 +245,6 @@ export function MarkAsStolenMapWithGeocoding({
           const isPointInParaiba = await checkIfPointIsInParaiba({
             latLng: [e.lngLat.lat, e.lngLat.lng],
           })
-
-          console.log(isPointInParaiba)
 
           if (!isPointInParaiba) return
 

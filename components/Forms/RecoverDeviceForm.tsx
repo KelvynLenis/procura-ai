@@ -53,7 +53,7 @@ export function RecoverDeviceForm({
 
   const formSchema = z.object({
     description: z.string(),
-    location: z.string(),
+    location: z.string().min(1, 'Selecione uma opção'),
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -65,9 +65,19 @@ export function RecoverDeviceForm({
   })
 
   const options = [
-    { label: 'Central da Policia Civil', value: [-7.1717726, -34.8739053] },
-    { label: '2° DP da Policia Civil', value: [-7.1186101, -34.8746099] },
-    { label: '9° DP da Policia Civil', value: [-7.1713252, -34.8392121] },
+    {
+      label: 'Central da Policia Civil',
+      value: [-7.171597790141487, -34.87325528291976],
+    },
+    {
+      label: 'DRF de Campina Grande',
+      value: [-7.21587149685039, -35.8800659651219],
+    },
+    { label: 'DRF de Patos', value: [-7.028485393244931, -37.288017090181285] },
+    {
+      label: 'Central de Policia de Guarabira',
+      value: [-6.849307249237192, -35.5038465361273],
+    },
   ]
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -83,7 +93,7 @@ export function RecoverDeviceForm({
             last_location: location?.value as [number, number],
             description: `Retirar o dispositivo no(a) ${values.location}`,
             type: 'Recuperado',
-            is_alert_on: true,
+            is_alert_on: false,
             id_district: '',
           })
 
@@ -106,6 +116,8 @@ export function RecoverDeviceForm({
                 : prevOccurrence
             )
           )
+
+          setIsRecoverDeviceDialogOpen(false)
 
           return true
         } catch (error) {

@@ -7,6 +7,7 @@ import { RecoverDeviceForm } from '../Forms/RecoverDeviceForm'
 import recoveryIcon from '../../assets/icons/recover.png'
 import { OccurrenceDetails } from '../OccurrenceDetails'
 import Image from 'next/image'
+import { useState } from 'react'
 
 interface AlertRowProps {
   index: number

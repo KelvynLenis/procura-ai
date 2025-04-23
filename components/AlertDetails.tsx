@@ -34,7 +34,8 @@ export function AlertDetails({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const events = await getDeviceEvents(id)
+        const events = await getDeviceEvents(id, false)
+
         setEvent(events[0])
       } catch (error) {
         console.error('Erro ao buscar eventos:', error)
