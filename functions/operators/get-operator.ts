@@ -3,7 +3,6 @@ import type { Operator } from '@/types'
 export async function getOperator(
   operatorId: string | undefined
 ): Promise<Operator | undefined> {
-  console.log(operatorId)
   if (!operatorId) {
     return undefined
   }
@@ -26,8 +25,6 @@ export async function getOperator(
     }
 
     const result = await response.json()
-
-    console.log(result)
 
     return result
   } catch (error) {
