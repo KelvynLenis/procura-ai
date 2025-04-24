@@ -2,10 +2,10 @@
 
 import { cn } from '@/lib/utils'
 import { IoIosWarning } from 'react-icons/io'
-import { MarkAsStolenForm } from './Forms/MarkAsStolenForm'
+import { MarkAsStolenForm } from '../../Forms/MarkAsStolenForm'
 import type { DeviceProps } from '@/types'
 import { Eye, X } from 'lucide-react'
-import { AlertDetails } from './AlertDetails'
+import { ViewMyAlert } from '../../ViewMyAlert'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
 import { DeviceDetailsCard } from './DeviceDetailsCard'
@@ -128,13 +128,13 @@ export function DeviceItem({
                 <IoIosWarning size={18} />
               </button>
             </DialogTrigger>
-            <DialogContent className="h-fit max-h-[90%] overflow-scroll flex flex-col w-[93%] rounded-md py-6 px-4">
+            <DialogContent className="h-[95%] overflow-scroll flex flex-col w-[93%]">
               {isStolen ? (
                 <>
                   <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
                     Visualizar alerta
                   </span>
-                  <AlertDetails
+                  <ViewMyAlert
                     id={id}
                     status={status}
                     handleDeviceRecovery={handleDeviceRecovery}

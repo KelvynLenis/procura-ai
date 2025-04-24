@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react'
 import type { DeviceProps } from '@/types'
 import { account } from '@/lib/appwrite'
-import Button from './Button'
+import Button from '../Button'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { DevicesList } from './DevicesList'
-import { Pagination, PaginationContent, PaginationItem } from './ui/pagination'
-import { DevicesTable } from './Tables/DevicesTable'
+import { DevicesList } from './DevicesList/DevicesList'
+import { Pagination, PaginationContent, PaginationItem } from '../ui/pagination'
+import { DevicesTable } from './DevicesTable/DevicesTable'
 import { listDevices } from '@/functions/device/list-devices'
 
 export function DevicesComponent() {

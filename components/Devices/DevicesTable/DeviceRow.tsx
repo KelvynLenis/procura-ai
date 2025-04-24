@@ -1,6 +1,6 @@
 'use client'
 
-import { TableCell, TableRow } from '../ui/table'
+import { TableCell, TableRow } from '../../ui/table'
 import { IoIosWarning } from 'react-icons/io'
 import { ImPencil } from 'react-icons/im'
 import Link from 'next/link'
@@ -14,15 +14,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { MarkAsStolenForm } from '../Forms/MarkAsStolenForm'
+import { MarkAsStolenForm } from '../../Forms/MarkAsStolenForm'
 import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
-import { AlertDetails } from '../AlertDetails'
-import { ConfirmationDialog } from '../ConfirmationDialog'
+import { ViewMyAlert } from '../../ViewMyAlert'
+import { ConfirmationDialog } from '../../ConfirmationDialog'
 import { deleteDevice } from '@/functions/device/delete-device'
 import { recoverDevice } from '@/functions/device/recover-device'
 import { getOperator } from '@/functions/operators/get-operator'
-import deviceInfo from '../../assets/icons/device-info.png'
+import deviceInfo from '../../../assets/icons/device-info.png'
 import Image from 'next/image'
 import { updateDeviceStatus } from '@/functions/device/update-device-status'
 
@@ -297,7 +297,7 @@ export function DeviceRow({
                     <DialogHeader>
                       <DialogTitle>Preencha as informações</DialogTitle>
                     </DialogHeader>
-                    <AlertDetails
+                    <ViewMyAlert
                       id={id}
                       status={status}
                       handleDeviceRecovery={handleDeviceRecovery}

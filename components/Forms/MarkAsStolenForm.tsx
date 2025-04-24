@@ -329,7 +329,7 @@ export function MarkAsStolenForm({
               control={form.control}
               name="coordinates"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
+                <FormItem className="flex flex-col w-full overflow-x-hidden">
                   <FormLabel className="w-fit text-center items-center flex">
                     <span className="text-red-500 h-6 flex align-text-bottom">
                       *
@@ -355,13 +355,13 @@ export function MarkAsStolenForm({
           <Button
             variant="blue"
             type="submit"
-            className="w-fit px-5 h-10 flex items-center justify-center text-xl text-white self-center"
+            className="w-fit px-5 h-10 flex items-center justify-center text-sm  text-white self-center"
           >
             Salvar
           </Button>
           {isPopup && (
             <DialogClose asChild>
-              <Button type="button" variant="red">
+              <Button type="button" variant="red" className="text-sm ">
                 Cancelar
               </Button>
             </DialogClose>

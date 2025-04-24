@@ -123,17 +123,19 @@ export function MarkAsStolenMapWithGeocoding({
       return 500
     } else if (window.innerWidth >= 768) {
       return 420
-    } else if (window.innerWidth >= 425) {
-      return 360
-    } else if (window.innerWidth >= 412) {
-      return 350
-    } else if (window.innerWidth >= 375) {
-      return 310
-    } else if (window.innerWidth >= 360) {
-      return 300
-    } else {
-      return 260
     }
+    // } else if (window.innerWidth >= 425) {
+    //   return 360
+    // } else if (window.innerWidth >= 412) {
+    //   return 350
+    // } else if (window.innerWidth >= 375) {
+    //   return 310
+    // } else if (window.innerWidth >= 360) {
+    //   return 300 // 300 original
+    // } else {
+    //   return 260
+    // }
+    return window.innerWidth
   }
 
   function setHeight() {

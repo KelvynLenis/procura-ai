@@ -42,7 +42,7 @@ import {
 } from '@/components/ui/command'
 
 import { account } from '@/lib/appwrite'
-import { phoneBrands } from '@/utils/ChartData'
+import { phoneBrands } from '@/utils/PhoneBrands'
 import type { Device, DeviceProps } from '@/types'
 import {
   cn,
@@ -126,9 +126,9 @@ export function DeviceForm({
     })
     .refine(data => validatePhoneNumber(data.phone_number), {
       path: ['phone_number'],
-      message: 'O número de celular deve conter exatamente 11 dígitos numéricos.',
+      message:
+        'O número de celular deve conter exatamente 11 dígitos numéricos.',
     })
-
 
   const brands = [
     { label: 'Apple', value: 'apple' },
@@ -168,38 +168,40 @@ export function DeviceForm({
   }, [device, form])
 
   useEffect(() => {
-    const imeiValue = form.watch('imei');
-    
+    const imeiValue = form.watch('imei')
+
     if (imeiValue && imeiValue.length === 15) {
       const validateAndFillForm = async () => {
         try {
-          setIsLoading(true);
-          const response = await fetch(`https://alpha.imeicheck.com/api/modelBrandName?imei=${imeiValue}&format=json`);
-          
+          setIsLoading(true)
+          const response = await fetch(
+            `https://alpha.imeicheck.com/api/modelBrandName?imei=${imeiValue}&format=json`
+          )
+
           if (!response.ok) {
-            toast.error('Erro ao validar IMEI. Por favor, tente novamente.');
-            return;
+            toast.error('Erro ao validar IMEI. Por favor, tente novamente.')
+            return
           }
 
-          const data = await response.json();
-          
+          const data = await response.json()
+
           if (data.status === 'succes' && data.object) {
-            form.setValue('brand', data.object.brand);
-            form.setValue('phone_model', data.object.name);
+            form.setValue('brand', data.object.brand)
+            form.setValue('phone_model', data.object.name)
           } else {
-            toast.error('Não foi possível obter informações do IMEI.');
+            toast.error('Não foi possível obter informações do IMEI.')
           }
         } catch (error) {
-          console.error('Erro ao validar IMEI:', error);
-          toast.error('Erro ao validar IMEI. Por favor, tente novamente.');
+          console.error('Erro ao validar IMEI:', error)
+          toast.error('Erro ao validar IMEI. Por favor, tente novamente.')
         } finally {
-          setIsLoading(false);
+          setIsLoading(false)
         }
-      };
+      }
 
-      validateAndFillForm();
+      validateAndFillForm()
     }
-  }, [form.watch('imei')]);
+  }, [form.watch('imei')])
 
   const router = useRouter()
 
@@ -218,7 +220,11 @@ export function DeviceForm({
         return
       }
 
-      const imeiValidation = await checkImei(values.imei, values.brand, values.phone_model)
+      const imeiValidation = await checkImei(
+        values.imei,
+        values.brand,
+        values.phone_model
+      )
       if (!imeiValidation.isValid) {
         setImeiError(imeiValidation.error || 'Erro ao validar IMEI')
         setIsLoading(false)
@@ -245,8 +251,7 @@ export function DeviceForm({
     } catch (error) {
       console.error(error)
       toast.error('Erro ao processar a operação.')
-    }
-    finally {
+    } finally {
       setIsLoading(false)
     }
   }
@@ -306,7 +311,6 @@ export function DeviceForm({
               <FormItem className="flex flex-col md:flex-row gap-5 w-full">
                 <div>
                   <FormLabel className="text-lg w-fit text-center items-start flex">
-                    
                     <span className="text-red-500 text-base">*</span>
                     IMEI
                   </FormLabel>
@@ -391,7 +395,8 @@ export function DeviceForm({
                 </div>
                 <span className="w-64 md:w-80 bg-[#D8A912]/30 text-procura-ai-black/60 font-medium py-2 px-4 rounded-xl">
                   🛈 O IMEI é composto por 15 números e pode ser encontrado na
-                  embalagem do aparelho ou digitando *#06# no teclado do aparelho.
+                  embalagem do aparelho ou digitando *#06# no teclado do
+                  aparelho.
                 </span>
               </FormItem>
             )}
@@ -420,7 +425,8 @@ export function DeviceForm({
                           disabled
                           className={cn(
                             'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100',
-                            !field.value && 'text-muted-foreground text-zinc-500',
+                            !field.value &&
+                              'text-muted-foreground text-zinc-500',
                             'cursor-not-allowed opacity-50'
                           )}
                         >
@@ -455,7 +461,8 @@ export function DeviceForm({
                           disabled
                           className={cn(
                             'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100',
-                            !field.value && 'text-muted-foreground text-zinc-500',
+                            !field.value &&
+                              'text-muted-foreground text-zinc-500',
                             'cursor-not-allowed opacity-50'
                           )}
                         >
@@ -567,13 +574,15 @@ export function DeviceForm({
                           type="button"
                           className={cn(
                             'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100',
-                            !field.value && 'text-muted-foreground text-zinc-500'
+                            !field.value &&
+                              'text-muted-foreground text-zinc-500'
                           )}
                         >
                           <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
                           {field.value
-                            ? operatorOptions.find(op => op.value === field.value)
-                              ?.label
+                            ? operatorOptions.find(
+                                op => op.value === field.value
+                              )?.label
                             : 'Pesquise a operadora do dispositivo'}
                           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </ButtonShadcn>
@@ -589,7 +598,9 @@ export function DeviceForm({
                         onValueChange={setSearchQuery}
                       />
                       <CommandList>
-                        <CommandEmpty>Nenhuma operadora encontrada.</CommandEmpty>
+                        <CommandEmpty>
+                          Nenhuma operadora encontrada.
+                        </CommandEmpty>
                         <CommandGroup>
                           {operatorOptions
                             .filter(operator =>
@@ -625,8 +636,6 @@ export function DeviceForm({
               </FormItem>
             )}
           />
-
-
 
           {device ? (
             <div className="flex justify-between w-full">
@@ -678,4 +687,3 @@ export function DeviceForm({
     </>
   )
 }
-

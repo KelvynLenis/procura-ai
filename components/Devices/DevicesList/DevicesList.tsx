@@ -2,9 +2,9 @@
 
 import type { DeviceProps } from '@/types'
 import { DeviceItem } from './DeviceItem'
-import { Skeleton } from './ui/skeleton'
+import { Skeleton } from '../../ui/skeleton'
 import Link from 'next/link'
-import Button from './Button'
+import Button from '../../Button'
 
 interface DevicesListProps {
   devices: DeviceProps[]
