@@ -61,7 +61,7 @@ export function CustomGeocodingControl({
 
   return (
     <>
-      <div className="relative z-10 w-full">
+      <div className="relative z-10 w-full md:w-[420px] lg:w-[500px]">
         <div className="flex">
           <input
             type="text"

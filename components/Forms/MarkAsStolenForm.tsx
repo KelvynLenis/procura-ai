@@ -355,13 +355,13 @@ export function MarkAsStolenForm({
           <Button
             variant="blue"
             type="submit"
-            className="w-fit px-5 h-10 flex items-center justify-center text-sm lg:text-xl text-white self-center"
+            className="w-fit px-5 h-10 flex items-center justify-center text-sm  text-white self-center"
           >
             Salvar
           </Button>
           {isPopup && (
             <DialogClose asChild>
-              <Button type="button" variant="red">
+              <Button type="button" variant="red" className="text-sm ">
                 Cancelar
               </Button>
             </DialogClose>

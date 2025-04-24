@@ -110,24 +110,20 @@ export function MarkAsStolenMapWithGeocoding({
     return true
   }
 
-  function calcularLarguraComponente(larguraTelaAtual: number) {
-    const proporcao = 250 / 320
-    return larguraTelaAtual * proporcao
-  }
-
   function setWidth() {
-    // if (window.innerWidth >= 1700) {
-    //   return 500
-    // } else if (window.innerWidth >= 1600) {
-    //   return 500
-    // } else if (window.innerWidth >= 1400) {
-    //   return 500
-    // } else if (window.innerWidth >= 1200) {
-    //   return 500
-    // } else if (window.innerWidth >= 1024) {
-    //   return 500
-    // } else if (window.innerWidth >= 768) {
-    //   return 420
+    if (window.innerWidth >= 1700) {
+      return 500
+    } else if (window.innerWidth >= 1600) {
+      return 500
+    } else if (window.innerWidth >= 1400) {
+      return 500
+    } else if (window.innerWidth >= 1200) {
+      return 500
+    } else if (window.innerWidth >= 1024) {
+      return 500
+    } else if (window.innerWidth >= 768) {
+      return 420
+    }
     // } else if (window.innerWidth >= 425) {
     //   return 360
     // } else if (window.innerWidth >= 412) {
