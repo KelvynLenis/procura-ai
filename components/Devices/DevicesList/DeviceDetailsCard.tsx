@@ -2,16 +2,16 @@
 
 import { cn } from '@/lib/utils'
 import { IoIosWarning } from 'react-icons/io'
-import { MarkAsStolenForm } from './Forms/MarkAsStolenForm'
+import { MarkAsStolenForm } from '../../Forms/MarkAsStolenForm'
 import type { DeviceProps, Operator } from '@/types'
 import { Trash2 } from 'lucide-react'
-import { AlertDetails } from './AlertDetails'
+import { ViewMyAlert } from '../../ViewMyAlert'
 import { toast } from 'react-toastify'
 import { v4 as uuidv4 } from 'uuid'
 import { ImPencil } from 'react-icons/im'
 import { useEffect, useState } from 'react'
-import Button from './Button'
-import { DeviceForm } from './Forms/DeviceForm'
+import Button from '../../Button'
+import { DeviceForm } from '../../Forms/DeviceForm'
 import { deleteDevice } from '@/functions/device/delete-device'
 import { createEvent } from '@/functions/event/create-event'
 import { updateDeviceStatus } from '@/functions/device/update-device-status'
@@ -186,7 +186,7 @@ export function DeviceDetailsCard({
                   <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
                     Visualizar alerta
                   </span>
-                  <AlertDetails
+                  <ViewMyAlert
                     id={id}
                     status={status}
                     handleDeviceRecovery={handleDeviceRecovery}

@@ -8,19 +8,19 @@ import { ConfirmationDialog } from './ConfirmationDialog'
 import { getDeviceEvents } from '@/functions/event/get-device-events'
 import { toast } from 'react-toastify'
 
-interface AlertDetailsProps {
+interface ViewMyAlertProps {
   id: string
   status: string
   handleDeviceRecovery: (id: string) => Promise<void>
   setModalOpen?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function AlertDetails({
+export function ViewMyAlert({
   id,
   status,
   handleDeviceRecovery,
   setModalOpen,
-}: AlertDetailsProps) {
+}: ViewMyAlertProps) {
   const [event, setEvent] = useState<Event | undefined>()
   const [isLoading, setIsLoading] = useState(true)
 

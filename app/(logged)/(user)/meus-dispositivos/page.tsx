@@ -1,4 +1,4 @@
-import { DevicesComponent } from '@/components/DevicesWrapper'
+import { DevicesComponent } from '@/components/Devices/DevicesWrapper'
 import ProtectedRoute from '@/components/ProtectedRoute'
 
 export default async function MyDevicesPage() {

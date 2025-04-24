@@ -1,4 +1,4 @@
-import { ContactsComponent } from '@/components/ContactsComponent'
+import { ContactsComponent } from '@/components/ContactsWrapper'
 import ProtectedRoute from '@/components/ProtectedRoute'
 
 export default async function MyDevicesPage() {

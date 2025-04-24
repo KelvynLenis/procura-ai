@@ -46,3 +46,4 @@ rest.http
 frontend/node_modules
 
 frontend/.next
+yarn.lock
