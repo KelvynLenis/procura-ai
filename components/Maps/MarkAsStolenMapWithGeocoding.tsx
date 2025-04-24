@@ -110,30 +110,36 @@ export function MarkAsStolenMapWithGeocoding({
     return true
   }
 
+  function calcularLarguraComponente(larguraTelaAtual: number) {
+    const proporcao = 250 / 320
+    return larguraTelaAtual * proporcao
+  }
+
   function setWidth() {
-    if (window.innerWidth >= 1700) {
-      return 500
-    } else if (window.innerWidth >= 1600) {
-      return 500
-    } else if (window.innerWidth >= 1400) {
-      return 500
-    } else if (window.innerWidth >= 1200) {
-      return 500
-    } else if (window.innerWidth >= 1024) {
-      return 500
-    } else if (window.innerWidth >= 768) {
-      return 420
-    } else if (window.innerWidth >= 425) {
-      return 360
-    } else if (window.innerWidth >= 412) {
-      return 350
-    } else if (window.innerWidth >= 375) {
-      return 310
-    } else if (window.innerWidth >= 360) {
-      return 300
-    } else {
-      return 260
-    }
+    // if (window.innerWidth >= 1700) {
+    //   return 500
+    // } else if (window.innerWidth >= 1600) {
+    //   return 500
+    // } else if (window.innerWidth >= 1400) {
+    //   return 500
+    // } else if (window.innerWidth >= 1200) {
+    //   return 500
+    // } else if (window.innerWidth >= 1024) {
+    //   return 500
+    // } else if (window.innerWidth >= 768) {
+    //   return 420
+    // } else if (window.innerWidth >= 425) {
+    //   return 360
+    // } else if (window.innerWidth >= 412) {
+    //   return 350
+    // } else if (window.innerWidth >= 375) {
+    //   return 310
+    // } else if (window.innerWidth >= 360) {
+    //   return 300 // 300 original
+    // } else {
+    //   return 260
+    // }
+    return window.innerWidth
   }
 
   function setHeight() {
@@ -156,8 +162,6 @@ export function MarkAsStolenMapWithGeocoding({
     if (!mapRef.current) return
 
     const isPointInParaiba = await checkIfPointIsInParaiba({ latLng })
-
-    console.log(isPointInParaiba)
 
     if (!isPointInParaiba) return
 
@@ -247,8 +251,6 @@ export function MarkAsStolenMapWithGeocoding({
           const isPointInParaiba = await checkIfPointIsInParaiba({
             latLng: [e.lngLat.lat, e.lngLat.lng],
           })
-
-          console.log(isPointInParaiba)
 
           if (!isPointInParaiba) return
 

@@ -162,7 +162,7 @@ export function LoginForm() {
             Esqueceu sua senha?
           </span>
 
-          <Button type="submit" variant="blue">
+          <Button type="submit" variant="blue" className="text-base">
             Entrar
           </Button>
 
@@ -190,7 +190,12 @@ export function LoginForm() {
                 href={'/cadastro'}
                 className="flex items-center justify-center"
               >
-                <Button onClick={showLoadingToast} type="button" variant="blue">
+                <Button
+                  onClick={showLoadingToast}
+                  type="button"
+                  variant="blue"
+                  className="text-base"
+                >
                   Cadastre-se
                 </Button>
               </Link>

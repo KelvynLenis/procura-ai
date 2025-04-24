@@ -329,7 +329,7 @@ export function MarkAsStolenForm({
               control={form.control}
               name="coordinates"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
+                <FormItem className="flex flex-col w-full overflow-x-hidden">
                   <FormLabel className="w-fit text-center items-center flex">
                     <span className="text-red-500 h-6 flex align-text-bottom">
                       *
