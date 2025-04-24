@@ -1,6 +1,9 @@
-import { Event } from '@/types'
+import type { Event } from '@/types'
 
-export async function getDeviceEvents(deviceId: string): Promise<Event[]> {
+export async function getDeviceEvents(
+  deviceId: string,
+  isAlertOn?: boolean
+): Promise<Event[]> {
   const params = new URLSearchParams({
     'queries[0]': JSON.stringify({
       method: 'equal',
@@ -10,7 +13,7 @@ export async function getDeviceEvents(deviceId: string): Promise<Event[]> {
     'queries[1]': JSON.stringify({
       method: 'equal',
       attribute: 'is_alert_on',
-      values: [true],
+      values: [isAlertOn !== undefined ? isAlertOn : true],
     }),
     'queries[2]': JSON.stringify({
       method: 'orderDesc',
@@ -25,7 +28,8 @@ export async function getDeviceEvents(deviceId: string): Promise<Event[]> {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'X-Appwrite-Project': process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || '',
+          'X-Appwrite-Project':
+            process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || '',
         },
         cache: 'no-store',
       }
@@ -42,4 +46,4 @@ export async function getDeviceEvents(deviceId: string): Promise<Event[]> {
     console.error('Erro ao buscar eventos:', error)
     throw error
   }
-} 
+}

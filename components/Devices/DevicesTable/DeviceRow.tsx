@@ -24,6 +24,7 @@ import { recoverDevice } from '@/functions/device/recover-device'
 import { getOperator } from '@/functions/operators/get-operator'
 import deviceInfo from '../../../assets/icons/device-info.png'
 import Image from 'next/image'
+import { updateDeviceStatus } from '@/functions/device/update-device-status'
 
 interface DeviceRowProps {
   id: string // ID do dispositivo
@@ -78,13 +79,16 @@ export function DeviceRow({
 
   async function handleDeviceRecovery(id: string) {
     try {
-      const success = await recoverDevice(id)
+      const success = await updateDeviceStatus(id, {
+        is_stolen: false,
+        status: 'Regular',
+      })
 
       if (success) {
         setDevices(prevDevices =>
           prevDevices.map(device =>
             device.$id === id
-              ? { ...device, is_stolen: false, status: 'Recuperado' }
+              ? { ...device, is_stolen: false, status: 'Regular' }
               : device
           )
         )
@@ -132,7 +136,7 @@ export function DeviceRow({
         <TableCell className="w-24">
           <span
             className={cn(
-              'rounded-md w-20 flex items-center justify-center capitalize',
+              'rounded-md w-24 flex items-center justify-center capitalize',
               status === 'Roubado' && 'bg-robbery-bg text-robbery-text p-1',
               status === 'Recuperado' && 'bg-regular-bg text-regular-text p-1',
               status === 'Regular' && 'bg-regular-bg text-regular-text p-1',
@@ -141,7 +145,7 @@ export function DeviceRow({
               // status === "Perdido" && "bg-violet-500/20 text-violet-700 p-1",
             )}
           >
-            {status === 'Recuperado' ? 'Regular' : status.replace(' ', '')}
+            {status}
           </span>
         </TableCell>
         <TableCell className="flex gap-2 items-center h-20 py-28 md:py-10 mdflex-wrap md:my-3">
@@ -255,13 +259,12 @@ export function DeviceRow({
               </button>
             </ConfirmationDialog>
 
-            {isStolen ? (
+            {status !== 'Regular' ? (
               <>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <DialogTrigger asChild>
                     <button
                       onClick={() => setIsDialogOpen(true)}
-                      title="Desativar alerta"
                       type="button"
                       className={cn(
                         'w-10 h-10 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white',
@@ -277,9 +280,16 @@ export function DeviceRow({
                           'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500'
                       )}
                     >
-                      <IoIosWarning size={28} />
-                      <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
-                        Visualizar alerta
+                      <IoIosWarning
+                        className={cn(
+                          status === 'Recuperado' &&
+                            'text-lime-600 animate-pulse'
+                        )}
+                        size={28}
+                      />
+                      <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 group-hover:animate-none bg-black/60 w-64 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
+                        Dispositivo recuperado, clique para ver o local da
+                        retirada
                       </span>
                     </button>
                   </DialogTrigger>

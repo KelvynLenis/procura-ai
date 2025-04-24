@@ -34,7 +34,8 @@ export function ViewMyAlert({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const events = await getDeviceEvents(id)
+        const events = await getDeviceEvents(id, false)
+
         setEvent(events[0])
       } catch (error) {
         console.error('Erro ao buscar eventos:', error)
@@ -82,16 +83,13 @@ export function ViewMyAlert({
 
             <div className="flex flex-col w-1/3 items-end">
               <ConfirmationDialog
-                title="Tem certeza que deseja marcar o dispositivo como recuperado?"
-                description="Ao concordar com esta ação, o dispositivo será removido da
-                      lista de alertas. Caso a policia encontre o dispositivo
-                      não será possível saber a quem ele pertence e nem te
-                      alertar de sua recuperação."
+                title="Tem certeza que deseja marcar o dispositivo como regular?"
+                description="Ao concordar com esta ação, o dispositivo será marcado como regular e os dados da recuperação serão perdidos.
+                 Tenha certeza que já tem o aparelho em mãos antes de prosseguir."
                 onConfirm={handleConfirmDialog}
               >
                 <button
                   type="button"
-                  title="Desativar alerta"
                   className={cn(
                     'w-fit top-5 gap-2 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white',
                     status === 'Roubado' &&
@@ -101,16 +99,17 @@ export function ViewMyAlert({
                     status === 'Perdido' &&
                       'bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500',
                     status === 'Recuperado' &&
-                      'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500',
+                      'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500 animate-pulse',
                     status === 'Regular' &&
                       'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500'
                   )}
                 >
                   <IoIosWarning size={28} />
-                  <span className="hidden opacity-0 group-hover:block group-hover:md:hidden group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
-                    Desativar alerta
+                  <span className="hidden md:block">
+                    {status === 'Recuperado'
+                      ? 'Já busquei'
+                      : 'Desativar alerta'}
                   </span>
-                  <span className="hidden md:block">Desativar</span>
                 </button>
               </ConfirmationDialog>
             </div>
