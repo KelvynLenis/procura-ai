@@ -25,6 +25,8 @@ import {
   joinDevicesEventsUsers,
   joinUsersDevicesEvents,
 } from '@/functions/occurences/get-occurrences'
+import { exportOccurrences } from '@/functions/export/export-ocurrences'
+import { toast } from 'react-toastify'
 
 interface DevicesTableProps {
   totalDevices?: number
@@ -243,6 +245,7 @@ export function AlertsTable({
           <button
             type="button"
             className="ring-1 ring-[#232323]/30 bg-white hover:bg-zinc-200 text-[#232323] flex items-center justify-center gap-3 h-fit px-4 py-2 rounded-lg"
+            onClick={() => exportOccurrences(occurrences)}
           >
             <Download size={18} />
             Exportar .CSV
