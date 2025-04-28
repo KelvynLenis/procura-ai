@@ -39,6 +39,8 @@ import { toast } from 'react-toastify'
 import { getUser } from '@/functions/user/get-user'
 import { account } from '@/lib/appwrite'
 import { getUserInfo } from '@/functions/user/get-user-info'
+import { sendEmail } from '@/functions/messages/messaging-sdk'
+import { createMessaging } from '@/functions/messages/create-messaging'
 
 interface RecoverDeviceFormProps {
   occurrence: OccurrencesProps
