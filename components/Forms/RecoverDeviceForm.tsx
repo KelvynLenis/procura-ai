@@ -43,6 +43,8 @@ import { emailClient } from '@/services/email-client'
 import { getUser } from '@/functions/user/get-user'
 import { account } from '@/lib/appwrite'
 import { getUserInfo } from '@/functions/user/get-user-info'
+import { sendEmail } from '@/functions/messages/messaging-sdk'
+import { createMessaging } from '@/functions/messages/create-messaging'
 
 interface RecoverDeviceFormProps {
   occurrence: OccurrencesProps
@@ -59,6 +61,7 @@ export function RecoverDeviceForm({
   const formSchema = z.object({
     description: z.string(),
     location: z.string().min(1, 'Selecione uma opção'),
+    shouldNotify: z.boolean().default(false),
     shouldNotify: z.boolean().default(false),
   })
 
@@ -146,6 +149,23 @@ export function RecoverDeviceForm({
               console.error('Erro ao enviar email:', error);
               toast.error('Não foi possível enviar o email de notificação. Tente novamente.');
             }
+          }
+
+          if (values.shouldNotify && occurrence.user.email) {
+            console.log(occurrence.user.email)
+            await createMessaging({
+              subject: 'Seu dispositivo foi recuperado!',
+              content: `
+                <h1>Olá ${occurrence.user.name},</h1>
+                <p>Seu dispositivo ${occurrence.device.phone_model} foi recuperado!</p>
+                <p>Você pode retirá-lo no seguinte local: ${values.location}</p>
+                <p>Informações adicionais: ${values.description || 'Nenhuma informação adicional.'}</p>
+                <br/>
+                <p>Atenciosamente,</p>
+                <p>Equipe ProcuraAí</p>
+              `,
+              users: [occurrence.user.email],
+            })
           }
 
           setOccurrences(prevOccurrences =>
