@@ -13,6 +13,7 @@ export async function exportOccurrences(occurrences: OccurrencesProps[]) {
       'PROPRIETÁRIO',
       'EMAIL',
       'TIPO',
+      'STATUS',
       'DESCRIÇÃO',
       'DATA',
       'LOCALIZAÇÃO',
@@ -28,6 +29,7 @@ export async function exportOccurrences(occurrences: OccurrencesProps[]) {
         occurrence.user.name || '',
         occurrence.user.email || '',
         occurrence.event.type || '',
+        occurrence.device.status || '',
         occurrence.event.description || '',
         occurrence.event.time_event
           ? new Date(occurrence.event.time_event).toLocaleString('pt-BR', {
@@ -62,6 +64,7 @@ export async function exportOccurrences(occurrences: OccurrencesProps[]) {
       { header: 'PROPRIETÁRIO', width: 30 },
       { header: 'EMAIL', width: 35 },
       { header: 'TIPO', width: 20 },
+      { header: 'STATUS', width: 20 },
       { header: 'DESCRIÇÃO', width: 40 },
       { header: 'DATA', width: 25 },
       { header: 'LOCALIZAÇÃO', width: 30 },
