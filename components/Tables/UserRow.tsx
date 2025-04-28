@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { DeviceProps } from '@/types'
+import type { DeviceProps, User } from '@/types'
 import {
   Table,
   TableBody,
@@ -25,18 +25,21 @@ import { updateUserStatus } from '@/functions/user/update-user-status'
 import { deleteUserSession } from '@/functions/user/delete-user'
 import { listUserDevices } from '@/functions/device/list-user-devices'
 import { ConfirmationDialog } from '../ConfirmationDialog'
+import deviceInfo from '../../assets/icons/device-info.svg'
+import Image from 'next/image'
 
-interface User {
-  $id: string
-  user_id: string
-  name?: string
-  cpf?: string
-  email?: string
-  type: string
-  status: string
-  accessed_at?: string
-  $createdAt?: string
-}
+// interface User {
+//   $id: string
+//   user_id: string
+//   name?: string
+//   cpf?: string
+//   email?: string
+//   type: string
+//   status: string
+//   accessed_at?: string
+//   $createdAt?: string
+//   img_url?: string
+// }
 
 interface UserRowProps {
   user: User
@@ -64,24 +67,24 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
   async function handleDeleteUser(userAuthid: string, userDocumentId: string) {
     try {
       await deleteUser(userAuthid, userDocumentId)
-      
+
       setUsers(prevUsers =>
         prevUsers.filter(prevUser => prevUser.$id !== userDocumentId)
-      );
-      toast.success('Usuário deletado com sucesso!');
+      )
+      toast.success('Usuário deletado com sucesso!')
     } catch (error) {
-      toast.error('Erro ao deletar usuário. Tente novamente.');
-      console.error('Erro ao deletar usuário:', error);
+      toast.error('Erro ao deletar usuário. Tente novamente.')
+      console.error('Erro ao deletar usuário:', error)
     }
   }
 
   async function handleDeactivateUser() {
     try {
-      const newStatus = user.status === 'Ativo' ? 'Inativo' : 'Ativo';
-      
+      const newStatus = user.status === 'Ativo' ? 'Inativo' : 'Ativo'
+
       const updatedUser = await updateUserStatus(user.$id, {
         status: newStatus,
-      });
+      })
 
       if (updatedUser) {
         setUsers(prevUsers =>
@@ -94,39 +97,46 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
             }
             return prevUser
           })
-        );
+        )
 
         try {
-          await deleteUserSession(user.user_id);
+          await deleteUserSession(user.user_id)
         } catch (error) {
-          console.error('Erro ao deletar sessão do usuário:', error);
+          console.error('Erro ao deletar sessão do usuário:', error)
           // Não vamos interromper o fluxo se falhar ao deletar a sessão
         }
 
-        toast.success(`Usuário ${newStatus === 'Ativo' ? 'ativado' : 'desativado'} com sucesso!`);
+        toast.success(
+          `Usuário ${newStatus === 'Ativo' ? 'ativado' : 'desativado'} com sucesso!`
+        )
       }
     } catch (error) {
-      toast.error(`Erro ao ${user.status === 'Ativo' ? 'desativar' : 'ativar'} usuário. Tente novamente.`);
-      console.error(`Erro ao ${user.status === 'Ativo' ? 'desativar' : 'ativar'} usuário:`, error);
+      toast.error(
+        `Erro ao ${user.status === 'Ativo' ? 'desativar' : 'ativar'} usuário. Tente novamente.`
+      )
+      console.error(
+        `Erro ao ${user.status === 'Ativo' ? 'desativar' : 'ativar'} usuário:`,
+        error
+      )
     }
   }
 
   useEffect(() => {
     const getDevices = async () => {
-      setIsLoading(true);
+      setIsLoading(true)
       try {
-        const userDevices = await listUserDevices(user.user_id);
-        setDevices(userDevices);
+        const userDevices = await listUserDevices(user.user_id)
+        setDevices(userDevices)
       } catch (error) {
-        console.error('Erro ao buscar dispositivos:', error);
+        console.error('Erro ao buscar dispositivos:', error)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
-    getDevices();
-    getRandomProfileColor();
-  }, [user.user_id]);
+    getDevices()
+    getRandomProfileColor()
+  }, [user.user_id])
 
   function getRandomProfileColor() {
     const colors = [
@@ -176,7 +186,7 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
               'font-bold text-lg break-words p-2 rounded-md capitalize',
               user.type === 'Usuario'
                 ? 'bg-sky-400/40 text-sky-700'
-                : 'bg-blue-500/30 text-blue-700'
+                : 'bg-purple-500/35 text-purple-800'
             )}
           >
             {user.type === 'Usuario' ? 'Usuário' : user.type || 'N/A'}
@@ -196,83 +206,144 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                   </span>
                 </button>
               </DialogTrigger>
-              <DialogContent className="flex flex-col py-10 gap-10 w-[70%]">
-                <DialogHeader>
+              <DialogContent className="flex flex-col p-0 gap-5 max-h-[75%] w-[65%]">
+                <DialogHeader className="text-xl text-procura-ai-blue bg-sky-100/40 rounded-md py-5 px-6">
                   <DialogTitle>Detalhes do usuários</DialogTitle>
                 </DialogHeader>
 
-                <div className="flex flex-wrap gap-10">
-                  <span
-                    className={cn(
-                      'text-3xl text-white capitalize font-bold rounded-full w-14 h-14 px-1 flex items-center justify-center mr-3 bg-procura-ai-blue'
-                    )}
-                  >
-                    {user.name!.split(' ').length > 1
-                      ? user.name!.split(' ')[0][0] +
-                        user.name!.split(' ')[1][0]
-                      : user.name!.split(' ')[0][0]}
-                  </span>
-
-                  <div className="flex flex-col items-start justify-center">
-                    <span className="font-bold">Nome completo</span>
-                    <span className="break-words">{user.name}</span>
+                <div className="flex flex-col gap-4 px-4 pb-4 overflow-y-scroll custom-scroll">
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-2 py-2 px-5 w-full text-lg font-medium bg-zinc-100 rounded-t-lg  border-zinc-200">
+                      {user.img_url ? (
+                        <Image
+                          src={user.img_url}
+                          width={48}
+                          height={48}
+                          alt="device-info"
+                          className="w-12 h-12 rounded-full"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 flex items-center justify-center text-white rounded-full bg-procura-ai-blue ">
+                          {user.name!.split(' ').length > 1
+                            ? user.name!.split(' ')[0][0] +
+                              user.name!.split(' ')[1][0]
+                            : user.name!.split(' ')[0][0]}
+                        </div>
+                      )}
+                      Informações do proprietário
+                    </div>
+                    <div className="flex flex-col gap-2 border border-zinc-200 p-4 rounded-b-3xl drop-shadow-sm">
+                      <div className="flex">
+                        <span className="w-44 font-medium">Nome</span>
+                        <span className="w-full">{user.name}</span>
+                      </div>
+                      <div className="flex">
+                        <span className="w-44 font-medium">CPF</span>
+                        <span className="w-full">{user.cpf}</span>
+                      </div>
+                      <div className="flex">
+                        <span className="w-44 font-medium">E-mail</span>
+                        <span className="w-full">{user.email}</span>
+                      </div>
+                      <div className="flex">
+                        <span className="w-44 font-medium">Último acesso</span>
+                        <span className="w-full">
+                          {user.accessed_at
+                            ? formatDateTime(user.accessed_at)
+                            : 'N/A'}
+                        </span>
+                      </div>
+                      <div className="flex">
+                        <span className="w-44 font-medium">Registrado em</span>
+                        <span className="w-full">
+                          {user.$createdAt
+                            ? formatDateTime(user.$createdAt)
+                            : 'N/A'}
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="flex flex-col items-start justify-center">
-                    <span className="font-bold">Email</span>
-                    <span>{user.email}</span>
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-2 py-2 px-5 w-full bg-zinc-100 rounded-t-lg border-zinc-200">
+                      <Image
+                        src={deviceInfo}
+                        alt="device-info"
+                        className="w-10 h-10"
+                      />
+                      <span className="text-lg text-procura-ai-zinc font-medium">
+                        Dispositivos
+                      </span>
+                    </div>
+                    <div className="border rounded-lg">
+                      <Table>
+                        <TableHeader className="bg-zinc-100 border-t border-zinc-200">
+                          <TableRow>
+                            <TableHead className="font-medium text-procura-ai-zinc">
+                              Número
+                            </TableHead>
+                            <TableHead className="font-medium text-procura-ai-zinc">
+                              Fabricante
+                            </TableHead>
+                            <TableHead className="font-medium text-procura-ai-zinc">
+                              Modelo
+                            </TableHead>
+                            <TableHead className="font-medium text-procura-ai-zinc">
+                              IMEI
+                            </TableHead>
+                            <TableHead className="font-medium text-procura-ai-zinc">
+                              Status
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {devices.length > 0 ? (
+                            devices.map((device, index) => (
+                              <TableRow key={index}>
+                                <TableCell className="">
+                                  {device.phone_number}
+                                </TableCell>
+                                <TableCell className="capitalize">
+                                  {device.brand}
+                                </TableCell>
+                                <TableCell className="capitalize">
+                                  {device.phone_model}
+                                </TableCell>
+                                <TableCell className="font-medium">
+                                  {device.imei}
+                                </TableCell>
+                                <TableCell className="font-medium">
+                                  <span
+                                    className={cn(
+                                      'w-fit rounded-sm flex items-center justify-center',
+                                      device.status === 'Roubado' &&
+                                        'bg-robbery-bg text-red-600 px-3 py-1 ring-red-500',
+                                      device.status === 'Furtado' &&
+                                        'bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500',
+                                      device.status === 'Perdido' &&
+                                        'bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500',
+                                      device.status === 'Recuperado' &&
+                                        'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500',
+                                      device.status === 'Regular' &&
+                                        'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500'
+                                    )}
+                                  >
+                                    {device.status}
+                                  </span>
+                                </TableCell>
+                              </TableRow>
+                            ))
+                          ) : (
+                            <TableRow>
+                              <TableCell colSpan={5} className="text-center">
+                                Nenhum dispositivo cadastrado
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
                   </div>
-
-                  <div className="flex flex-col gap-2 items-center justify-start">
-                    <span className="font-bold">CPF</span>
-                    <span>{user.cpf}</span>
-                  </div>
-
-                  <div className="flex flex-col items-start justify-center">
-                    <span className="font-bold">Último acesso</span>
-                    <span>
-                      {user.accessed_at ? formatDateTime(user.accessed_at) : 'N/A'}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-col items-start justify-center">
-                    <span className="font-bold">Registrado em</span>
-                    <span>
-                      {user.$createdAt ? formatDateTime(user.$createdAt) : 'N/A'}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex flex-col">
-                  <span className="font-bold">Dispositivos</span>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[100px]">IMEI</TableHead>
-                        <TableHead>Fabricante</TableHead>
-                        <TableHead>Modelo</TableHead>
-                        <TableHead className="text-right">Número</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {devices.map((device, index) => (
-                        <TableRow key={index}>
-                          <TableCell className="font-medium">
-                            {device.imei}
-                          </TableCell>
-                          <TableCell className="capitalize">
-                            {device.brand}
-                          </TableCell>
-                          <TableCell className="capitalize">
-                            {device.phone_model}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {device.phone_number}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
                 </div>
               </DialogContent>
             </Dialog>
