@@ -5,6 +5,7 @@ export const client = new Client()
 client
   .setEndpoint('https://cloud.appwrite.io/v1')
   .setProject(process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID!)
+  // .setKey(process.env.NEXT_PUBLIC_APP_WRITE_KEY!)
 
 export const account = new Account(client)
 export const databases = new Databases(client)

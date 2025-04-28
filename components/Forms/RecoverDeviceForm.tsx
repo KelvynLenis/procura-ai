@@ -38,6 +38,8 @@ import type { OccurrencesProps } from '@/types'
 import { createEvent } from '@/functions/event/create-event'
 import { updateDeviceStatus } from '@/functions/device/update-device-status'
 import { toast } from 'react-toastify'
+import { sendEmail } from '@/functions/messages/messaging-sdk'
+import { createMessaging } from '@/functions/messages/create-messaging'
 
 interface RecoverDeviceFormProps {
   occurrence: OccurrencesProps
@@ -54,6 +56,7 @@ export function RecoverDeviceForm({
   const formSchema = z.object({
     description: z.string(),
     location: z.string().min(1, 'Selecione uma opção'),
+    shouldNotify: z.boolean().default(false),
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -61,6 +64,7 @@ export function RecoverDeviceForm({
     defaultValues: {
       description: '',
       location: '',
+      shouldNotify: false,
     },
   })
 
@@ -101,6 +105,23 @@ export function RecoverDeviceForm({
             is_stolen: false,
             status: 'Recuperado',
           })
+
+          if (values.shouldNotify && occurrence.user.email) {
+            console.log(occurrence.user.email)
+            await createMessaging({
+              subject: 'Seu dispositivo foi recuperado!',
+              content: `
+                <h1>Olá ${occurrence.user.name},</h1>
+                <p>Seu dispositivo ${occurrence.device.phone_model} foi recuperado!</p>
+                <p>Você pode retirá-lo no seguinte local: ${values.location}</p>
+                <p>Informações adicionais: ${values.description || 'Nenhuma informação adicional.'}</p>
+                <br/>
+                <p>Atenciosamente,</p>
+                <p>Equipe ProcuraAí</p>
+              `,
+              users: [occurrence.user.email],
+            })
+          }
 
           setOccurrences(prevOccurrences =>
             prevOccurrences.map(prevOccurrence =>
@@ -272,16 +293,24 @@ export function RecoverDeviceForm({
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2 font-medium">
-                  <Checkbox className="shadow-none rounded-sm border-[#232323]/90 font-medium" />
-                  Notificar proprietário através de e-mail e SMS
-                </div>
-                {/* <div className="flex items-center text-base gap-2 font-medium">
-                  <Checkbox className="shadow-none rounded-sm border-[#232323]/90 font-medium" />
-                  <span className="text-base">
-                    Notificar contatos de confiança
-                  </span>
-                </div> */}
+                <FormField
+                  control={form.control}
+                  name="shouldNotify"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-2">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="shadow-none rounded-sm border-[#232323]/90 font-medium"
+                        />
+                      </FormControl>
+                      <FormLabel className="font-medium !mt-0">
+                        Notificar proprietário através de e-mail e SMS
+                      </FormLabel>
+                    </FormItem>
+                  )}
+                />
               </div>
               {/* <div className="flex flex-col gap-2">
                 <Label className="font-medium text-base">
