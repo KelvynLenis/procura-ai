@@ -198,7 +198,7 @@ export function EditProfileForm() {
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full max-w-80">
                   <Label className="text-base">Nome</Label>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 relative">
                     <FormControl>
                       <Input
                         type="text"
@@ -207,7 +207,7 @@ export function EditProfileForm() {
                         {...field}
                       />
                     </FormControl>
-                    <Pencil className="w-4 h-4" />
+                    <Pencil className="w-4 h-4 absolute right-5" />
                   </div>
                 </FormItem>
               )}
@@ -219,7 +219,7 @@ export function EditProfileForm() {
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full max-w-80">
                   <Label className="text-base">Email</Label>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 relative">
                     <FormControl>
                       <Input
                         type="text"
@@ -228,7 +228,7 @@ export function EditProfileForm() {
                         {...field}
                       />
                     </FormControl>
-                    <Pencil className="w-4 h-4" />
+                    <Pencil className="w-4 h-4 absolute right-5" />
                   </div>
                   <FormMessage />
                 </FormItem>
@@ -318,17 +318,17 @@ export function EditProfileForm() {
           </div>
         </div>
         <div className="flex w-full justify-between">
-          <Button variant="blue" type="submit">
+          <Button variant="blue" type="submit" className="text-base">
             Salvar
           </Button>
-          <Button variant="red" type="button">
+          <Button variant="red" type="button" className="text-base">
             Cancelar
           </Button>
         </div>
       </form>
       <Dialog>
         <DialogTrigger asChild className="mt-5">
-          <Button variant="blue" type="button">
+          <Button variant="blue" type="button" className="text-base">
             Editar senha
           </Button>
         </DialogTrigger>

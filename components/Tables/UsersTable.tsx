@@ -21,7 +21,7 @@ import { LoadingToast } from '@/components/LoadingToast'
 import { listUsers } from '@/functions/user/list-users'
 import { exportUsers } from '@/functions/export/export-users'
 import { exportAlerts } from '@/functions/export/export-alerts'
-import { User } from '@/types'
+import type { User } from '@/types'
 
 export function UsersTable() {
   const [users, setUsers] = useState<User[]>([])
