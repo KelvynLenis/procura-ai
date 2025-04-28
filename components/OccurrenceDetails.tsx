@@ -115,7 +115,7 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                   <div className="w-full">
                     <span
                       className={cn(
-                        'w-fit rounded-sm flex items-center justify-center hover:bg-white',
+                        'w-fit rounded-sm flex items-center justify-center',
                         occurrence?.device.status === 'Roubado' &&
                           'bg-robbery-bg text-red-600 px-3 py-1 ring-red-500',
                         occurrence?.device.status === 'Furtado' &&
