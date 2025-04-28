@@ -36,9 +36,6 @@ import type { OccurrencesProps } from '@/types'
 import { createEvent } from '@/functions/event/create-event'
 import { updateDeviceStatus } from '@/functions/device/update-device-status'
 import { toast } from 'react-toastify'
-import { getUser } from '@/functions/user/get-user'
-import { account } from '@/lib/appwrite'
-import { getUserInfo } from '@/functions/user/get-user-info'
 import { emailClient } from '@/services/email-client'
 import { getUser } from '@/functions/user/get-user'
 import { account } from '@/lib/appwrite'
@@ -59,7 +56,6 @@ export function RecoverDeviceForm({
   const formSchema = z.object({
     description: z.string(),
     location: z.string().min(1, 'Selecione uma opção'),
-    shouldNotify: z.boolean().default(false),
     shouldNotify: z.boolean().default(false),
   })
 
