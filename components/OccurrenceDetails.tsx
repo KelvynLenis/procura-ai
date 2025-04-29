@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react'
 import { listContacts } from '@/functions/contact/list-contacts'
 import { getOperator } from '@/functions/operators/get-operator'
 import { getDeviceEvents } from '@/functions/event/get-device-events'
+import { listAllEvents } from '@/functions/event/list-all-events'
 
 interface RecoverDeviceFormProps {
   occurrence?: OccurrencesProps
@@ -41,7 +42,7 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
 
   async function fetchEvents() {
     try {
-      const events = await getDeviceEvents(occurrence?.device.$id!)
+      const events = await listAllEvents(occurrence?.device.$id!)
 
       console.log(events.length)
 

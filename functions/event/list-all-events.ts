@@ -1,6 +1,6 @@
 import type { Event } from '@/types'
 
-export async function listAllEvents(): Promise<Event[]> {
+export async function listAllEvents(deviceId?: string): Promise<Event[]> {
   const allEvents: Event[] = []
   let offset = 0
   const limit = 25
@@ -15,6 +15,11 @@ export async function listAllEvents(): Promise<Event[]> {
       'queries[1]': JSON.stringify({
         method: 'offset',
         values: [offset],
+      }),
+      'queries[2]': JSON.stringify({
+        method: 'equal',
+        attribute: 'id_device',
+        values: [deviceId || ''],
       }),
     })
 
