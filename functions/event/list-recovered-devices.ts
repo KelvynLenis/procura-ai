@@ -1,10 +1,10 @@
-import { Event } from '@/types'
+import type { Event } from '@/types'
 
 export async function listRecoveredDevices(): Promise<Event[]> {
   const allEvents: Event[] = []
   let offset = 0
   const limit = 25
-  let total = Infinity
+  let total = Number.POSITIVE_INFINITY
 
   while (offset < total) {
     const params = new URLSearchParams({
@@ -50,4 +50,4 @@ export async function listRecoveredDevices(): Promise<Event[]> {
     }
   }
   return allEvents
-} 
+}
