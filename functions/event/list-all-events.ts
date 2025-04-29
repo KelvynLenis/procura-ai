@@ -1,10 +1,10 @@
-import { Event } from '@/types';
+import type { Event } from '@/types'
 
 export async function listAllEvents(): Promise<Event[]> {
-  const allEvents: Event[] = [];
-  let offset = 0;
-  const limit = 25;
-  let total = Infinity;
+  const allEvents: Event[] = []
+  let offset = 0
+  const limit = 25
+  let total = Number.POSITIVE_INFINITY
 
   while (offset < total) {
     const params = new URLSearchParams({
@@ -16,7 +16,7 @@ export async function listAllEvents(): Promise<Event[]> {
         method: 'offset',
         values: [offset],
       }),
-    });
+    })
 
     try {
       const response = await fetch(
@@ -25,25 +25,26 @@ export async function listAllEvents(): Promise<Event[]> {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'X-Appwrite-Project': process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || '',
+            'X-Appwrite-Project':
+              process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || '',
           },
           cache: 'no-store',
         }
-      );
+      )
 
       if (!response.ok) {
-        throw new Error(`Erro ao buscar eventos: ${await response.text()}`);
+        throw new Error(`Erro ao buscar eventos: ${await response.text()}`)
       }
 
-      const { documents, total: fetchedTotal } = await response.json();
-      allEvents.push(...documents);
-      total = fetchedTotal;
-      offset += limit;
+      const { documents, total: fetchedTotal } = await response.json()
+      allEvents.push(...documents)
+      total = fetchedTotal
+      offset += limit
     } catch (error) {
-      console.error('Erro ao buscar eventos:', error);
-      break;
+      console.error('Erro ao buscar eventos:', error)
+      break
     }
   }
 
-  return allEvents;
-} 
+  return allEvents
+}
