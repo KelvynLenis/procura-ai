@@ -84,13 +84,13 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
             </span>
           </button>
         </DialogTrigger>
-        <DialogContent className="flex flex-col py-10 gap-3 w-[840px] h-[680px]">
-          <DialogHeader>
+        <DialogContent className="flex flex-col p-0 gap-3 w-[840px] max-h-[75%]">
+          <DialogHeader className="text-xl text-procura-ai-blue bg-sky-100/40 rounded-md py-5 px-6">
             <DialogTitle className="text-xl">
               Detalhes da ocorrência
             </DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col gap-2 overflow-y-scroll custom-scroll pr-4">
+          <div className="flex flex-col gap-2 overflow-y-scroll custom-scroll px-4 pb-4">
             <div className="flex flex-col">
               <div className="flex items-center px-5 w-full h-20 text-lg font-medium bg-zinc-100 rounded-t-lg  border-zinc-200 gap-3">
                 <Image
