@@ -1,6 +1,6 @@
 import type { QueryFilter } from '@/types'
 import { getStolenDevices } from '../devices/list-stolen-devices'
-import { getEvents } from '../events/list-events'
+import { getEvents } from '../event/get-events'
 import { getUser } from '../user/get-user'
 import { getDevices } from '../devices/list-devices'
 

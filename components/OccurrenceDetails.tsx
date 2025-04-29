@@ -13,11 +13,13 @@ import occurrenceInfo from '../assets/icons/occurrence-info.png'
 import ownerInfo from '../assets/icons/owner-info.png'
 import { cn, formatDateTime } from '@/lib/utils'
 
-import type { Contact, OccurrencesProps, Operator } from '@/types'
+import type { Contact, Event, OccurrencesProps, Operator } from '@/types'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { listContacts } from '@/functions/contact/list-contacts'
 import { getOperator } from '@/functions/operators/get-operator'
+import { getDeviceEvents } from '@/functions/event/get-device-events'
+import { listAllEvents } from '@/functions/event/list-all-events'
 
 interface RecoverDeviceFormProps {
   occurrence?: OccurrencesProps
@@ -25,6 +27,8 @@ interface RecoverDeviceFormProps {
 export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
   const [contacts, setContacts] = useState<Contact[]>([])
   const [operator, setOperator] = useState<Operator>()
+  const [events, setEvents] = useState<Event[]>([])
+  const [isShowAllEventsOn, setIsShowAllEventsOn] = useState(false)
 
   async function getContacts() {
     const contacts = await listContacts({
@@ -34,6 +38,18 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
     setContacts(contacts)
 
     return contacts
+  }
+
+  async function fetchEvents() {
+    try {
+      const events = await listAllEvents(occurrence?.device.$id!)
+
+      console.log(events.length)
+
+      setEvents(events)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   async function fetchOperator() {
@@ -50,6 +66,7 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
 
   useEffect(() => {
     getContacts()
+    fetchEvents()
     fetchOperator()
   }, [])
 
@@ -67,13 +84,13 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
             </span>
           </button>
         </DialogTrigger>
-        <DialogContent className="flex flex-col py-10 gap-3 w-[840px] h-[680px]">
-          <DialogHeader>
+        <DialogContent className="flex flex-col p-0 gap-3 w-[840px] max-h-[75%]">
+          <DialogHeader className="text-xl text-procura-ai-blue bg-sky-100/40 rounded-md py-5 px-6">
             <DialogTitle className="text-xl">
               Detalhes da ocorrência
             </DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col gap-2 overflow-y-scroll custom-scroll">
+          <div className="flex flex-col gap-2 overflow-y-scroll custom-scroll px-4 pb-4">
             <div className="flex flex-col">
               <div className="flex items-center px-5 w-full h-20 text-lg font-medium bg-zinc-100 rounded-t-lg  border-zinc-200 gap-3">
                 <Image
@@ -144,7 +161,11 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                 />
                 <span>Informações do ocorrência</span>
               </div>
-              <div className="flex flex-col gap-2 border border-zinc-200 p-4 rounded-b-3xl drop-shadow-sm">
+              <div
+                className={cn(
+                  'flex flex-col gap-2 border-x rounded-none border-zinc-200 p-4  drop-shadow-sm'
+                )}
+              >
                 <div className="flex">
                   <span className="w-40 font-medium">ID</span>
                   <span className="w-full">
@@ -174,6 +195,83 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                   </span>
                 </div>
               </div>
+              {events.length > 0 && (
+                <div
+                  className={cn(
+                    'w-full flex justify-center border-x pt-4 pb-1',
+                    isShowAllEventsOn
+                      ? 'bg-zinc-100/90 border-b-0'
+                      : 'border-b rounded-b-3xl'
+                  )}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setIsShowAllEventsOn(!isShowAllEventsOn)}
+                    className={'text-primary underline hover:text-blue-400'}
+                  >
+                    {isShowAllEventsOn
+                      ? 'Ocultar histórico de ocorrências'
+                      : 'Ver ocorrências anteriores'}
+                  </button>
+                </div>
+              )}
+              {isShowAllEventsOn &&
+                events.map((prevEvent, index) => (
+                  <div
+                    key={prevEvent.$id}
+                    className={cn(
+                      'flex flex-col gap-2 bg-zinc-100/90 border border-zinc-200 p-4 drop-shadow-sm',
+                      index === events.length - 1 && 'rounded-b-3xl',
+                      index === 0 && 'border-t-0'
+                    )}
+                  >
+                    <div className="flex">
+                      <span className="w-40 font-medium">ID</span>
+                      <span className="w-full">
+                        {prevEvent
+                          ? prevEvent?.$id.slice(0, 5)
+                          : 'Este evento não existe.'}
+                      </span>
+                    </div>
+                    <div className="flex">
+                      <span className="w-40 font-medium">Data e horário</span>
+                      <span className="w-full">
+                        {prevEvent
+                          ? formatDateTime(prevEvent?.time_event!)
+                          : 'Este evento não existe.'}
+                      </span>
+                    </div>
+                    <div className="flex">
+                      <span className="w-32 font-medium">Tipo</span>
+                      <span
+                        className={cn(
+                          'w-fit rounded-sm flex items-start justify-start',
+                          prevEvent?.type === 'Roubo' &&
+                            'bg-robbery-bg text-red-600 px-3 py-1 ring-red-500',
+                          prevEvent?.type === 'Furto simples' &&
+                            'bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500',
+                          prevEvent?.type === 'Perda ou extravio' &&
+                            'bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500',
+                          prevEvent?.type === 'Recuperado' &&
+                            'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500',
+                          prevEvent?.type === 'Regular' &&
+                            'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500'
+                        )}
+                      >
+                        {prevEvent?.type}
+                      </span>
+                      {/* <span className="w-full">{prevEvent?.type}</span> */}
+                    </div>
+                    <div className="flex">
+                      <span className="w-40 font-medium">Descrição</span>
+                      <span className="w-full">
+                        {prevEvent
+                          ? prevEvent?.description || 'Não informado'
+                          : 'Este evento não existe.'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
             </div>
 
             <div className="flex flex-col">
