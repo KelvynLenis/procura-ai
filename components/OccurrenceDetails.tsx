@@ -90,7 +90,7 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
               Detalhes da ocorrência
             </DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col gap-2 overflow-y-scroll custom-scroll">
+          <div className="flex flex-col gap-2 overflow-y-scroll custom-scroll pr-4">
             <div className="flex flex-col">
               <div className="flex items-center px-5 w-full h-20 text-lg font-medium bg-zinc-100 rounded-t-lg  border-zinc-200 gap-3">
                 <Image
