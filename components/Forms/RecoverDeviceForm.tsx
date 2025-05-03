@@ -38,8 +38,7 @@ import type { OccurrencesProps } from '@/types'
 import { createEvent } from '@/functions/event/create-event'
 import { updateDeviceStatus } from '@/functions/device/update-device-status'
 import { toast } from 'react-toastify'
-import { sendEmail } from '@/functions/messages/messaging-sdk'
-import { createMessaging } from '@/functions/messages/create-messaging'
+import { emailService } from '@/services/email'
 
 interface RecoverDeviceFormProps {
   occurrence: OccurrencesProps
@@ -107,20 +106,21 @@ export function RecoverDeviceForm({
           })
 
           if (values.shouldNotify && occurrence.user.email) {
-            console.log(occurrence.user.email)
-            await createMessaging({
-              subject: 'Seu dispositivo foi recuperado!',
-              content: `
-                <h1>Olá ${occurrence.user.name},</h1>
-                <p>Seu dispositivo ${occurrence.device.phone_model} foi recuperado!</p>
-                <p>Você pode retirá-lo no seguinte local: ${values.location}</p>
-                <p>Informações adicionais: ${values.description || 'Nenhuma informação adicional.'}</p>
-                <br/>
-                <p>Atenciosamente,</p>
-                <p>Equipe ProcuraAí</p>
-              `,
-              users: [occurrence.user.email],
-            })
+            try {
+              await emailService.sendDeviceRecoveryEmail({
+                userName: occurrence.user.name,
+                userEmail: occurrence.user.email,
+                deviceModel: occurrence.device.phone_model,
+                deviceBrand: occurrence.device.brand,
+                location: values.location,
+                description: values.description
+              });
+              
+              toast.success('Email de notificação enviado com sucesso!');
+            } catch (error) {
+              console.error('Erro ao enviar email:', error);
+              toast.error('Não foi possível enviar o email de notificação. Tente novamente.');
+            }
           }
 
           setOccurrences(prevOccurrences =>

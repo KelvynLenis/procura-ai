@@ -61,6 +61,7 @@
     "react-spinners": "^0.15.0",
     "react-toastify": "^11.0.3",
     "recharts": "^2.14.1",
+    "resend": "^4.5.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"
