@@ -1,41 +1,30 @@
-import { Client, Messaging } from 'node-appwrite'
-import { v4 as uuidv4 } from 'uuid'
+import { Resend } from 'resend';
 
-interface MessagingProps {
-  subject: string
-  content: string
-  users: string[]
+interface SendEmailParams {
+  subject: string;
+  content: string;
+  users: { email: string; name?: string }[];
 }
 
-const client = new Client()
-  .setEndpoint(process.env.NEXT_PUBLIC_API_URL || '')
-  .setProject(process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || '')
-  .setKey(process.env.NEXT_PUBLIC_APP_WRITE_KEY || '')
+// Inicializa o cliente Resend com a chave API do servidor
+const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY);
 
-const messaging = new Messaging(client)
-
-export async function sendEmail(data: MessagingProps) {
+export async function sendEmail({ subject, content, users }: SendEmailParams) {
   try {
-    const message = await messaging.createEmail(
-      uuidv4(), // messageId
-      data.subject, // subject
-      data.content, // content
-      [], // topics
-      data.users, // users
-      [], // targets
-      [], // cc
-      [], // bcc
-      [], // attachments
-      false, // draft
-      true, // html
-      '' // scheduledAt
-    )
+    const promises = users.map(async (user) => {
+      return resend.emails.send({
+        from: 'ProcuraAí <noreply@procuraai.com.br>',
+        to: user.email,
+        subject: subject,
+        html: content,
+        text: content.replace(/<[^>]*>/g, ''), // Remove tags HTML para versão texto
+      });
+    });
 
-    console.log(message)
-
-    return message
+    const results = await Promise.all(promises);
+    return results;
   } catch (error) {
-    console.error('Erro ao enviar email:', error)
-    throw new Error('Falha ao enviar email. Por favor, tente novamente.')
+    console.error('Erro ao enviar email:', error);
+    throw error;
   }
-} 
+}
