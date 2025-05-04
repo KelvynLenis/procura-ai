@@ -39,7 +39,7 @@ import { toast } from 'react-toastify'
 import { getUser } from '@/functions/user/get-user'
 import { account } from '@/lib/appwrite'
 import { getUserInfo } from '@/functions/user/get-user-info'
-import { emailService } from '@/services/email'
+import { emailClient } from '@/services/email-client'
 
 interface RecoverDeviceFormProps {
   occurrence: OccurrencesProps
