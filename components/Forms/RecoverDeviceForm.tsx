@@ -39,7 +39,7 @@ import { toast } from 'react-toastify'
 import { getUser } from '@/functions/user/get-user'
 import { account } from '@/lib/appwrite'
 import { getUserInfo } from '@/functions/user/get-user-info'
-import { emailService } from '@/services/email'
+import { emailClient } from '@/services/email-client'
 import { emailClient } from '@/services/email-client'
 
 interface RecoverDeviceFormProps {
@@ -126,20 +126,25 @@ export function RecoverDeviceForm({
           })
 
           if (values.shouldNotify && occurrence.user.email) {
-            console.log(occurrence.user.email)
-            await createMessaging({
-              subject: 'Seu dispositivo foi recuperado!',
-              content: `
-                <h1>Olá ${occurrence.user.name},</h1>
-                <p>Seu dispositivo ${occurrence.device.phone_model} foi recuperado!</p>
-                <p>Você pode retirá-lo no seguinte local: ${values.location}</p>
-                <p>Informações adicionais: ${values.description || 'Nenhuma informação adicional.'}</p>
-                <br/>
-                <p>Atenciosamente,</p>
-                <p>Equipe ProcuraAí</p>
-              `,
-              users: [occurrence.user.email],
-            })
+            try {
+              await emailClient.sendDeviceRecoveryEmail({
+                userName: occurrence.user.name,
+                userEmail: occurrence.user.email,
+                deviceModel: occurrence.device.phone_model,
+                deviceBrand: occurrence.device.brand,
+                location: values.location,
+                description: values.description,
+                emergencyContacts: occurrence.user.emergency_contacts?.map(contact => ({
+                  name: contact.name,
+                  email: contact.email
+                }))
+              });
+              
+              toast.success('Email de notificação enviado com sucesso!');
+            } catch (error) {
+              console.error('Erro ao enviar email:', error);
+              toast.error('Não foi possível enviar o email de notificação. Tente novamente.');
+            }
           }
 
           setOccurrences(prevOccurrences =>
