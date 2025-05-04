@@ -1,3 +1,9 @@
+import { emailService as nodemailerService } from './nodemailer';
+
+if (typeof window !== 'undefined') {
+  throw new Error('Este módulo só pode ser importado no servidor');
+}
+
 interface SendEmailProps {
   subject: string;
   content: string;
@@ -14,30 +20,22 @@ interface DeviceRecoveryEmailProps {
   deviceBrand: string;
   location: string;
   description?: string;
+  emergencyContacts?: Array<{
+    name: string;
+    email: string;
+  }>;
 }
 
 export const emailService = {
   async sendEmail({ subject, content, users }: SendEmailProps) {
+    
     try {
-      const response = await fetch('/api/send-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          subject,
-          content,
-          users,
-        }),
+      return await nodemailerService.sendEmail({
+        from: 'ProcuraAí <procuraai.noreply@gmail.com>',
+        to: users.map(user => user.email),
+        subject,
+        html: content,
       });
-
-      const data = await response.json();
-      
-      if (!data.success) {
-        throw new Error(data.error);
-      }
-
-      return data.data;
     } catch (error) {
       console.error('Erro ao enviar email:', error);
       throw error;
@@ -51,6 +49,7 @@ export const emailService = {
     deviceBrand,
     location,
     description,
+    emergencyContacts,
   }: DeviceRecoveryEmailProps) {
     const emailContent = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -85,7 +84,7 @@ export const emailService = {
       </div>
     `.trim();
 
-    return this.sendEmail({
+    await this.sendEmail({
       subject: 'Seu dispositivo foi recuperado!',
       content: emailContent,
       users: [{
@@ -93,5 +92,18 @@ export const emailService = {
         name: userName
       }]
     });
+
+    if (emergencyContacts && emergencyContacts.length > 0) {
+      for (const contact of emergencyContacts) {
+        await this.sendEmail({
+          subject: `Dispositivo de ${userName} foi recuperado`,
+          content: emailContent,
+          users: [{
+            email: contact.email,
+            name: contact.name
+          }]
+        });
+      }
+    }
   }
 }; 

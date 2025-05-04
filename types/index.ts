@@ -27,6 +27,10 @@ export interface OccurrencesProps {
     name: string
     email: string
     cpf: string
+    emergency_contacts?: Array<{
+      name: string
+      email: string
+    }>
   }
 }
 

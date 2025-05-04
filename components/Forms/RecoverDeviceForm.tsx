@@ -38,7 +38,7 @@ import type { OccurrencesProps } from '@/types'
 import { createEvent } from '@/functions/event/create-event'
 import { updateDeviceStatus } from '@/functions/device/update-device-status'
 import { toast } from 'react-toastify'
-import { emailService } from '@/services/email'
+import { emailClient } from '@/services/email-client'
 
 interface RecoverDeviceFormProps {
   occurrence: OccurrencesProps
@@ -107,13 +107,17 @@ export function RecoverDeviceForm({
 
           if (values.shouldNotify && occurrence.user.email) {
             try {
-              await emailService.sendDeviceRecoveryEmail({
+              await emailClient.sendDeviceRecoveryEmail({
                 userName: occurrence.user.name,
                 userEmail: occurrence.user.email,
                 deviceModel: occurrence.device.phone_model,
                 deviceBrand: occurrence.device.brand,
                 location: values.location,
-                description: values.description
+                description: values.description,
+                emergencyContacts: occurrence.user.emergency_contacts?.map(contact => ({
+                  name: contact.name,
+                  email: contact.email
+                }))
               });
               
               toast.success('Email de notificação enviado com sucesso!');
@@ -264,9 +268,8 @@ export function RecoverDeviceForm({
                 <FormField
                   control={form.control}
                   name="location"
-                  className="flex flex-col gap-2"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex flex-col gap-2">
                       <FormLabel className="font-medium text-base">
                         Local para retirada do dispositivo
                       </FormLabel>
