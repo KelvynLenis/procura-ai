@@ -56,8 +56,6 @@ export function Dashboard() {
         listEvents(),
       ])
 
-      console.log('fetchedEvents', fetchedEvents)
-
       if (devicesData.length === 0) return []
 
       const enrichDevice = async (device: Device) => {
