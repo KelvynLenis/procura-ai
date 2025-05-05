@@ -50,5 +50,6 @@ export async function listEvents(): Promise<Event[]> {
       break
     }
   }
+
   return allEvents
 }

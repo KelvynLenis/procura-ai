@@ -1,4 +1,4 @@
-import { Device } from '@/types'
+import type { Device } from '@/types'
 
 interface ImeiCheckResponse {
   status: string
@@ -18,60 +18,76 @@ interface ImeiValidationResult {
   error?: string
 }
 
-async function validateImeiWithExternalApi(imei: string, brand: string, model: string): Promise<ImeiValidationResult> {
+async function validateImeiWithExternalApi(
+  imei: string,
+  brand: string,
+  model: string
+): Promise<ImeiValidationResult> {
   try {
-    const response = await fetch(`https://alpha.imeicheck.com/api/modelBrandName?imei=${imei}&format=json`)
-    
+    const response = await fetch(
+      `https://alpha.imeicheck.com/api/modelBrandName?imei=${imei}&format=json`
+    )
+
     if (!response.ok) {
       console.error('Erro ao validar IMEI com API externa')
       return {
         isValid: false,
-        error: 'Não foi possível validar o IMEI no momento. Por favor, tente novamente mais tarde.'
+        error:
+          'Não foi possível validar o IMEI no momento. Por favor, tente novamente mais tarde.',
       }
     }
 
     const data: ImeiCheckResponse = await response.json()
-    
+
     if (data.status !== 'succes') {
       console.error('API retornou status inválido')
       return {
         isValid: false,
-        error: 'Não foi possível validar o IMEI no momento. Por favor, tente novamente mais tarde.'
+        error:
+          'Não foi possível validar o IMEI no momento. Por favor, tente novamente mais tarde.',
       }
     }
 
     const normalizedBrand = brand.toLowerCase().trim()
     const normalizedApiBrand = data.object.brand.toLowerCase().trim()
-    
+
     if (normalizedBrand !== normalizedApiBrand) {
-      console.error(`O Fabricante informado (${brand}) não corresponde ao IMEI (${data.object.brand})`)
+      console.error(
+        `O Fabricante informado (${brand}) não corresponde ao IMEI (${data.object.brand})`
+      )
       return {
         isValid: false,
-        error: 'O Fabricante informado não corresponde ao IMEI.'
+        error: 'O Fabricante informado não corresponde ao IMEI.',
       }
     }
 
     const normalizedModel = model.toLowerCase().trim()
     const normalizedApiModel = data.object.name.toLowerCase().trim()
     const normalizedApiModelNumber = data.object.model.toLowerCase().trim()
-    
-    const modelMatches = 
-      normalizedModel.includes(normalizedApiModel) || 
+
+    const modelMatches =
+      normalizedModel.includes(normalizedApiModel) ||
       normalizedApiModel.includes(normalizedModel) ||
       normalizedModel.includes(normalizedApiModelNumber) ||
       normalizedApiModelNumber.includes(normalizedModel)
 
     if (!modelMatches) {
-      console.error(`Modelo informado (${model}) não corresponde ao IMEI (${data.object.name} / ${data.object.model})`)
+      console.error(
+        `Modelo informado (${model}) não corresponde ao IMEI (${data.object.name} / ${data.object.model})`
+      )
       return {
         isValid: false,
-        error: 'O modelo informado não corresponde ao IMEI.'
+        error: 'O modelo informado não corresponde ao IMEI.',
       }
     }
 
     console.log('IMEI validado com sucesso:', {
       informado: { fabricante: brand, modelo: model },
-      api: { fabricante: data.object.brand, modelo: data.object.name, modelNumber: data.object.model }
+      api: {
+        fabricante: data.object.brand,
+        modelo: data.object.name,
+        modelNumber: data.object.model,
+      },
     })
 
     return { isValid: true }
@@ -79,12 +95,17 @@ async function validateImeiWithExternalApi(imei: string, brand: string, model: s
     console.error('Erro ao validar IMEI:', error)
     return {
       isValid: false,
-      error: 'Não foi possível validar o IMEI no momento. Por favor, tente novamente mais tarde.'
+      error:
+        'Não foi possível validar o IMEI no momento. Por favor, tente novamente mais tarde.',
     }
   }
 }
 
-export async function checkImei(imei: string, brand?: string, model?: string): Promise<ImeiValidationResult> {
+export async function checkImei(
+  imei: string,
+  brand?: string,
+  model?: string
+): Promise<ImeiValidationResult> {
   try {
     const params = new URLSearchParams({
       'queries[0]': JSON.stringify({
@@ -117,7 +138,7 @@ export async function checkImei(imei: string, brand?: string, model?: string): P
     if (imeiExists) {
       return {
         isValid: false,
-        error: 'Este IMEI já está cadastrado.'
+        error: 'Este IMEI já está cadastrado.',
       }
     }
 
@@ -130,7 +151,8 @@ export async function checkImei(imei: string, brand?: string, model?: string): P
     console.error('Erro ao verificar IMEI:', error)
     return {
       isValid: false,
-      error: 'Não foi possível verificar o IMEI no momento. Por favor, tente novamente mais tarde.'
+      error:
+        'Não foi possível verificar o IMEI no momento. Por favor, tente novamente mais tarde.',
     }
   }
-} 
+}

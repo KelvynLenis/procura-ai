@@ -2,7 +2,7 @@ export async function getUserInfo(auth_id: string) {
   const allUsers = []
   let offset = 0
   const limit = 25
-  let total = Infinity
+  let total = Number.POSITIVE_INFINITY
 
   while (offset < total) {
     const params = new URLSearchParams({
@@ -39,4 +39,4 @@ export async function getUserInfo(auth_id: string) {
     }
   }
   return allUsers
-} 
+}

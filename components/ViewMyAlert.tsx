@@ -57,28 +57,44 @@ export function ViewMyAlert({
         <div className="flex flex-col gap-5">
           <div className="flex">
             <div className="flex flex-col gap-2 w-full">
-              <span className="font-bold">
+              <div className="font-bold">
                 Tipo de alerta:{' '}
                 <span className="font-normal">
                   {event?.type ? event?.type : 'Tipo de alerta não registrado'}
                 </span>
-              </span>
-              <span className="font-bold">
+              </div>
+              <div className="font-bold">
                 Descrição do alerta:{' '}
                 <span className="font-normal">
                   {event?.description
                     ? event?.description
                     : 'Descrição não registrada'}
                 </span>
-              </span>
-              <span className="font-bold">
+              </div>
+              <div className="font-bold">
                 Data e hora da ocorrência:{' '}
                 <span className="font-normal">
                   {event?.time_event
                     ? formatDateTime(event.time_event)
                     : 'Data não registrada'}
                 </span>
-              </span>
+              </div>
+
+              <div className="font-bold">
+                Local de recuperação:{' '}
+                <span className="font-normal">
+                  {event?.retrieval_location
+                    ? event?.retrieval_location
+                    : 'Local não registrado'}
+                </span>
+              </div>
+
+              <div className="font-bold">
+                Endereço:{' '}
+                <span className="font-normal">
+                  {event?.address ? event?.address : 'Endereço não registrado'}
+                </span>
+              </div>
             </div>
 
             <div className="flex flex-col w-1/3 items-end">
