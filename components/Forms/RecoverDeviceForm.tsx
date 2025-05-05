@@ -40,7 +40,6 @@ import { getUser } from '@/functions/user/get-user'
 import { account } from '@/lib/appwrite'
 import { getUserInfo } from '@/functions/user/get-user-info'
 import { emailClient } from '@/services/email-client'
-import { emailClient } from '@/services/email-client'
 
 interface RecoverDeviceFormProps {
   occurrence: OccurrencesProps
@@ -111,10 +110,7 @@ export function RecoverDeviceForm({
             id_device: occurrence?.device.$id!,
             time_event: new Date().toISOString(),
             last_location: location?.value as [number, number],
-            retrieval_location: `${values.location}`,
             retrieval_location: `Retirar o dispositivo no(a) ${values.location}`,
-            address: `${location?.address}`,
-            admin_id: `${user[0].user_id}`,
             description: `${values.description}`,
             address: `${location?.address}`,
             admin_id: `${user[0].user_id}`,
