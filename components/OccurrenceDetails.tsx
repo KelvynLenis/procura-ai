@@ -41,7 +41,7 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
 
   async function fetchEvents() {
     try {
-      const events = await listAllEvents(occurrence?.device.$id!)(events.length)
+      const events = await listAllEvents(occurrence?.device.$id!)
 
       setEvents(events)
     } catch (error) {
