@@ -4,6 +4,9 @@ interface CreateEventData {
   id_device: string
   time_event: string
   description?: string
+  retrieval_location?: string
+  address?: string
+  admin_id?: string
   type: string
   is_alert_on: boolean
   last_location: [number, number]
@@ -39,4 +42,4 @@ export async function createEvent(data: CreateEventData) {
     console.error(error)
     throw error
   }
-} 
+}

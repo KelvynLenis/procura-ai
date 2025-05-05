@@ -2,7 +2,6 @@
 
 import recoveryIcon from '../../assets/icons/recover.png'
 import { cn } from '@/lib/utils'
-import { CloudUpload } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import {
   Dialog,
@@ -19,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Label } from '../ui/label'
 import { Textarea } from '../ui/textarea'
 import { Checkbox } from '../ui/checkbox'
 import Button from '../Button'
@@ -38,6 +36,9 @@ import type { OccurrencesProps } from '@/types'
 import { createEvent } from '@/functions/event/create-event'
 import { updateDeviceStatus } from '@/functions/device/update-device-status'
 import { toast } from 'react-toastify'
+import { getUser } from '@/functions/user/get-user'
+import { account } from '@/lib/appwrite'
+import { getUserInfo } from '@/functions/user/get-user-info'
 
 interface RecoverDeviceFormProps {
   occurrence: OccurrencesProps
@@ -68,15 +69,25 @@ export function RecoverDeviceForm({
     {
       label: 'Central da Policia Civil',
       value: [-7.171597790141487, -34.87325528291976],
+      address:
+        'R. Manoel Rufino da Silva, 500 - Ernesto Geisel, João Pessoa - PB, 58076-005',
     },
     {
       label: 'DRF de Campina Grande',
       value: [-7.21587149685039, -35.8800659651219],
+      address:
+        'R. Janúncio Ferreira, 680 - Santo Antônio, Campina Grande - PB, 58102-555',
     },
-    { label: 'DRF de Patos', value: [-7.028485393244931, -37.288017090181285] },
+    {
+      label: 'DRF de Patos',
+      value: [-7.028485393244931, -37.288017090181285],
+      address: 'Adélia Urquiza,179, bairro Liberdade, Patos/PB',
+    },
     {
       label: 'Central de Policia de Guarabira',
       value: [-6.849307249237192, -35.5038465361273],
+      address:
+        'Tv. Lodônio de Bulhões, 36-112 - Alto Boa Vista, Guarabira - PB, 58200-000',
     },
   ]
 
@@ -87,11 +98,18 @@ export function RecoverDeviceForm({
           option => option.label === values.location
         )
         try {
+          const authUser = await account.get()
+
+          const user = await getUserInfo(authUser.$id)
+
           await createEvent({
             id_device: occurrence?.device.$id!,
             time_event: new Date().toISOString(),
             last_location: location?.value as [number, number],
-            description: `Retirar o dispositivo no(a) ${values.location}`,
+            retrieval_location: `Retirar o dispositivo no(a) ${values.location}`,
+            description: `${values.description}`,
+            address: `${location?.address}`,
+            admin_id: `${user[0].user_id}`,
             type: 'Recuperado',
             is_alert_on: false,
             id_district: '',

@@ -44,7 +44,9 @@ export function Dashboard() {
   const [isLoading, setIsLoading] = useState(false)
   const [districts, setDistricts] = useState<District[]>([])
   const [notifications, setNotifications] = useState<Notification[]>([])
-  const [selectedLocation, setSelectedLocation] = useState<[number, number] | undefined>()
+  const [selectedLocation, setSelectedLocation] = useState<
+    [number, number] | undefined
+  >()
   const router = useRouter()
 
   async function getDashboardData(): Promise<OccurrencesProps[]> {
@@ -138,7 +140,7 @@ export function Dashboard() {
     const relatedOccurrence = occurrences.find(
       occ => occ.device.$id === notification.id_device
     )
-    
+
     if (relatedOccurrence?.event?.last_location) {
       // Reseta a localização antes de definir a nova para garantir que o useEffect seja disparado
       setSelectedLocation(undefined)
@@ -177,8 +179,8 @@ export function Dashboard() {
           </div>
 
           <div className="flex w-full gap-4">
-            <OccurrencesMap 
-              occurences={occurrences} 
+            <OccurrencesMap
+              occurences={occurrences}
               notifications={notifications}
               setNotifications={setNotifications}
               selectedLocation={selectedLocation}
