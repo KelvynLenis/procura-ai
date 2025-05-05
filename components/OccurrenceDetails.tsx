@@ -170,7 +170,7 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                   <span className="w-40 font-medium">ID</span>
                   <span className="w-full">
                     {occurrence?.event
-                      ? occurrence?.event?.$id.slice(0, 5)
+                      ? '#' + occurrence?.event?.$id.slice(0, 5)
                       : 'Este evento não existe.'}
                   </span>
                 </div>

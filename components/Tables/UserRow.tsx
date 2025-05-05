@@ -27,6 +27,7 @@ import { listUserDevices } from '@/functions/device/list-user-devices'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import deviceInfo from '../../assets/icons/device-info.svg'
 import Image from 'next/image'
+import { getOperator } from '@/functions/operators/get-operator'
 
 // interface User {
 //   $id: string
@@ -119,6 +120,12 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
         error
       )
     }
+  }
+
+  async function fetchOperator(operatorId: string) {
+    const operator = await getOperator(operatorId)
+
+    return operator
   }
 
   useEffect(() => {
@@ -283,6 +290,9 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                               Número
                             </TableHead>
                             <TableHead className="font-medium text-procura-ai-zinc">
+                              Operadora
+                            </TableHead>
+                            <TableHead className="font-medium text-procura-ai-zinc">
                               Fabricante
                             </TableHead>
                             <TableHead className="font-medium text-procura-ai-zinc">
@@ -301,7 +311,14 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                             devices.map((device, index) => (
                               <TableRow key={index}>
                                 <TableCell className="">
-                                  {device.phone_number}
+                                  {`(${device.phone_number.slice(0, 2)}) ${device.phone_number.slice(2, 7)}-${device.phone_number.slice(7, 11)}`}
+                                </TableCell>
+                                <TableCell className="">
+                                  {device.operator_id
+                                    ? fetchOperator(device.operator_id).then(
+                                        operator => operator?.name_operator
+                                      )
+                                    : 'N/A'}
                                 </TableCell>
                                 <TableCell className="capitalize">
                                   {device.brand}
