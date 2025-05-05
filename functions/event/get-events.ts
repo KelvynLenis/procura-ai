@@ -51,5 +51,6 @@ export async function getEvents(): Promise<Event[]> {
     }
   }
 
+  console.log('allEvents', allEvents)
   return allEvents
 }
