@@ -40,7 +40,6 @@ import { emailClient } from '@/services/email-client'
 import { getUser } from '@/functions/user/get-user'
 import { account } from '@/lib/appwrite'
 import { getUserInfo } from '@/functions/user/get-user-info'
-import { emailClient } from '@/services/email-client'
 
 interface RecoverDeviceFormProps {
   occurrence: OccurrencesProps
