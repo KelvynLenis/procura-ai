@@ -36,6 +36,7 @@ import type { OccurrencesProps } from '@/types'
 import { createEvent } from '@/functions/event/create-event'
 import { updateDeviceStatus } from '@/functions/device/update-device-status'
 import { toast } from 'react-toastify'
+import { emailClient } from '@/services/email-client'
 import { getUser } from '@/functions/user/get-user'
 import { account } from '@/lib/appwrite'
 import { getUserInfo } from '@/functions/user/get-user-info'
@@ -55,6 +56,7 @@ export function RecoverDeviceForm({
   const formSchema = z.object({
     description: z.string(),
     location: z.string().min(1, 'Selecione uma opção'),
+    shouldNotify: z.boolean().default(false),
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -62,6 +64,7 @@ export function RecoverDeviceForm({
     defaultValues: {
       description: '',
       location: '',
+      shouldNotify: false,
     },
   })
 
@@ -119,6 +122,28 @@ export function RecoverDeviceForm({
             is_stolen: false,
             status: 'Recuperado',
           })
+
+          if (values.shouldNotify && occurrence.user.email) {
+            try {
+              await emailClient.sendDeviceRecoveryEmail({
+                userName: occurrence.user.name,
+                userEmail: occurrence.user.email,
+                deviceModel: occurrence.device.phone_model,
+                deviceBrand: occurrence.device.brand,
+                location: values.location,
+                description: values.description,
+                emergencyContacts: occurrence.user.emergency_contacts?.map(contact => ({
+                  name: contact.name,
+                  email: contact.email
+                }))
+              });
+              
+              toast.success('Email de notificação enviado com sucesso!');
+            } catch (error) {
+              console.error('Erro ao enviar email:', error);
+              toast.error('Não foi possível enviar o email de notificação. Tente novamente.');
+            }
+          }
 
           setOccurrences(prevOccurrences =>
             prevOccurrences.map(prevOccurrence =>
@@ -261,9 +286,8 @@ export function RecoverDeviceForm({
                 <FormField
                   control={form.control}
                   name="location"
-                  className="flex flex-col gap-2"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex flex-col gap-2">
                       <FormLabel className="font-medium text-base">
                         Local para retirada do dispositivo
                       </FormLabel>
@@ -290,16 +314,24 @@ export function RecoverDeviceForm({
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2 font-medium">
-                  <Checkbox className="shadow-none rounded-sm border-[#232323]/90 font-medium" />
-                  Notificar proprietário através de e-mail e SMS
-                </div>
-                {/* <div className="flex items-center text-base gap-2 font-medium">
-                  <Checkbox className="shadow-none rounded-sm border-[#232323]/90 font-medium" />
-                  <span className="text-base">
-                    Notificar contatos de confiança
-                  </span>
-                </div> */}
+                <FormField
+                  control={form.control}
+                  name="shouldNotify"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-2">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="shadow-none rounded-sm border-[#232323]/90 font-medium"
+                        />
+                      </FormControl>
+                      <FormLabel className="font-medium !mt-0">
+                        Notificar proprietário através de e-mail e SMS
+                      </FormLabel>
+                    </FormItem>
+                  )}
+                />
               </div>
               {/* <div className="flex flex-col gap-2">
                 <Label className="font-medium text-base">

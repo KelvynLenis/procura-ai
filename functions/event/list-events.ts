@@ -51,5 +51,7 @@ export async function listEvents(): Promise<Event[]> {
     }
   }
 
+  console.log('allEvents', allEvents)
+
   return allEvents
 }

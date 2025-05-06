@@ -3,6 +3,8 @@ import { getStolenDevices } from '../devices/list-stolen-devices'
 import { getEvents } from '../event/get-events'
 import { getUser } from '../user/get-user'
 import { getDevices } from '../devices/list-devices'
+import { listContacts } from '../contact/list-contacts'
+import type { Contact } from '@/types'
 
 interface joinProps {
   devicesFilters?: QueryFilter[]
@@ -42,6 +44,9 @@ export async function joinDevicesEventsUsers(props?: joinProps) {
 
         const ownerResponse = await getUser({ filters: [userFilter] })
         const ownerInfo = ownerResponse?.[0]
+        
+        const emergencyContacts = await listContacts({ userIdParam: device.auth_id })
+        
         return {
           device: { ...device },
           event: recentEvent,
@@ -49,18 +54,20 @@ export async function joinDevicesEventsUsers(props?: joinProps) {
             name: ownerInfo?.name || 'Usuário excluído',
             email: ownerInfo?.email || 'Sem email',
             cpf: ownerInfo?.cpf || 'Sem CPF',
+            emergency_contacts: emergencyContacts?.map((contact: Contact) => ({
+              name: contact.name_contact,
+              email: contact.email_contact
+            }))
           },
         }
       })
     )
-
     return enrichedDevices
   } catch (error) {
     console.error(error)
   }
 }
 
-// unused function
 export async function joinUsersDevicesEvents(props?: joinProps) {
   const devicesFilters = props?.devicesFilters || []
   const eventsFilters = props?.eventsFilters || []
