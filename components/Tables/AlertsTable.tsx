@@ -184,10 +184,21 @@ export function AlertsTable({
         ...(ownerFilter.values.length > 0 ? [ownerFilter] : []),
       ]
 
+      const defaultDevicesStatusFilters = [
+        {
+          method: 'equal',
+          attribute: 'status',
+          values: ['Roubado', 'Furtado', 'Perdido', 'Recuperado'],
+        },
+      ]
+
       const filterOptions = {
-        ...(deviceActiveFilters.length > 0
-          ? { devicesFilters: deviceActiveFilters }
-          : {}),
+        devicesFilters:
+          deviceActiveFilters.length > 0 ? deviceActiveFilters : [],
+      }
+
+      if (statusFilter.values.length === 0) {
+        filterOptions.devicesFilters.push(defaultDevicesStatusFilters[0])
       }
 
       const occurrences = await joinDevicesEventsUsers(filterOptions)
@@ -209,7 +220,6 @@ export function AlertsTable({
       setOccurrences(occurrences || [])
       setIsLoading(false)
     }
-
     getOccurrences()
 
     setTotalFilters(brandFilter.values.length + statusFilter.values.length)

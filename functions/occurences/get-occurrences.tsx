@@ -44,9 +44,11 @@ export async function joinDevicesEventsUsers(props?: joinProps) {
 
         const ownerResponse = await getUser({ filters: [userFilter] })
         const ownerInfo = ownerResponse?.[0]
-        
-        const emergencyContacts = await listContacts({ userIdParam: device.auth_id })
-        
+
+        const emergencyContacts = await listContacts({
+          userIdParam: device.auth_id,
+        })
+
         return {
           device: { ...device },
           event: recentEvent,
@@ -56,8 +58,8 @@ export async function joinDevicesEventsUsers(props?: joinProps) {
             cpf: ownerInfo?.cpf || 'Sem CPF',
             emergency_contacts: emergencyContacts?.map((contact: Contact) => ({
               name: contact.name_contact,
-              email: contact.email_contact
-            }))
+              email: contact.email_contact,
+            })),
           },
         }
       })
