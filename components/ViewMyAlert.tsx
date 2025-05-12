@@ -34,7 +34,14 @@ export function ViewMyAlert({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const events = await getDeviceEvents(id, false)
+        if (status === 'Recuperado') {
+          const events = await getDeviceEvents(id, false)
+
+          setEvent(events[0])
+          return
+        }
+
+        const events = await getDeviceEvents(id, true)
 
         setEvent(events[0])
       } catch (error) {
@@ -83,16 +90,22 @@ export function ViewMyAlert({
               <div className="font-bold">
                 Local de recuperação:{' '}
                 <span className="font-normal">
-                  {event?.retrieval_location
+                  {status === 'Recuperado'
                     ? event?.retrieval_location
-                    : 'Local não registrado'}
+                      ? event?.retrieval_location
+                      : 'Local não registrado'
+                    : 'Esse dispositivo ainda não foi recuperado'}
                 </span>
               </div>
 
               <div className="font-bold">
                 Endereço:{' '}
                 <span className="font-normal">
-                  {event?.address ? event?.address : 'Endereço não registrado'}
+                  {status === 'Recuperado'
+                    ? event?.address
+                      ? event?.address
+                      : 'Endereço não registrado'
+                    : 'Esse dispositivo ainda não foi recuperado'}
                 </span>
               </div>
             </div>
