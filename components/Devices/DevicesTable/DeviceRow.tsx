@@ -295,7 +295,7 @@ export function DeviceRow({
                   </DialogTrigger>
                   <DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-fit py-8">
                     <DialogHeader>
-                      <DialogTitle>Preencha as informações</DialogTitle>
+                      <DialogTitle>Informações da ocorrência</DialogTitle>
                     </DialogHeader>
                     <ViewMyAlert
                       id={id}
