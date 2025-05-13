@@ -408,7 +408,6 @@ export function DeviceForm({
             render={({ field }) => (
               <FormItem className="flex flex-col w-full md:w-fit self-start">
                 <FormLabel className="text-lg w-fit text-center items-start flex">
-                  <span className="text-red-500 text-base">*</span>
                   Fabricante
                 </FormLabel>
                 <Popover
@@ -447,7 +446,6 @@ export function DeviceForm({
             render={({ field }) => (
               <FormItem className="flex flex-col w-full md:w-fit self-start">
                 <FormLabel className="text-lg w-fit text-center items-start flex">
-                  <span className="text-red-500 text-base">*</span>
                   Modelo do dispositivo
                 </FormLabel>
                 <Popover open={open} onOpenChange={setOpen}>

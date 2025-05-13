@@ -4,9 +4,9 @@ WORKDIR /home/node/app
 
 RUN apt-get update -y && apt-get install -y openssl
 
-COPY package.json  ./
+# COPY package.json  ./
 
-RUN yarn install
+# RUN yarn install
 
 COPY . .
 
