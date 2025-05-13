@@ -44,7 +44,7 @@ export default function signIn() {
           <Text className='underline self-start ml-16'>
             Esqueci minha senha
           </Text>
-          <Button variant='blue' onPress={() => router.push('/meus-dispositivos')}>
+          <Button variant='blue' onPress={() => router.push('/my-devices')}>
             Entrar
           </Button>
 
@@ -53,7 +53,7 @@ export default function signIn() {
           <Text>
             Não possui conta?
           </Text>
-          <Button variant='white'>
+          <Button variant='white' onPress={() => router.push('/auth/sign-up')}>
             Cadastre-se
           </Button>
       </View>
