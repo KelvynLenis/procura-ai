@@ -29,7 +29,7 @@ const InputField = ({
           </Text>
 
           <View
-            className={`w-9/12 px-4 flex flex-row justify-start shadow-xl items-center relative bg-white rounded-full border border-primary focus:border-primary-500`}
+            className={`w-80 px-4 flex flex-row justify-start shadow-xl items-center relative bg-white rounded-full border border-primary focus:border-primary-500`}
           >
             {/* {icon && icon} */}
             <TextInput
