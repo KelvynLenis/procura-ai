@@ -1,4 +1,5 @@
 import { InputFieldProps } from "@/interfaces/InputField";
+import { cn } from "@/utils/cn";
 import {
   TextInput,
   View,
@@ -15,6 +16,10 @@ const InputField = ({
   label,
   icon,
   secureTextEntry = false,
+  labelStyle,
+  containerStyle,
+  inputStyle,
+  iconStyle,
   className,
   ...props
 }: InputFieldProps) => {
@@ -29,11 +34,11 @@ const InputField = ({
           </Text>
 
           <View
-            className={`w-80 px-4 flex flex-row justify-start shadow-xl items-center relative bg-white rounded-full border border-primary focus:border-primary-500`}
+            className={cn(`w-80 px-4 flex flex-row justify-start shadow-xl items-center relative bg-white rounded-full border border-primary focus:border-primary-500`, containerStyle)}
           >
             {/* {icon && icon} */}
             <TextInput
-              className={`rounded-full p-4 text-[15px] flex-1 text-left`}
+              className={cn('rounded-full p-4 text-[15px] flex-1 text-left', inputStyle)}
               secureTextEntry={secureTextEntry} 
               {...props}
             />

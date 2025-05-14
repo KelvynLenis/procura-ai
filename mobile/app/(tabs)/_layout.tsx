@@ -44,7 +44,7 @@ export default function LoggedLayout() {
     >
       <Tabs.Screen 
         name="my-devices" 
-        options={{ headerShown: false, title: 'Meus dispositivos', tabBarIcon: ({ focused }) => (
+        options={{ headerShown: true, title: 'Meus dispositivos', tabBarIcon: ({ focused }) => (
             <>
               <TabIcon focused={focused} icon={<Smartphone size={20} color="black" />} title="Meus dispositivos" />
             </>
@@ -54,7 +54,7 @@ export default function LoggedLayout() {
 
       <Tabs.Screen 
         name="add-new" 
-        options={{ headerShown: false, title: 'Adicionar novo', tabBarIcon: ({ focused }) => (
+        options={{ headerShown: true, title: 'Adicionar novo', tabBarIcon: ({ focused }) => (
             <>
               <TabIcon focused={focused} icon={<PlusCircle size={20} color="black" />} title="Adicionar novo" />
             </>
@@ -63,7 +63,7 @@ export default function LoggedLayout() {
       />
       <Tabs.Screen 
         name="contacts" 
-        options={{ headerShown: false, title: 'Contatos de confiança', tabBarIcon: ({ focused }) => (
+        options={{ headerShown: true, title: 'Contatos de confiança', tabBarIcon: ({ focused }) => (
             <>
               <TabIcon focused={focused} icon={<Contact size={20} color="black" />} title="Contatos de confiança" />
             </>
@@ -73,7 +73,7 @@ export default function LoggedLayout() {
 
       <Tabs.Screen 
         name="profile" 
-        options={{ headerShown: false, title: 'Perfil', tabBarIcon: ({ focused }) => (
+        options={{ headerShown: true, title: 'Perfil', tabBarIcon: ({ focused }) => (
             <>
               <TabIcon focused={focused} icon={<User size={20} color="black" />} title="Perfil" />
             </>
