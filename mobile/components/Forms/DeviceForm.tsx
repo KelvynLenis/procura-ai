@@ -28,9 +28,9 @@ const DeviceForm = ({ setIsModalVisible }: DeviceFormProps) => {
         <View className='w-full h-0.5 bg-zinc-200' />
 
         <InputField
-          label="*IMEI"
+          label="IMEI"
           placeholder="IMEI"
-          // icon={<Mail size={20} color="gray" />}
+          required
           containerStyle='rounded-md border-0 bg-zinc-100'
           textContentType="none"
           value={form.imei}
