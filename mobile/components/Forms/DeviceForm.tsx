@@ -5,11 +5,11 @@ import Button from '../Button';
 import { router } from 'expo-router';
 import { CircleAlert } from 'lucide-react-native';
 
-interface DeviceProps {
+interface DeviceFormProps {
   setIsModalVisible?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const DeviceForm = ({ setIsModalVisible }: DeviceProps) => {
+const DeviceForm = ({ setIsModalVisible }: DeviceFormProps) => {
   const [form, setForm] = useState({
     imei: "",
     model: "",

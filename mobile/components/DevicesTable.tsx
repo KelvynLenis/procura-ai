@@ -4,11 +4,13 @@ import { Eye, Pencil, Trash2, TriangleAlert } from 'lucide-react-native'
 import { router } from 'expo-router';
 import ConfirmationDialog from './ConfirmationDialog';
 import DeviceForm from './Forms/DeviceForm';
+import AlertForm from './Forms/AlertForm';
 
 const DeviceRow = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [isConfirmDialogVisible, setIsConfirmDialogVisible] = useState(false);
+  const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
+  const [isAlertModalVisible, setIsAlertModalVisible] = useState(false);
 
   return (
     <>
@@ -22,7 +24,7 @@ const DeviceRow = () => {
           </View>
         </View>
           <View className='flex flex-row gap-2 w-[20%]'> 
-            <TouchableOpacity className='bg-red-500 flex items-center justify-center w-9 h-9 rounded-md'>
+            <TouchableOpacity onPress={() => setIsAlertModalVisible(true)} className='bg-red-500 flex items-center justify-center w-9 h-9 rounded-md'>
               <TriangleAlert size={28} color='red' fill={'white'} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setIsModalVisible(true)} className='bg-white border border-zinc-400 flex items-center justify-center w-9 h-9 rounded-md'>
@@ -30,17 +32,18 @@ const DeviceRow = () => {
             </TouchableOpacity>
           </View>
       </View>
+
       <Modal animationType='fade' transparent visible={isModalVisible} onRequestClose={() => setIsModalVisible(false)}>
         <Pressable className='flex-1 bg-black/50 flex items-center justify-center' onPress={() => setIsModalVisible(false)}>
           <Pressable onPress={(e) => e.stopPropagation()} className='bg-white w-[90%] h-80 flex rounded-2xl overflow-hidden'>
             <View className='w-full h-16 flex flex-row items-center justify-end gap-3 px-5 bg-primary rounded-t-2xl'>
-              <TouchableOpacity onPress={() => router.push('/add-new')} className='bg-red-500 flex items-center justify-center w-9 h-9 rounded-md border border-white'>
+              <TouchableOpacity onPress={() => setIsAlertModalVisible(true)} className='bg-red-500 flex items-center justify-center w-9 h-9 rounded-md border border-white'>
                 <TriangleAlert size={28} color='red' fill={'white'} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setIsEditModalVisible(true)} className='bg-white border border-zinc-400 flex items-center justify-center w-9 h-9 rounded-md'>
               <Pencil size={24} color='black' />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setIsConfirmDialogVisible(true)} className='bg-white border border-zinc-400 flex items-center justify-center w-9 h-9 rounded-md'>
+            <TouchableOpacity onPress={() => setIsConfirmModalVisible(true)} className='bg-white border border-zinc-400 flex items-center justify-center w-9 h-9 rounded-md'>
               <Trash2 size={24} color='red' />
             </TouchableOpacity>
             </View>
@@ -72,6 +75,14 @@ const DeviceRow = () => {
         </Pressable>
       </Modal>
 
+      <Modal animationType='fade' transparent visible={isAlertModalVisible} onRequestClose={() => setIsAlertModalVisible(false)}>
+        <Pressable className='flex-1 bg-black/50 flex items-center justify-center' onPress={() => setIsEditModalVisible(false)}>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '76%', width: '95%' }} className='bg-white flex rounded-2xl overflow-hidden'>
+            <AlertForm setIsModalVisible={() => setIsAlertModalVisible(false)} />
+          </Pressable>
+        </Pressable>
+      </Modal>
+
       <Modal animationType='fade' transparent visible={isEditModalVisible} onRequestClose={() => setIsEditModalVisible(false)}>
         <Pressable className='flex-1 bg-black/50 flex items-center justify-center' onPress={() => setIsEditModalVisible(false)}>
           <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '85%', width: '95%' }} className='bg-white flex rounded-2xl overflow-hidden'>
@@ -80,7 +91,7 @@ const DeviceRow = () => {
         </Pressable>
       </Modal>
 
-      <ConfirmationDialog onConfirm={() => setIsConfirmDialogVisible(false)} title='Deseja realmente excluir o dispositivo?' description='Essa ação não pode ser desfeita. Isso excluirá permanentemente o dispositivo e removerá seus dados de nossos servidores.' isModalVisible={isConfirmDialogVisible} setIsModalVisible={() => setIsConfirmDialogVisible(false)} />
+      <ConfirmationDialog onConfirm={() => setIsConfirmModalVisible(false)} title='Deseja realmente excluir o dispositivo?' description='Essa ação não pode ser desfeita. Isso excluirá permanentemente o dispositivo e removerá seus dados de nossos servidores.' isModalVisible={isConfirmModalVisible} setIsModalVisible={() => setIsConfirmModalVisible(false)} />
     </>
   )
 }
