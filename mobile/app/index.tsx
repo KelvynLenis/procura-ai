@@ -103,7 +103,7 @@ export default function Index() {
           </View>
         </View>
 
-        <Button variant="blue" className="self-center">
+        <Button onPress={() => router.push('/auth/sign-up')} variant="blue" className="self-center">
           Cadastre-se
         </Button>
       </View>

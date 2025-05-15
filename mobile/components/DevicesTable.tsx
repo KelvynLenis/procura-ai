@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import ConfirmationDialog from './ConfirmationDialog';
 import DeviceForm from './Forms/DeviceForm';
 import AlertForm from './Forms/AlertForm';
+import Button from './Button';
 
 const DeviceRow = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -111,8 +112,9 @@ const DevicesTable = () => {
         </View>
       </View>
 
-      <View className='py-2 px-1'>
+      <View className='py-2 px-1 gap-2'>
         <DeviceRow />
+        <Button variant='blue' onPress={() => router.push('/add-new')} className='w-52 self-end'>Cadastrar dispositivo</Button>
       </View>
     </View>
   )
