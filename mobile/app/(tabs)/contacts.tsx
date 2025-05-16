@@ -13,7 +13,7 @@ const Card = () => {
 
   return (
     <>
-      <View className='bg-white w-[95%] flex rounded-2xl' style={{ height: 160 }}>
+      <View className='bg-white w-full flex rounded-2xl' style={{ height: 160 }}>
         <View className='w-full h-16 flex flex-row items-center justify-end gap-3 px-5 bg-primary rounded-t-2xl'>
           <TouchableOpacity onPress={() => setIsEditModalVisible(true)} className='bg-white border border-zinc-400 flex items-center justify-center w-9 h-9 rounded-md'>
           <Pencil size={24} color='black' />
