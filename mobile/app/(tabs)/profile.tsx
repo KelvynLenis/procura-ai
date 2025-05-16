@@ -13,7 +13,7 @@ export default function Profile() {
           ),
         }}
       />
-      <View>
+      <View className='bg-[#F2F8FD] w-screen h-screen p-2'>
         <Text>Perfil</Text>
       </View>
     </>

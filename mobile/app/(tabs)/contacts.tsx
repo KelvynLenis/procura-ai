@@ -13,7 +13,7 @@ export default function Contacts() {
           ),
         }}
       />
-      <View>
+      <View className='w-screen h-screen bg-[#F2F8FD] px-4'>
         <Text>Contatos de confiança</Text>
       </View>
     </>
