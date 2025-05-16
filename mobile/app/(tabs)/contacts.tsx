@@ -44,7 +44,7 @@ const Card = () => {
         </Pressable>
       </Modal>
 
-      <ConfirmationDialog className='h-40' isModalVisible={isConfirmModalVisible} setIsModalVisible={setIsConfirmModalVisible} title='Excluir contato' description='Tem certeza que deseja excluir esse contato?' />
+      <ConfirmationDialog className='h-56' isModalVisible={isConfirmModalVisible} setIsModalVisible={setIsConfirmModalVisible} title='Excluir contato' description='Tem certeza que deseja excluir esse contato?' />
     </>
   )
 }
