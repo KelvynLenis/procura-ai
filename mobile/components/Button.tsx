@@ -6,8 +6,9 @@ import { cn } from '@/utils/cn'
 const Button = ({ children, className, variant, ...props }: ButtonProps) => {
   return (
     <TouchableOpacity
+      style={{ paddingVertical: 10 }}
       className={cn(
-        'flex items-center justify-center px-6 py-2 rounded-full font-semibold',
+        'flex items-center justify-center px-6 rounded-full font-semibold',
         variant === 'blue' && 'bg-primary',
         variant === 'white' && 'bg-white border border-primary',
         variant === 'red' && 'bg-red-500',
