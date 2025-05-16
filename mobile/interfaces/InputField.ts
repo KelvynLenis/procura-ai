@@ -9,5 +9,6 @@ export interface InputFieldProps extends TextInputProps {
   containerStyle?: string;
   inputStyle?: string;
   iconStyle?: string;
+  iconEnd?: boolean;
   className?: string;
 }
