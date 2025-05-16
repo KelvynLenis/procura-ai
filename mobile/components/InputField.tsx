@@ -1,4 +1,5 @@
 import { InputFieldProps } from "@/interfaces/InputField";
+import { cn } from "@/utils/cn";
 import {
   TextInput,
   View,
@@ -15,6 +16,11 @@ const InputField = ({
   label,
   icon,
   secureTextEntry = false,
+  labelStyle,
+  containerStyle,
+  required,
+  inputStyle,
+  iconStyle,
   className,
   ...props
 }: InputFieldProps) => {
@@ -24,16 +30,23 @@ const InputField = ({
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View className="my-2 w-full">
-          <Text className={`text-lg mb-3 ml-5`}>
-            {label}
-          </Text>
+          <View className="flex flex-row gap-2">
+            {
+              required && (
+                <Text style={{ color: 'red' }}>*</Text>
+              )
+            }
+            <Text className={cn(`text-lg mb-3`, labelStyle)}>
+              {label}
+            </Text>
+          </View>
 
           <View
-            className={`w-80 px-4 flex flex-row justify-start shadow-xl items-center relative bg-white rounded-full border border-primary focus:border-primary-500`}
+            className={cn(`w-80 px-4 flex flex-row justify-start shadow-xl items-center relative bg-white rounded-full border border-primary focus:border-primary-500`, containerStyle)}
           >
             {/* {icon && icon} */}
             <TextInput
-              className={`rounded-full p-4 text-[15px] flex-1 text-left`}
+              className={cn('rounded-full p-4 text-[15px] flex-1 text-justify', inputStyle)}
               secureTextEntry={secureTextEntry} 
               {...props}
             />

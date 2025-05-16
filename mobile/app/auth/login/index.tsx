@@ -48,7 +48,7 @@ export default function signIn() {
             Entrar
           </Button>
 
-          <View className='w-10/12 h-[1.5px] bg-primary' />
+          <View className='w-[90%] h-[1.5px] bg-primary' />
 
           <Text>
             Não possui conta?

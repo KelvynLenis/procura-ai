@@ -14,7 +14,7 @@ export default function Index() {
       </View>
       <ImageBackground
         source={images.hero}
-        className="flex-1 flex-row bg-primary pr-2 pt-5"
+        className="flex-1 flex-row bg-primary pr-2 py-5"
       >
         <View className="w-1/2">
         <Image source={images.landing} style={{ width: '100%', height: '90%' }} />
@@ -23,7 +23,7 @@ export default function Index() {
         
         <View className="flex w-1/2 gap-2">
           <Text className="text-primary font-bold text-2xl text-right leading-9">
-            Perdeu ou teve seu celular roubado? 
+            Perdeu ou teve seu celular roubado?
             O{' '}
             <View className="bg-primary rounded-md p-1">
               <Text className="text-white font-bold">Procura.Aí</Text>
@@ -103,7 +103,7 @@ export default function Index() {
           </View>
         </View>
 
-        <Button variant="blue" className="self-center">
+        <Button onPress={() => router.push('/auth/sign-up')} variant="blue" className="self-center">
           Cadastre-se
         </Button>
       </View>

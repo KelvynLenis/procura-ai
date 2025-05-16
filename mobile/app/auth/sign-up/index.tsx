@@ -97,7 +97,7 @@ export default function signUp() {
           <Text>
             Já possui conta?{' '}
             <Link href={'/auth/login'}>
-              <Text>
+              <Text className='text-blue-500 underline'>
                 Faça login
               </Text>
             </Link>

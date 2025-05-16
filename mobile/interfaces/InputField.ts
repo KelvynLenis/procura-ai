@@ -5,6 +5,7 @@ export interface InputFieldProps extends TextInputProps {
   icon?: React.ReactNode;
   secureTextEntry?: boolean;
   labelStyle?: string;
+  required?: boolean;
   containerStyle?: string;
   inputStyle?: string;
   iconStyle?: string;
