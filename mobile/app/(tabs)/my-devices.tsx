@@ -15,7 +15,7 @@ export default function MyDevices() {
           ),
         }}
       />
-      <View className='bg-white w-screen h-screen p-2'>
+      <View className='bg-[#F2F8FD] w-screen h-screen p-2'>
         <DevicesTable />
       </View>
     </>

@@ -2,6 +2,7 @@ import { View, Text } from 'react-native'
 import React from 'react'
 import { Stack } from 'expo-router'
 import Header from '@/components/Header'
+import ProfileForm from '@/components/Forms/ProfileForm'
 
 export default function Profile() {
   return (
@@ -13,8 +14,8 @@ export default function Profile() {
           ),
         }}
       />
-      <View>
-        <Text>Perfil</Text>
+      <View className='bg-[#F2F8FD] w-screen h-screen p-2'>
+        <ProfileForm />
       </View>
     </>
   )

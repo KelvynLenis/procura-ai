@@ -21,6 +21,7 @@ const InputField = ({
   required,
   inputStyle,
   iconStyle,
+  iconEnd,
   className,
   ...props
 }: InputFieldProps) => {
@@ -44,12 +45,13 @@ const InputField = ({
           <View
             className={cn(`w-80 px-4 flex flex-row justify-start shadow-xl items-center relative bg-white rounded-full border border-primary focus:border-primary-500`, containerStyle)}
           >
-            {/* {icon && icon} */}
+            {icon && !iconEnd && icon}
             <TextInput
               className={cn('rounded-full p-4 text-[15px] flex-1 text-justify', inputStyle)}
               secureTextEntry={secureTextEntry} 
               {...props}
-            />
+              />
+            {icon && iconEnd && icon}
           </View>
         </View>
       </TouchableWithoutFeedback>
