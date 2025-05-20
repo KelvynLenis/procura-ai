@@ -17,7 +17,7 @@ import {
 import { MarkAsStolenForm } from '../../Forms/MarkAsStolenForm'
 import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
-import { ViewMyAlert } from '../../ViewMyAlert'
+import { ViewMyAlert2 } from '../../ViewMyAlert2'
 import { ConfirmationDialog } from '../../ConfirmationDialog'
 import { deleteDevice } from '@/functions/device/delete-device'
 import { recoverDevice } from '@/functions/device/recover-device'
@@ -297,7 +297,7 @@ export function DeviceRow({
                     <DialogHeader>
                       <DialogTitle>Informações da ocorrência</DialogTitle>
                     </DialogHeader>
-                    <ViewMyAlert
+                    <ViewMyAlert2
                       id={id}
                       status={status}
                       handleDeviceRecovery={handleDeviceRecovery}

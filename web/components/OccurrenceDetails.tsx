@@ -156,7 +156,7 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                   alt="device-info"
                   className="w-12 h-12"
                 />
-                <span>Informações do ocorrência</span>
+                <span>Informações da ocorrência</span>
               </div>
               <div
                 className={cn(
