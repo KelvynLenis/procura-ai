@@ -156,7 +156,7 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                   alt="device-info"
                   className="w-12 h-12"
                 />
-                <span>Informações do ocorrência</span>
+                <span>Informações da ocorrência</span>
               </div>
               <div
                 className={cn(
@@ -247,7 +247,7 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                             'bg-robbery-bg text-red-600 px-3 py-1 ring-red-500',
                           prevEvent?.type === 'Furto simples' &&
                             'bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500',
-                          prevEvent?.type === 'Perda ou extravio' &&
+                          prevEvent?.type === 'Extravio ou Perda' &&
                             'bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500',
                           prevEvent?.type === 'Recuperado' &&
                             'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500',
