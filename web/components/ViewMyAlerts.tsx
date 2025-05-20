@@ -59,7 +59,7 @@ export function ViewMyAlerts({
           <ClipLoader color="#002E72" loading={isLoading} size={50} />
         </div>
       ) : (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5 overflow-y-auto max-h-[500px] pr-2">
           <div className="flex">
             <div className="flex flex-col gap-2 w-full">
               <div className="font-bold">
@@ -178,7 +178,7 @@ export function ViewMyAlerts({
                 </div>
               )}
               {isShowAllEventsOn && (
-                <div className="max-h-[300px] overflow-y-auto pr-2">
+                <div className="max-h-[300px]">
 
                 { events.map((prevEvent, index) => (
                   <div
