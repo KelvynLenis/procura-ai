@@ -60,7 +60,8 @@ export default function signIn() {
         type: error?.type,
         response: error?.response
       });
-      Alert.alert('Erro', 'Email ou senha inválidos');
+      // Alert.alert('Erro', 'Email ou senha inválidos');
+      Alert.alert('Erro', error?.message);
     } finally {
       setIsLoading(false);
     }
