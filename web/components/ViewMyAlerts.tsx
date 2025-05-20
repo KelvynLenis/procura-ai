@@ -5,8 +5,10 @@ import { cn, formatDateTime } from '@/lib/utils'
 import { IoIosWarning } from 'react-icons/io'
 import ClipLoader from 'react-spinners/ClipLoader'
 import { ConfirmationDialog } from './ConfirmationDialog'
-import { getDeviceEvents } from '@/functions/event/get-device-events'
+import { getAllDeviceEvents } from '@/functions/event/get-device-events'
 import { toast } from 'react-toastify'
+
+
 
 interface ViewMyAlertProps {
   id: string
@@ -15,14 +17,16 @@ interface ViewMyAlertProps {
   setModalOpen?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function ViewMyAlert2({
+export function ViewMyAlerts({
   id,
   status,
   handleDeviceRecovery,
   setModalOpen,
 }: ViewMyAlertProps) {
-  const [event, setEvent] = useState<Event | undefined>()
+  const [events, setEvents] = useState<Event[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isShowAllEventsOn, setIsShowAllEventsOn] = useState(false)
+  
 
   async function handleConfirmDialog() {
     await handleDeviceRecovery(id)
@@ -34,16 +38,10 @@ export function ViewMyAlert2({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (status === 'Recuperado') {
-          const events = await getDeviceEvents(id, false)
 
-          setEvent(events[0])
-          return
-        }
+        const events = await getAllDeviceEvents(id)
 
-        const events = await getDeviceEvents(id, true)
-
-        setEvent(events[0])
+        setEvents(events)
       } catch (error) {
         console.error('Erro ao buscar eventos:', error)
         toast.error('Erro ao buscar detalhes do alerta. Tente novamente.')
@@ -67,22 +65,22 @@ export function ViewMyAlert2({
               <div className="font-bold">
                 Tipo de alerta:{' '}
                 <span className="font-normal">
-                  {event?.type ? event?.type : 'Tipo de alerta não registrado'}
+                  {events[0]?.type ? events[0]?.type : 'Tipo de alerta não registrado'}
                 </span>
               </div>
               <div className="font-bold">
                 Descrição do alerta:{' '}
                 <span className="font-normal">
-                  {event?.description
-                    ? event?.description
-                    : 'Descrição não registrada'}
+                  {events[0]?.description
+                    ? events[0]?.description
+                    : 'Descrição não registrada teste'}
                 </span>
               </div>
               <div className="font-bold">
                 Data e hora da ocorrência:{' '}
                 <span className="font-normal">
-                  {event?.time_event
-                    ? formatDateTime(event.time_event)
+                  {events[0].time_event
+                    ? formatDateTime(events[0].time_event)
                     : 'Data não registrada'}
                 </span>
               </div>
@@ -91,8 +89,8 @@ export function ViewMyAlert2({
                 Local de recuperação:{' '}
                 <span className="font-normal">
                   {status === 'Recuperado'
-                    ? event?.retrieval_location
-                      ? event?.retrieval_location
+                    ? events[0]?.retrieval_location
+                      ? events[0].retrieval_location
                       : 'Local não registrado'
                     : 'Esse dispositivo ainda não foi recuperado'}
                 </span>
@@ -102,8 +100,8 @@ export function ViewMyAlert2({
                 Endereço:{' '}
                 <span className="font-normal">
                   {status === 'Recuperado'
-                    ? event?.address
-                      ? event?.address
+                    ? events[0]?.address
+                      ? events[0]?.address
                       : 'Endereço não registrado'
                     : 'Esse dispositivo ainda não foi recuperado'}
                 </span>
@@ -145,8 +143,8 @@ export function ViewMyAlert2({
           </div>
 
           <div>
-            {event?.last_location ? (
-              <ViewOccurrenceMap position={event?.last_location} />
+            {events[0]?.last_location ? (
+              <ViewOccurrenceMap position={events[0]?.last_location} />
             ) : (
               <div>
                 <span className="font-bold">
@@ -158,6 +156,88 @@ export function ViewMyAlert2({
               </div>
             )}
           </div>
+
+          {events.length > 0 && (
+                <div
+                  className={cn(
+                    'w-full flex justify-center border-x pt-4 pb-1 ',
+                    isShowAllEventsOn
+                      ? 'bg-zinc-100/90 border-b-0'
+                      : 'border-b rounded-b-3xl'
+                  )}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setIsShowAllEventsOn(!isShowAllEventsOn)}
+                    className={'text-primary underline hover:text-blue-400'}
+                  >
+                    {isShowAllEventsOn
+                      ? 'Ocultar histórico de ocorrências'
+                      : 'Ver ocorrências anteriores'}
+                  </button>
+                </div>
+              )}
+              {isShowAllEventsOn && (
+                <div className="max-h-[300px] overflow-y-auto pr-2">
+
+                { events.map((prevEvent, index) => (
+                  <div
+                    key={prevEvent.$id}
+                    className={cn(
+                      'flex flex-col gap-2 bg-zinc-100/90 border border-zinc-200 p-4 drop-shadow-sm',
+                      index === events.length - 1 && 'rounded-b-3xl',
+                      index === 0 && 'border-t-0'
+                    )}
+                  >
+                    <div className="flex">
+                      <span className="w-40 font-medium">ID</span>
+                      <span className="w-full">
+                        {prevEvent
+                          ? prevEvent?.$id.slice(0, 5)
+                          : 'Este evento não existe.'}
+                      </span>
+                    </div>
+                    <div className="flex">
+                      <span className="w-40 font-medium">Data e horário</span>
+                      <span className="w-full">
+                        {prevEvent
+                          ? formatDateTime(prevEvent?.time_event!)
+                          : 'Este evento não existe.'}
+                      </span>
+                    </div>
+                    <div className="flex">
+                      <span className="w-32 font-medium">Tipo</span>
+                      <span
+                        className={cn(
+                          'w-fit rounded-sm flex items-start justify-start',
+                          prevEvent?.type === 'Roubo' &&
+                            'bg-robbery-bg text-red-600 px-3 py-1 ring-red-500',
+                          prevEvent?.type === 'Furto simples' &&
+                            'bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500',
+                          prevEvent?.type === 'Extravio ou Perda' &&
+                            'bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500',
+                          prevEvent?.type === 'Recuperado' &&
+                            'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500',
+                          prevEvent?.type === 'Regular' &&
+                            'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500'
+                        )}
+                      >
+                        {prevEvent?.type}
+                      </span>
+                      {/* <span className="w-full">{prevEvent?.type}</span> */}
+                    </div>
+                    <div className="flex">
+                      <span className="w-40 font-medium">Descrição</span>
+                      <span className="w-full">
+                        {prevEvent
+                          ? prevEvent?.description || 'Não informado'
+                          : 'Este evento não existe.'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+                </div>
+        )}
         </div>
       )}
     </>
