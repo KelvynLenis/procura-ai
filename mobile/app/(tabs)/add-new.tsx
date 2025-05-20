@@ -3,6 +3,7 @@ import React from 'react'
 import { Stack } from 'expo-router'
 import Header from '@/components/Header'
 import DeviceForm from '@/components/Forms/DeviceForm'
+import ProtectedRoute from '@/components/ProtectedRoute'
 
 export default function AddNew() {
   return (
@@ -14,7 +15,8 @@ export default function AddNew() {
           ),
         }}
       />
-      <View className='w-screen h-screen bg-[#F2F8FD] px-4' style={{ paddingTop: 20 }}>
+
+      <View className='w-screen h-screen bg-[#F2F8FD] px-4' style={{ paddingTop: 10 }}>
         <DeviceForm />
       </View>
     </>

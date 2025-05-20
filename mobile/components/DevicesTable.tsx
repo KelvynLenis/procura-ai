@@ -1,11 +1,15 @@
-import { View, Text, TouchableOpacity, Modal, Pressable } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, Modal, Pressable, FlatList, ActivityIndicator } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { Eye, Pencil, Trash2, TriangleAlert } from 'lucide-react-native'
 import { router } from 'expo-router';
 import ConfirmationDialog from './ConfirmationDialog';
 import DeviceForm from './Forms/DeviceForm';
 import AlertForm from './Forms/AlertForm';
 import Button from './Button';
+import { DeviceProps } from '@/interfaces';
+import { account } from '@/lib/appwrite';
+import { listDevices } from '@/services/device/list-devices';
+import useFetch from '@/lib/useFetch';
 
 const DeviceRow = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -98,8 +102,27 @@ const DeviceRow = () => {
 }
 
 const DevicesTable = () => {
+   const [devices, setDevices] = useState<DeviceProps[]>([])
+   const [isLoading, setIsLoading] = useState(true)
+
+   useEffect(() => {
+     async function fetchDevices() {
+       const user = await account.get()
+      //  const { data, loading: isLoading, error: devicesErro } = useFetch(() => listDevices({ userId: user.$id, limit: 100, page: 1}));
+      const devices = await listDevices({ userId: user.$id, limit: 100, page: 1})
+      
+      setDevices(devices)
+
+      console.log(devices)
+
+      setIsLoading(false)
+    }
+
+    fetchDevices()
+  }, [])
+
   return (
-    <View className='bg-zinc-100/50 border border-zinc-200 w-full h-40 rounded-xl'>
+    <View className='bg-zinc-100/50 border border-zinc-200 w-full h-fit gap-2 rounded-xl'>
       <View className='bg-zinc-200/70 w-full h-10 flex flex-row items-center rounded-t-xl pr-5 pl-3'>
         <View className='w-[49%]'>
           <Text>Modelo</Text>
@@ -112,12 +135,33 @@ const DevicesTable = () => {
         </View>
       </View>
 
-      <View className='py-2 px-1 gap-2'>
+      <View className='pb-2 px-1 gap-2'>
+        {/* {
+          isLoading ? (
+            <ActivityIndicator 
+              size='large'
+              color={'#0000ff'}
+              className="mt-0 self-center"
+            />
+          ) : (
+            <>
+              <FlatList 
+                data={devices}
+                renderItem={({ item }) => <DeviceRow />}
+                keyExtractor={item => item.$id?.toString() || ''}
+                numColumns={2}
+                columnWrapperStyle={{ justifyContent: 'flex-start', gap: 20, paddingRight: 5, marginBottom: 10 }}
+                className="mt-2 pb-32"
+                scrollEnabled={false}
+              />
+            </>
+          )
+        } */}
+
         <DeviceRow />
-        <Button variant='blue' onPress={() => router.push('/add-new')} className='w-52 self-end'>Cadastrar dispositivo</Button>
+        <Button variant='blue' onPress={() => router.push('/add-new')} className='self-end'>Cadastrar dispositivo</Button>
       </View>
     </View>
   )
 }
-
 export default DevicesTable
