@@ -16,3 +16,14 @@
   ```bash
    npx expo start --tunnel --clear
    ```
+
+3. Build
+   IOS:
+   ```bash
+   eas build --platform ios --profile development-ios
+   ```
+
+   Android:
+   ```bash
+   eas build -p android --profile preview
+   ```

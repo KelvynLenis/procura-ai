@@ -22,7 +22,7 @@ export default function signIn() {
         if (sessions.status) {
           // await account.deleteSession('current')
           // console.log('Sessão anterior removida com sucesso')
-          console.log('Sessão anterior:', sessions)
+          // console.log('Sessão anterior:', sessions)
           router.push('/my-devices')
         }
       } catch (error: any) {

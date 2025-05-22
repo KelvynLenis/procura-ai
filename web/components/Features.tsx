@@ -8,6 +8,8 @@ import feat3 from '../assets/icons/feat3.svg'
 import feat4 from '../assets/icons/feat4.svg'
 import Link from 'next/link'
 import Button from './Button'
+import { AiFillAndroid } from "react-icons/ai";
+
 
 export function Features() {
   return (
@@ -104,7 +106,13 @@ export function Features() {
           </Button>
         </Link>
         <span className="text-lg md:text-2xl font-bold text-procura-ai-black">
-          Disponível em breve nas principais lojas de aplicativos
+          {/* Disponível em breve nas principais lojas de aplicativos */}
+          <button type='button' className='bg-black rounded-lg px-4 pt-2 pb-1.5 text-white'>
+            <a href="https://expo.dev/artifacts/eas/xjay4tVTnKbbxK4Dkbj2uG.apk">
+              <AiFillAndroid className='inline ml-2 text-lime-400' size={40} />
+              Disponível para download
+            </a>
+          </button>
         </span>
       </div>
 
