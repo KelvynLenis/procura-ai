@@ -108,9 +108,9 @@ export function Features() {
         <span className="text-lg md:text-2xl font-bold text-procura-ai-black">
           {/* Disponível em breve nas principais lojas de aplicativos */}
           <button type='button' className='bg-black rounded-lg px-4 pt-2 pb-1.5 text-white'>
-            <a href="https://expo.dev/artifacts/eas/xjay4tVTnKbbxK4Dkbj2uG.apk">
+            <a href={process.env.NEXT_PUBLIC_APK_DOWNLOAD_LINK}>
               <AiFillAndroid className='inline ml-2 text-lime-400' size={40} />
-              Disponível para download
+              Download para android
             </a>
           </button>
         </span>
