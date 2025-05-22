@@ -22,7 +22,7 @@ export default function signIn() {
         if (sessions.status) {
           // await account.deleteSession('current')
           // console.log('Sessão anterior removida com sucesso')
-          console.log('Sessão anterior:', sessions)
+          // console.log('Sessão anterior:', sessions)
           router.push('/my-devices')
         }
       } catch (error: any) {
@@ -60,7 +60,8 @@ export default function signIn() {
         type: error?.type,
         response: error?.response
       });
-      Alert.alert('Erro', 'Email ou senha inválidos');
+      // Alert.alert('Erro', 'Email ou senha inválidos');
+      Alert.alert('Erro', error?.message);
     } finally {
       setIsLoading(false);
     }
