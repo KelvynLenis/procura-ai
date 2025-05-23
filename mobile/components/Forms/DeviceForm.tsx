@@ -22,7 +22,7 @@ const DeviceForm = ({ setIsModalVisible }: DeviceFormProps) => {
   }
   
   return (
-    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ minHeight: '100%', paddingBottom: 40 }}>
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ minHeight: '100%', paddingBottom: 150 }}>
       <View className='flex-col items-start p-6 gap-5 bg-white shadow-black shadow-md rounded-xl w-full'>
         <Text>Insira os dados abaixo:</Text>
         <View className='w-full h-0.5 bg-zinc-200' />
