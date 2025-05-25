@@ -7,9 +7,10 @@ import Button from '@/components/Button';
 import { Link, router } from 'expo-router';
 import { createUser } from '@/services/user/create-user';
 import { ID } from '@/lib/appwrite';
+import { createUserSchema, type CreateUserFormData } from '@/schemas/user';
 
 export default function signUp() {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<CreateUserFormData>({
     name: "",
     cpf: "",
     email: "",
@@ -20,27 +21,14 @@ export default function signUp() {
   const [isLoading, setIsLoading] = useState(false);
 
   const validateForm = () => {
-    if (!form.name || !form.cpf || !form.email || !form.confirmEmail || !form.password || !form.confirmPassword) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos');
+    try {
+      createUserSchema.parse(form);
+      return true;
+    } catch (error: any) {
+      const firstError = error.errors[0];
+      Alert.alert('Erro', firstError.message);
       return false;
     }
-
-    if (form.email !== form.confirmEmail) {
-      Alert.alert('Erro', 'Os emails não coincidem');
-      return false;
-    }
-
-    if (form.password !== form.confirmPassword) {
-      Alert.alert('Erro', 'As senhas não coincidem');
-      return false;
-    }
-
-    if (form.password.length < 6) {
-      Alert.alert('Erro', 'A senha deve ter pelo menos 6 caracteres');
-      return false;
-    }
-
-    return true;
   };
 
   async function onSignUp() {
