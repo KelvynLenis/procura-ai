@@ -14,4 +14,4 @@ WORKDIR /home/node/app
 
 USER node
 
-CMD ["sh", "-c", "yarn dev"]
+EXPOSE 19000 19001 19002 3000 8081 8082
