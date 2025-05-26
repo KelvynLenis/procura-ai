@@ -2,8 +2,16 @@
 
 1. Install dependencies
 
+   Dependencias do projeto
    ```bash
    npm install
+   ```
+
+   Dependencias da build
+   ```bash
+      npm install -g eas-cli
+      eas login
+      npx expo install expo-dev-client
    ```
 
 2. Start the app
@@ -26,4 +34,10 @@
    Android:
    ```bash
    eas build -p android --profile preview
+   ```
+
+   ou 
+
+    ```bash
+   eas build -p android --profile development
    ```

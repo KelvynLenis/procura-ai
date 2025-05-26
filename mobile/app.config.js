@@ -3,8 +3,8 @@ import 'dotenv/config';
 
 export default {
   expo: {
-    name: "mobile",
-    slug: "mobile",
+    name: "procuraai",
+    slug: "procura-ai",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/logo.png",
@@ -13,7 +13,7 @@ export default {
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
-       bundleIdentifier: "com.procuraai.mobile"
+       bundleIdentifier: "com.kmartins2077.mobile"
     },
     android: {
       adaptiveIcon: {
@@ -21,12 +21,12 @@ export default {
         backgroundColor: "#ffffff"
       },
       edgeToEdgeEnabled: true,
-      package: "com.procuraai.mobile"
+      package: "com.kmartins2077.mobile"
     },
     web: {
       bundler: "metro",
       output: "static",
-      favicon: "./assets/images/favicon.png"
+      favicon: "./assets/icons/favicon.png"
     },
     plugins: [
       "expo-router",
