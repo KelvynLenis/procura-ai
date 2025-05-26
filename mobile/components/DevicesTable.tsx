@@ -20,15 +20,15 @@ const DeviceRow = () => {
   return (
     <>
       <View className='bg-white w-full h-14 flex flex-row gap-2 items-center rounded-lg px-2 border border-zinc-300'>
-        <View className='w-[45%]'>
+        <View className='w-[4.5rem] sm:w-[7rem] md:w-[9rem]'>
           <Text>Galaxy A54</Text>
         </View>
-        <View className='w-[25%] mr-5'>
+        <View className='w-fit sm:w-[7.2rem] md:w-[8.2rem]'>
           <View className='bg-red-100 w-28 items-center justify-center rounded-md p-2'>
             <Text className='text-red-600'>Roubado</Text>
           </View>
         </View>
-          <View className='flex flex-row gap-2 w-[20%]'> 
+          <View className='flex flex-row gap-2 w-fit'> 
             <TouchableOpacity onPress={() => setIsAlertModalVisible(true)} className='bg-red-500 flex items-center justify-center w-9 h-9 rounded-md'>
               <TriangleAlert size={28} color='red' fill={'white'} />
             </TouchableOpacity>
@@ -124,13 +124,13 @@ const DevicesTable = () => {
   return (
     <View className='bg-zinc-100/50 border border-zinc-200 w-full h-fit gap-2 rounded-xl'>
       <View className='bg-zinc-200/70 w-full h-10 flex flex-row items-center rounded-t-xl pr-5 pl-3'>
-        <View className='w-[49%]'>
+        <View className='w-[5.2rem] sm:w-[7.8rem] md:w-[9.7rem]'>
           <Text>Modelo</Text>
         </View>
-        <View className='w-[31.5%]'>
+        <View className='w-[7.4rem] sm:w-[7.6rem] md:w-[8.6rem]'>
           <Text>Status</Text>
         </View>
-        <View className='w-[10%]'>
+        <View className='w-fit'>
           <Text>Ação</Text>
         </View>
       </View>
