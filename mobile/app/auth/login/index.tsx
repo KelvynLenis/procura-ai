@@ -7,12 +7,19 @@ import Button from '@/components/Button';
 import { router } from 'expo-router';
 import { login } from '@/services/auth/login';
 import { account } from '@/lib/appwrite';
+import { z } from 'zod';
+
+const formSchema = z.object({
+  email: z.string().email('Email inválido'),
+  password: z.string().min(1, 'A senha é obrigatória'),
+});
 
 export default function signIn() {
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -33,9 +40,29 @@ export default function signIn() {
     getSession()
   }, [])
 
+  const validateForm = () => {
+    try {
+      formSchema.parse(form);
+      setErrors({});
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const newErrors: { email?: string; password?: string } = {};
+        error.errors.forEach((err) => {
+          if (err.path[0] === 'email') {
+            newErrors.email = err.message;
+          } else if (err.path[0] === 'password') {
+            newErrors.password = err.message;
+          }
+        });
+        setErrors(newErrors);
+      }
+      return false;
+    }
+  };
+
   const handleLogin = async () => {
-    if (!form.email || !form.password) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos');
+    if (!validateForm()) {
       return;
     }
 
@@ -60,8 +87,17 @@ export default function signIn() {
         type: error?.type,
         response: error?.response
       });
-      // Alert.alert('Erro', 'Email ou senha inválidos');
-      Alert.alert('Erro', error?.message);
+
+      if (error.message?.match(/password/)) {
+        setErrors({
+          email: 'Email ou senha incorretos',
+          password: 'Email ou senha incorretos'
+        });
+        // Alert.alert('Erro', 'Email ou senha incorretos');
+        return;
+      }
+
+      // Alert.alert('Erro', error?.message || 'Erro ao fazer login');
     } finally {
       setIsLoading(false);
     }
@@ -83,7 +119,11 @@ export default function signIn() {
           textContentType="emailAddress"
           keyboardType="email-address"
           value={form.email}
-          onChangeText={(value) => setForm({ ...form, email: value })}
+          onChangeText={(value) => {
+            setForm({ ...form, email: value });
+            setErrors({ ...errors, email: undefined });
+          }}
+          error={errors.email}
         />
 
         <InputField
@@ -93,7 +133,11 @@ export default function signIn() {
           secureTextEntry={true}
           textContentType="password"
           value={form.password}
-          onChangeText={(value) => setForm({ ...form, password: value })}
+          onChangeText={(value) => {
+            setForm({ ...form, password: value });
+            setErrors({ ...errors, password: undefined });
+          }}
+          error={errors.password}
         />
 
         <Text className='underline self-start ml-16'>
