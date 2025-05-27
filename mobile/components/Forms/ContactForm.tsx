@@ -118,14 +118,16 @@ const ContactForm = ({ setIsModalVisible, onSuccess, initialData }: ContactFormP
   
   return (
     <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       className="flex-1"
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
       <ScrollView 
         className="flex-1" 
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="on-drag"
+        keyboardDismissMode="none"
+        contentContainerStyle={{ flexGrow: 1 }}
       >
         <View className='flex-col items-start p-6 gap-4 bg-white shadow-black shadow-md rounded-xl w-full'>
           <Text className="text-lg font-bold mb-2">
@@ -147,6 +149,7 @@ const ContactForm = ({ setIsModalVisible, onSuccess, initialData }: ContactFormP
             onChangeText={(value) => handleFieldChange('name_contact', value)}
             error={errors.name_contact}
             maxLength={50}
+            returnKeyType="next"
           />
 
           <InputField
@@ -161,6 +164,7 @@ const ContactForm = ({ setIsModalVisible, onSuccess, initialData }: ContactFormP
             onChangeText={(value) => handleFieldChange('email_contact', value)}
             error={errors.email_contact}
             maxLength={100}
+            returnKeyType="next"
           />
 
           <View className="w-full">
@@ -174,6 +178,7 @@ const ContactForm = ({ setIsModalVisible, onSuccess, initialData }: ContactFormP
               keyboardType="phone-pad"
               placeholder="(XX) XXXXX-XXXX"
               className="h-12 px-4 rounded-md bg-zinc-100 w-full"
+              returnKeyType="done"
             />
             {errors.number_contact && (
               <Text className="text-red-500 text-sm mt-1">{errors.number_contact}</Text>

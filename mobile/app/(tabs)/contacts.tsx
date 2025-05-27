@@ -179,7 +179,7 @@ export default function Contacts() {
 
       <Modal animationType='fade' transparent visible={isAddModalVisible} onRequestClose={() => setIsAddModalVisible(false)}>
         <Pressable className='flex-1 bg-black/50 flex items-center justify-center' onPress={() => setIsAddModalVisible(false)}>
-          <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '48%', width: '95%' }} className='bg-white flex rounded-2xl overflow-hidden'>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '70%', width: '95%' }} className='bg-white flex rounded-2xl overflow-hidden'>
             <ContactForm 
               setIsModalVisible={setIsAddModalVisible}
               onSuccess={() => {
@@ -193,7 +193,7 @@ export default function Contacts() {
 
       <Modal animationType='fade' transparent visible={isEditModalVisible} onRequestClose={() => setIsEditModalVisible(false)}>
         <Pressable className='flex-1 bg-black/50 flex items-center justify-center' onPress={() => setIsEditModalVisible(false)}>
-          <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '48%', width: '95%' }} className='bg-white flex rounded-2xl overflow-hidden'>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '70%', width: '95%' }} className='bg-white flex rounded-2xl overflow-hidden'>
             <ContactForm 
               setIsModalVisible={setIsEditModalVisible}
               onSuccess={() => {
