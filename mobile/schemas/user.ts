@@ -1,34 +1,52 @@
 import { z } from 'zod';
+import { validateCPF } from '@/lib/utils';
+import { validateUserEmail } from '@/services/user/validate-user-email';
+import { validateUserCpf } from '@/services/user/validate-user-cpf';
 
 export const createUserSchema = z.object({
-  name: z.string()
-    .min(3, 'O nome deve ter pelo menos 3 caracteres')
-    .max(100, 'O nome deve ter no máximo 100 caracteres'),
-
+  name: z.string().min(1, 'Nome é obrigatório'),
   cpf: z.string()
-    .min(11, 'CPF deve ter 11 dígitos')
-    .max(11, 'CPF deve ter 11 dígitos')
-    .regex(/^\d+$/, 'CPF deve conter apenas números'),
-
+    .min(11, 'O CPF deve conter exatamente 11 dígitos numéricos.')
+    .refine((cpf) => validateCPF(cpf), {
+      message: 'CPF inválido. Por favor, verifique os dígitos informados.',
+    })
+    .refine(
+      async (cpf) => {
+        try {
+          return await validateUserCpf(cpf);
+        } catch (error) {
+          console.error('Erro ao verificar CPF:', error);
+          return false;
+        }
+      },
+      {
+        message: 'Este CPF já está cadastrado no sistema.',
+      }
+    ),
   email: z.string()
     .email('Email inválido')
-    .min(5, 'Email muito curto')
-    .max(100, 'Email muito longo'),
-
-  confirmEmail: z.string()
-    .email('Email inválido'),
-
-  password: z.string()
-    .min(6, 'A senha deve ter pelo menos 6 caracteres')
-    .max(50, 'A senha deve ter no máximo 50 caracteres'),
-
-  confirmPassword: z.string()
-}).refine((data) => data.email === data.confirmEmail, {
-  message: 'Os emails não coincidem',
-  path: ['confirmEmail']
+    .refine(
+      async (email) => {
+        try {
+          return await validateUserEmail(email);
+        } catch (error) {
+          console.error('Erro ao verificar e-mail:', error);
+          return false;
+        }
+      },
+      {
+        message: 'Este e-mail já está cadastrado no sistema.',
+      }
+    ),
+  confirmEmail: z.string().email('Email inválido'),
+  password: z.string().min(8, 'A senha deve conter pelo menos 8 caracteres.'),
+  confirmPassword: z.string().min(8, 'A senha deve conter pelo menos 8 caracteres.'),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: 'As senhas não coincidem',
-  path: ['confirmPassword']
+  path: ['confirmPassword'],
+  message: 'As senhas precisam ser iguais',
+}).refine((data) => data.email === data.confirmEmail, {
+  path: ['confirmEmail'],
+  message: 'Os e-mails precisam ser iguais',
 });
 
 export type CreateUserFormData = z.infer<typeof createUserSchema>; 
