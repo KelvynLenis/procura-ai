@@ -20,7 +20,7 @@ const DeviceRow = ({ device }: {device: DeviceProps}) => {
   return (
     <>
       <View className='bg-white w-full h-14 flex flex-row gap-2 items-center rounded-lg px-2 border border-zinc-300'>
-        <View className='xs:w-[4.5rem] sm:w-[50%] md:w-[9rem]'>
+        <View className='w-full max-w-52'>
           <Text>{device.phone_model}</Text>
         </View>
         <View className='w-fit sm:w-[7.2rem] md:w-[8.2rem]'>
@@ -62,7 +62,7 @@ const DeviceRow = ({ device }: {device: DeviceProps}) => {
 
       <Modal animationType='fade' transparent visible={isModalVisible} onRequestClose={() => setIsModalVisible(false)}>
         <Pressable className='flex-1 bg-black/50 flex items-center justify-center' onPress={() => setIsModalVisible(false)}>
-          <Pressable onPress={(e) => e.stopPropagation()} className='bg-white w-[90%] h-80 flex rounded-2xl overflow-hidden'>
+          <Pressable onPress={(e) => e.stopPropagation()} className='bg-white w-[90%] h-[26rem] max-h-[30rem] flex rounded-2xl overflow-hidden'>
             <View className='w-full h-16 flex flex-row items-center justify-end gap-3 px-5 bg-primary rounded-t-2xl'>
               <TouchableOpacity onPress={() => setIsAlertModalVisible(true)} className='bg-red-500 flex items-center justify-center w-9 h-9 rounded-md border border-white'>
                 <TriangleAlert size={28} color='red' fill={'white'} />
@@ -75,12 +75,14 @@ const DeviceRow = ({ device }: {device: DeviceProps}) => {
             </TouchableOpacity>
             </View>
             <View className='flex flex-row w-full h-full'>
-              <View className='flex items-start px-6 gap-5 pt-4 w-[30%] bg-zinc-100 h-full'>
+              <View className='flex items-start px-6 gap-5 pt-4 w-[35%] bg-zinc-100 h-full'>
                 <Text>Modelo</Text>
                 <View className='w-14 h-0.5 bg-zinc-300' />
                 <Text>Fabricante</Text>
                 <View className='w-14 h-0.5 bg-zinc-300' />
                 <Text>IMEI</Text>
+                <View className='w-14 h-0.5 bg-zinc-300' />
+                <Text>Número</Text>
                 <View className='w-14 h-0.5 bg-zinc-300' />
                 <Text className='mt-2'>Status</Text>
               </View>
@@ -91,9 +93,28 @@ const DeviceRow = ({ device }: {device: DeviceProps}) => {
                 <View className='w-[67%] h-0.5 bg-zinc-300' />
                 <Text className='font-semibold'>{`${device.imei.slice(0, 1)} ${device.imei.slice(1, 8)} ${device.imei.slice(9, 15)}`}</Text>
                 <View className='w-[67%] h-0.5 bg-zinc-300' />
+                <Text className='font-semibold'>{`(${device.phone_number.slice(0, 2)}) ${device.phone_number.slice(2, 7)}-${device.phone_number.slice(7, 11)}`}</Text>
+                <View className='w-[67%] h-0.5 bg-zinc-300' />
                 <Text className='font-semibold'>
-                  <View className='bg-red-100 w-28 items-center justify-center rounded-md p-2'>
-                    <Text className='text-red-600'>{device.status}</Text>
+                  <View className={cn(
+                    'w-28 items-center justify-center rounded-md p-2',
+                    device.status === 'Roubado' && 'bg-robbery-bg text-robbery-text',
+                    device.status === 'Recuperado' && 'bg-regular-bg text-regular-text',
+                    device.status === 'Regular' && 'bg-regular-bg text-regular-text',
+                    device.status === 'Furtado' && 'bg-theft-bg text-theft-text',
+                    device.status === 'Perdido' && 'bg-lost-bg text-lost-text'
+                    )}
+                  >
+                    <Text className={cn(
+                        device.status === 'Roubado' && 'text-robbery-text',
+                        device.status === 'Recuperado' && 'text-regular-text',
+                        device.status === 'Regular' && 'text-regular-text',
+                        device.status === 'Furtado' && 'text-theft-text',
+                        device.status === 'Perdido' && 'text-lost-text'
+                      )}
+                    >
+                      {device.status}
+                    </Text>
                   </View>
                 </Text>
               </View>
@@ -142,9 +163,9 @@ const DevicesTable = () => {
   }, [])
 
   return (
-    <View className='bg-zinc-100/50 border border-zinc-200 w-full h-fit gap-2 rounded-xl'>
+    <View className='bg-zinc-100/50 border border-zinc-200 w-full h-fit gap-2 rounded-xl flex'>
       <View className='bg-zinc-200/70 w-full h-10 flex flex-row items-center rounded-t-xl pr-5 pl-3'>
-        <View className='w-[5.2rem] sm:w-[54%] md:w-[9.7rem]'>
+        <View className='w-full max-w-[13.5rem]'>
           <Text>Modelo</Text>
         </View>
         <View className='w-[7.4rem] sm:w-[7.6rem] md:w-[8.6rem]'>
@@ -169,8 +190,7 @@ const DevicesTable = () => {
                 data={devices}
                 renderItem={({ item }) => <DeviceRow device={item} />}
                 keyExtractor={item => item.$id?.toString() || ''}
-                numColumns={2}
-                columnWrapperStyle={{ justifyContent: 'flex-start', gap: 20, paddingRight: 5, marginBottom: 10 }}
+                // columnWrapperStyle={{ justifyContent: 'flex-start', gap: 20, paddingRight: 5, marginBottom: 10 }}
                 className="mt-2"
                 scrollEnabled={false}
               />
