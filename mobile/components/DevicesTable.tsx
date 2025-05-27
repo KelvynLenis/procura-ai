@@ -52,7 +52,7 @@ const DeviceRow = ({ device }: {device: DeviceProps}) => {
                 'bg-red-500'
                )}
               >
-              <TriangleAlert size={28} color={device.status === 'Recuperado' ? 'white' :'red'} fill={device.status === 'Recuperado' ? 'green' : 'white'} />
+              <TriangleAlert size={28} color={device.status === 'Recuperado' ? '#D7EDB6' :'red'} fill={device.status === 'Recuperado' ? 'green' : 'white'} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setIsModalVisible(true)} className='bg-white border border-zinc-400 flex items-center justify-center w-9 h-9 rounded-md'>
               <Eye size={24} color='black' />
