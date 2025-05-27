@@ -9,7 +9,6 @@ import Button from './Button';
 import { DeviceProps } from '@/interfaces';
 import { account } from '@/lib/appwrite';
 import { listDevices } from '@/services/device/list-devices';
-import useFetch from '@/lib/useFetch';
 import { cn } from '@/utils/cn';
 
 const DeviceRow = ({ device }: {device: DeviceProps}) => {
@@ -86,15 +85,15 @@ const DeviceRow = ({ device }: {device: DeviceProps}) => {
                 <Text className='mt-2'>Status</Text>
               </View>
               <View className='flex items-start px-6 gap-5 pt-4 w-full h-full'>
-                <Text className='font-semibold'>Modelo</Text>
+                <Text className='font-semibold'>{device.phone_model}</Text>
                 <View className='w-[67%] h-0.5 bg-zinc-300' />
-                <Text className='font-semibold'>Fabricante</Text>
+                <Text className='font-semibold'>{device.brand}</Text>
                 <View className='w-[67%] h-0.5 bg-zinc-300' />
-                <Text className='font-semibold'>IMEI</Text>
+                <Text className='font-semibold'>{`${device.imei.slice(0, 1)} ${device.imei.slice(1, 8)} ${device.imei.slice(9, 15)}`}</Text>
                 <View className='w-[67%] h-0.5 bg-zinc-300' />
                 <Text className='font-semibold'>
                   <View className='bg-red-100 w-28 items-center justify-center rounded-md p-2'>
-                    <Text className='text-red-600'>Roubado</Text>
+                    <Text className='text-red-600'>{device.status}</Text>
                   </View>
                 </Text>
               </View>
