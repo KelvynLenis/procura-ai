@@ -62,7 +62,7 @@ const DeviceRow = ({ device }: {device: DeviceProps}) => {
 
       <Modal animationType='fade' transparent visible={isModalVisible} onRequestClose={() => setIsModalVisible(false)}>
         <Pressable className='flex-1 bg-black/50 flex items-center justify-center' onPress={() => setIsModalVisible(false)}>
-          <Pressable onPress={(e) => e.stopPropagation()} className='bg-white w-[90%] h-[23rem] max-h-[30rem] flex rounded-2xl overflow-hidden'>
+          <Pressable onPress={(e) => e.stopPropagation()} className='bg-white w-[90%] h-[25rem] max-h-[30rem] flex rounded-2xl overflow-hidden'>
             <View className='w-full h-16 flex flex-row items-center justify-end gap-3 px-5 bg-primary rounded-t-2xl'>
               <TouchableOpacity onPress={() => setIsAlertModalVisible(true)} className='bg-red-500 flex items-center justify-center w-9 h-9 rounded-md border border-white'>
                 <TriangleAlert size={28} color='red' fill={'white'} />
@@ -177,7 +177,7 @@ const DeviceRow = ({ device }: {device: DeviceProps}) => {
               </View>
 
               <View className='flex flex-row'>
-                <View className='w-[30%] pb-8 pt-4 flex bg-zinc-100 items-center'>
+                <View className='w-[30%] pb-32 pt-4 flex bg-zinc-100 items-center'>
                   {/* <View className='w-14 h-0.5 bg-zinc-300' /> */}
                 </View>
                 <View className='w-[90%] pb-2 pt-4 items-start ml-4'>
