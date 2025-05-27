@@ -4,7 +4,7 @@ import 'dotenv/config';
 export default {
   expo: {
     name: "procuraai",
-    slug: "procura-ai",
+    slug: "mobile",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/logo.png",
