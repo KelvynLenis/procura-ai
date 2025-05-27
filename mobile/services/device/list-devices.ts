@@ -51,7 +51,8 @@ export async function listDevices({ userId, limit, page, isAdmin }: ListDevicesP
       throw new Error(`Erro ao listar dispositivos: ${error}`)
     }
 
-    return await response.json()
+    const result = await response.json()
+    return result.documents || []
   } catch (error) {
     console.error('Erro ao listar dispositivos:', error)
     throw error

@@ -1,14 +1,20 @@
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { cn } from "@/utils/cn";
 import { Tabs } from "expo-router";
-import { Contact, LogOut, PlusCircle, Smartphone, User } from "lucide-react-native";
+import { LogOut, PlusCircle, Smartphone, User } from "lucide-react-native";
 import { Image, ImageBackground, Text, TouchableOpacity, View } from "react-native";
+import AddDevice from '@/assets/icons/add-device.svg'
+import AddDeviceFocused from '@/assets/icons/add-device-focused.svg'
+import ContactsIcon from '@/assets/icons/contacts.svg'
+import ContactsFocusedIcon from '@/assets/icons/contacts-focused.svg'
 
-const TabIcon = ({ focused, icon, title }: { focused: boolean, icon: any, title: string}) => {
+const TabIcon = ({ focused, icon, iconFocused, title }: { focused: boolean, icon: any, iconFocused: any, title: string}) => {
 
   return (
     <View className={cn('w-20 h-20 justify-center items-center', focused && 'rounded-md')}>
-      {icon}
+      {/* {icon} */}
+      {focused ? iconFocused : icon}
+      {/* <AddDevice width={20} height={20} className="text-white" /> */}
       <Text className={cn('text-xs text-center', focused ? 'text-procura-ai-blue' : 'text-black')}>{title}</Text>
       {focused && <View className='w-3/5 h-0.5 bg-procura-ai-blue rounded-full' />}
     </View>
@@ -51,7 +57,7 @@ export default function LoggedLayout() {
           name="my-devices" 
           options={{ headerShown: true, title: 'Meus dispositivos', tabBarIcon: ({ focused }) => (
               <>
-                <TabIcon focused={focused} icon={<Smartphone size={20} color={focused ? "#002E72" : "black"} />} title="Meus dispositivos" />
+                <TabIcon focused={focused} icon={<Smartphone size={20}  color={"black"} />} iconFocused={<Smartphone size={20}  color={"#002E72"} />} title="Meus dispositivos" />
               </>
             )
           }} 
@@ -61,7 +67,7 @@ export default function LoggedLayout() {
           name="add-new" 
           options={{ headerShown: true, title: 'Adicionar novo', tabBarIcon: ({ focused }) => (
               <>
-                <TabIcon focused={focused} icon={<PlusCircle size={20} color={focused ? "#002E72" : "black"} />} title="Adicionar novo" />
+                <TabIcon focused={focused} icon={<AddDevice width={20} height={20} className="text-white" />} iconFocused={<AddDeviceFocused width={20} height={20} />} title="Adicionar novo" />
               </>
             )
           }} 
@@ -70,7 +76,7 @@ export default function LoggedLayout() {
           name="contacts" 
           options={{ headerShown: true, title: 'Contatos de confiança', tabBarIcon: ({ focused }) => (
               <>
-                <TabIcon focused={focused} icon={<Contact size={20} color={focused ? "#002E72" : "black"} />} title="Contatos de confiança" />
+                <TabIcon focused={focused} icon={<ContactsIcon width={20} height={20} />} iconFocused={<ContactsFocusedIcon width={20} height={20} />} title="Contatos de confiança" />
               </>
             )
           }} 
@@ -80,7 +86,7 @@ export default function LoggedLayout() {
           name="profile" 
           options={{ headerShown: true, title: 'Perfil', tabBarIcon: ({ focused }) => (
               <>
-                <TabIcon focused={focused} icon={<User size={20} color={focused ? "#002E72" : "black"} />} title="Perfil" />
+                <TabIcon focused={focused} icon={<User size={20} color={"black"} />} iconFocused={<User size={20} color={"#002E72"} />} title="Perfil" />
               </>
             )
           }} 

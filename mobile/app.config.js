@@ -13,7 +13,7 @@ export default {
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
-       bundleIdentifier: "com.kmartins2077.mobile"
+       bundleIdentifier: "com.procuraai.mobile"
     },
     android: {
       adaptiveIcon: {
@@ -21,7 +21,7 @@ export default {
         backgroundColor: "#ffffff"
       },
       edgeToEdgeEnabled: true,
-      package: "com.kmartins2077.mobile"
+      package: "com.procuraai.mobile"
     },
     web: {
       bundler: "metro",

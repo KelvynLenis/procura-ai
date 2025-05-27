@@ -10,8 +10,9 @@ import { DeviceProps } from '@/interfaces';
 import { account } from '@/lib/appwrite';
 import { listDevices } from '@/services/device/list-devices';
 import useFetch from '@/lib/useFetch';
+import { cn } from '@/utils/cn';
 
-const DeviceRow = () => {
+const DeviceRow = ({ device }: {device: DeviceProps}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
@@ -20,17 +21,39 @@ const DeviceRow = () => {
   return (
     <>
       <View className='bg-white w-full h-14 flex flex-row gap-2 items-center rounded-lg px-2 border border-zinc-300'>
-        <View className='w-[4.5rem] sm:w-[7rem] md:w-[9rem]'>
-          <Text>Galaxy A54</Text>
+        <View className='xs:w-[4.5rem] sm:w-[50%] md:w-[9rem]'>
+          <Text>{device.phone_model}</Text>
         </View>
         <View className='w-fit sm:w-[7.2rem] md:w-[8.2rem]'>
-          <View className='bg-red-100 w-28 items-center justify-center rounded-md p-2'>
-            <Text className='text-red-600'>Roubado</Text>
+          <View className={cn(
+            'w-28 items-center justify-center rounded-md p-2',
+            device.status === 'Roubado' && 'bg-robbery-bg text-robbery-text',
+            device.status === 'Recuperado' && 'bg-regular-bg text-regular-text',
+            device.status === 'Regular' && 'bg-regular-bg text-regular-text',
+            device.status === 'Furtado' && 'bg-theft-bg text-theft-text',
+            device.status === 'Perdido' && 'bg-lost-bg text-lost-text'
+            )}
+          >
+            <Text className={cn(
+                device.status === 'Roubado' && 'text-robbery-text',
+                device.status === 'Recuperado' && 'text-regular-text',
+                device.status === 'Regular' && 'text-regular-text',
+                device.status === 'Furtado' && 'text-theft-text',
+                device.status === 'Perdido' && 'text-lost-text'
+              )}
+            >
+              {device.status}
+            </Text>
           </View>
         </View>
           <View className='flex flex-row gap-2 w-fit'> 
-            <TouchableOpacity onPress={() => setIsAlertModalVisible(true)} className='bg-red-500 flex items-center justify-center w-9 h-9 rounded-md'>
-              <TriangleAlert size={28} color='red' fill={'white'} />
+            <TouchableOpacity onPress={() => setIsAlertModalVisible(true)} className={cn(
+                'flex items-center justify-center w-9 h-9 rounded-md',
+                device.status === 'Recuperado' && 'bg-regular-bg text-regular-text',
+                'bg-red-500'
+               )}
+              >
+              <TriangleAlert size={28} color={device.status === 'Recuperado' ? 'white' :'red'} fill={device.status === 'Recuperado' ? 'green' : 'white'} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setIsModalVisible(true)} className='bg-white border border-zinc-400 flex items-center justify-center w-9 h-9 rounded-md'>
               <Eye size={24} color='black' />
@@ -113,8 +136,6 @@ const DevicesTable = () => {
       
       setDevices(devices)
 
-      console.log(devices)
-
       setIsLoading(false)
     }
 
@@ -124,7 +145,7 @@ const DevicesTable = () => {
   return (
     <View className='bg-zinc-100/50 border border-zinc-200 w-full h-fit gap-2 rounded-xl'>
       <View className='bg-zinc-200/70 w-full h-10 flex flex-row items-center rounded-t-xl pr-5 pl-3'>
-        <View className='w-[5.2rem] sm:w-[7.8rem] md:w-[9.7rem]'>
+        <View className='w-[5.2rem] sm:w-[54%] md:w-[9.7rem]'>
           <Text>Modelo</Text>
         </View>
         <View className='w-[7.4rem] sm:w-[7.6rem] md:w-[8.6rem]'>
@@ -136,7 +157,7 @@ const DevicesTable = () => {
       </View>
 
       <View className='pb-2 px-1 gap-2'>
-        {/* {
+        {
           isLoading ? (
             <ActivityIndicator 
               size='large'
@@ -147,18 +168,18 @@ const DevicesTable = () => {
             <>
               <FlatList 
                 data={devices}
-                renderItem={({ item }) => <DeviceRow />}
+                renderItem={({ item }) => <DeviceRow device={item} />}
                 keyExtractor={item => item.$id?.toString() || ''}
                 numColumns={2}
                 columnWrapperStyle={{ justifyContent: 'flex-start', gap: 20, paddingRight: 5, marginBottom: 10 }}
-                className="mt-2 pb-32"
+                className="mt-2"
                 scrollEnabled={false}
               />
             </>
           )
-        } */}
+        }
 
-        <DeviceRow />
+        {/* <DeviceRow /> */}
         <Button variant='blue' onPress={() => router.push('/add-new')} className='self-end'>Cadastrar dispositivo</Button>
       </View>
     </View>
