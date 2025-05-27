@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { createContact } from '@/services/contact/create-contact';
 import { updateContact } from '@/services/contact/update-contact';
 import type { Contact } from '@/services/contact/list-contacts';
+import MaskInput from 'react-native-mask-input';
 
 interface ContactFormProps {
   setIsModalVisible?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,9 +16,20 @@ interface ContactFormProps {
 }
 
 const contactSchema = z.object({
-  name_contact: z.string().min(1, 'Nome é obrigatório'),
-  email_contact: z.string().email('Email inválido'),
-  number_contact: z.string().min(1, 'Número de telefone é obrigatório'),
+  name_contact: z.string()
+    .min(1, 'Nome é obrigatório')
+    .min(3, 'Nome deve ter no mínimo 3 caracteres')
+    .max(50, 'Nome deve ter no máximo 50 caracteres')
+    .regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome deve conter apenas letras'),
+  email_contact: z.string()
+    .min(1, 'E-mail é obrigatório')
+    .email('E-mail inválido')
+    .max(100, 'E-mail deve ter no máximo 100 caracteres')
+    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Formato de e-mail inválido'),
+  number_contact: z.string()
+    .min(1, 'Número de telefone é obrigatório')
+    .length(11, 'Número deve ter 11 dígitos')
+    .regex(/^\d{11}$/, 'Apenas números são permitidos'),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
@@ -69,7 +81,11 @@ const ContactForm = ({ setIsModalVisible, onSuccess, initialData }: ContactFormP
         Alert.alert('Sucesso', 'Contato atualizado com sucesso!');
       } else {
         await createContact({
-          values: form
+          values: {
+            name_contact: form.name_contact,
+            email_contact: form.email_contact,
+            number_contact: form.number_contact,
+          }
         });
         Alert.alert('Sucesso', 'Contato adicionado com sucesso!');
       }
@@ -130,6 +146,7 @@ const ContactForm = ({ setIsModalVisible, onSuccess, initialData }: ContactFormP
             value={form.name_contact}
             onChangeText={(value) => handleFieldChange('name_contact', value)}
             error={errors.name_contact}
+            maxLength={50}
           />
 
           <InputField
@@ -143,19 +160,25 @@ const ContactForm = ({ setIsModalVisible, onSuccess, initialData }: ContactFormP
             value={form.email_contact}
             onChangeText={(value) => handleFieldChange('email_contact', value)}
             error={errors.email_contact}
+            maxLength={100}
           />
 
-          <InputField
-            label="Número de telefone"
-            placeholder="Número de telefone"
-            required
-            containerStyle='rounded-md border-0 bg-zinc-100 w-full'
-            textContentType="telephoneNumber"
-            keyboardType="phone-pad"
-            value={form.number_contact}
-            onChangeText={(value) => handleFieldChange('number_contact', value)}
-            error={errors.number_contact}
-          />
+          <View className="w-full">
+            <Text className="text-sm font-medium mb-1">
+              Número de telefone <Text className="text-red-500">*</Text>
+            </Text>
+            <MaskInput
+              value={form.number_contact}
+              onChangeText={(masked, unmasked) => handleFieldChange('number_contact', unmasked)}
+              mask={['(', /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
+              keyboardType="phone-pad"
+              placeholder="(XX) XXXXX-XXXX"
+              className="h-12 px-4 rounded-md bg-zinc-100 w-full"
+            />
+            {errors.number_contact && (
+              <Text className="text-red-500 text-sm mt-1">{errors.number_contact}</Text>
+            )}
+          </View>
 
           <View className='flex flex-row w-full gap-4 mt-2'>
             <Button 
