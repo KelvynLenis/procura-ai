@@ -11,4 +11,5 @@ export interface InputFieldProps extends TextInputProps {
   iconStyle?: string;
   iconEnd?: boolean;
   className?: string;
+  error?: string;
 }

@@ -23,6 +23,7 @@ const InputField = ({
   iconStyle,
   iconEnd,
   className,
+  error,
   ...props
 }: InputFieldProps) => {
   return (
@@ -43,16 +44,19 @@ const InputField = ({
           </View>
 
           <View
-            className={cn(`w-80 px-4 flex flex-row justify-start shadow-xl items-center relative bg-white rounded-full border border-primary focus:border-primary-500`, containerStyle)}
+            className={cn(`w-80 px-4 flex flex-row justify-start shadow-xl items-center relative bg-white rounded-full border ${error ? 'border-red-500' : 'border-primary'} focus:border-primary-500`, containerStyle)}
           >
             {icon && !iconEnd && icon}
             <TextInput
               className={cn('rounded-full p-4 text-[15px] flex-1 text-justify', inputStyle)}
               secureTextEntry={secureTextEntry} 
               {...props}
-              />
+            />
             {icon && iconEnd && icon}
           </View>
+          {error && (
+            <Text className="text-red-500 text-sm mt-1 ml-4">{error}</Text>
+          )}
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
