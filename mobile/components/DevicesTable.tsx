@@ -25,7 +25,7 @@ const DeviceRow = ({ device }: {device: DeviceProps}) => {
         </View>
         <View className='w-fit sm:w-[7.2rem] md:w-[8.2rem]'>
           <View className={cn(
-            'w-28 items-center justify-center rounded-md p-2',
+            'w-fit max-w-40 items-center justify-center rounded-md p-2',
             device.status === 'Roubado' && 'bg-robbery-bg text-robbery-text',
             device.status === 'Recuperado' && 'bg-regular-bg text-regular-text',
             device.status === 'Regular' && 'bg-regular-bg text-regular-text',
@@ -62,7 +62,7 @@ const DeviceRow = ({ device }: {device: DeviceProps}) => {
 
       <Modal animationType='fade' transparent visible={isModalVisible} onRequestClose={() => setIsModalVisible(false)}>
         <Pressable className='flex-1 bg-black/50 flex items-center justify-center' onPress={() => setIsModalVisible(false)}>
-          <Pressable onPress={(e) => e.stopPropagation()} className='bg-white w-[90%] h-[26rem] max-h-[30rem] flex rounded-2xl overflow-hidden'>
+          <Pressable onPress={(e) => e.stopPropagation()} className='bg-white w-[90%] h-[23rem] max-h-[30rem] flex rounded-2xl overflow-hidden'>
             <View className='w-full h-16 flex flex-row items-center justify-end gap-3 px-5 bg-primary rounded-t-2xl'>
               <TouchableOpacity onPress={() => setIsAlertModalVisible(true)} className='bg-red-500 flex items-center justify-center w-9 h-9 rounded-md border border-white'>
                 <TriangleAlert size={28} color='red' fill={'white'} />
@@ -74,30 +74,87 @@ const DeviceRow = ({ device }: {device: DeviceProps}) => {
               <Trash2 size={24} color='red' />
             </TouchableOpacity>
             </View>
-            <View className='flex flex-row w-full h-full'>
-              <View className='flex items-start px-6 gap-5 pt-4 w-[35%] bg-zinc-100 h-full'>
-                <Text>Modelo</Text>
-                <View className='w-14 h-0.5 bg-zinc-300' />
-                <Text>Fabricante</Text>
-                <View className='w-14 h-0.5 bg-zinc-300' />
-                <Text>IMEI</Text>
-                <View className='w-14 h-0.5 bg-zinc-300' />
-                <Text>Número</Text>
-                <View className='w-14 h-0.5 bg-zinc-300' />
-                <Text className='mt-2'>Status</Text>
+
+            <View className=''>
+              <View className='flex flex-row gap-4'>
+                <View className='w-[30%] flex bg-zinc-100 items-center justify-center pt-2'>
+                  <Text>Modelo</Text>
+                </View>
+                <View className='w-[80%] pt-2'>
+                  <Text className='font-semibold'>{device.phone_model}</Text>
+                </View>
               </View>
-              <View className='flex items-start px-6 gap-5 pt-4 w-full h-full'>
-                <Text className='font-semibold'>{device.phone_model}</Text>
-                <View className='w-[67%] h-0.5 bg-zinc-300' />
-                <Text className='font-semibold'>{device.brand}</Text>
-                <View className='w-[67%] h-0.5 bg-zinc-300' />
-                <Text className='font-semibold'>{`${device.imei.slice(0, 1)} ${device.imei.slice(1, 8)} ${device.imei.slice(9, 15)}`}</Text>
-                <View className='w-[67%] h-0.5 bg-zinc-300' />
-                <Text className='font-semibold'>{`(${device.phone_number.slice(0, 2)}) ${device.phone_number.slice(2, 7)}-${device.phone_number.slice(7, 11)}`}</Text>
-                <View className='w-[67%] h-0.5 bg-zinc-300' />
-                <Text className='font-semibold'>
+
+              <View className='flex flex-row'>
+                <View className='w-[30%] pb-2 pt-4 flex bg-zinc-100 items-center'>
+                  <View className='w-14 h-0.5 bg-zinc-300' />
+                </View>
+                <View className='w-[90%] pb-2 pt-4 items-start ml-4'>
+                  <View className='w-[67%] h-0.5 bg-zinc-300' />
+                </View>
+              </View>
+
+              <View className='flex flex-row gap-4'>
+                <View className='w-[30%] flex bg-zinc-100 items-center justify-center pt-2'>
+                  <Text>Fabricante</Text>
+                </View>
+                <View className='w-[80%] pt-2'>
+                  <Text className='font-semibold'>{device.brand}</Text>
+                </View>
+              </View>
+
+              <View className='flex flex-row'>
+                <View className='w-[30%] pb-2 pt-4 flex bg-zinc-100 items-center'>
+                  <View className='w-14 h-0.5 bg-zinc-300' />
+                </View>
+                <View className='w-[90%] pb-2 pt-4 items-start ml-4'>
+                  <View className='w-[67%] h-0.5 bg-zinc-300' />
+                </View>
+              </View>
+
+              <View className='flex flex-row gap-4'>
+                <View className='w-[30%] flex bg-zinc-100 items-center justify-center pt-2'>
+                  <Text>IMEI</Text>
+                </View>
+                <View className='w-[80%] pt-2'>
+                  <Text className='font-semibold'>{`${device.imei.slice(0, 1)} ${device.imei.slice(1, 8)} ${device.imei.slice(9, 15)}`}</Text>
+                </View>
+              </View>
+
+              <View className='flex flex-row'>
+                <View className='w-[30%] pb-2 pt-4 flex bg-zinc-100 items-center'>
+                  <View className='w-14 h-0.5 bg-zinc-300' />
+                </View>
+                <View className='w-[90%] pb-2 pt-4 items-start ml-4'>
+                  <View className='w-[67%] h-0.5 bg-zinc-300' />
+                </View>
+              </View>
+
+              <View className='flex flex-row gap-4'>
+                <View className='w-[30%] flex bg-zinc-100 items-center justify-center pt-2'>
+                  <Text>Número</Text>
+                </View>
+                <View className='w-[80%] pt-2'>
+                  <Text className='font-semibold'>{`(${device.phone_number.slice(0, 2)}) ${device.phone_number.slice(2, 7)}-${device.phone_number.slice(7, 11)}`}</Text>
+                </View>
+              </View>
+
+              <View className='flex flex-row'>
+                <View className='w-[30%] pb-2 pt-4 flex bg-zinc-100 items-center'>
+                  <View className='w-14 h-0.5 bg-zinc-300' />
+                </View>
+                <View className='w-[90%] pb-2 pt-4 items-start ml-4'>
+                  <View className='w-[67%] h-0.5 bg-zinc-300' />
+                </View>
+              </View>
+
+              <View className='flex flex-row gap-4'>
+                <View className='w-[30%] flex bg-zinc-100 items-center justify-center pt-2'>
+                  <Text>Status</Text>
+                </View>
+                <View className='w-[80%] pt-2'>
                   <View className={cn(
-                    'w-28 items-center justify-center rounded-md p-2',
+                    'w-fit max-w-40 items-center justify-center rounded-md p-2',
                     device.status === 'Roubado' && 'bg-robbery-bg text-robbery-text',
                     device.status === 'Recuperado' && 'bg-regular-bg text-regular-text',
                     device.status === 'Regular' && 'bg-regular-bg text-regular-text',
@@ -116,8 +173,18 @@ const DeviceRow = ({ device }: {device: DeviceProps}) => {
                       {device.status}
                     </Text>
                   </View>
-                </Text>
+                </View>
               </View>
+
+              <View className='flex flex-row'>
+                <View className='w-[30%] pb-8 pt-4 flex bg-zinc-100 items-center'>
+                  {/* <View className='w-14 h-0.5 bg-zinc-300' /> */}
+                </View>
+                <View className='w-[90%] pb-2 pt-4 items-start ml-4'>
+                  {/* <View className='w-[67%] h-0.5 bg-zinc-300' /> */}
+                </View>
+              </View>
+
             </View>
           </Pressable>
         </Pressable>
