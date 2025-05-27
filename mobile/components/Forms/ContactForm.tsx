@@ -1,65 +1,184 @@
-import { View, Text, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, ScrollView, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import InputField from '../InputField'
 import Button from '../Button';
 import { router } from 'expo-router';
-import { CircleAlert } from 'lucide-react-native';
+import { z } from 'zod';
+import { createContact } from '@/services/contact/create-contact';
+import { updateContact } from '@/services/contact/update-contact';
+import type { Contact } from '@/services/contact/list-contacts';
 
 interface ContactFormProps {
-  setIsModalVisible?: React.Dispatch<React.SetStateAction<boolean>>
+  setIsModalVisible?: React.Dispatch<React.SetStateAction<boolean>>;
+  onSuccess?: () => void;
+  initialData?: Contact | null;
 }
 
-const ContactForm = ({ setIsModalVisible }: ContactFormProps) => {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    number: "",
-  });
+const contactSchema = z.object({
+  name_contact: z.string().min(1, 'Nome é obrigatório'),
+  email_contact: z.string().email('Email inválido'),
+  number_contact: z.string().min(1, 'Número de telefone é obrigatório'),
+});
 
-  function onSignUp() {
-    router.push('/auth/login')
+type ContactFormData = z.infer<typeof contactSchema>;
+
+const ContactForm = ({ setIsModalVisible, onSuccess, initialData }: ContactFormProps) => {
+  const [form, setForm] = useState<ContactFormData>({
+    name_contact: "",
+    email_contact: "",
+    number_contact: "",
+  });
+  const [errors, setErrors] = useState<Partial<Record<keyof ContactFormData, string>>>({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (initialData) {
+      setForm({
+        name_contact: initialData.name_contact,
+        email_contact: initialData.email_contact,
+        number_contact: initialData.number_contact,
+      });
+    }
+  }, [initialData]);
+
+  const handleFieldChange = (field: keyof ContactFormData, value: string) => {
+    setForm(prev => ({ ...prev, [field]: value }));
+    // Limpa o erro do campo quando o usuário começa a digitar
+    setErrors(prev => ({ ...prev, [field]: undefined }));
+  };
+
+  async function handleSubmit() {
+    try {
+      // Fecha o teclado antes de validar
+      Keyboard.dismiss();
+      setIsLoading(true);
+
+      // Validação do formulário
+      await contactSchema.parseAsync(form);
+      setErrors({});
+
+      if (initialData) {
+        await updateContact({
+          id: initialData.$id,
+          values: {
+            name_contact: form.name_contact,
+            email_contact: form.email_contact,
+            number_contact: form.number_contact,
+          }
+        });
+        Alert.alert('Sucesso', 'Contato atualizado com sucesso!');
+      } else {
+        await createContact({
+          values: form
+        });
+        Alert.alert('Sucesso', 'Contato adicionado com sucesso!');
+      }
+      
+      if (onSuccess) {
+        onSuccess();
+      }
+      
+      if (setIsModalVisible) {
+        setIsModalVisible(false);
+      }
+    } catch (error) {
+      console.log('Erro ao manipular contato:', error);
+      
+      if (error instanceof z.ZodError) {
+        const newErrors: Partial<Record<keyof ContactFormData, string>> = {};
+        error.errors.forEach(err => {
+          if (err.path[0]) {
+            newErrors[err.path[0] as keyof ContactFormData] = err.message;
+          }
+        });
+        setErrors(newErrors);
+      } else {
+        Alert.alert('Erro', 'Não foi possível editar o contato. Tente novamente.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   }
   
   return (
-    <View className='flex-col items-start p-6 gap-2 bg-white shadow-black shadow-md rounded-xl w-full'>
-      <InputField
-        label="Nome"
-        placeholder="nome completo"
-        required
-        containerStyle='rounded-md border-0 bg-zinc-100 w-full'
-        textContentType="none"
-        value={form.name}
-        onChangeText={(value) => setForm({ ...form, name: value })}
-      />
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      className="flex-1"
+    >
+      <ScrollView 
+        className="flex-1" 
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+      >
+        <View className='flex-col items-start p-6 gap-4 bg-white shadow-black shadow-md rounded-xl w-full'>
+          <Text className="text-lg font-bold mb-2">
+            {initialData ? 'Editar contato' : 'Cadastrar contato'}
+          </Text>
+          <Text className="text-sm text-gray-600 mb-4">
+            {initialData 
+              ? 'Atualize as informações do seu contato de confiança.'
+              : 'Adicione um contato de confiança para eventuais contatos de emergência.'}
+          </Text>
 
-      <InputField
-        label="Email"
-        placeholder="email"
-        required
-        containerStyle='rounded-md border-0 bg-zinc-100 w-full'
-        textContentType="none"
-        value={form.email}
-        onChangeText={(value) => setForm({ ...form, email: value })}
-      />
+          <InputField
+            label="Nome"
+            placeholder="Nome completo"
+            required
+            containerStyle='rounded-md border-0 bg-zinc-100 w-full'
+            textContentType="name"
+            value={form.name_contact}
+            onChangeText={(value) => handleFieldChange('name_contact', value)}
+            error={errors.name_contact}
+          />
 
-      <InputField
-        label="Número de telefone"
-        placeholder="Número de telefone"
-        containerStyle='rounded-md border-0 bg-zinc-100 w-full'
-        textContentType="none"
-        value={form.number}
-        onChangeText={(value) => setForm({ ...form, number: value })}
-      />
+          <InputField
+            label="Email"
+            placeholder="Email"
+            required
+            containerStyle='rounded-md border-0 bg-zinc-100 w-full'
+            textContentType="emailAddress"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={form.email_contact}
+            onChangeText={(value) => handleFieldChange('email_contact', value)}
+            error={errors.email_contact}
+          />
 
-      <View className='flex flex-row w-full' style={{ justifyContent: 'space-between' }}>
-        <Button variant='blue'>
-          Adicionar contato
-        </Button>
-        <Button variant='red' onPress={setIsModalVisible ? () => setIsModalVisible(false) : () => console.log('cancelar')}>
-          Cancelar
-        </Button>
-      </View>
-    </View>
+          <InputField
+            label="Número de telefone"
+            placeholder="Número de telefone"
+            required
+            containerStyle='rounded-md border-0 bg-zinc-100 w-full'
+            textContentType="telephoneNumber"
+            keyboardType="phone-pad"
+            value={form.number_contact}
+            onChangeText={(value) => handleFieldChange('number_contact', value)}
+            error={errors.number_contact}
+          />
+
+          <View className='flex flex-row w-full gap-4 mt-2'>
+            <Button 
+              variant='blue'
+              onPress={handleSubmit}
+              disabled={isLoading}
+              className="flex-1"
+            >
+              {isLoading 
+                ? (initialData ? 'Atualizando...' : 'Adicionando...') 
+                : (initialData ? 'Atualizar contato' : 'Adicionar contato')}
+            </Button>
+            <Button 
+              variant='red' 
+              onPress={setIsModalVisible ? () => setIsModalVisible(false) : () => router.back()}
+              className="flex-1"
+            >
+              Cancelar
+            </Button>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 
