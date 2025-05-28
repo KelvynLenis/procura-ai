@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { View, Text, ScrollView, Image, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
 import Button from '@/components/Button';
 import { Link, router } from 'expo-router';
-import { createUser } from '@/services/user/create-user';
+import { createUser } from '@/functions/user/create-user';
 import { ID } from '@/lib/appwrite';
 import { z } from 'zod';
 import MaskInput from 'react-native-mask-input';

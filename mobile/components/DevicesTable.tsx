@@ -8,9 +8,9 @@ import AlertForm from './Forms/AlertForm';
 import Button from './Button';
 import { DeviceProps } from '@/interfaces';
 import { account } from '@/lib/appwrite';
-import { listDevices } from '@/services/device/list-devices';
+import { listDevices } from '@/functions/device/list-devices';
 import { cn } from '@/utils/cn';
-import { deleteDevice } from '@/services/device/delete-device';
+import { deleteDevice } from '@/functions/device/delete-device';
 
 const DeviceRow = ({ device }: {device: DeviceProps}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);

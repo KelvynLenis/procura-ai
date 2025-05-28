@@ -8,9 +8,9 @@ import MaskInput from 'react-native-mask-input';
 import { CreateDevice } from '@/interfaces';
 import CreateDeviceSchema from '@/interfaces/createDeviceSchema';
 import { ID } from 'react-native-appwrite';
-import { createDevice } from '@/services/device/create-device';
+import { createDevice } from '@/functions/device/create-device';
 import { z } from 'zod';
-import { updateDevice } from '@/services/device/update-device';
+import { updateDevice } from '@/functions/device/update-device';
 
 interface DeviceFormProps {
   setIsModalVisible?: React.Dispatch<React.SetStateAction<boolean>>
