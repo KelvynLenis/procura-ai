@@ -49,4 +49,3 @@ export const createUserSchema = z.object({
   message: 'Os e-mails precisam ser iguais',
 });
 
-export type CreateUserFormData = z.infer<typeof createUserSchema>; 

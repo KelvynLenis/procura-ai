@@ -10,12 +10,18 @@ import { DeviceProps } from '@/interfaces';
 import { account } from '@/lib/appwrite';
 import { listDevices } from '@/services/device/list-devices';
 import { cn } from '@/utils/cn';
+import { deleteDevice } from '@/services/device/delete-device';
 
 const DeviceRow = ({ device }: {device: DeviceProps}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [isAlertModalVisible, setIsAlertModalVisible] = useState(false);
+
+  async function handleDeleteDevice() {
+    await deleteDevice(device.$id!)
+    setIsModalVisible(false)
+  }
 
   return (
     <>
@@ -206,7 +212,7 @@ const DeviceRow = ({ device }: {device: DeviceProps}) => {
         </Pressable>
       </Modal>
 
-      <ConfirmationDialog onConfirm={() => setIsConfirmModalVisible(false)} title='Deseja realmente excluir o dispositivo?' description='Essa ação não pode ser desfeita. Isso excluirá permanentemente o dispositivo e removerá seus dados de nossos servidores.' isModalVisible={isConfirmModalVisible} setIsModalVisible={() => setIsConfirmModalVisible(false)} />
+      <ConfirmationDialog onConfirm={handleDeleteDevice} title='Deseja realmente excluir o dispositivo?' description='Essa ação não pode ser desfeita. Isso excluirá permanentemente o dispositivo e removerá seus dados de nossos servidores.' isModalVisible={isConfirmModalVisible} setIsModalVisible={() => setIsConfirmModalVisible(false)} />
     </>
   )
 }
@@ -257,15 +263,14 @@ const DevicesTable = () => {
                 data={devices}
                 renderItem={({ item }) => <DeviceRow device={item} />}
                 keyExtractor={item => item.$id?.toString() || ''}
-                // columnWrapperStyle={{ justifyContent: 'flex-start', gap: 20, paddingRight: 5, marginBottom: 10 }}
                 className="mt-2"
+                contentContainerStyle={{ gap: 4 }}
                 scrollEnabled={false}
               />
             </>
           )
         }
 
-        {/* <DeviceRow /> */}
         <Button variant='blue' onPress={() => router.push('/add-new')} className='self-end'>Cadastrar dispositivo</Button>
       </View>
     </View>
