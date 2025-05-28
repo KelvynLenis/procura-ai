@@ -224,9 +224,9 @@ const DeviceForm = ({ setIsModalVisible, Device }: DeviceFormProps) => {
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      className="flex-1 bg-neutral-50"
+      className="flex-1"
     >
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ minHeight: '100%', paddingBottom: 350 }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ minHeight: '100%', paddingBottom: 450 }}>
         <View className='flex-col items-start p-6 gap-5 bg-white shadow-black shadow-md rounded-xl w-full'>
           <Text>Insira os dados abaixo:</Text>
           <View className='w-full h-0.5 bg-zinc-200' />
