@@ -106,6 +106,10 @@ export default function Index() {
         <Button onPress={() => router.push('/auth/sign-up')} variant="blue" className="self-center">
           Cadastre-se
         </Button>
+
+        <View className="flex flex-row w-full justify-end">
+          <Text className="text-zinc-400">Versão 0.0.5</Text>
+        </View>
       </View>
     </ScrollView>
   );
