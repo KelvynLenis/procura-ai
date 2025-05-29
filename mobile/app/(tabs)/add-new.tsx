@@ -17,7 +17,7 @@ export default function AddNew() {
       />
 
       <View className='w-screen h-screen bg-[#F2F8FD] px-4' style={{ paddingTop: 10 }}>
-        <DeviceForm />
+        <DeviceForm  device={undefined}/>
       </View>
     </>
   )

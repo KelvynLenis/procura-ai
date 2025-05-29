@@ -1,56 +1,41 @@
-import { View, Text, ScrollView, Image, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, ScrollView, Image, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, Keyboard, FlatList } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import InputField from '../InputField'
 import Button from '../Button';
 import { router } from 'expo-router';
 import { CircleAlert } from 'lucide-react-native';
 import MaskInput from 'react-native-mask-input';
-import { CreateDevice } from '@/interfaces';
+import { CreateDevice, DeviceProps, ImeiCheckResponse, ImeiValidationResult, Operator } from '@/interfaces';
 import CreateDeviceSchema from '@/interfaces/createDeviceSchema';
 import { ID } from 'react-native-appwrite';
 import { createDevice } from '@/functions/device/create-device';
 import { z } from 'zod';
 import { updateDevice } from '@/functions/device/update-device';
+import { listOperators } from '@/functions/operators/list-operators';
+import { getOperator } from '@/functions/operators/get-operator';
+import { Picker } from '@react-native-picker/picker';
+import PickerComponent from '../PickerComponent';
+import DropdownComponent from '../DropdownComponent';
 
 interface DeviceFormProps {
   setIsModalVisible?: React.Dispatch<React.SetStateAction<boolean>>
-  Device?: CreateDevice
+  device?: DeviceProps
 }
 
-interface ImeiCheckResponse {
-  status: string
-  result: string
-  imei: string
-  count_free_checks_today: number
-  readPerformance: string
-  object: {
-    brand: string
-    name: string
-    model: string
-  }
-}
 
-interface ImeiValidationResult {
-  isValid: boolean
-  brand?: string
-  model?: string
-  name?: string
-  error?: string
-}
-
-const DeviceForm = ({ setIsModalVisible, Device }: DeviceFormProps) => {
+const DeviceForm = ({ setIsModalVisible, device }: DeviceFormProps) => {
   const [form, setForm] = useState({
-    imei: Device?.imei || "",
-    phone_model: Device?.phone_model || "",
-    brand: Device?.brand || "",
-    phone_number: Device?.phone_number || "",
-    operator_id: Device?.operator_id || "",
+    imei: device?.imei || "",
+    phone_model: device?.phone_model || "",
+    brand: device?.brand || "",
+    phone_number: device?.phone_number || "",
+    operator_id: device?.operator_id || "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof CreateDevice, string>>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isValidatingImei, setIsValidatingImei] = useState(false)
   const [imeiError, setImeiError] = useState<string | null>(null)
-
+  const [operators, setOperators] = useState<{ label: string; value: string }[]>([])
 
   async function validateImeiAndGetDetails(imei: string): Promise<ImeiValidationResult> {
     try {
@@ -141,11 +126,8 @@ const DeviceForm = ({ setIsModalVisible, Device }: DeviceFormProps) => {
 
   const handleFieldChange = (field: keyof CreateDevice, value: string) => {
       setForm(prev => ({ ...prev, [field]: value }));
-      console.log(`Campo ${field} alterado para: ${value}`);
-      console.log(value.length)
 
       if (field === 'imei' && value.length === 15) {
-        console.log('Validando IMEI...');
         handleImeiValidation(value);
       }
       // Limpa o erro do campo quando o usuário começa a digitar
@@ -181,8 +163,8 @@ const DeviceForm = ({ setIsModalVisible, Device }: DeviceFormProps) => {
 
       console.log('Dados do dispositivo:', deviceData);
 
-      if (Device) {
-        await updateDevice(Device.$id!, deviceData);
+      if (device) {
+        await updateDevice(device.$id!, deviceData);
         Alert.alert('Sucesso', 'Dispositivo atualizado com sucesso!');
 
         setIsModalVisible && setIsModalVisible(false);
@@ -220,13 +202,49 @@ const DeviceForm = ({ setIsModalVisible, Device }: DeviceFormProps) => {
       setIsLoading(false);
     }
   }
+
+  function onCancel() {
+    form.imei = ''
+    form.brand = ''
+    form.phone_model = ''
+    form.phone_number = ''
+    form.operator_id = ''
+    router.back();
+  }
+
+  async function loadOperators() {
+    try {
+      const response = await listOperators();
+
+      const data = response.map(operator => {
+        return {
+          label: operator.name_operator,
+          value: operator.$id
+        }
+      })
+
+      setOperators(data);
+    } catch (error) {
+      console.error('Erro ao listar operadores:', error);
+    }
+  }
+
+  useEffect(() => {
+    if (device) {
+      const operator = getOperator(device.operator_id)
+
+    }
+
+    loadOperators()
+
+  }, [device])
   
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       className="flex-1"
     >
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ minHeight: '100%', paddingBottom: 450 }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: device ? 0 : 350 }}>
         <View className='flex-col items-start p-6 gap-5 bg-white shadow-black shadow-md rounded-xl w-full'>
           <Text>Insira os dados abaixo:</Text>
           <View className='w-full h-0.5 bg-zinc-200' />
@@ -286,9 +304,9 @@ const DeviceForm = ({ setIsModalVisible, Device }: DeviceFormProps) => {
               <MaskInput
                 value={form.phone_number}
                 onChangeText={(masked, unmasked) => handleFieldChange('phone_number', unmasked)}
-                mask={['(', /\d/, /\d/, ')', /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/, /\d/]}
+                mask={['(', /\d/, /\d/, ')', /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
                 keyboardType="numeric"
-                placeholder="Digite o IMEI"
+                placeholder="Digite o número do celular"
                 className="rounded-md p-4 text-[15px] flex-1 text-justify"
               />
             </View>
@@ -297,20 +315,13 @@ const DeviceForm = ({ setIsModalVisible, Device }: DeviceFormProps) => {
             )}
           </View>
 
-          <InputField
-            label="Operadora"
-            placeholder="Operadora"
-            containerStyle='rounded-md border-0 bg-zinc-100 w-full'
-            textContentType="none"
-            value={form.operator_id}
-            onChangeText={(value) => setForm({ ...form, operator_id: value })}
-          />
+          <PickerComponent value={form.operator_id} setValue={(value) => form.operator_id = value}/>
 
           <View className='flex flex-row w-full' style={{ justifyContent: 'space-between' }}>
             <Button variant='blue' onPress={onSubmit}>
               Criar conta
             </Button>
-            <Button variant='red' onPress={setIsModalVisible ? () => setIsModalVisible(false) : () => console.log('cancelar')}>
+            <Button variant='red' onPress={setIsModalVisible ? () => setIsModalVisible(false) : onCancel}>
               Cancelar
             </Button>
           </View>

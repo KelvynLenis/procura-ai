@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, Modal, Pressable, FlatList, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, TouchableOpacity, Modal, Pressable, FlatList, ActivityIndicator, ScrollView } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Eye, Pencil, Trash2, TriangleAlert } from 'lucide-react-native'
 import { router } from 'expo-router';
 import ConfirmationDialog from './ConfirmationDialog';
@@ -11,6 +11,7 @@ import { account } from '@/lib/appwrite';
 import { listDevices } from '@/functions/device/list-devices';
 import { cn } from '@/utils/cn';
 import { deleteDevice } from '@/functions/device/delete-device';
+import { RefreshControl } from 'react-native';
 
 const DeviceRow = ({ device }: {device: DeviceProps}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -207,7 +208,7 @@ const DeviceRow = ({ device }: {device: DeviceProps}) => {
       <Modal animationType='fade' transparent visible={isEditModalVisible} onRequestClose={() => setIsEditModalVisible(false)}>
         <Pressable className='flex-1 bg-black/50 flex items-center justify-center' onPress={() => setIsEditModalVisible(false)}>
           <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '85%', width: '95%' }} className='bg-white flex rounded-2xl overflow-hidden'>
-            <DeviceForm setIsModalVisible={() => setIsEditModalVisible(false)} />
+            <DeviceForm device={device} setIsModalVisible={() => setIsEditModalVisible(false)} />
           </Pressable>
         </Pressable>
       </Modal>
@@ -221,59 +222,73 @@ const DevicesTable = () => {
    const [devices, setDevices] = useState<DeviceProps[]>([])
    const [isLoading, setIsLoading] = useState(true)
 
-   useEffect(() => {
-     async function fetchDevices() {
-       const user = await account.get()
-      //  const { data, loading: isLoading, error: devicesErro } = useFetch(() => listDevices({ userId: user.$id, limit: 100, page: 1}));
-      const devices = await listDevices({ userId: user.$id, limit: 100, page: 1})
-      
-      setDevices(devices)
+  const onRefresh = useCallback(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      fetchDevices();
+      setIsLoading(false);
+    }, 2000);
+  }, []);
 
-      setIsLoading(false)
-    }
+  async function fetchDevices() {
+    const user = await account.get()
+   //  const { data, loading: isLoading, error: devicesErro } = useFetch(() => listDevices({ userId: user.$id, limit: 100, page: 1}));
+   const devices = await listDevices({ userId: user.$id, limit: 100, page: 1})
+   
+   setDevices(devices)
 
+   setIsLoading(false)
+ }
+
+  useEffect(() => {
     fetchDevices()
   }, [])
 
   return (
-    <View className='bg-zinc-100/50 border border-zinc-200 w-full h-fit gap-2 rounded-xl flex'>
-      <View className='bg-zinc-200/70 w-full h-10 flex flex-row items-center rounded-t-xl pr-5 pl-3'>
-        <View className='w-full max-w-[13.5rem]'>
-          <Text>Modelo</Text>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
+      }
+    >
+      <View className='bg-zinc-100/50 border border-zinc-200 w-full h-fit gap-2 rounded-xl flex'>
+        <View className='bg-zinc-200/70 w-full h-10 flex flex-row items-center rounded-t-xl pr-5 pl-3'>
+          <View className='w-full max-w-[13.5rem]'>
+            <Text>Modelo</Text>
+          </View>
+          <View className='w-[7.4rem] sm:w-[7.6rem] md:w-[8.6rem]'>
+            <Text>Status</Text>
+          </View>
+          <View className='w-fit'>
+            <Text>Ação</Text>
+          </View>
         </View>
-        <View className='w-[7.4rem] sm:w-[7.6rem] md:w-[8.6rem]'>
-          <Text>Status</Text>
-        </View>
-        <View className='w-fit'>
-          <Text>Ação</Text>
-        </View>
-      </View>
 
-      <View className='pb-2 px-1 gap-2'>
-        {
-          isLoading ? (
-            <ActivityIndicator 
-              size='large'
-              color={'#0000ff'}
-              className="mt-0 self-center"
-            />
-          ) : (
-            <>
-              <FlatList 
-                data={devices}
-                renderItem={({ item }) => <DeviceRow device={item} />}
-                keyExtractor={item => item.$id?.toString() || ''}
-                className="mt-2"
-                contentContainerStyle={{ gap: 4 }}
-                scrollEnabled={false}
+        <View className='pb-2 px-1 gap-2'>
+          {
+            isLoading ? (
+              <ActivityIndicator 
+                size='large'
+                color={'#0000ff'}
+                className="mt-0 self-center"
               />
-            </>
-          )
-        }
+            ) : (
+              <>
+                <FlatList 
+                  data={devices}
+                  renderItem={({ item }) => <DeviceRow device={item} />}
+                  keyExtractor={item => item.$id?.toString() || ''}
+                  className="mt-2"
+                  contentContainerStyle={{ gap: 4 }}
+                  scrollEnabled={false}
+                />
+              </>
+            )
+          }
 
-        <Button variant='blue' onPress={() => router.push('/add-new')} className='self-end'>Cadastrar dispositivo</Button>
+          <Button variant='blue' onPress={() => router.push('/add-new')} className='self-end'>Cadastrar dispositivo</Button>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   )
 }
 export default DevicesTable
