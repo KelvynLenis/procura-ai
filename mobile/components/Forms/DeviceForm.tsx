@@ -319,7 +319,7 @@ const DeviceForm = ({ setIsModalVisible, device }: DeviceFormProps) => {
 
           <View className='flex flex-row w-full' style={{ justifyContent: 'space-between' }}>
             <Button variant='blue' onPress={onSubmit}>
-              Criar conta
+              Cadastrar
             </Button>
             <Button variant='red' onPress={setIsModalVisible ? () => setIsModalVisible(false) : onCancel}>
               Cancelar

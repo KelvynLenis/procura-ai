@@ -13,14 +13,16 @@ import { cn } from '@/utils/cn';
 import { deleteDevice } from '@/functions/device/delete-device';
 import { RefreshControl } from 'react-native';
 
-const DeviceRow = ({ device }: {device: DeviceProps}) => {
+const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () => void}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [isAlertModalVisible, setIsAlertModalVisible] = useState(false);
 
   async function handleDeleteDevice() {
+    onRefresh()
     await deleteDevice(device.$id!)
+    setIsConfirmModalVisible(false)
     setIsModalVisible(false)
   }
 
@@ -275,7 +277,7 @@ const DevicesTable = () => {
               <>
                 <FlatList 
                   data={devices}
-                  renderItem={({ item }) => <DeviceRow device={item} />}
+                  renderItem={({ item }) => <DeviceRow device={item} onRefresh={onRefresh} />}
                   keyExtractor={item => item.$id?.toString() || ''}
                   className="mt-2"
                   contentContainerStyle={{ gap: 4 }}
