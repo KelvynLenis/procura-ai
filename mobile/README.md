@@ -33,7 +33,7 @@
 
    Android:
    ```bash
-   eas build -p android --profile preview
+   eas build -p android --profile deployment
    ```
 
    ou 

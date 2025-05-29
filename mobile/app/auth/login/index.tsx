@@ -5,7 +5,7 @@ import { View, Text, ScrollView, Image, Alert } from 'react-native'
 import { Lock, Mail } from 'lucide-react-native'
 import Button from '@/components/Button';
 import { router } from 'expo-router';
-import { login } from '@/services/auth/login';
+import { login } from '@/functions/auth/login';
 import { account } from '@/lib/appwrite';
 import { z } from 'zod';
 

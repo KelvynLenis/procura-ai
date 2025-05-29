@@ -4,9 +4,9 @@ import InputField from '../InputField'
 import Button from '../Button';
 import { router } from 'expo-router';
 import { z } from 'zod';
-import { createContact } from '@/services/contact/create-contact';
-import { updateContact } from '@/services/contact/update-contact';
-import type { Contact } from '@/services/contact/list-contacts';
+import { createContact } from '@/functions/contact/create-contact';
+import { updateContact } from '@/functions/contact/update-contact';
+import type { Contact } from '@/functions/contact/list-contacts';
 import MaskInput from 'react-native-mask-input';
 
 interface ContactFormProps {

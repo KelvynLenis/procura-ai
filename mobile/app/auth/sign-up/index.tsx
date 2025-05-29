@@ -4,11 +4,12 @@ import { useState } from 'react';
 import { View, Text, ScrollView, Image, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
 import Button from '@/components/Button';
 import { Link, router } from 'expo-router';
-import { createUser } from '@/services/user/create-user';
+import { createUser } from '@/functions/user/create-user';
 import { ID } from '@/lib/appwrite';
-import { createUserSchema, type CreateUserFormData } from '@/schemas/user';
 import { z } from 'zod';
 import MaskInput from 'react-native-mask-input';
+import { CreateUserFormData } from '@/interfaces';
+import { createUserSchema } from '@/interfaces/user';
 
 export default function signUp() {
   const [form, setForm] = useState<CreateUserFormData>({

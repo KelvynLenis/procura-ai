@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { validateCPF } from '@/lib/utils';
-import { validateUserEmail } from '@/services/user/validate-user-email';
-import { validateUserCpf } from '@/services/user/validate-user-cpf';
+import { validateUserEmail } from '@/functions/user/validate-user-email';
+import { validateUserCpf } from '@/functions/user/validate-user-cpf';
 
 export const createUserSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),
@@ -49,4 +49,3 @@ export const createUserSchema = z.object({
   message: 'Os e-mails precisam ser iguais',
 });
 
-export type CreateUserFormData = z.infer<typeof createUserSchema>; 

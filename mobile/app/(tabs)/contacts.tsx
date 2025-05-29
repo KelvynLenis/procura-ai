@@ -6,8 +6,8 @@ import { Pencil, Trash2, Mail, Phone } from 'lucide-react-native'
 import Button from '@/components/Button'
 import ContactForm from '@/components/Forms/ContactForm'
 import ConfirmationDialog from '@/components/ConfirmationDialog'
-import { listContacts, type Contact } from '@/services/contact/list-contacts'
-import { deleteContact } from '@/services/contact/delete-contact'
+import { listContacts, type Contact } from '@/functions/contact/list-contacts'
+import { deleteContact } from '@/functions/contact/delete-contact'
 
 const formatPhoneNumber = (number: string) => {
   // Remove todos os caracteres não numéricos

@@ -1,5 +1,8 @@
 import type { z } from 'zod'
 import type DeviceSchema from './deviceSchema'
+import { createUserSchema } from './user'
+import CreateDeviceSchema from './createDeviceSchema'
+import OperatorSchema from './operatorSchema'
 // import type cepSearchResponseSchema from './cepSearchResponseSchema'
 // import type districtSchema from './districtSchema'
 // import type EventSchema from './eventSchema'
@@ -34,11 +37,28 @@ export interface OccurrencesProps {
   }
 }
 
+export interface ImeiCheckResponse {
+  status: string
+  result: string
+  imei: string
+  count_free_checks_today: number
+  readPerformance: string
+  object: {
+    brand: string
+    name: string
+    model: string
+  }
+}
+
+export interface ImeiValidationResult {
+  isValid: boolean
+  brand?: string
+  model?: string
+  name?: string
+  error?: string
+}
+
 export type Device = z.infer<typeof DeviceSchema>
-// export type Event = z.infer<typeof EventSchema>
-// export type District = z.infer<typeof districtSchema>
-// export type cepSearchResponse = z.infer<typeof cepSearchResponseSchema>
-// export type Contact = z.infer<typeof ContactSchema>
-// export type QueryFilter = z.infer<typeof QueryFilterSchema>
-// export type User = z.infer<typeof UserSchema>
-// export type Operator = z.infer<typeof OperatorSchema>
+export type CreateUserFormData = z.infer<typeof createUserSchema>
+export type CreateDevice = z.infer<typeof CreateDeviceSchema>
+export type Operator = z.infer<typeof OperatorSchema>
