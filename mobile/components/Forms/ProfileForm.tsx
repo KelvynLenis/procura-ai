@@ -1,9 +1,9 @@
-import { View, Text, ScrollView, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, Keyboard, Image, Modal } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, Keyboard, Image, Modal, RefreshControl } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import InputField from '../InputField'
 import Button from '../Button';
 import { router } from 'expo-router';
-import { Pencil, Upload } from 'lucide-react-native';
+import { Pencil, Upload, LogOut, Eye, EyeOff } from 'lucide-react-native';
 import { z } from 'zod';
 import { updateUser } from '@/functions/user/update-user';
 import MaskInput from 'react-native-mask-input';
@@ -13,6 +13,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { validateCPF } from '@/lib/utils';
 import { updatePassword } from '@/functions/auth/update-password';
 import { uploadImage } from '@/functions/storage/upload-image';
+import { useFocusEffect } from '@react-navigation/native'
+import { account } from '@/lib/appwrite';
 
 interface ProfileFormProps {
   setIsModalVisible?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -74,18 +76,30 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [tempImageUri, setTempImageUri] = useState<string | null>(null);
   const [userId, setUserId] = useState<any>(null);
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
+  const [showPasswordSection, setShowPasswordSection] = useState(false);
+  const [expandedSection, setExpandedSection] = useState<'profile' | 'password' | null>('profile');
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  useEffect(() => {
-    loadUserData();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      loadUserData();
+      setErrors({});
+      setPasswordErrors({});
+      setTempImageUri(null);
+      setExpandedSection('profile');
+    }, [])
+  );
 
   async function loadUserData() {
     try {
       setIsLoadingData(true);
       const currentUserId = await getUserId();
-      
+
       if (!currentUserId) {
         throw new Error('Usuário não encontrado');
       }
@@ -108,7 +122,6 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
       }[] = await getUserInfo(currentUserId);
       setUserId(userData);
 
-      
       if (userData && userData.length > 0) {
         const user = userData[0];
         setForm({
@@ -117,9 +130,7 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
           cpf: user.cpf || "",
           imgURL: user.img_url || "",
         });
-        if (user.img_url) {
-          setSelectedImage(user.img_url);
-        }
+        setSelectedImage(user.img_url || null);
       }
     } catch (error) {
       console.error('Erro ao carregar dados do usuário:', error);
@@ -137,7 +148,7 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
   const pickImage = async () => {
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      
+
       if (status !== 'granted') {
         Alert.alert('Permissão necessária', 'Precisamos de permissão para acessar suas fotos.');
         return;
@@ -152,34 +163,8 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
 
       if (!result.canceled && result.assets[0].uri) {
         const selectedAsset = result.assets[0];
+        setTempImageUri(selectedAsset.uri);
         setSelectedImage(selectedAsset.uri);
-
-        // Preparar arquivo para upload
-        const fileData = {
-          uri: selectedAsset.uri,
-          type: 'image/jpeg',
-          name: `profile-${Date.now()}.jpg`,
-          size: selectedAsset.fileSize || 0
-        };
-
-        try {
-          setIsLoading(true);
-          const imageUrl = await uploadImage(fileData);
-          setForm(prev => ({ ...prev, imgURL: imageUrl }));
-          Alert.alert('Sucesso', 'Imagem enviada com sucesso!');
-        } catch (error: any) {
-          console.error('Erro ao fazer upload da imagem:', error);
-          let errorMessage = 'Não foi possível fazer o upload da imagem.';
-          
-          if (error.message?.includes('Network request failed')) {
-            errorMessage = 'Erro de conexão. Verifique sua internet e tente novamente.';
-          }
-          
-          Alert.alert('Erro', errorMessage);
-          setSelectedImage(null);
-        } finally {
-          setIsLoading(false);
-        }
       }
     } catch (error) {
       console.error('Erro ao selecionar imagem:', error);
@@ -190,14 +175,8 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
   const removeImage = async () => {
     try {
       setSelectedImage(null);
+      setTempImageUri(null);
       setForm(prev => ({ ...prev, imgURL: "" }));
-
-      if (userId && userId[0]?.$id) {
-        await updateUser(userId[0].$id, {
-          ...form,
-          img_url: null
-        });
-      }
     } catch (error) {
       console.error('Erro ao remover imagem:', error);
       Alert.alert('Erro', 'Não foi possível remover a imagem.');
@@ -216,25 +195,44 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
         throw new Error('Usuário não encontrado');
       }
 
+      let finalImageUrl = form.imgURL;
+
+      if (tempImageUri) {
+        const fileData = {
+          uri: tempImageUri,
+          type: 'image/jpeg',
+          name: `profile-${Date.now()}.jpg`,
+          size: 0
+        };
+
+        try {
+          finalImageUrl = await uploadImage(fileData);
+        } catch (error: any) {
+          console.error('Erro ao fazer upload da imagem:', error);
+          throw new Error('Não foi possível fazer o upload da imagem. Tente novamente.');
+        }
+      }
+
       await updateUser(userId[0].$id, {
         name: form.name,
         email: form.email,
         cpf: form.cpf,
-        img_url: form.imgURL,
+        img_url: finalImageUrl,
       });
 
       Alert.alert('Sucesso', 'Perfil atualizado com sucesso!');
-      
+      setTempImageUri(null);
+
       if (onSuccess) {
         onSuccess();
       }
-      
+
       if (setIsModalVisible) {
         setIsModalVisible(false);
       }
     } catch (error) {
       console.log('Erro ao atualizar perfil:', error);
-      
+
       if (error instanceof z.ZodError) {
         const newErrors: Partial<Record<keyof ProfileFormData, string>> = {};
         error.errors.forEach(err => {
@@ -273,7 +271,7 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
       });
     } catch (error) {
       console.log('Erro ao atualizar senha:', error);
-      
+
       if (error instanceof z.ZodError) {
         const newErrors: Partial<Record<keyof PasswordFormData, string>> = {};
         error.errors.forEach(err => {
@@ -290,202 +288,275 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
     }
   }
 
+  async function handleLogout() {
+    Alert.alert('Sair', 'Deseja realmente sair da conta?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Sair',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await account.deleteSession('current');
+            router.replace('/');
+          } catch (error) {
+            console.error('Erro ao fazer logout:', error);
+            Alert.alert('Erro', 'Não foi possível sair da conta. Tente novamente.');
+          }
+        }
+      },
+    ]);
+  }
+
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       className="flex-1"
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+      style={{ flex: 1 }}
     >
-      <ScrollView 
-        showsVerticalScrollIndicator={false} 
-        contentContainerStyle={{ minHeight: '100%', paddingBottom: 40 }}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ 
+          flexGrow: 1,
+          paddingBottom: 100 
+        }}
         keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="none"
+        keyboardDismissMode="on-drag"
+        automaticallyAdjustKeyboardInsets={true}
+        style={{ flex: 1 }}
+        scrollEnabled={true}
+        nestedScrollEnabled={true}
       >
-        <View className='flex-col items-start p-6 gap-5 bg-white shadow-black shadow-md rounded-xl w-full'>
-          {isLoadingData ? (
-            <View className="w-full items-center justify-center py-8">
-              <Text className="text-gray-600">Carregando dados...</Text>
+        <View style={{ minHeight: '100%', paddingBottom: 200 }}>
+          <View className="w-full items-center justify-center pt-6 pb-2">
+            <View className='w-24 h-24 rounded-full bg-zinc-300 overflow-hidden mb-2'>
+              {selectedImage ? (
+                <Image
+                  source={{ uri: selectedImage }}
+                  className="w-full h-full"
+                  resizeMode="cover"
+                />
+              ) : (
+                <View className="w-full h-full items-center justify-center bg-primary">
+                  <Text className="text-white text-3xl font-medium">
+                    {form.name.split(' ').length > 1
+                      ? form.name.split(' ')[0][0] + form.name.split(' ')[1][0]
+                      : form.name.split(' ')[0][0]}
+                  </Text>
+                </View>
+              )}
             </View>
-          ) : (
-            <>
-              <View className='flex flex-row gap-3'>
-                <View className='w-24 h-24 rounded-full bg-zinc-300 overflow-hidden'>
-                  {selectedImage ? (
-                    <Image 
-                      source={{ uri: selectedImage }} 
-                      className="w-full h-full"
-                      resizeMode="cover"
-                    />
-                  ) : (
-                    <View className="w-full h-full items-center justify-center bg-primary">
-                      <Text className="text-white text-2xl font-medium">
-                        {form.name.split(' ').length > 1
-                          ? form.name.split(' ')[0][0] + form.name.split(' ')[1][0]
-                          : form.name.split(' ')[0][0]}
-                      </Text>
+            <Text className="text-lg font-bold text-zinc-900 mb-1">{form.name}</Text>
+            <Text className="text-sm text-zinc-500 mb-2">{form.email}</Text>
+          </View>
+          <View className='flex-col items-start p-6 gap-5 bg-white shadow-black shadow-md rounded-xl w-full mt-0'>
+            {isLoadingData ? (
+              <View className="w-full items-center justify-center py-8">
+                <Text className="text-gray-600">Carregando dados...</Text>
+              </View>
+            ) : (
+              <>
+                <TouchableOpacity
+                  onPress={() => setExpandedSection(expandedSection === 'profile' ? null : 'profile')}
+                  className="flex-row items-center justify-between w-full py-3 px-2 border-b border-zinc-200"
+                  activeOpacity={0.8}
+                >
+                  <Text className="text-base font-semibold text-primary">Editar dados pessoais</Text>
+                  <Text className="text-primary text-xl">{expandedSection === 'profile' ? '▲' : '▼'}</Text>
+                </TouchableOpacity>
+                {expandedSection === 'profile' && (
+                  <View className="w-full mt-2">
+                    <View className='flex flex-row gap-3 mb-2'>
+
+                      <View className="flex-1 justify-center">
+                        <TouchableOpacity
+                          onPress={pickImage}
+                          className='flex flex-row gap-2 bg-zinc-100 p-2 rounded-md border border-zinc-400 items-center mb-1'
+                        >
+                          <Upload size={20} color='black' />
+                          <Text>Selecionar imagem</Text>
+                        </TouchableOpacity>
+                        {selectedImage && (
+                          <TouchableOpacity
+                            onPress={removeImage}
+                            className='flex flex-row gap-2 bg-zinc-100 p-2 rounded-md border border-zinc-400 items-center'
+                          >
+                            <Text>Remover</Text>
+                          </TouchableOpacity>
+                        )}
+                        <Text className='text-xs mt-2'>* São suportadas imagens nos formatos .png .jpg de até 10 mb</Text>
+                      </View>
                     </View>
-                  )}
-                </View>
-                <View>
-                  <View className='flex flex-row gap-2'>
-                    <TouchableOpacity 
-                      onPress={pickImage}
-                      className='flex flex-row gap-2 bg-zinc-100 p-2 rounded-md border border-zinc-400 items-center'
-                    >
-                      <Upload size={24} color='black' />
-                      <Text>Selecionar imagem</Text>
-                    </TouchableOpacity>
-                    {selectedImage && (
-                      <TouchableOpacity 
-                        onPress={removeImage}
-                        className='flex w-24 justify-center flex-row gap-2 bg-zinc-100 p-2 rounded-md border border-zinc-400 items-center'
+                    <InputField
+                      label="Nome"
+                      placeholder="Nome"
+                      icon={<Pencil size={20} color="gray" className='right-0 absolute' />}
+                      iconEnd
+                      containerStyle='rounded-md border-0 bg-zinc-100 w-full'
+                      textContentType="name"
+                      value={form.name}
+                      onChangeText={(value) => handleFieldChange('name', value)}
+                      error={errors.name}
+                      maxLength={50}
+                      returnKeyType="next"
+                    />
+                    <InputField
+                      label="E-mail"
+                      placeholder="E-mail"
+                      icon={<Pencil size={20} color="gray" className='right-0 absolute' />}
+                      iconEnd
+                      containerStyle='rounded-md border-0 bg-zinc-100 w-full'
+                      textContentType="emailAddress"
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      value={form.email}
+                      onChangeText={(value) => handleFieldChange('email', value)}
+                      error={errors.email}
+                      maxLength={100}
+                      returnKeyType="next"
+                    />
+                    <View className="w-full mb-2">
+                      <Text className="text-sm font-medium mb-1">
+                        CPF <Text className="text-red-500">*</Text>
+                      </Text>
+                      <View className="bg-zinc-100 rounded-md p-2">
+                        <Text>{form.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}</Text>
+                      </View>
+                    </View>
+                    <View className='flex flex-row w-full gap-4 mt-2'>
+                      <Button
+                        variant='red'
+                        onPress={setIsModalVisible ? () => setIsModalVisible(false) : () => router.back()}
+                        className="flex-1"
                       >
-                        <Text>Remover</Text>
+                        Cancelar
+                      </Button>
+                      <Button
+                        variant='blue'
+                        onPress={handleSubmit}
+                        disabled={isLoading}
+                        className="flex-1"
+                      >
+                        {isLoading ? 'Salvando...' : 'Salvar'}
+                      </Button>
+                    </View>
+                    <View className="w-full mt-4 flex-col items-end">
+                      <TouchableOpacity
+                        onPress={() => setExpandedSection('password')}
+                        className="flex-row items-center justify-end"
+                      >
                       </TouchableOpacity>
-                    )}
+                    </View>
                   </View>
-                  <Text className='w-80 text-xs mt-2'>* São suportadas imagens nos formatos .png .jpg de até 50 mb</Text>
-                </View>
-              </View>
-
-              <InputField
-                label="Nome"
-                placeholder="Nome"
-                icon={<Pencil size={20} color="gray" className='right-0 absolute' />}
-                iconEnd
-                containerStyle='rounded-md border-0 bg-zinc-100 w-full'
-                textContentType="name"
-                value={form.name}
-                onChangeText={(value) => handleFieldChange('name', value)}
-                error={errors.name}
-                maxLength={50}
-                returnKeyType="next"
-              />
-
-              <InputField
-                label="E-mail"
-                placeholder="E-mail"
-                icon={<Pencil size={20} color="gray" className='right-0 absolute' />}
-                iconEnd
-                containerStyle='rounded-md border-0 bg-zinc-100 w-full'
-                textContentType="emailAddress"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                value={form.email}
-                onChangeText={(value) => handleFieldChange('email', value)}
-                error={errors.email}
-                maxLength={100}
-                returnKeyType="next"
-              />
-
-              <View className="w-full">
-                <Text className="text-sm font-medium mb-1">
-                  CPF <Text className="text-red-500">*</Text>
-                </Text>
-                <View className="bg-zinc-100 rounded-md p-2">
-                  <Text>{form.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}</Text>
-                </View>
-              </View>
-
-              <View className='flex flex-row w-full gap-4 mt-2'>
-                <Button 
-                  variant='blue'
-                  onPress={handleSubmit}
-                  disabled={isLoading}
-                  className="flex-1"
+                )}
+                <TouchableOpacity
+                  onPress={() => setExpandedSection(expandedSection === 'password' ? null : 'password')}
+                  className="flex-row items-center justify-between w-full py-3 px-2 border-b border-zinc-200"
+                  activeOpacity={0.8}
                 >
-                  {isLoading ? 'Salvando...' : 'Salvar'}
-                </Button>
-                <Button 
-                  variant='red' 
-                  onPress={setIsModalVisible ? () => setIsModalVisible(false) : () => router.back()}
-                  className="flex-1"
-                >
-                  Cancelar
-                </Button>
-              </View>
-
-              <Button 
-                variant='blue'
-                onPress={() => setIsPasswordModalVisible(true)}
-                className="w-full mt-4"
-              >
-                Editar senha
-              </Button>
-            </>
-          )}
-        </View>
-      </ScrollView>
-
-      <Modal
-        visible={isPasswordModalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setIsPasswordModalVisible(false)}
-      >
-        <View className="flex-1 bg-black/50 items-center justify-center p-4">
-          <View className="bg-white rounded-xl p-6 w-full max-w-sm">
-            <Text className="text-lg font-bold mb-4">Editar senha</Text>
-            
-            <InputField
-              label="Senha atual"
-              placeholder="Digite sua senha atual"
-              secureTextEntry
-              containerStyle='rounded-md border-0 bg-zinc-100 w-full'
-              value={passwordForm.oldPassword}
-              onChangeText={(value) => handlePasswordChange('oldPassword', value)}
-              error={passwordErrors.oldPassword}
-            />
-
-            <InputField
-              label="Nova senha"
-              placeholder="Digite sua nova senha"
-              secureTextEntry
-              containerStyle='rounded-md border-0 bg-zinc-100 w-full mt-4'
-              value={passwordForm.newPassword}
-              onChangeText={(value) => handlePasswordChange('newPassword', value)}
-              error={passwordErrors.newPassword}
-            />
-
-            <InputField
-              label="Confirmar nova senha"
-              placeholder="Confirme sua nova senha"
-              secureTextEntry
-              containerStyle='rounded-md border-0 bg-zinc-100 w-full mt-4'
-              value={passwordForm.confirmPassword}
-              onChangeText={(value) => handlePasswordChange('confirmPassword', value)}
-              error={passwordErrors.confirmPassword}
-            />
-
-            <View className="flex flex-row gap-4 mt-4">
-              <Button 
-                variant='blue'
-                onPress={handlePasswordSubmit}
-                disabled={isLoading}
-                className="flex-1"
-              >
-                {isLoading ? 'Salvando...' : 'Salvar'}
-              </Button>
-              <Button 
-                variant='red'
-                onPress={() => {
-                  setIsPasswordModalVisible(false);
-                  setPasswordForm({
-                    oldPassword: "",
-                    newPassword: "",
-                    confirmPassword: "",
-                  });
-                  setPasswordErrors({});
-                }}
-                className="flex-1"
-              >
-                Cancelar
-              </Button>
-            </View>
+                  <Text className="text-base font-semibold text-primary">Alterar senha</Text>
+                  <Text className="text-primary text-xl">{expandedSection === 'password' ? '▲' : '▼'}</Text>
+                </TouchableOpacity>
+                {expandedSection === 'password' && (
+                  <View className="w-full mt-2">
+                    <InputField
+                      label="Senha atual"
+                      placeholder="Digite sua senha atual"
+                      secureTextEntry={!showOldPassword}
+                      containerStyle='rounded-md border-0 bg-zinc-100 w-full'
+                      value={passwordForm.oldPassword}
+                      onChangeText={(value) => handlePasswordChange('oldPassword', value)}
+                      error={passwordErrors.oldPassword}
+                      icon={
+                        <TouchableOpacity onPress={() => setShowOldPassword(!showOldPassword)}>
+                          {showOldPassword ? (
+                            <EyeOff size={20} color="gray" />
+                          ) : (
+                            <Eye size={20} color="gray" />
+                          )}
+                        </TouchableOpacity>
+                      }
+                      iconEnd
+                    />
+                    <InputField
+                      label="Nova senha"
+                      placeholder="Digite sua nova senha"
+                      secureTextEntry={!showNewPassword}
+                      containerStyle='rounded-md border-0 bg-zinc-100 w-full mt-4'
+                      value={passwordForm.newPassword}
+                      onChangeText={(value) => handlePasswordChange('newPassword', value)}
+                      error={passwordErrors.newPassword}
+                      icon={
+                        <TouchableOpacity onPress={() => setShowNewPassword(!showNewPassword)}>
+                          {showNewPassword ? (
+                            <EyeOff size={20} color="gray" />
+                          ) : (
+                            <Eye size={20} color="gray" />
+                          )}
+                        </TouchableOpacity>
+                      }
+                      iconEnd
+                    />
+                    <InputField
+                      label="Confirmar nova senha"
+                      placeholder="Confirme sua nova senha"
+                      secureTextEntry={!showConfirmPassword}
+                      containerStyle='rounded-md border-0 bg-zinc-100 w-full mt-4'
+                      value={passwordForm.confirmPassword}
+                      onChangeText={(value) => handlePasswordChange('confirmPassword', value)}
+                      error={passwordErrors.confirmPassword}
+                      icon={
+                        <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+                          {showConfirmPassword ? (
+                            <EyeOff size={20} color="gray" />
+                          ) : (
+                            <Eye size={20} color="gray" />
+                          )}
+                        </TouchableOpacity>
+                      }
+                      iconEnd
+                    />
+                    <View className="flex flex-row gap-4 mt-4">
+                      <Button
+                        variant='red'
+                        onPress={() => {
+                          setPasswordForm({
+                            oldPassword: "",
+                            newPassword: "",
+                            confirmPassword: "",
+                          });
+                          setPasswordErrors({});
+                          setExpandedSection('profile');
+                        }}
+                        className="flex-1"
+                      >
+                        Cancelar
+                      </Button>
+                      <Button
+                        variant='blue'
+                        onPress={handlePasswordSubmit}
+                        disabled={isLoading}
+                        className="flex-1"
+                      >
+                        {isLoading ? 'Salvando...' : 'Alterar senha'}
+                      </Button>
+                    </View>
+                  </View>
+                )}
+              </>
+            )}
+          </View>
+          <View className="w-full items-center py-4 mt-4 mb-8">
+            <TouchableOpacity 
+              onPress={handleLogout} 
+              className="flex-row items-center gap-2"
+            >
+              <LogOut size={20} color="#e11d48" />
+              <Text className="text-red-500 font-medium text-base">Sair da conta</Text>
+            </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      </ScrollView>
     </KeyboardAvoidingView>
   )
 }
