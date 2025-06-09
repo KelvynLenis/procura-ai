@@ -32,14 +32,8 @@ const profileSchema = z.object({
     .email('E-mail inválido')
     .max(100, 'E-mail deve ter no máximo 100 caracteres')
     .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Formato de e-mail inválido'),
-  cpf: z.string()
-    .min(1, 'CPF é obrigatório')
-    .length(11, 'CPF deve ter 11 dígitos')
-    .regex(/^\d{11}$/, 'Apenas números são permitidos'),
   imgURL: z.string().nullable(),
-}).refine(data => validateCPF(data.cpf), {
-  path: ['cpf'],
-  message: 'O CPF deve conter exatamente 11 dígitos numéricos.',
+  cpf: z.string(),
 });
 
 const passwordSchema = z.object({
@@ -63,8 +57,8 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
   const [form, setForm] = useState<ProfileFormData>({
     name: "",
     email: "",
-    cpf: "",
     imgURL: "",
+    cpf: "",
   });
   const [passwordForm, setPasswordForm] = useState<PasswordFormData>({
     oldPassword: "",
@@ -112,13 +106,13 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
         $permissions: any[];
         $updatedAt: string;
         accessed_at: string;
-        cpf: string;
         email: string;
         img_url: string | null;
         name: string;
         status: string;
         type: string;
         user_id: string;
+        cpf: string;
       }[] = await getUserInfo(currentUserId);
       setUserId(userData);
 
@@ -127,10 +121,12 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
         setForm({
           name: user.name || "",
           email: user.email || "",
-          cpf: user.cpf || "",
           imgURL: user.img_url || "",
+          cpf: user.cpf || "",
         });
-        setSelectedImage(user.img_url || null);
+        if (user.img_url) {
+          setSelectedImage(user.img_url);
+        }
       }
     } catch (error) {
       console.error('Erro ao carregar dados do usuário:', error);
@@ -183,6 +179,21 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
     }
   };
 
+  const handleCancel = () => {
+    setExpandedSection(null);
+    if (userId && userId[0]) {
+      setForm({
+        name: userId[0].name || "",
+        email: userId[0].email || "",
+        imgURL: userId[0].img_url || "",
+        cpf: userId[0].cpf || "",
+      });
+      setSelectedImage(userId[0].img_url);
+      setTempImageUri(null);
+    }
+    setErrors({});
+  };
+
   async function handleSubmit() {
     try {
       Keyboard.dismiss();
@@ -216,7 +227,6 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
       await updateUser(userId[0].$id, {
         name: form.name,
         email: form.email,
-        cpf: form.cpf,
         img_url: finalImageUrl,
       });
 
@@ -417,7 +427,7 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
                     />
                     <View className="w-full mb-2">
                       <Text className="text-sm font-medium mb-1">
-                        CPF <Text className="text-red-500">*</Text>
+                        CPF
                       </Text>
                       <View className="bg-zinc-100 rounded-md p-2">
                         <Text>{form.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}</Text>
@@ -426,7 +436,7 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
                     <View className='flex flex-row w-full gap-4 mt-2'>
                       <Button
                         variant='red'
-                        onPress={setIsModalVisible ? () => setIsModalVisible(false) : () => router.back()}
+                        onPress={handleCancel}
                         className="flex-1"
                       >
                         Cancelar

@@ -1,7 +1,6 @@
 interface UpdateUserStatusData {
     name: string
     email: string
-    cpf: string
     img_url: string | null
   }
   
