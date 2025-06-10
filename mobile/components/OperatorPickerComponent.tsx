@@ -2,13 +2,13 @@ import { View, Text, FlatList } from 'react-native'
 import React, { useState } from 'react'
 import { Picker } from '@react-native-picker/picker'
 
-interface PickerComponentProps {
+interface OperatorPickerComponentProps {
   data?: { label: string, value: string }[] 
   value?: string
   setValue: (value: string) => void
 }
 
-const PickerComponent = ({ value, data, setValue }: PickerComponentProps) => {
+const OperatorPickerComponent = ({ value, data, setValue }: OperatorPickerComponentProps) => {
   const [selectedValue, setSelectedValue] = useState(value ? value : '');
 
   function onSelect(value: string) {
@@ -38,4 +38,4 @@ const PickerComponent = ({ value, data, setValue }: PickerComponentProps) => {
   )
 }
 
-export default PickerComponent
+export default OperatorPickerComponent

@@ -20,6 +20,11 @@ export default {
         foregroundImage: "./assets/icons/favicon.png",
         backgroundColor: "#ffffff"
       },
+      config: {
+        "googleMaps": {
+          "apiKey": "process.env.GOOGLE_MAPS_API_KEY",
+        },
+      },
       edgeToEdgeEnabled: true,
       package: "com.procuraai.mobile"
     },

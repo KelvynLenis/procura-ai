@@ -3,13 +3,7 @@ import type DeviceSchema from './deviceSchema'
 import { createUserSchema } from './user'
 import CreateDeviceSchema from './createDeviceSchema'
 import OperatorSchema from './operatorSchema'
-// import type cepSearchResponseSchema from './cepSearchResponseSchema'
-// import type districtSchema from './districtSchema'
-// import type EventSchema from './eventSchema'
-// import type ContactSchema from './contactSchema'
-// import type { QueryFilterSchema } from './queryFilter'
-// import type { UserSchema } from './userSchema'
-// import type OperatorSchema from './operatorSchema'
+
 
 export interface DeviceProps {
   $id?: string // ID do dispositivo

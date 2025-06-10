@@ -12,6 +12,7 @@ import { listDevices } from '@/functions/device/list-devices';
 import { cn } from '@/utils/cn';
 import { deleteDevice } from '@/functions/device/delete-device';
 import { RefreshControl } from 'react-native';
+import ViewMyAlerts from './ViewMyAlerts';
 
 const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () => void}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -202,7 +203,13 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
       <Modal animationType='fade' transparent visible={isAlertModalVisible} onRequestClose={() => setIsAlertModalVisible(false)}>
         <Pressable className='flex-1 bg-black/50 flex items-center justify-center' onPress={() => setIsEditModalVisible(false)}>
           <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '76%', width: '95%' }} className='bg-white flex rounded-2xl overflow-hidden'>
-            <AlertForm setIsModalVisible={() => setIsAlertModalVisible(false)} />
+            {
+              device.status === 'Regular' ? (
+                <AlertForm setIsModalVisible={() => setIsAlertModalVisible(false)} device={device} />
+              ) : (
+                <ViewMyAlerts setIsModalVisible={() => setIsAlertModalVisible(false)} device={device} />
+              )
+            }
           </Pressable>
         </Pressable>
       </Modal>
