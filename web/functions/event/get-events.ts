@@ -43,6 +43,9 @@ export async function getEvents(): Promise<Event[]> {
 
       const { documents, total: fetchedTotal } = await response.json()
       allEvents.push(...documents)
+
+      console.log('documents', documents)
+
       total = fetchedTotal
       offset += limit
     } catch (error) {

@@ -14,7 +14,7 @@ import { updateDevice } from '@/functions/device/update-device';
 import { listOperators } from '@/functions/operators/list-operators';
 import { getOperator } from '@/functions/operators/get-operator';
 import { Picker } from '@react-native-picker/picker';
-import PickerComponent from '../PickerComponent';
+import OperatorPickerComponent from '../OperatorPickerComponent';
 import DropdownComponent from '../DropdownComponent';
 
 interface DeviceFormProps {
@@ -315,7 +315,7 @@ const DeviceForm = ({ setIsModalVisible, device }: DeviceFormProps) => {
             )}
           </View>
 
-          <PickerComponent value={form.operator_id} setValue={(value) => form.operator_id = value}/>
+          <OperatorPickerComponent value={form.operator_id} setValue={(value) => form.operator_id = value}/>
 
           <View className='flex flex-row w-full' style={{ justifyContent: 'space-between' }}>
             <Button variant='blue' onPress={onSubmit}>

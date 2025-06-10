@@ -10,7 +10,7 @@ const Button = ({ children, className, variant, ...props }: ButtonProps) => {
       className={cn(
         'flex items-center justify-center px-6 rounded-full font-semibold w-fit',
         variant === 'blue' && 'bg-primary',
-        variant === 'white' && 'bg-white border border-primary',
+        variant === 'white' && 'bg-white border border-red-500',
         variant === 'red' && 'bg-red-500',
         className
       )}
@@ -20,7 +20,7 @@ const Button = ({ children, className, variant, ...props }: ButtonProps) => {
         className={cn(
           'text-base',
           variant === 'blue' && 'text-white',
-          variant === 'white' && 'text-black',
+          variant === 'white' && 'text-red-500',
           variant === 'red' && 'text-white'
         )}
       >

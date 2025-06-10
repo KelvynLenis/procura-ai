@@ -20,22 +20,30 @@ export function getDeviceStatus(type: string): string {
 export async function updateDeviceStatus(deviceId: string, data: UpdateDeviceStatusData) {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${deviceId}`,
+      `${process.env.EXPO_PUBLIC_API_URL}/databases/${process.env.EXPO_PUBLIC_DATABASE_ID}/collections/${process.env.EXPO_PUBLIC_COLLECTION_DEVICE}/documents/${deviceId}`,
       {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+          'X-Appwrite-Project': `${process.env.EXPO_PUBLIC_APP_WRITE_PROJECT_ID}`,
         },
         body: JSON.stringify({
-          data,
+          data: {
+            is_stolen: data.is_stolen,
+            status: getDeviceStatus(data.status),
+          },
         }),
       }
     )
 
+
+
     if (!response.ok) {
-      const error = await response.text()
-      throw new Error(`Erro ao atualizar status do dispositivo: ${error}`)
+      const errorText = await response.text()
+      console.error('Erro na resposta:', errorText)
+      throw new Error(`Erro ao criar evento: ${errorText}`)
+      // const error = await response.text()
+      // throw new Error(`Erro ao atualizar status do dispositivo: ${error}`)
     }
 
     return await response.json()

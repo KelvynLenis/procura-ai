@@ -9,28 +9,25 @@ import { createEvent } from '@/functions/event/create-event';
 import { DeviceProps } from '@/interfaces';
 import { updateDeviceStatus } from '@/functions/device/update-device-status';
 import { router } from 'expo-router';
-import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
-// import DatePicker from 'react-native-date-picker'
-
-const PARAIBA_CENTER = {
-  latitude: -7.5,
-  longitude: -36.5,
-};
-
-const PARAIBA_BOUNDS = {
-  minLat: -8.5,
-  maxLat: -5.5,
-  minLng: -39.0,
-  maxLng: -34.0,
-};
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { cn } from '@/utils/cn';
+import { formatISODateString } from '@/lib/utils';
+import EventTypePickerComponent from '../EventTypePickerComponent';
 
 interface AlertFormProps {
   setIsModalVisible?: React.Dispatch<React.SetStateAction<boolean>>
   device: DeviceProps
 }
 
+interface formProps {
+  datetime: string,
+  description: string,
+  type: string,
+  location: [number, number]
+}
+
 const AlertForm = ({ setIsModalVisible, device }: AlertFormProps) => {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<formProps>({
     datetime: "",
     description: "",
     type: "",
@@ -38,21 +35,25 @@ const AlertForm = ({ setIsModalVisible, device }: AlertFormProps) => {
   });
   const [marker, setMarker] = useState<{ latitude: number; longitude: number } | null>(null);
   const [search, setSearch] = useState('');
-  const [date, setDate] = useState(new Date());
-  const [show, setShow] = useState(false);
+  const [dateTime, setDateTime] = useState('')
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   // const [predictions, setPredictions] = useState<any[]>([]);
   const mapRef = useRef<MapView | null>(null);
-  const [open, setOpen] = useState(false)
 
-  const onChange = (event: any, selectedDate?: Date) => {
-    setShow(false); // fecha o picker
-    if (selectedDate) {
-      setDate(selectedDate);
-    }
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
   };
 
-  const showDatepicker = () => {
-    setShow(true);
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+
+  const handleConfirm = (date: Date) => {
+    console.log("A date has been picked: ", date);
+    setForm({ ...form, datetime: date.toISOString() });
+    setDateTime(date.toISOString());
+    hideDatePicker();
   };
 
   const handleMapPress = (event: MapPressEvent) => {
@@ -172,7 +173,7 @@ const AlertForm = ({ setIsModalVisible, device }: AlertFormProps) => {
         type: form.type,
         last_location: form.location,
         is_alert_on: true,
-        id_district: ""
+        id_district: "991dcbfe-f61e-4a65-b2a0-ca52a0f1f53d"
       }
 
       await createEvent(data);
@@ -189,8 +190,8 @@ const AlertForm = ({ setIsModalVisible, device }: AlertFormProps) => {
         location: [0, 0]
       })
 
-      router.push('/my-devices')
-      Alert.alert('Alerta enviado com sucesso!');
+      setIsModalVisible && setIsModalVisible(false)
+      Alert.alert('Alerta criado com sucesso!');
     } catch (error) {
       console.error(error)
     }
@@ -202,25 +203,20 @@ const AlertForm = ({ setIsModalVisible, device }: AlertFormProps) => {
         <Text className='font-medium'>Preencha as informações:</Text>
         <View className='w-full h-0.5 bg-zinc-200' />
 
-        <DateTimePicker
-          value={date}
-          mode="datetime"
-          display="default"
-          onChange={onChange}
-          
-        />
-
-        {/* <InputField
-          label="Data e hora da ocorrência"
-          required
-          labelStyle='font-medium'
-          placeholder="02/06/2024 - 12:00"
-          containerStyle='rounded-md border-0 bg-zinc-100 w-full'
-          textContentType="birthdate"
-          value={form.datetime}
-          onChangeText={(value) => setForm({ ...form, datetime: value })}
-        /> */}
-
+        <View className='gap-2 w-full'>
+          <Text className='font-medium'>
+            Data e hora da ocorrência
+          </Text>
+          <TouchableOpacity onPress={showDatePicker} className='w-full flex  p-2 rounded-lg flex-row items-center gap-2 h-10 bg-zinc-100'>
+            <Text className={cn( dateTime ? 'text-zinc-900' : 'text-zinc-500')}>{dateTime ? formatISODateString(dateTime) : 'Ex.: 02/06/2025 - 12:00'}</Text>
+          </TouchableOpacity>
+          <DateTimePickerModal
+            isVisible={isDatePickerVisible}
+            mode="datetime"
+            onConfirm={handleConfirm}
+            onCancel={hideDatePicker}
+          />
+        </View>
 
         <InputField
           label="Descrição"
@@ -235,6 +231,8 @@ const AlertForm = ({ setIsModalVisible, device }: AlertFormProps) => {
           onChangeText={(value) => setForm({ ...form, description: value })}
         />
 
+        <EventTypePickerComponent value={form.type} setValue={(value) => form.type = value}/>
+{/* 
         <InputField
           label="Tipo de ocorrência"
           labelStyle='font-medium'
@@ -244,7 +242,7 @@ const AlertForm = ({ setIsModalVisible, device }: AlertFormProps) => {
           textContentType="none"
           value={form.type}
           onChangeText={(value) => setForm({ ...form, type: value })}
-        />
+        /> */}
         
         <View className='flex flex-col w-full gap-1'>
           <View className='flex flex-row gap-2'>
@@ -283,11 +281,11 @@ const AlertForm = ({ setIsModalVisible, device }: AlertFormProps) => {
         </View>
 
         <View className='flex flex-row w-full' style={{ justifyContent: 'space-between' }}>
-          <Button variant='blue'>
-            Criar conta
-          </Button>
-          <Button variant='red' onPress={setIsModalVisible ? () => setIsModalVisible(false) : () => console.log('cancelar')}>
+          <Button variant='white' onPress={setIsModalVisible ? () => setIsModalVisible(false) : () => console.log('cancelar')}>
             Cancelar
+          </Button>
+          <Button variant='blue' onPress={onSubmit}>
+            Salvar
           </Button>
         </View>
       </View>
