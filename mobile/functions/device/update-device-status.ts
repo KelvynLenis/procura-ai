@@ -12,6 +12,8 @@ export function getDeviceStatus(type: string): string {
       return 'Perdido'
     case 'Roubo':
       return 'Roubado'
+    case 'Regular':
+      return 'Regular'
     default:
       return 'Desconhecido'
   }

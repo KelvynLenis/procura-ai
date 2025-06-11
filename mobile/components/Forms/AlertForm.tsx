@@ -50,7 +50,6 @@ const AlertForm = ({ setIsModalVisible, device }: AlertFormProps) => {
 
 
   const handleConfirm = (date: Date) => {
-    console.log("A date has been picked: ", date);
     setForm({ ...form, datetime: date.toISOString() });
     setDateTime(date.toISOString());
     hideDatePicker();
@@ -231,8 +230,8 @@ const AlertForm = ({ setIsModalVisible, device }: AlertFormProps) => {
           onChangeText={(value) => setForm({ ...form, description: value })}
         />
 
-        <EventTypePickerComponent value={form.type} setValue={(value) => form.type = value}/>
-{/* 
+        <EventTypePickerComponent value={form.type} setValue={(value) => setForm({ ...form, type: value })}/>
+      {/* 
         <InputField
           label="Tipo de ocorrência"
           labelStyle='font-medium'
@@ -266,7 +265,7 @@ const AlertForm = ({ setIsModalVisible, device }: AlertFormProps) => {
                 Buscar
               </Button>
             </View>
-              <MapView 
+            <MapView 
               initialRegion={{
                 latitude: -7.1195,
                 longitude: -34.8450,
