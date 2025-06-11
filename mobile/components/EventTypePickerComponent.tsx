@@ -31,7 +31,7 @@ const EventTypePickerComponent = ({ value, data, setValue }: EventTypePickerComp
           onSelect(itemValue)
         }>
           <Picker.Item label='Roubo' value='Roubo' />    
-          <Picker.Item label='Extravio ou perda' value='Extravio ou perda' />    
+          <Picker.Item label='Extravio ou Perda' value='Extravio ou Perda' />    
           <Picker.Item label='Furto' value='Furto' />    
       </Picker>
     </View>
