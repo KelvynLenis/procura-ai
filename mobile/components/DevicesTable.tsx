@@ -40,7 +40,7 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
 
   return (
     <>
-      <View className='bg-white w-full h-14 flex flex-row gap-2 items-center rounded-lg px-2 border border-zinc-300'>
+      <View className='bg-white w-full h-[60px] flex flex-row gap-2 items-center rounded-lg px-2 border border-zinc-300'>
         <View className='w-full max-w-52'>
           <Text>{device.phone_model}</Text>
         </View>

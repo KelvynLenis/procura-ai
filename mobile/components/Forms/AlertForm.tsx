@@ -286,8 +286,8 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
       className="flex-1"
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
-      <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{ minHeight: '100%' }}>
-        <View className='flex-col items-start p-6 gap-5 bg-white shadow-black shadow-md rounded-xl w-full'>
+      <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{ minHeight: '100%', backgroundColor: 'white', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: 24, gap: 20 }}>
+        {/* <View className='flex-col h-full flex-1 items-start p-6 gap-5 bg-transparent shadow-black shadow-md rounded-xl w-full'> */}
           <Text className='font-medium'>Preencha as informações:</Text>
           <View className='w-full h-0.5 bg-zinc-200' />
 
@@ -310,11 +310,20 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
             />
           </View>
 
+          <InputField
+            label="Descrição"
+            labelStyle='font-medium'
+            maxLength={250}
+            numberOfLines={4}
+            placeholder="Descreva em poucas palavras como aconteceu."
+            containerStyle='rounded-md items-start border-0 bg-zinc-100 w-full h-40'
+            inputStyle='h-40 break-words rounded-md'
+            textContentType="none"
+            value={form.description}
+            onChangeText={(value) => setForm({ ...form, description: value })}
+          />
+
           <View className='gap-2 w-full'>
-            <Text className='font-medium'>
-              <Text className='text-red-500'>*</Text>
-              Tipo de ocorrência
-            </Text>
             <EventTypePickerComponent 
               value={form.type} 
               setValue={(value) => {
@@ -387,19 +396,6 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
             </View>
           </View>
 
-          <InputField
-            label="Descrição"
-            labelStyle='font-medium'
-            maxLength={250}
-            numberOfLines={4}
-            placeholder="Descreva em poucas palavras como aconteceu."
-            containerStyle='rounded-md items-start border-0 bg-zinc-100 w-full h-40'
-            inputStyle='h-40 break-words rounded-md'
-            textContentType="none"
-            value={form.description}
-            onChangeText={(value) => setForm({ ...form, description: value })}
-          />
-
           <View className='flex flex-row w-full' style={{ justifyContent: 'space-between' }}>
             <Button variant='white' onPress={setIsModalVisible ? () => setIsModalVisible(false) : () => console.log('cancelar')}>
               Cancelar
@@ -408,7 +404,7 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
               {isLoading ? 'Criando...' : 'Criar alerta'}
             </Button>
           </View>
-        </View>
+        {/* </View> */}
       </ScrollView>
     </KeyboardAvoidingView>
   )

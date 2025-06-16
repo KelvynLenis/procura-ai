@@ -127,9 +127,9 @@ const ContactForm = ({ setIsModalVisible, onSuccess, initialData }: ContactFormP
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="none"
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{ flexGrow: 1, backgroundColor: 'white', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 16, padding: 28 }}
       >
-        <View className='flex-col items-start p-6 gap-4 bg-white shadow-black shadow-md rounded-xl w-full'>
+        {/* <View className='flex-col items-start p-6 gap-4 h-full rounded-xl w-full'> */}
           <Text className="text-lg font-bold mb-2">
             {initialData ? 'Editar contato' : 'Cadastrar contato'}
           </Text>
@@ -205,7 +205,7 @@ const ContactForm = ({ setIsModalVisible, onSuccess, initialData }: ContactFormP
             </Button>
            
           </View>
-        </View>
+        {/* </View> */}
       </ScrollView>
     </KeyboardAvoidingView>
   )
