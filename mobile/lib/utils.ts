@@ -94,3 +94,16 @@ export function validateIMEI(imei: string) {
     return false
   }
 }
+
+export function extractImageIdFromUrl(url: string | null): string | null {
+  if (!url) return null;
+  
+  try {
+    const regex = /\/files\/([^\/]+)\/view/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+  } catch (error) {
+    console.error('Erro ao extrair ID da imagem:', error);
+    return null;
+  }
+}

@@ -13,6 +13,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { validateCPF } from '@/lib/utils';
 import { updatePassword } from '@/functions/auth/update-password';
 import { uploadImage } from '@/functions/storage/upload-image';
+import { deleteImage } from '@/functions/storage/delete-image';
 import { useFocusEffect } from '@react-navigation/native'
 import { account } from '@/lib/appwrite';
 
@@ -79,6 +80,15 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [imageState, setImageState] = useState<{
+    currentUrl: string | null;
+    tempUri: string | null;
+    isDeleted: boolean;
+  }>({
+    currentUrl: null,
+    tempUri: null,
+    isDeleted: false
+  });
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
@@ -91,7 +101,11 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
       loadUserData();
       setErrors({});
       setPasswordErrors({});
-      setTempImageUri(null);
+      setImageState({
+        currentUrl: null,
+        tempUri: null,
+        isDeleted: false
+      });
       setExpandedSection('profile');
     }, [])
   );
@@ -131,9 +145,11 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
           imgURL: user.img_url || "",
           cpf: user.cpf || "",
         });
-        if (user.img_url) {
-          setSelectedImage(user.img_url);
-        }
+        setImageState({
+          currentUrl: user.img_url,
+          tempUri: null,
+          isDeleted: false
+        });
       }
     } catch (error) {
       console.error('Erro ao carregar dados do usuário:', error);
@@ -166,8 +182,11 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
 
       if (!result.canceled && result.assets[0].uri) {
         const selectedAsset = result.assets[0];
-        setTempImageUri(selectedAsset.uri);
-        setSelectedImage(selectedAsset.uri);
+        setImageState(prev => ({
+          ...prev,
+          tempUri: selectedAsset.uri,
+          isDeleted: false
+        }));
       }
     } catch (error) {
       console.error('Erro ao selecionar imagem:', error);
@@ -175,30 +194,20 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
     }
   };
 
-  const removeImage = async () => {
-    try {
-      setSelectedImage(null);
-      setTempImageUri(null);
-      setForm(prev => ({ ...prev, imgURL: "" }));
-    } catch (error) {
-      console.error('Erro ao remover imagem:', error);
-      Alert.alert('Erro', 'Não foi possível remover a imagem.');
-    }
+  const handleCancel = () => {
+    setImageState(prev => ({
+      ...prev,
+      tempUri: null,
+      isDeleted: false
+    }));
   };
 
-  const handleCancel = () => {
-    setExpandedSection(null);
-    if (userId && userId[0]) {
-      setForm({
-        name: userId[0].name || "",
-        email: userId[0].email || "",
-        imgURL: userId[0].img_url || "",
-        cpf: userId[0].cpf || "",
-      });
-      setSelectedImage(userId[0].img_url);
-      setTempImageUri(null);
-    }
-    setErrors({});
+  const handleRemoveImage = () => {
+    setImageState(prev => ({
+      ...prev,
+      tempUri: null,
+      isDeleted: true
+    }));
   };
 
   async function handleSubmit() {
@@ -213,11 +222,11 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
         throw new Error('Usuário não encontrado');
       }
 
-      let finalImageUrl = form.imgURL;
+      let finalImageUrl = imageState.currentUrl;
 
-      if (tempImageUri) {
+      if (imageState.tempUri) {
         const fileData = {
-          uri: tempImageUri,
+          uri: imageState.tempUri,
           type: 'image/jpeg',
           name: `profile-${Date.now()}.jpg`,
           size: 0
@@ -231,14 +240,31 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
         }
       }
 
+      if (imageState.currentUrl && (imageState.isDeleted || imageState.tempUri)) {
+        try {
+          await deleteImage(imageState.currentUrl);
+        } catch (error) {
+          console.error('Erro ao deletar imagem antiga:', error);
+        }
+      }
+
+      if (imageState.isDeleted && !imageState.tempUri) {
+        finalImageUrl = null;
+      }
+
       await updateUser(userId[0].$id, {
         name: form.name,
         email: form.email,
         img_url: finalImageUrl,
       });
 
+      setImageState({
+        currentUrl: finalImageUrl,
+        tempUri: null,
+        isDeleted: false
+      });
+
       Alert.alert('Sucesso', 'Perfil atualizado com sucesso!');
-      setTempImageUri(null);
 
       if (onSuccess) {
         onSuccess();
@@ -355,9 +381,9 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
         <View style={{ minHeight: '100%', paddingBottom: 200 }}>
           <View className="w-full items-center justify-center pt-6 pb-2">
             <View className='w-24 h-24 rounded-full bg-zinc-300 overflow-hidden mb-2'>
-              {selectedImage ? (
+              {(imageState.tempUri || (!imageState.isDeleted && imageState.currentUrl)) ? (
                 <Image
-                  source={{ uri: selectedImage }}
+                  source={{ uri: imageState.tempUri || imageState.currentUrl || undefined }}
                   className="w-full h-full"
                   resizeMode="cover"
                 />
@@ -392,7 +418,6 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
                 {expandedSection === 'profile' && (
                   <View className="w-full mt-2">
                     <View className='flex flex-row gap-3 mb-2'>
-
                       <View className="flex-1 justify-center">
                         <TouchableOpacity
                           onPress={pickImage}
@@ -401,14 +426,25 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
                           <Upload size={20} color='black' />
                           <Text>Selecionar imagem</Text>
                         </TouchableOpacity>
-                        {selectedImage && (
+                        
+                        {imageState.tempUri && (
                           <TouchableOpacity
-                            onPress={removeImage}
+                            onPress={handleCancel}
+                            className='flex flex-row gap-2 bg-zinc-100 p-2 rounded-md border border-zinc-400 items-center mb-1'
+                          >
+                            <Text>Cancelar</Text>
+                          </TouchableOpacity>
+                        )}
+
+                        {(imageState.currentUrl || imageState.tempUri) && !imageState.isDeleted && (
+                          <TouchableOpacity
+                            onPress={handleRemoveImage}
                             className='flex flex-row gap-2 bg-zinc-100 p-2 rounded-md border border-zinc-400 items-center'
                           >
                             <Text>Remover</Text>
                           </TouchableOpacity>
                         )}
+                        
                         <Text className='text-xs mt-2'>* São suportadas imagens nos formatos .png .jpg de até 10 mb</Text>
                       </View>
                     </View>

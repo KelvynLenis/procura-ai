@@ -1,11 +1,19 @@
-
 import { storage } from '@/lib/appwrite';
 
-export async function deleteImage(fileId: string) {
+export async function deleteImage(imageUrl: string) {
     try {
-        const result = await storage.deleteFile(
+        // Extrair o ID da imagem da URL
+        const regex = /\/files\/([^\/]+)\/view/;
+        const match = imageUrl.match(regex);
+        const imageId = match ? match[1] : null;
+
+        if (!imageId) {
+            throw new Error('ID da imagem não encontrado');
+        }
+
+        await storage.deleteFile(
             process.env.EXPO_PUBLIC_APP_WRITE_STORAGE_ID!, // bucketId
-            fileId // fileId
+            imageId // fileId
         );
     } catch (error) {
         console.error('Erro ao deletar imagem:', error);
