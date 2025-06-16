@@ -182,8 +182,8 @@ const DeviceForm = ({ setIsModalVisible, device, onSuccess }: DeviceFormProps) =
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       className="flex-1"
     >
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: device ? 0 : 350 }}>
-        <View className='flex-col items-start p-6 gap-5 bg-white shadow-black shadow-md rounded-xl w-full'>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ backgroundColor: '#fff', borderRadius: 20, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: 36, gap: 20 }}>
+        {/* <View className='flex-col items-start p-6 gap-5 bg-white shadow-black shadow-md rounded-xl w-full'> */}
           <Text>Insira os dados abaixo:</Text>
           <View className='w-full h-0.5 bg-zinc-200' />
 
@@ -243,7 +243,7 @@ const DeviceForm = ({ setIsModalVisible, device, onSuccess }: DeviceFormProps) =
 
           <View className="w-full mb-2 gap-2">
             <Text className="text-lg ml-1">
-              {/* <Text className="text-red-500">*</Text> */}
+              <Text className="text-red-500">*</Text>
               Número do celular
             </Text>
             <View className='rounded-md border-0 bg-zinc-100 px-4'>
@@ -274,7 +274,7 @@ const DeviceForm = ({ setIsModalVisible, device, onSuccess }: DeviceFormProps) =
               {isLoading ? <ActivityIndicator color="#fff" /> : device ? 'Atualizar' : 'Cadastrar'}
             </Button>
           </View>
-        </View>
+        {/* </View> */}
       </ScrollView>
     </KeyboardAvoidingView>
   )

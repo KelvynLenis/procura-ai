@@ -20,7 +20,7 @@ const EventTypePickerComponent = ({ value, data, setValue }: EventTypePickerComp
     <View className='flex-1 w-full'>
       <View className='flex flex-row gap-1'>
         <Text style={{ color: 'red' }}>*</Text>
-        <Text className='text-lg mb-3 w-48'>Tipo</Text>
+        <Text className='text-lg mb-3 w-48 font-medium'>Tipo de ocorrência</Text>
       </View>
       
       <Picker

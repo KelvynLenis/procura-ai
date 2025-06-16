@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import InputField from '../InputField'
 import Button from '../Button';
 import { router } from 'expo-router';
-import { Pencil, Upload, LogOut, Eye, EyeOff } from 'lucide-react-native';
+import { Pencil, Upload, LogOut, Eye, EyeOff, ChevronRight, ChevronDown } from 'lucide-react-native';
 import { z } from 'zod';
 import { updateUser } from '@/functions/user/update-user';
 import MaskInput from 'react-native-mask-input';
@@ -378,7 +378,7 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
           />
         }
       >
-        <View style={{ minHeight: '100%', paddingBottom: 200 }}>
+        {/* <View style={{ minHeight: '100%', paddingBottom: 200 }}> */}
           <View className="w-full items-center justify-center pt-6 pb-2">
             <View className='w-24 h-24 rounded-full bg-zinc-300 overflow-hidden mb-2'>
               {(imageState.tempUri || (!imageState.isDeleted && imageState.currentUrl)) ? (
@@ -413,7 +413,7 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
                   activeOpacity={0.8}
                 >
                   <Text className="text-base font-semibold text-primary">Editar dados pessoais</Text>
-                  <Text className="text-primary text-xl">{expandedSection === 'profile' ? '▲' : '▼'}</Text>
+                  <View className="text-primary text-xl">{expandedSection === 'profile' ? <ChevronDown color={'#0F2498'} size={20} /> : <ChevronRight color={'#0F2498'} size={20} />}</View>
                 </TouchableOpacity>
                 {expandedSection === 'profile' && (
                   <View className="w-full mt-2">
@@ -516,7 +516,7 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
                   activeOpacity={0.8}
                 >
                   <Text className="text-base font-semibold text-primary">Alterar senha</Text>
-                  <Text className="text-primary text-xl">{expandedSection === 'password' ? '▲' : '▼'}</Text>
+                  <View className="text-primary text-xl">{expandedSection === 'password' ? <ChevronDown color={'#0F2498'} size={20} /> : <ChevronRight color={'#0F2498'} size={20} />}</View>
                 </TouchableOpacity>
                 {expandedSection === 'password' && (
                   <View className="w-full mt-2">
@@ -616,7 +616,7 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
               <Text className="text-red-500 font-medium text-base">Sair da conta</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        {/* </View> */}
       </ScrollView>
     </KeyboardAvoidingView>
   )

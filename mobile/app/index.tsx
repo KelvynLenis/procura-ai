@@ -25,7 +25,7 @@ export default function Index() {
           <Text className="text-primary font-bold text-2xl text-right leading-9">
             Perdeu ou teve seu celular roubado?
             O{' '}
-            <View className="bg-primary rounded-md p-1">
+            <View className="bg-primary rounded-md p-0 pt-1 px-1  text-2xl">
               <Text className="text-white font-bold">Procura.Aí</Text>
             </View> 
             {' '}pode te ajudar!
