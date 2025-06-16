@@ -27,6 +27,12 @@ interface formProps {
   location: [number, number]
 }
 
+interface FormErrors {
+  datetime?: string;
+  type?: string;
+  location?: string;
+}
+
 const PARAIBA_CENTER = {
   latitude: -7.1195,
   longitude: -34.8450,
@@ -39,11 +45,13 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
     type: "",
     location: [0, 0],
   });
+  const [errors, setErrors] = useState<FormErrors>({});
   const [marker, setMarker] = useState<{ latitude: number; longitude: number } | null>(null);
   const [search, setSearch] = useState('');
   const [dateTime, setDateTime] = useState('')
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [predictions, setPredictions] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const mapRef = useRef<MapView | null>(null);
 
   const showDatePicker = () => {
@@ -60,12 +68,6 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
     setDateTime(date.toISOString());
     hideDatePicker();
   };
-
-  // const handleMapPress = (event: MapPressEvent) => {
-  //   const { coordinate } = event.nativeEvent;
-  //   setMarker(coordinate);
-  //   setForm({ ...form, location: [coordinate.latitude, coordinate.longitude] });
-  // };
 
   const handleMapPress = async (event: MapPressEvent) => {
     const { coordinate } = event.nativeEvent;
@@ -102,44 +104,6 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
       alert('Erro ao verificar localização selecionada.');
     }
   };
-
-
-  // const handleSearch = async () => {
-  //   if (!search.trim()) return;
-
-  //   try {
-  //     const response = await fetch(
-  //       `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(search)}&key=${process.env.EXPO_PUBLIC_GOOGLE_API_KEY}`
-  //     );
-  //     const data = await response.json();
-
-  //     const point = {
-  //       latitude: data.results[0].geometry.location.lat,
-  //       longitude: data.results[0].geometry.location.lng
-  //     }
-
-  //     if (data.status === 'OK') {
-  //       const location = data.results[0].geometry.location;
-
-  //       const newRegion = {
-  //         latitude: location.lat,
-  //         longitude: location.lng,
-  //         latitudeDelta: 0.01,
-  //         longitudeDelta: 0.01,
-  //       };
-
-  //       setMarker({ latitude: location.lat, longitude: location.lng });
-  //       setForm({ ...form, location: [point.latitude, point.longitude] });
-  //       mapRef.current?.animateToRegion(newRegion, 1000);
-  //       Keyboard.dismiss();
-  //     } else {
-  //       alert('Local não encontrado.');
-  //     }
-  //   } catch (error) {
-  //     console.error('Erro na geocodificação:', error);
-  //     alert('Erro ao buscar localização.');
-  //   }
-  // };
 
   const handleSearch = async () => {
     if (!search.trim()) return;
@@ -190,36 +154,35 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
     }
   };
 
-
   const handleSearchChange = async (text: string) => {
-  setSearch(text);
+    setSearch(text);
 
-  if (text.length < 3) {
-    setPredictions([]);
-    return;
-  }
-
-  try {
-    const res = await fetch(
-      `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
-        text
-      )}&key=${process.env.EXPO_PUBLIC_GOOGLE_API_KEY}&components=country:br&location=${PARAIBA_CENTER.latitude},${PARAIBA_CENTER.longitude}&radius=250000`
-    );
-    const json = await res.json();
-
-    if (json.status === 'OK') {
-      // Filtra apenas sugestões com "PB" ou "Paraíba"
-      const paraibaResults = json.predictions.filter((prediction: any) =>
-        /PB|Paraíba/i.test(prediction.description)
-      );
-      setPredictions(paraibaResults);
-    } else {
+    if (text.length < 3) {
       setPredictions([]);
+      return;
     }
-  } catch (err) {
-    console.error('Erro no autocomplete:', err);
-  }
-};
+
+    try {
+      const res = await fetch(
+        `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
+          text
+        )}&key=${process.env.EXPO_PUBLIC_GOOGLE_API_KEY}&components=country:br&location=${PARAIBA_CENTER.latitude},${PARAIBA_CENTER.longitude}&radius=250000`
+      );
+      const json = await res.json();
+
+      if (json.status === 'OK') {
+        // Filtra apenas sugestões com "PB" ou "Paraíba"
+        const paraibaResults = json.predictions.filter((prediction: any) =>
+          /PB|Paraíba/i.test(prediction.description)
+        );
+        setPredictions(paraibaResults);
+      } else {
+        setPredictions([]);
+      }
+    } catch (err) {
+      console.error('Erro no autocomplete:', err);
+    }
+  };
 
   const handlePredictionSelect = async (placeId: string, description: string) => {
     try {
@@ -246,28 +209,41 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
     }
   };
 
-  // const keepWithinParaiba = (region: Region) => {
-  //   const { latitude, longitude } = region;
+  const validateForm = () => {
+    const newErrors: FormErrors = {};
+    let isValid = true;
 
-  //   const clampedLat = Math.max(PARAIBA_BOUNDS.minLat, Math.min(PARAIBA_BOUNDS.maxLat, latitude));
-  //   const clampedLng = Math.max(PARAIBA_BOUNDS.minLng, Math.min(PARAIBA_BOUNDS.maxLng, longitude));
+    if (!dateTime) {
+      newErrors.datetime = 'Data e hora são obrigatórios';
+      isValid = false;
+    }
 
-  //   if (latitude !== clampedLat || longitude !== clampedLng) {
-  //     mapRef.current?.animateToRegion({
-  //       latitude: clampedLat,
-  //       longitude: clampedLng,
-  //       latitudeDelta: region.latitudeDelta,
-  //       longitudeDelta: region.longitudeDelta,
-  //     }, 500);
-  //   }
-  // };
+    if (!form.type) {
+      newErrors.type = 'Tipo de ocorrência é obrigatório';
+      isValid = false;
+    }
+
+    if (!marker) {
+      newErrors.location = 'Localização é obrigatória';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
 
   async function onSubmit(){
+    if (!validateForm()) {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    setIsLoading(true);
     try {
       const data = { 
         id_device: device.$id,  
         description: form.description,
-        time_event: form.datetime,
+        time_event: dateTime,
         type: form.type,
         last_location: form.location,
         is_alert_on: true,
@@ -286,15 +262,21 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
         description: "",
         type: "",
         location: [0, 0]
-      })
+      });
+      setDateTime('');
+      setMarker(null);
+      setErrors({});
 
-      setIsModalVisible(false)
-      Alert.alert('Alerta criado com sucesso!');
+      setIsModalVisible(false);
+      Alert.alert('Sucesso', 'Alerta criado com sucesso!');
       if (onSuccess) {
         onSuccess();
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
+      Alert.alert('Erro', 'Não foi possível criar o alerta. Tente novamente.');
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -314,9 +296,12 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
               <Text className='text-red-500'>*</Text>
               Data e hora da ocorrência
             </Text>
-            <TouchableOpacity onPress={showDatePicker} className='w-full flex  p-2 rounded-lg flex-row items-center gap-2 h-10 bg-zinc-100'>
-              <Text className={cn( dateTime ? 'text-zinc-900' : 'text-zinc-500')}>{dateTime ? formatISODateString(dateTime) : 'Ex.: 02/06/2025 - 12:00'}</Text>
+            <TouchableOpacity onPress={showDatePicker} className='w-full flex p-2 rounded-lg flex-row items-center gap-2 h-10 bg-zinc-100'>
+              <Text className={cn(dateTime ? 'text-zinc-900' : 'text-zinc-500')}>{dateTime ? formatISODateString(dateTime) : 'Ex.: 02/06/2025 - 12:00'}</Text>
             </TouchableOpacity>
+            {errors.datetime && (
+              <Text className='text-red-500 text-sm'>{errors.datetime}</Text>
+            )}
             <DateTimePickerModal
               isVisible={isDatePickerVisible}
               mode="datetime"
@@ -325,44 +310,34 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
             />
           </View>
 
-          <InputField
-            label="Descrição"
-            labelStyle='font-medium'
-            maxLength={250}
-            numberOfLines={4}
-            placeholder="Descreva em poucas palavras como aconteceu."
-            containerStyle='rounded-md items-start border-0 bg-zinc-100 w-full h-40'
-            inputStyle='h-40 break-words rounded-md'
-            textContentType="none"
-            value={form.description}
-            onChangeText={(value) => setForm({ ...form, description: value })}
-          />
+          <View className='gap-2 w-full'>
+            <Text className='font-medium'>
+              <Text className='text-red-500'>*</Text>
+              Tipo de ocorrência
+            </Text>
+            <EventTypePickerComponent 
+              value={form.type} 
+              setValue={(value) => {
+                setForm({ ...form, type: value });
+                setErrors(prev => ({ ...prev, type: undefined }));
+              }}
+            />
+            {errors.type && (
+              <Text className='text-red-500 text-sm'>{errors.type}</Text>
+            )}
+          </View>
 
-          <EventTypePickerComponent value={form.type} setValue={(value) => setForm({ ...form, type: value })}/>
-          
           <View className='flex flex-col w-full gap-1'>
             <View className='flex flex-row gap-2'>
               <Text className='font-medium'>
-                <Text style={{ color: 'red' }}>*</Text>
-                Clique no mapa para selecionar o local aproximado da  ocorrência ou digite endereço/CEP
+                <Text className='text-red-500'>*</Text>
+                Clique no mapa para selecionar o local aproximado da ocorrência
               </Text>
             </View>
-
+            {errors.location && (
+              <Text className='text-red-500 text-sm'>{errors.location}</Text>
+            )}
             <View className='w-full h-80 gap-2'>
-              {/* <View className='flex flex-row gap-2'>
-                <TextInput
-                  className='flex-1 rounded-md border-0 p-4 bg-zinc-100 truncate'
-                  placeholder="Ex.: Shopping Center, Avenida Floriano, 1234 ou 12345-678"
-                  value={search}
-                  onChangeText={setSearch}
-                  onSubmitEditing={handleSearch}
-                  returnKeyType="search"
-                />
-                <Button className='rounded-md' variant='blue' onPress={handleSearch}>
-                  Buscar
-                </Button>
-              </View> */}
-
               <View className='relative'>
                 <View className='flex flex-row gap-2'>
                   <TextInput
@@ -397,26 +372,40 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
                 )}
               </View>
 
-              <MapView 
+              <MapView
                 initialRegion={{
                   latitude: -7.1195,
                   longitude: -34.8450,
                   latitudeDelta: 0.05,
                   longitudeDelta: 0.05,
                 }}
-                onPress={handleMapPress} style={{ flex: 1 }} 
+                onPress={handleMapPress}
+                style={{ flex: 1 }}
               >
                 {marker && <Marker coordinate={marker} />}
               </MapView>
             </View>
           </View>
 
+          <InputField
+            label="Descrição"
+            labelStyle='font-medium'
+            maxLength={250}
+            numberOfLines={4}
+            placeholder="Descreva em poucas palavras como aconteceu."
+            containerStyle='rounded-md items-start border-0 bg-zinc-100 w-full h-40'
+            inputStyle='h-40 break-words rounded-md'
+            textContentType="none"
+            value={form.description}
+            onChangeText={(value) => setForm({ ...form, description: value })}
+          />
+
           <View className='flex flex-row w-full' style={{ justifyContent: 'space-between' }}>
             <Button variant='white' onPress={setIsModalVisible ? () => setIsModalVisible(false) : () => console.log('cancelar')}>
               Cancelar
             </Button>
             <Button variant='blue' onPress={onSubmit}>
-              Salvar
+              {isLoading ? 'Criando...' : 'Criar alerta'}
             </Button>
           </View>
         </View>
@@ -424,4 +413,5 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
     </KeyboardAvoidingView>
   )
 }
+
 export default AlertForm

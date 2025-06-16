@@ -222,7 +222,11 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
                   onSuccess={handleSuccess}
                 />
               ) : (
-                <ViewMyAlerts setIsModalVisible={() => setIsAlertModalVisible(false)} device={device} />
+                <ViewMyAlerts 
+                  setIsModalVisible={() => setIsAlertModalVisible(false)} 
+                  device={device} 
+                  onSuccess={handleSuccess}
+                />
               )
             }
           </Pressable>
