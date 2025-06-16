@@ -78,6 +78,13 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await loadUserData();
+    setRefreshing(false);
+  }, []);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -336,6 +343,14 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
         style={{ flex: 1 }}
         scrollEnabled={true}
         nestedScrollEnabled={true}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#0F2498']}
+            tintColor="#0F2498"
+          />
+        }
       >
         <View style={{ minHeight: '100%', paddingBottom: 200 }}>
           <View className="w-full items-center justify-center pt-6 pb-2">

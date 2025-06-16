@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Modal, Pressable, ActivityIndicator, Alert } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Modal, Pressable, ActivityIndicator, Alert, RefreshControl } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { Stack } from 'expo-router'
 import Header from '@/components/Header'
@@ -79,6 +79,7 @@ export default function Contacts() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const loadContacts = async () => {
     try {
@@ -96,8 +97,14 @@ export default function Contacts() {
       setContacts([]);
     } finally {
       setIsLoading(false);
+      setRefreshing(false);
     }
   };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    loadContacts();
+  }, []);
 
   const handleDeleteContact = async (contactId: string) => {
     try {
@@ -137,7 +144,17 @@ export default function Contacts() {
         }}
       />
       <View className='flex-1 bg-[#F2F8FD] p-4'>
-        <ScrollView className="flex-1">
+        <ScrollView 
+          className="flex-1"
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#0F2498"]} // Cor do indicador de loading
+              tintColor="#0F2498" // Para iOS
+            />
+          }
+        >
           {contacts.length === 0 ? (
             <View className="flex-1 items-center justify-center py-8">
               <Text className="text-gray-500 text-center">
@@ -179,13 +196,10 @@ export default function Contacts() {
 
       <Modal animationType='fade' transparent visible={isAddModalVisible} onRequestClose={() => setIsAddModalVisible(false)}>
         <Pressable className='flex-1 bg-black/50 flex items-center justify-center' onPress={() => setIsAddModalVisible(false)}>
-          <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '70%', width: '95%' }} className='bg-white flex rounded-2xl overflow-hidden'>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '85%', width: '95%' }} className='bg-white flex rounded-2xl overflow-hidden'>
             <ContactForm 
-              setIsModalVisible={setIsAddModalVisible}
-              onSuccess={() => {
-                setIsAddModalVisible(false);
-                loadContacts();
-              }}
+              setIsModalVisible={setIsAddModalVisible} 
+              onSuccess={loadContacts}
             />
           </Pressable>
         </Pressable>
@@ -193,14 +207,11 @@ export default function Contacts() {
 
       <Modal animationType='fade' transparent visible={isEditModalVisible} onRequestClose={() => setIsEditModalVisible(false)}>
         <Pressable className='flex-1 bg-black/50 flex items-center justify-center' onPress={() => setIsEditModalVisible(false)}>
-          <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '70%', width: '95%' }} className='bg-white flex rounded-2xl overflow-hidden'>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '85%', width: '95%' }} className='bg-white flex rounded-2xl overflow-hidden'>
             <ContactForm 
+              initialData={selectedContact!}
               setIsModalVisible={setIsEditModalVisible}
-              onSuccess={() => {
-                setIsEditModalVisible(false);
-                loadContacts();
-              }}
-              initialData={selectedContact}
+              onSuccess={loadContacts}
             />
           </Pressable>
         </Pressable>
