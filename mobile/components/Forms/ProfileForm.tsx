@@ -435,7 +435,7 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
                     </View>
                     <View className='flex flex-row w-full gap-4 mt-2'>
                       <Button
-                        variant='red'
+                        variant='white'
                         onPress={handleCancel}
                         className="flex-1"
                       >
@@ -528,7 +528,7 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
                     />
                     <View className="flex flex-row gap-4 mt-4">
                       <Button
-                        variant='red'
+                        variant='white'
                         onPress={() => {
                           setPasswordForm({
                             oldPassword: "",

@@ -15,8 +15,9 @@ import { formatISODateString } from '@/lib/utils';
 import EventTypePickerComponent from '../EventTypePickerComponent';
 
 interface AlertFormProps {
-  setIsModalVisible?: React.Dispatch<React.SetStateAction<boolean>>
   device: DeviceProps
+  setIsModalVisible: React.Dispatch<React.SetStateAction<boolean>>
+  onSuccess?: () => void
 }
 
 interface formProps {
@@ -31,7 +32,7 @@ const PARAIBA_CENTER = {
   longitude: -34.8450,
 };
 
-const AlertForm = ({ setIsModalVisible, device }: AlertFormProps) => {
+const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => {
   const [form, setForm] = useState<formProps>({
     datetime: "",
     description: "",
@@ -287,8 +288,11 @@ const AlertForm = ({ setIsModalVisible, device }: AlertFormProps) => {
         location: [0, 0]
       })
 
-      setIsModalVisible && setIsModalVisible(false)
+      setIsModalVisible(false)
       Alert.alert('Alerta criado com sucesso!');
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       console.error(error)
     }

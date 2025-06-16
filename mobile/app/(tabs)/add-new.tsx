@@ -1,24 +1,28 @@
-import { View, Text } from 'react-native'
+import { View } from 'react-native'
 import React from 'react'
-import { Stack } from 'expo-router'
-import Header from '@/components/Header'
 import DeviceForm from '@/components/Forms/DeviceForm'
-import ProtectedRoute from '@/components/ProtectedRoute'
+import { router } from 'expo-router'
+import { listDevices } from '@/functions/device/list-devices'
+import { account } from '@/lib/appwrite'
 
 export default function AddNew() {
-  return (
-    <>
-      <Stack.Screen
-        options={{
-          header: () => (
-            <Header title="Cadastrar dispositivo" />
-          ),
-        }}
-      />
+  const handleSuccess = async () => {
+    try {
+      // Força um refresh dos dados antes de navegar
+      const user = await account.get();
+      await listDevices({ userId: user.$id, limit: 100, page: 1 });
+      
+      // Navega de volta para a lista
+      router.replace('/(tabs)/my-devices');
+    } catch (error) {
+      console.error('Erro ao atualizar lista:', error);
+      router.replace('/(tabs)/my-devices');
+    }
+  };
 
-      <View className='w-screen h-screen bg-[#F2F8FD] px-4' style={{ paddingTop: 10 }}>
-        <DeviceForm  device={undefined}/>
-      </View>
-    </>
+  return (
+    <View className='flex-1 bg-zinc-100 px-5 py-5'>
+      <DeviceForm onSuccess={handleSuccess} />
+    </View>
   )
 }

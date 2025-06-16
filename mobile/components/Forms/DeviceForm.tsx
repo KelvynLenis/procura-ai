@@ -16,14 +16,16 @@ import { getOperator } from '@/functions/operators/get-operator';
 import { Picker } from '@react-native-picker/picker';
 import OperatorPickerComponent from '../OperatorPickerComponent';
 import DropdownComponent from '../DropdownComponent';
+import { validateIMEI } from '@/lib/utils';
+import { checkImei } from '@/functions/device/check-imei';
 
 interface DeviceFormProps {
   setIsModalVisible?: React.Dispatch<React.SetStateAction<boolean>>
   device?: DeviceProps
+  onSuccess?: () => void
 }
 
-
-const DeviceForm = ({ setIsModalVisible, device }: DeviceFormProps) => {
+const DeviceForm = ({ setIsModalVisible, device, onSuccess }: DeviceFormProps) => {
   const [form, setForm] = useState({
     imei: device?.imei || "",
     phone_model: device?.phone_model || "",
@@ -37,77 +39,27 @@ const DeviceForm = ({ setIsModalVisible, device }: DeviceFormProps) => {
   const [imeiError, setImeiError] = useState<string | null>(null)
   const [operators, setOperators] = useState<{ label: string; value: string }[]>([])
 
-  async function validateImeiAndGetDetails(imei: string): Promise<ImeiValidationResult> {
-    try {
-      // Remove any spaces or formatting from IMEI
-      const cleanImei = imei.replace(/\s/g, '')
-      
-      if (cleanImei.length !== 15) {
-        return {
-          isValid: false,
-          error: 'IMEI deve ter exatamente 15 dígitos'
-        }
-      }
-
-      const response = await fetch(
-        `https://alpha.imeicheck.com/api/modelBrandName?imei=${cleanImei}&format=json`
-      )
-
-      if (!response.ok) {
-        return {
-          isValid: false,
-          error: 'Não foi possível validar o IMEI no momento. Tente novamente mais tarde.'
-        }
-      }
-
-      const data: ImeiCheckResponse = await response.json()
-
-      if (data.status !== 'succes') {
-        return {
-          isValid: false,
-          error: 'IMEI inválido ou não encontrado'
-        }
-      }
-
-      return {
-        isValid: true,
-        brand: data.object.brand,
-        model: data.object.model,
-        name: data.object.name
-      }
-    } catch (error) {
-      console.error('Erro ao validar IMEI:', error)
-      return {
-        isValid: false,
-        error: 'Erro de conexão. Verifique sua internet e tente novamente.'
-      }
-    }
-  }
-
- const handleImeiValidation = async (imei: string) => {
+  const handleImeiValidation = async (imei: string) => {
     // Remove any formatting and check if it's exactly 15 digits
     const cleanImei = imei.replace(/\s/g, '')
     
-    if (cleanImei.length === 15 && /^\d{15}$/.test(cleanImei)) {
+    if (cleanImei.length === 15) {
+      if (device && device.imei === cleanImei) {
+        setImeiError(null);
+        return;
+      }
+
       setIsValidatingImei(true)
       setImeiError(null)
       try {
-        const result = await validateImeiAndGetDetails(cleanImei)
+        const result = await checkImei(cleanImei, form.brand, form.phone_model)
         
         if (result.isValid && result.brand && (result.model || result.name)) {
-          // Auto-complete the form fields
           setForm(prev => ({
             ...prev,
             brand: result.brand || prev.brand,
             phone_model: result.name || result.model || prev.phone_model
           }))
-          
-          // Show success message
-          // Alert.alert(
-          //   'IMEI Validado',
-          //   'Informações do dispositivo foram preenchidas automaticamente.',
-          //   [{ text: 'OK' }]
-          // )
         } else {
           setImeiError(result.error || 'Não foi possível validar o IMEI')
         }
@@ -116,7 +68,6 @@ const DeviceForm = ({ setIsModalVisible, device }: DeviceFormProps) => {
       } finally {
         setIsValidatingImei(false)
       }
-      
     } else if (cleanImei.length > 15) {
       setImeiError('IMEI deve ter exatamente 15 dígitos')
     } else {
@@ -130,55 +81,44 @@ const DeviceForm = ({ setIsModalVisible, device }: DeviceFormProps) => {
       if (field === 'imei' && value.length === 15) {
         handleImeiValidation(value);
       }
-      // Limpa o erro do campo quando o usuário começa a digitar
       setErrors(prev => ({ ...prev, [field]: undefined }));
   };
 
-  async function onSubmit() {
+  const handleSubmit = async () => {
+    setIsLoading(true);
     try {
-      // Fecha o teclado antes de validar
-      Keyboard.dismiss();
-      setIsLoading(true);
-      
-      // Validação do formulário
-      await CreateDeviceSchema.parseAsync(form);
-      setErrors({});
-
-      console.log('Iniciando criação de usuário:', { 
-        imei: form.imei,
-        phone_model: form.phone_model,
-        brand: form.brand,
-        phone_number: form.phone_number,
-        operator_id: form.operator_id
-      });
-
-      const deviceId = ID.unique();
-      const deviceData = {
-        imei: form.imei,
-        phone_model: form.phone_model,
-        brand: form.brand,
-        phone_number: form.phone_number,
-        operator_id: form.operator_id
-      };
-
-      console.log('Dados do dispositivo:', deviceData);
+      const validatedData = await CreateDeviceSchema.parseAsync(form);
 
       if (device) {
-        await updateDevice(device.$id!, deviceData);
+        await updateDevice(device.$id!, validatedData);
         Alert.alert('Sucesso', 'Dispositivo atualizado com sucesso!');
-
-        setIsModalVisible && setIsModalVisible(false);
-        return
+      } else {
+        const deviceId = ID.unique();
+        await createDevice(deviceId, validatedData);
+        Alert.alert('Sucesso', 'Dispositivo criado com sucesso!');
+        // Limpa o formulário apenas para novo cadastro
+        setForm({
+          imei: '',
+          phone_model: '',
+          brand: '',
+          phone_number: '',
+          operator_id: ''
+        });
+        setErrors({});
+        setImeiError(null);
       }
 
-      const response = await createDevice(deviceId, deviceData);
+      if (onSuccess) {
+        onSuccess();
+      }
 
-      console.log('Resposta da criação:', response);
-
-      Alert.alert('Sucesso', 'Dispositivo criado com sucesso!');
-      router.push('/my-devices');
+      if (setIsModalVisible) {
+        setIsModalVisible(false);
+      } else {
+        router.push('/(tabs)/my-devices');
+      }
     } catch (error) {
-      console.log('Erro ao criar usuário:', error);
+      console.log('Erro ao processar dispositivo:', error);
       
       if (error instanceof z.ZodError) {
         const newErrors: Partial<Record<keyof CreateDevice, string>> = {};
@@ -189,27 +129,27 @@ const DeviceForm = ({ setIsModalVisible, device }: DeviceFormProps) => {
         });
         setErrors(newErrors);
       } else {
-        const errorObj = error as { message?: string; code?: string; type?: string; response?: any };
-        console.log('Detalhes do erro:', {
-          message: errorObj?.message,
-          code: errorObj?.code,
-          type: errorObj?.type,
-          response: errorObj?.response
-        });
-        Alert.alert('Erro', 'Não foi possível criar o dispositivo. Tente novamente.');
+        Alert.alert('Erro', 'Não foi possível processar o dispositivo. Tente novamente.');
       }
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   function onCancel() {
-    form.imei = ''
-    form.brand = ''
-    form.phone_model = ''
-    form.phone_number = ''
-    form.operator_id = ''
-    router.back();
+    setForm({
+      imei: '',
+      brand: '',
+      phone_model: '',
+      phone_number: '',
+      operator_id: ''
+    });
+    
+    if (setIsModalVisible) {
+      setIsModalVisible(false);
+    } else {
+      router.back();
+    }
   }
 
   async function loadOperators() {
@@ -232,11 +172,9 @@ const DeviceForm = ({ setIsModalVisible, device }: DeviceFormProps) => {
   useEffect(() => {
     if (device) {
       const operator = getOperator(device.operator_id)
-
     }
 
     loadOperators()
-
   }, [device])
   
   return (
@@ -259,7 +197,7 @@ const DeviceForm = ({ setIsModalVisible, device }: DeviceFormProps) => {
                 value={form.imei}
                 onChangeText={(masked, unmasked) => handleFieldChange('imei', unmasked)}
                 mask={[/\d/, ' ', /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/ ]}
-                keyboardType="numeric"
+                keyboardType="number-pad"
                 placeholder="Digite o IMEI"
                 className="rounded-md p-4 text-[15px] flex-1 text-justify"
               />
@@ -267,11 +205,20 @@ const DeviceForm = ({ setIsModalVisible, device }: DeviceFormProps) => {
             {errors.imei && (
               <Text className="text-red-500 text-sm mt-1 ml-4">{errors.imei}</Text>
             )}
+            {imeiError && (
+              <Text className="text-red-500 text-sm mt-1 ml-4">{imeiError}</Text>
+            )}
+            {isValidatingImei && (
+              <View className="flex-row items-center mt-1 ml-4">
+                <ActivityIndicator size="small" color="#0000ff" />
+                <Text className="text-sm ml-2">Validando IMEI...</Text>
+              </View>
+            )}
           </View>
 
           <View className='w-full rounded-lg px-5 py-2 flex flex-row' style={{ backgroundColor: 'rgba(216,169,18,0.3)' }}>
             <Text className='flex flex-row items-end gap-2'>
-            <CircleAlert size={15} color='black' />{' '}
+              <CircleAlert size={15} color='black' />{' '}
               O IMEI é composto por 15 números e pode ser encontrado na embalagem do aparelho ou digitando *#06# no teclado do aparelho.
             </Text>
           </View>
@@ -279,7 +226,6 @@ const DeviceForm = ({ setIsModalVisible, device }: DeviceFormProps) => {
           <InputField
             label="Modelo"
             placeholder="Modelo"
-            // icon={<Mail size={20} color="gray" />}
             containerStyle='rounded-md border-0 bg-zinc-100 w-full'
             textContentType="none"
             value={form.phone_model}
@@ -305,7 +251,7 @@ const DeviceForm = ({ setIsModalVisible, device }: DeviceFormProps) => {
                 value={form.phone_number}
                 onChangeText={(masked, unmasked) => handleFieldChange('phone_number', unmasked)}
                 mask={['(', /\d/, /\d/, ')', /\d/, ' ',  /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
-                keyboardType="numeric"
+                keyboardType="number-pad"
                 placeholder="Digite o número do celular"
                 className="rounded-md p-4 text-[15px] flex-1 text-justify"
               />
@@ -315,14 +261,17 @@ const DeviceForm = ({ setIsModalVisible, device }: DeviceFormProps) => {
             )}
           </View>
 
-          <OperatorPickerComponent value={form.operator_id} setValue={(value) => form.operator_id = value}/>
+          <OperatorPickerComponent 
+            value={form.operator_id} 
+            setValue={(value) => handleFieldChange('operator_id', value)}
+          />
 
           <View className='flex flex-row w-full' style={{ justifyContent: 'space-between' }}>
-            <Button variant='blue' onPress={onSubmit}>
-              Cadastrar
-            </Button>
-            <Button variant='red' onPress={setIsModalVisible ? () => setIsModalVisible(false) : onCancel}>
+            <Button variant='white' onPress={onCancel}>
               Cancelar
+            </Button>
+            <Button variant='blue' onPress={handleSubmit}>
+              {isLoading ? <ActivityIndicator color="#fff" /> : device ? 'Atualizar' : 'Cadastrar'}
             </Button>
           </View>
         </View>
