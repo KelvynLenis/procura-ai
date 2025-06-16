@@ -30,6 +30,7 @@ const EventTypePickerComponent = ({ value, data, setValue }: EventTypePickerComp
         onValueChange={(itemValue, itemIndex) =>
           onSelect(itemValue)
         }>
+          <Picker.Item label='Selecione o tipo de ocorrência' value='' />
           <Picker.Item label='Roubo' value='Roubo' />    
           <Picker.Item label='Extravio ou Perda' value='Extravio ou Perda' />    
           <Picker.Item label='Furto' value='Furto simples' />    

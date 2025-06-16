@@ -131,7 +131,7 @@ export default function signUp() {
                 value={form.cpf}
                 onChangeText={(masked, unmasked) => handleFieldChange('cpf', unmasked)}
                 mask={[/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/]}
-                keyboardType="numeric"
+                keyboardType="number-pad"
                 placeholder="Digite seu CPF"
                 className="rounded-full p-4 text-[15px] flex-1 text-justify"
               />

@@ -186,6 +186,13 @@ const ContactForm = ({ setIsModalVisible, onSuccess, initialData }: ContactFormP
           </View>
 
           <View className='flex flex-row w-full gap-4 mt-2'>
+          <Button 
+              variant='white' 
+              onPress={setIsModalVisible ? () => setIsModalVisible(false) : () => router.back()}
+              className="flex-1"
+            >
+              Cancelar
+            </Button>
             <Button 
               variant='blue'
               onPress={handleSubmit}
@@ -196,13 +203,7 @@ const ContactForm = ({ setIsModalVisible, onSuccess, initialData }: ContactFormP
                 ? (initialData ? 'Atualizando...' : 'Adicionando...') 
                 : (initialData ? 'Atualizar contato' : 'Adicionar contato')}
             </Button>
-            <Button 
-              variant='red' 
-              onPress={setIsModalVisible ? () => setIsModalVisible(false) : () => router.back()}
-              className="flex-1"
-            >
-              Cancelar
-            </Button>
+           
           </View>
         </View>
       </ScrollView>

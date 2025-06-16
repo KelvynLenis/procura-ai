@@ -13,9 +13,10 @@ import { cn } from '@/utils/cn'
 interface ViewMyAlertsProps {
   setIsModalVisible?: React.Dispatch<React.SetStateAction<boolean>>
   device: DeviceProps
+  onSuccess?: () => void
 }
 
-const ViewMyAlerts = ({ setIsModalVisible, device }: ViewMyAlertsProps) => {
+const ViewMyAlerts = ({ setIsModalVisible, device, onSuccess }: ViewMyAlertsProps) => {
   const [events, setEvents] = useState<Event[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] = useState(false)
@@ -29,11 +30,15 @@ const ViewMyAlerts = ({ setIsModalVisible, device }: ViewMyAlertsProps) => {
       })
 
       if (success) {
+        if (onSuccess) {
+          onSuccess();
+        }
         setIsModalVisible!(false)
         Alert.alert('Sucesso', 'Dispositivo recuperado com sucesso!')
       }
     } catch (error) {
       console.error(error)
+      Alert.alert('Erro', 'Não foi possível recuperar o dispositivo. Tente novamente.')
     }
   }
 
@@ -115,7 +120,7 @@ const ViewMyAlerts = ({ setIsModalVisible, device }: ViewMyAlertsProps) => {
             
             {
               device.status !== 'Recuperado' ? (
-                <Button variant='red' className='mt-4' onPress={() => setIsConfirmationDialogVisible(true)}>Cancelar o alerta</Button>              
+                <Button variant='white' className='mt-4' onPress={() => setIsConfirmationDialogVisible(true)}>Cancelar o alerta</Button>              
               ) : (
                 <Button variant='blue' className='mt-2' onPress={() => setIsConfirmationDialogVisible(true)}>
                   <Text className='text-white font-medium'>Recuperei meu aparelho</Text>

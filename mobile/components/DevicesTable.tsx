@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity, Modal, Pressable, FlatList, ActivityIndicator, ScrollView } from 'react-native'
+import { View, Text, TouchableOpacity, Modal, Pressable, FlatList, ActivityIndicator, ScrollView, Alert } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Eye, Pencil, Trash2, TriangleAlert } from 'lucide-react-native'
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import ConfirmationDialog from './ConfirmationDialog';
 import DeviceForm from './Forms/DeviceForm';
 import AlertForm from './Forms/AlertForm';
@@ -21,11 +21,22 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
   const [isAlertModalVisible, setIsAlertModalVisible] = useState(false);
 
   async function handleDeleteDevice() {
-    onRefresh()
-    await deleteDevice(device.$id!)
-    setIsConfirmModalVisible(false)
-    setIsModalVisible(false)
+    try {
+      await deleteDevice(device.$id!);
+      setIsConfirmModalVisible(false);
+      setIsModalVisible(false);
+      Alert.alert('Sucesso', 'Dispositivo excluído com sucesso!');
+      onRefresh();
+
+    } catch (error) {
+      console.error('Erro ao excluir dispositivo:', error);
+      Alert.alert('Erro', 'Não foi possível excluir o dispositivo. Tente novamente.');
+    }
   }
+
+  const handleSuccess = () => {
+    onRefresh();
+  };
 
   return (
     <>
@@ -205,9 +216,17 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
           <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '76%', width: '95%' }} className='bg-white flex rounded-2xl overflow-hidden'>
             {
               device.status === 'Regular' ? (
-                <AlertForm setIsModalVisible={() => setIsAlertModalVisible(false)} device={device} />
+                <AlertForm 
+                  setIsModalVisible={() => setIsAlertModalVisible(false)} 
+                  device={device}
+                  onSuccess={handleSuccess}
+                />
               ) : (
-                <ViewMyAlerts setIsModalVisible={() => setIsAlertModalVisible(false)} device={device} />
+                <ViewMyAlerts 
+                  setIsModalVisible={() => setIsAlertModalVisible(false)} 
+                  device={device} 
+                  onSuccess={handleSuccess}
+                />
               )
             }
           </Pressable>
@@ -217,44 +236,55 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
       <Modal animationType='fade' transparent visible={isEditModalVisible} onRequestClose={() => setIsEditModalVisible(false)}>
         <Pressable className='flex-1 bg-black/50 flex items-center justify-center' onPress={() => setIsEditModalVisible(false)}>
           <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '85%', width: '95%' }} className='bg-white flex rounded-2xl overflow-hidden'>
-            <DeviceForm device={device} setIsModalVisible={() => setIsEditModalVisible(false)} />
+            <DeviceForm 
+              device={device} 
+              setIsModalVisible={() => setIsEditModalVisible(false)}
+              onSuccess={handleSuccess}
+            />
           </Pressable>
         </Pressable>
       </Modal>
 
-      <ConfirmationDialog onConfirm={handleDeleteDevice} title='Deseja realmente excluir o dispositivo?' description='Essa ação não pode ser desfeita. Isso excluirá permanentemente o dispositivo e removerá seus dados de nossos servidores.' isModalVisible={isConfirmModalVisible} setIsModalVisible={() => setIsConfirmModalVisible(false)} />
+      <ConfirmationDialog 
+        onConfirm={handleDeleteDevice} 
+        title='Deseja realmente excluir o dispositivo?' 
+        description='Essa ação não pode ser desfeita. Isso excluirá permanentemente o dispositivo e removerá seus dados de nossos servidores.' 
+        isModalVisible={isConfirmModalVisible} 
+        setIsModalVisible={() => setIsConfirmModalVisible(false)} 
+      />
     </>
   )
 }
 
 const DevicesTable = () => {
-   const [devices, setDevices] = useState<DeviceProps[]>([])
-   const [isLoading, setIsLoading] = useState(true)
+  const [devices, setDevices] = useState<DeviceProps[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   const onRefresh = useCallback(() => {
     setIsLoading(true);
-    setTimeout(() => {
-      fetchDevices();
+    fetchDevices().finally(() => {
       setIsLoading(false);
-    }, 2000);
+    });
   }, []);
 
   async function fetchDevices() {
-    const user = await account.get()
-   //  const { data, loading: isLoading, error: devicesErro } = useFetch(() => listDevices({ userId: user.$id, limit: 100, page: 1}));
-   const devices = await listDevices({ userId: user.$id, limit: 100, page: 1})
-   
-   setDevices(devices)
+    try {
+      const user = await account.get();
+      const devices = await listDevices({ userId: user.$id, limit: 100, page: 1});
+      setDevices(devices);
+    } catch (error) {
+      console.error('Erro ao buscar dispositivos:', error);
+    }
+  }
 
-   setIsLoading(false)
- }
-
-  useEffect(() => {
-    fetchDevices()
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      onRefresh();
+    }, [onRefresh])
+  );
 
   return (
-    <ScrollView
+    <ScrollView 
       refreshControl={
         <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
       }
@@ -273,28 +303,37 @@ const DevicesTable = () => {
         </View>
 
         <View className='pb-2 px-1 gap-2'>
-          {
-            isLoading ? (
-              <ActivityIndicator 
-                size='large'
-                color={'#0000ff'}
-                className="mt-0 self-center"
+          {isLoading ? (
+            <ActivityIndicator 
+              size='large'
+              color={'#0000ff'}
+              className="mt-0 self-center"
+            />
+          ) : (
+            <>
+              <FlatList 
+                data={devices}
+                renderItem={({ item }) => (
+                  <DeviceRow 
+                    device={item} 
+                    onRefresh={onRefresh}
+                  />
+                )}
+                keyExtractor={item => item.$id?.toString() || ''}
+                className="mt-2"
+                contentContainerStyle={{ gap: 4 }}
+                scrollEnabled={false}
               />
-            ) : (
-              <>
-                <FlatList 
-                  data={devices}
-                  renderItem={({ item }) => <DeviceRow device={item} onRefresh={onRefresh} />}
-                  keyExtractor={item => item.$id?.toString() || ''}
-                  className="mt-2"
-                  contentContainerStyle={{ gap: 4 }}
-                  scrollEnabled={false}
-                />
-              </>
-            )
-          }
+            </>
+          )}
 
-          <Button variant='blue' onPress={() => router.push('/add-new')} className='self-end'>Cadastrar dispositivo</Button>
+          <Button 
+            variant='blue' 
+            onPress={() => router.push('/(tabs)/add-new')} 
+            className='self-end'
+          >
+            Cadastrar dispositivo
+          </Button>
         </View>
       </View>
     </ScrollView>
