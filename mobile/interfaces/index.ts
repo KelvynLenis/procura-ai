@@ -4,6 +4,7 @@ import { createUserSchema } from './user'
 import CreateDeviceSchema from './createDeviceSchema'
 import OperatorSchema from './operatorSchema'
 import EventSchema from './eventSchema'
+import districtSchema from './districtSchema'
 
 
 export interface DeviceProps {
@@ -58,3 +59,4 @@ export type CreateUserFormData = z.infer<typeof createUserSchema>
 export type CreateDevice = z.infer<typeof CreateDeviceSchema>
 export type Operator = z.infer<typeof OperatorSchema>
 export type Event = z.infer<typeof EventSchema>
+export type District = z.infer<typeof districtSchema>

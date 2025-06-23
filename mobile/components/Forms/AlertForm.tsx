@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import InputField from '../InputField'
 import Button from '../Button';
 import { isPointInPolygon } from 'geolib';
+import bairros from '../../assets/data/bairros.json';
 import paraibaGeoJSON from '../../assets/data/Paraiba.json';
 import MapView, { Marker, MapPressEvent, Region } from 'react-native-maps';
 import { createEvent } from '@/functions/event/create-event';
@@ -13,6 +14,11 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { cn } from '@/utils/cn';
 import { formatISODateString } from '@/lib/utils';
 import EventTypePickerComponent from '../EventTypePickerComponent';
+import * as turf from '@turf/turf';
+import { updateDistrictCounters } from '@/functions/districts/update-district-counters';
+import { getNeighborhoodId } from '@/functions/districts/get-neighborhood-id';
+import { getNeighborhood } from '@/functions/districts/get-neighborhood';
+import { updateDistrict } from '@/functions/districts/update-district';
 
 interface AlertFormProps {
   device: DeviceProps
@@ -25,6 +31,7 @@ interface formProps {
   description: string,
   type: string,
   location: [number, number]
+  id_district: string
 }
 
 interface FormErrors {
@@ -44,6 +51,7 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
     description: "",
     type: "",
     location: [0, 0],
+    id_district: ""
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [marker, setMarker] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -53,6 +61,9 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
   const [predictions, setPredictions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const mapRef = useRef<MapView | null>(null);
+  const [idDistrict, setIdDistrict] = useState('');
+
+  // let id_district = '';
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -60,6 +71,18 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
 
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
+  };
+
+  const getBairroFromCoordinate = (latitude: number, longitude: number): string | null => {
+    const point = turf.point([longitude, latitude]);
+
+    for (const feature of bairros.features) {
+      if (turf.booleanPointInPolygon(point, feature)) {
+        return feature.properties.cod_bairro; // ou outro campo como 'id'
+      }
+    }
+
+    return null;
   };
 
 
@@ -71,6 +94,19 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
 
   const handleMapPress = async (event: MapPressEvent) => {
     const { coordinate } = event.nativeEvent;
+
+    const cod_neighborhood = getBairroFromCoordinate(coordinate.latitude, coordinate.longitude);
+
+    if (cod_neighborhood) {
+      const neighborhoodId = await getNeighborhoodId(Number(cod_neighborhood));
+
+
+      if (neighborhoodId) {
+        // id_district = neighborhoodId
+        setIdDistrict(neighborhoodId)
+        setForm({ ...form, id_district: neighborhoodId });
+      }
+    }
 
     try {
       const response = await fetch(
@@ -247,7 +283,7 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
         type: form.type,
         last_location: form.location,
         is_alert_on: true,
-        id_district: "991dcbfe-f61e-4a65-b2a0-ca52a0f1f53d"
+        id_district: idDistrict
       }
 
       await createEvent(data);
@@ -257,11 +293,36 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
         status: form.type,
       })
 
+      if (idDistrict) {
+        const neighborhood = await getNeighborhood(idDistrict)
+        
+        let data_neighborhood = {}
+
+        if (form.type === 'Furto simples') {
+          data_neighborhood = {
+            theft_counter: neighborhood.theft_counter + 1,
+          }
+        } else if (form.type === 'Extravio ou Perda') {
+          data_neighborhood = {
+            lost_counter: neighborhood.lost_counter + 1,
+          }
+        } else if (form.type === 'Roubo') {
+          data_neighborhood = {
+            robbery_counter: neighborhood.robbery_counter + 1,
+          }
+        }
+
+        if (Object.keys(data).length > 0) {
+          await updateDistrict(idDistrict, data_neighborhood)
+        }
+      }
+
       setForm({
         datetime: "",
         description: "",
         type: "",
-        location: [0, 0]
+        location: [0, 0],
+        id_district: ""
       });
       setDateTime('');
       setMarker(null);
