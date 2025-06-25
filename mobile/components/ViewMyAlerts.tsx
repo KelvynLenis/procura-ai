@@ -79,7 +79,7 @@ const ViewMyAlerts = ({ setIsModalVisible, device, onSuccess }: ViewMyAlertsProp
               <View className={cn(
                 'w-fitrounded-md p-1',
                 device.status === 'Roubado' && 'bg-robbery-bg text-robbery-text',
-                device.status === 'Recuperado' && 'bg-regular-bg text-regular-text',
+                device.status === 'Recuperado' && 'bg-recovered-bg text-recovered-text',
                 device.status === 'Regular' && 'bg-regular-bg text-regular-text',
                 device.status === 'Furtado' && 'bg-theft-bg text-theft-text',
                 device.status === 'Perdido' && 'bg-lost-bg text-lost-text'
@@ -87,7 +87,7 @@ const ViewMyAlerts = ({ setIsModalVisible, device, onSuccess }: ViewMyAlertsProp
               >
                 <Text className={cn(
                     device.status === 'Roubado' && 'text-robbery-text',
-                    device.status === 'Recuperado' && 'text-regular-text',
+                    device.status === 'Recuperado' && 'text-recovered-text',
                     device.status === 'Regular' && 'text-regular-text',
                     device.status === 'Furtado' && 'text-theft-text',
                     device.status === 'Perdido' && 'text-lost-text'

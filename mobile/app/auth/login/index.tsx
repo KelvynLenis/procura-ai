@@ -105,7 +105,7 @@ export default function signIn() {
 
   return (
     <ScrollView className="flex-1 bg-neutral-50" showsVerticalScrollIndicator={false} contentContainerStyle={{ minHeight: '100%', paddingBottom: 40 }}>
-      <View className="px-5 bg-white shadow-lg pt-2">
+      <View className="px-5 bg-primary shadow-lg pt-2">
         <Image source={images.headerLogo} />
       </View>
 

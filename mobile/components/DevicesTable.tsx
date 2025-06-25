@@ -48,7 +48,7 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
           <View className={cn(
             'w-fit max-w-40 items-center justify-center rounded-md p-2',
             device.status === 'Roubado' && 'bg-robbery-bg text-robbery-text',
-            device.status === 'Recuperado' && 'bg-regular-bg text-regular-text',
+            device.status === 'Recuperado' && 'bg-recovered-bg text-recovered-text',
             device.status === 'Regular' && 'bg-regular-bg text-regular-text',
             device.status === 'Furtado' && 'bg-theft-bg text-theft-text',
             device.status === 'Perdido' && 'bg-lost-bg text-lost-text'
@@ -56,7 +56,7 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
           >
             <Text className={cn(
                 device.status === 'Roubado' && 'text-robbery-text',
-                device.status === 'Recuperado' && 'text-regular-text',
+                device.status === 'Recuperado' && 'text-recovered-text',
                 device.status === 'Regular' && 'text-regular-text',
                 device.status === 'Furtado' && 'text-theft-text',
                 device.status === 'Perdido' && 'text-lost-text'
@@ -68,12 +68,11 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
         </View>
           <View className='flex flex-row gap-2 w-fit'> 
             <TouchableOpacity onPress={() => setIsAlertModalVisible(true)} className={cn(
-                'flex items-center justify-center w-9 h-9 rounded-md',
-                device.status === 'Recuperado' && 'bg-regular-bg text-regular-text',
-                'bg-red-500'
+                'flex items-center justify-center w-9 h-9 rounded-md ',
+                device.status === 'Recuperado' ? 'bg-recovered-bg text-recovered-text' : 'bg-red-500',
                )}
               >
-              <TriangleAlert size={28} color={device.status === 'Recuperado' ? '#D7EDB6' :'red'} fill={device.status === 'Recuperado' ? 'green' : 'white'} />
+              <TriangleAlert size={28} color={device.status === 'Recuperado' ? '#3cd9d680' :'red'} fill={device.status === 'Recuperado' ? '#009c99' : 'white'} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setIsModalVisible(true)} className='bg-white border border-zinc-400 flex items-center justify-center w-9 h-9 rounded-md'>
               <Eye size={24} color='black' />
@@ -177,7 +176,7 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
                   <View className={cn(
                     'w-fit max-w-40 items-center justify-center rounded-md p-2',
                     device.status === 'Roubado' && 'bg-robbery-bg text-robbery-text',
-                    device.status === 'Recuperado' && 'bg-regular-bg text-regular-text',
+                    device.status === 'Recuperado' && 'bg-recovered-bg text-recovered-text',
                     device.status === 'Regular' && 'bg-regular-bg text-regular-text',
                     device.status === 'Furtado' && 'bg-theft-bg text-theft-text',
                     device.status === 'Perdido' && 'bg-lost-bg text-lost-text'
@@ -185,7 +184,7 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
                   >
                     <Text className={cn(
                         device.status === 'Roubado' && 'text-robbery-text',
-                        device.status === 'Recuperado' && 'text-regular-text',
+                        device.status === 'Recuperado' && 'text-recovered-text',
                         device.status === 'Regular' && 'text-regular-text',
                         device.status === 'Furtado' && 'text-theft-text',
                         device.status === 'Perdido' && 'text-lost-text'
