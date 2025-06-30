@@ -85,7 +85,7 @@ export function DeviceRow({
         time_event: new Date().toISOString(),
         last_location: [0, 0],
         description: 'Evento Cancelado pelo usuário',
-        type: 'Recuperado',
+        type: 'Regular',
         is_alert_on: false,
         id_district: '',
       })
