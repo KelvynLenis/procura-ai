@@ -25,6 +25,7 @@ import { getOperator } from '@/functions/operators/get-operator'
 import deviceInfo from '../../../assets/icons/device-info.png'
 import Image from 'next/image'
 import { updateDeviceStatus } from '@/functions/device/update-device-status'
+import { createEvent } from '@/functions/event/create-event'
 
 interface DeviceRowProps {
   id: string // ID do dispositivo
@@ -79,6 +80,15 @@ export function DeviceRow({
 
   async function handleDeviceRecovery(id: string) {
     try {
+      await createEvent({
+        id_device: id,
+        time_event: new Date().toISOString(),
+        last_location: [0, 0],
+        description: 'Evento Cancelado pelo usuário',
+        type: 'Recuperado',
+        is_alert_on: false,
+        id_district: '',
+      })
       const success = await updateDeviceStatus(id, {
         is_stolen: false,
         status: 'Regular',

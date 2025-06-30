@@ -9,6 +9,7 @@ import { updateDeviceStatus } from '@/functions/device/update-device-status'
 import { TriangleAlert, X } from 'lucide-react-native'
 import ConfirmationDialog from './ConfirmationDialog'
 import { cn } from '@/utils/cn'
+import { createEvent } from '@/functions/event/create-event'
 
 interface ViewMyAlertsProps {
   setIsModalVisible?: React.Dispatch<React.SetStateAction<boolean>>
@@ -24,6 +25,15 @@ const ViewMyAlerts = ({ setIsModalVisible, device, onSuccess }: ViewMyAlertsProp
 
   async function handleDeviceRecovery() {
     try {
+      await createEvent({
+        id_device: device.$id!,
+        time_event: new Date().toISOString(),
+        last_location: [0, 0],
+        description: 'Evento Cancelado pelo usuário',
+        type: 'Recuperado',
+        is_alert_on: false,
+        id_district: '',
+      })
       const success = await updateDeviceStatus(device.$id!, {
         is_stolen: false,
         status: 'Regular',
