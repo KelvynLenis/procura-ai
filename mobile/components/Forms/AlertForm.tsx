@@ -136,7 +136,7 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
       setForm({ ...form, location: [coordinate.latitude, coordinate.longitude] });
 
     } catch (error) {
-      console.error('Erro ao verificar local:', error);
+      console.error('Erro ao verificar local:', error.message);
       alert('Erro ao verificar localização selecionada.');
     }
   };

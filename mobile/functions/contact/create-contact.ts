@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
 import { getUserId } from '../user/get-user-id'
-import 'react-native-get-random-values'
 
 interface CreateContactProps {
   values: {

@@ -1,4 +1,5 @@
 
+import 'react-native-get-random-values'
 import { images } from "@/contants/images";
 import { useRouter } from "expo-router";
 import { Image, ImageBackground, ScrollView, Text, View } from "react-native";
