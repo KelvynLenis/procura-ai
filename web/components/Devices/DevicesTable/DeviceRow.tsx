@@ -261,50 +261,14 @@ export function DeviceRow({
 
             {status !== 'Regular' ? (
               <>
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <DialogTrigger asChild>
-                    <button
-                      onClick={() => setIsDialogOpen(true)}
-                      type="button"
-                      className={cn(
-                        'w-10 h-10 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white',
-                        status === 'Roubado' &&
-                          'bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500',
-                        status === 'Furtado' &&
-                          'bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500',
-                        status === 'Perdido' &&
-                          'bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500',
-                        status === 'Recuperado' &&
-                          'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500',
-                        status === 'Regular' &&
-                          'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500'
-                      )}
-                    >
-                      <IoIosWarning
-                        className={cn(
-                          status === 'Recuperado' &&
-                            'text-lime-600 animate-pulse'
-                        )}
-                        size={28}
-                      />
-                      <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 group-hover:animate-none bg-black/60 w-64 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
-                        Dispositivo recuperado, clique para ver o local da
-                        retirada
-                      </span>
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-fit py-8">
-                    <DialogHeader>
-                      <DialogTitle>Informações da ocorrência</DialogTitle>
-                    </DialogHeader>
-                    <ViewMyAlerts
-                      id={id}
-                      status={status}
-                      handleDeviceRecovery={handleDeviceRecovery}
-                      setModalOpen={setIsDialogOpen}
-                    />
-                  </DialogContent>
-                </Dialog>
+                <ViewMyAlerts
+                  id={id}
+                  status={status}
+                  handleDeviceRecovery={handleDeviceRecovery}
+                  isDialogOpen={isDialogOpen}
+                  setIsDialogOpen={setIsDialogOpen}
+                  setModalOpen={setIsDialogOpen}
+                />
               </>
             ) : (
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

@@ -3,8 +3,11 @@
 import { client } from '@/lib/appwrite'
 import { formatDateTime } from '@/lib/utils'
 import { toZonedTime } from 'date-fns-tz'
-import { Bell, X } from 'lucide-react'
+import { Bell, ChevronRight, X } from 'lucide-react'
 import { useEffect, useState, useCallback } from 'react'
+import DeviceCheck from '../assets/icons/device-check.svg'
+import Image from 'next/image'
+import Link from 'next/link'
 
 interface Notification {
   $id: string
@@ -137,11 +140,36 @@ export function NotificationButton({
         )}
       </button>
       {isListVisible && (
-        <div className="absolute right-0 top-12 bg-white shadow-lg rounded-md w-80 border z-100">
-          <div className="p-2 text-gray-700 font-semibold border-b w-full flex justify-center">
+        <div className="absolute right-0 top-12 bg-white shadow-lg rounded-md w-96 border z-100">
+          <div className="p-2 text-gray-700 font-semibold border-b w-full flex justify-between items-center">
             Notificações
+            <button onClick={() => setIsListVisible(false)} type='button'>
+              <X className="ml-2" size={24}/>
+            </button>
           </div>
-          <div className="max-h-96 overflow-y-auto flex flex-col items-center justify-center py-2 px-4">
+          <div className="max-h-96 overflow-y-auto flex flex-col items-center justify-center py-2 px-2">
+            <div className='w-full flex h-full px-5 py-3 rounded-lg bg-blue-100/40 gap-4'>
+              <Image src={DeviceCheck} alt="device-check" className="w-6 h-6 self-center" />
+              <div className='flex flex-col gap-4'>
+                <div className='flex justify-between items-center'>
+                  <h1 className='font-bold text-sm text-primary'>Seu dispositivo foi recuperado</h1>
+                  
+                  <span className='w-2 h-2 rounded-full bg-[#004EC1]'></span>
+                </div>
+                <p className='text-sm'>
+                  Informamos que o seu dispositivo  Redmi Note 7, registrado como roubado foi localizado e recuperado pela polícia. 
+                  Acompanhe todas as atualizações desta ocorrência na página de recuperação.
+                </p>
+                <span className='text-xs'>
+                  Hoje - 06/05/2025
+                </span>
+
+                <span className='text-primary flex self-end text-sm underline'>
+                  Acompanhar atualizações
+                  <ChevronRight size={16} />
+                </span>
+              </div>
+            </div>
             {filteredNotifications.length > 0 ? (
               filteredNotifications.map(notification => renderNotification(notification))
             ) : (
