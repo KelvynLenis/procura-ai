@@ -8,6 +8,7 @@ import ContactForm from '@/components/Forms/ContactForm'
 import ConfirmationDialog from '@/components/ConfirmationDialog'
 import { listContacts, type Contact } from '@/functions/contact/list-contacts'
 import { deleteContact } from '@/functions/contact/delete-contact'
+import ProtectedRoute from '@/components/ProtectedRoute'
 
 const formatPhoneNumber = (number: string) => {
   // Remove todos os caracteres não numéricos
@@ -136,6 +137,7 @@ export default function Contacts() {
   
   return (
     <>
+    <ProtectedRoute>
       <Stack.Screen
         options={{
           header: () => (
@@ -216,6 +218,7 @@ export default function Contacts() {
           </Pressable>
         </Pressable>
       </Modal>
+    </ProtectedRoute>
     </>
   )
 }

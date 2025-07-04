@@ -136,7 +136,7 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
       setForm({ ...form, location: [coordinate.latitude, coordinate.longitude] });
 
     } catch (error) {
-      console.error('Erro ao verificar local:', error);
+      console.error('Erro ao verificar local:', error.message);
       alert('Erro ao verificar localização selecionada.');
     }
   };
@@ -236,6 +236,7 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
       };
 
       setMarker({ latitude: location.lat, longitude: location.lng });
+      setForm({ ...form, location: [location.lat, location.lng] });
       mapRef.current?.animateToRegion(region, 1000);
       setSearch(description);
       setPredictions([]);
@@ -335,7 +336,7 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Erro', 'Não foi possível criar o alerta. Tente novamente.');
+      Alert.alert('Erro', error.message);
     } finally {
       setIsLoading(false);
     }

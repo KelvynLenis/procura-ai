@@ -1,9 +1,11 @@
 import { View } from 'react-native'
 import React from 'react'
 import DeviceForm from '@/components/Forms/DeviceForm'
-import { router } from 'expo-router'
+import { router, Stack } from 'expo-router'
 import { listDevices } from '@/functions/device/list-devices'
 import { account } from '@/lib/appwrite'
+import ProtectedRoute from '@/components/ProtectedRoute'
+import Header from '@/components/Header'
 
 export default function AddNew() {
   const handleSuccess = async () => {
@@ -21,8 +23,17 @@ export default function AddNew() {
   };
 
   return (
-    <View className='flex-1 bg-zinc-100 px-5 py-5'>
-      <DeviceForm onSuccess={handleSuccess} />
-    </View>
+    <ProtectedRoute>
+      <Stack.Screen
+        options={{
+          header: () => (
+            <Header title="Adicionar Novo Dispositivo" />
+          ),
+        }}
+      />
+      <View className='flex-1 bg-zinc-100 px-5 py-5'>
+        <DeviceForm onSuccess={handleSuccess} />
+      </View>
+    </ProtectedRoute>
   )
 }

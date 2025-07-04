@@ -9,7 +9,7 @@ const Button = ({ children, className, variant, ...props }: ButtonProps) => {
       style={{ paddingVertical: 10 }}
       className={cn(
         'flex flex-row items-center justify-center px-6 rounded-full font-semibold w-fit',
-        variant === 'blue' && 'bg-primary',
+        variant === 'blue' && 'bg-secondary',
         variant === 'white' && 'bg-white border border-red-500',
         variant === 'red' && 'bg-red-500',
         variant === 'green' && 'bg-green-500 w-fit rounded-md',
