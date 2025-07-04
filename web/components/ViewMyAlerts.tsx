@@ -235,19 +235,19 @@ export function ViewMyAlerts({
                   <span className='text-primary text-sm'>{formatDateTime(events[0].time_event)}</span>
                 </div>
 
-                <div className='w-60 flex flex-col items-center'>
+                {/* <div className='w-60 flex flex-col items-center'>
                   <span className={cn('w-10 h-10 border-2 border-zinc-500 rounded-full')} />
                   <span className='text-zinc-500 font-medium text-center'>Dispositivo ainda não está disponível para retirada</span>
-                  {/* <span className='text- text-sm'>{formatDateTime(events[0].time_event)}</span> */}
-                </div>
+                  <span className='text- text-sm'>{formatDateTime(events[0].time_event)}</span>
+                </div> */}
               </div>
 
               <div className='flex w-full items-center justify-center'>
                 <span className='w-3 h-3 bg-primary rounded-full' />
                 <span className='w-56 h-0.5 bg-primary' />
                 <span className='w-3 h-3 bg-primary rounded-full' />
-                <span className='w-56 h-0.5 bg-zinc-500' />
-                <span className='w-3 h-3 bg-zinc-500 rounded-full' />
+                {/* <span className='w-56 h-0.5 bg-zinc-500' />
+                <span className='w-3 h-3 bg-zinc-500 rounded-full' /> */}
               </div>
             </div>
 
