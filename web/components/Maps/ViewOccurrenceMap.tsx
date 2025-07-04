@@ -43,42 +43,44 @@ export function ViewOccurrenceMap({ position }: MarkAsStolenMapProps) {
   }, [])
 
   function setWidth() {
-    if (window.innerWidth >= 1440) {
-      return 700
-    } else if (window.innerWidth >= 1024) {
-      return 700
-    } else if (window.innerWidth >= 768) {
-      return 680
-    } else if (window.innerWidth >= 425) {
-      return 361
-    } else if (window.innerWidth >= 375) {
-      return 310
-    } else if (window.innerWidth >= 320) {
-      return 260
-    }
+    // if (window.innerWidth >= 1440) {
+    //   return 770
+    // } else if (window.innerWidth >= 1024) {
+    //   return 740
+    // } else if (window.innerWidth >= 768) {
+    //   return 680
+    // } else if (window.innerWidth >= 425) {
+    //   return 361
+    // } else if (window.innerWidth >= 375) {
+    //   return 310
+    // } else if (window.innerWidth >= 320) {
+    //   return 260
+    // }
+
+    return 750
+  }
+
+  function setHeight() {
+    // if (window.innerWidth >= 1440) {
+    //   return 200
+    // } else if (window.innerWidth >= 1024) {
+    //   return 200
+    // } else if (window.innerWidth >= 768) {
+    //   return 200
+    // } else if (window.innerWidth >= 425) {
+    //   return 340
+    // } else if (window.innerWidth >= 375) {
+    //   return 300
+    // } else if (window.innerWidth >= 320) {
+    //   return 270
+    // }
 
     return 200
   }
 
-  function setHeight() {
-    if (window.innerWidth >= 1440) {
-      return 280
-    } else if (window.innerWidth >= 1024) {
-      return 280
-    } else if (window.innerWidth >= 768) {
-      return 280
-    } else if (window.innerWidth >= 425) {
-      return 340
-    } else if (window.innerWidth >= 375) {
-      return 300
-    } else if (window.innerWidth >= 320) {
-      return 270
-    }
-  }
-
   return (
     <Map
-      width={setWidth()}
+      width={750}
       height={setHeight()}
       defaultCenter={position}
       defaultZoom={13}

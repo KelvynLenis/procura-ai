@@ -275,7 +275,7 @@ export function DeviceDetailsCard({
                 'rounded-md w-20 flex items-center justify-center capitalize',
                 status === 'Roubado' && 'bg-robbery-bg text-robbery-text p-1',
                 status === 'Recuperado' &&
-                  'bg-regular-bg text-regular-text p-1',
+                  'bg-recovered-bg text-recovered-text p-1',
                 status === 'Regular' && 'bg-regular-bg text-regular-text p-1',
                 status === 'Furtado' && 'bg-theft-bg text-theft-text p-1',
                 status === 'Perdido' && 'bg-lost-bg text-lost-text p-1'

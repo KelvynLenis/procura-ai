@@ -207,101 +207,40 @@ export function ViewMyAlerts({
             </div> */}
 
             <p>
-              Seu dispositivo {device.phone_model} foi registrado como {device.status}. 
+              {
+                status === 'Recuperado' 
+                ? `Seu dispositivo ${device.phone_model}, recuperado pela polícia já se encontra disponível para retirada.`
+                : `Seu dispositivo ${device.phone_model} foi registrado como ${device.status}.`
+              }
+              
             </p>
 
             <p>
-              Assim que o dispositivo for recuperado você será notificado através do aplicativo e via e-mail para orientação sobre os próximos passos.
+              {
+                status === 'Recuperado'
+                ? 'Para fazer a retirada do dispositivo dirija-se ao local indicado abaixo portando um documento oficial com foto.'
+                : 'Assim que o dispositivo for recuperado você será notificado através do aplicativo e via e-mail para orientação sobre os próximos passos.'
+              }
             </p>
 
-            <p>
-              Informaremos também aos seus contatos de confiança.
-            </p>
+            {
+              status === 'Recuperado'
+              ? (
+                <div className='flex flex-col'>
+                  <h2 className='text-lg font-medium'>Local de retirada</h2>
 
-
-            <div className='bg-zinc-200/50 w-full flex flex-col items-center p-4 gap-4'>
-              <span className='text-primary font-medium'>Atualizações da ocorrência</span>
-
-              <div className='w-full flex justify-around'>
-                <div className='w-60 flex flex-col items-center'>
-                  <span className={cn('w-10 h-10 border-2 border-primary rounded-full')} />
-                  <span className='text-primary font-medium'>Ocorrência criada</span>
-                  <span className='text-primary text-sm'>{formatDateTime(events[0].time_event)}</span>
+                  <span className='font-medium'>{events[0]?.retrieval_location?.split(')')[1]}</span>
+                  <span>Endereço: {events[0]?.address}</span>
                 </div>
+              )
+              : (
+                <p>
+                  Informaremos também aos seus contatos de confiança.
+                </p>
+              )
+            }
 
-                <div className='w-60 flex flex-col items-center'>
-                  <span className={cn('w-10 h-10 border-2 border-primary rounded-full')} />
-                  <span className='text-primary font-medium'>Dispositivo recuperado</span>
-                  <span className='text-primary text-sm'>{formatDateTime(events[0].time_event)}</span>
-                </div>
-
-                {/* <div className='w-60 flex flex-col items-center'>
-                  <span className={cn('w-10 h-10 border-2 border-zinc-500 rounded-full')} />
-                  <span className='text-zinc-500 font-medium text-center'>Dispositivo ainda não está disponível para retirada</span>
-                  <span className='text- text-sm'>{formatDateTime(events[0].time_event)}</span>
-                </div> */}
-              </div>
-
-              <div className='flex w-full items-center justify-center'>
-                <span className='w-3 h-3 bg-primary rounded-full' />
-                <span className='w-56 h-0.5 bg-primary' />
-                <span className='w-3 h-3 bg-primary rounded-full' />
-                {/* <span className='w-56 h-0.5 bg-zinc-500' />
-                <span className='w-3 h-3 bg-zinc-500 rounded-full' /> */}
-              </div>
-            </div>
-
-            <div className="rounded-lg flex flex-col gap-2 p-4">
-              <h2 className="font-medium text-lg">Detalhes da ocorrência</h2>
-              <div className="flex flex-col gap-5">
-                <div className="flex gap-2">
-                  <span className="font-medium w-44">Dispositivo</span>
-
-                  <span className="w-full">
-                    {device.phone_model} /{' '}
-                    {device.brand}
-                  </span>
-                </div>
-                <div className="flex">
-                  <span className="font-medium w-44">Proprietário</span>
-
-                  <span className="w-full">{user.name}</span>
-                </div>
-                <div className="flex">
-                  <span className="font-medium w-44">Descrição</span>
-
-                  <span className="w-full">
-                    {events[0].description || 'Sem descrição'}
-                  </span>
-                </div>
-                <div className="flex">
-                  <span className="font-medium w-44">Status</span>
-
-                  <div className="w-full">
-                    <span
-                      className={cn(
-                        'w-fit rounded-sm flex items-center justify-center hover:bg-white',
-                        device.status === 'Roubado' &&
-                          'bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500',
-                        device.status === 'Furtado' &&
-                          'bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500',
-                        device.status === 'Perdido' &&
-                          'bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500',
-                        device.status === 'Recuperado' &&
-                          'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500',
-                        device.status === 'Regular' &&
-                          'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500'
-                      )}
-                    >
-                      {device.status}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
-            {/* <div>
+            <div >
               {events[0]?.last_location ? (
                 <ViewOccurrenceMap position={events[0]?.last_location} />
               ) : (
@@ -314,7 +253,124 @@ export function ViewMyAlerts({
                   </span>
                 </div>
               )}
-            </div> */}
+            </div>
+
+            <div className='bg-zinc-200/50 w-full flex flex-col items-center p-4 gap-4'>
+              <span className='text-primary font-medium'>Atualizações da ocorrência</span>
+
+              <div className='w-full flex justify-around'>
+                <div className='w-60 flex flex-col items-center'>
+                  <span className={cn('w-10 h-10 border-2 border-primary rounded-full')} />
+                  <span className='text-primary font-medium'>Ocorrência criada</span>
+                  <span className='text-primary text-sm'>{formatDateTime(events[0].time_event)}</span>
+                </div>
+
+                <div className='w-60 flex flex-col items-center'>
+                  <span className={cn('w-10 h-10 border-2 rounded-full', status === 'Recuperado' ? 'border-primary' : 'border-zinc-500')} />
+                  <span className={cn('font-medium', status === 'Recuperado' ? 'text-primary' : 'text-zinc-500')}>Dispositivo recuperado</span>
+                  <span className={cn('text-sm', status === 'Recuperado' ? 'text-primary' : 'text-zinc-500')}>{formatDateTime(events[0].time_event)}</span>
+                </div>
+
+                {/* <div className='w-60 flex flex-col items-center'>
+                  <span className={cn('w-10 h-10 border-2 border-zinc-500 rounded-full')} />
+                  <span className='text-zinc-500 font-medium text-center'>Dispositivo ainda não está disponível para retirada</span>
+                  <span className='text- text-sm'>{formatDateTime(events[0].time_event)}</span>
+                </div> */}
+              </div>
+
+              <div className='flex w-full items-center justify-center'>
+                <span className='w-3 h-3 bg-primary rounded-full' />
+                <span className={cn('w-80 h-0.5', status === 'Recuperado' ? 'bg-primary' : 'bg-zinc-500')} />
+                <span className={cn('w-3 h-3 rounded-full', status === 'Recuperado' ? 'bg-primary' : 'bg-zinc-500')} />
+                {/* <span className='w-56 h-0.5 bg-zinc-500' />
+                <span className='w-3 h-3 bg-zinc-500 rounded-full' /> */}
+              </div>
+            </div>
+
+            <div className="rounded-lg flex flex-col gap-2 p-4">
+              <h2 className="font-medium text-lg">Detalhes da ocorrência</h2>
+              <div className="flex flex-col gap-5">
+
+                <div className="flex">
+                  <span className="font-medium w-44">Dispositivo</span>
+                  <span className="w-full">
+                    {device.phone_model} /{' '}
+                    {device.brand}
+                  </span>
+                </div>
+
+                <div className="flex">
+                  <span className="font-medium w-44">Proprietário</span>
+                  <span className="w-full">{user.name}</span>
+                </div>
+
+                <div className="flex">
+                  <span className="font-medium w-44">Data e hora</span>
+                  <span className="w-full">{formatDateTime(events[0].time_event)}</span>
+                </div>
+
+                <div className="flex">
+                  <span className="font-medium w-44">Descrição</span>
+                  <span className="w-full">
+                    {events[0].description || 'Sem descrição'}
+                  </span>
+                </div>
+
+                <div className="flex">
+                  <span className="font-medium w-44">Status</span>
+                  <div className="w-full">
+                    <span
+                      className={cn(
+                        'w-fit rounded-sm flex items-center justify-center hover:bg-white',
+                        device.status === 'Roubado' &&
+                          'bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500',
+                        device.status === 'Furtado' &&
+                          'bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500',
+                        device.status === 'Perdido' &&
+                          'bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500',
+                        device.status === 'Recuperado' &&
+                          'bg-lime-500/30 text-recovered-text p-1',
+                        device.status === 'Regular' &&
+                          'bg-lime-500/30 text-regular-text p-1'
+                      )}
+                    >
+                      {device.status}
+                    </span>
+
+                  </div>
+                </div>
+              </div>
+              <ConfirmationDialog
+                title="Tem certeza que deseja marcar o dispositivo como regular?"
+                description="Ao concordar com esta ação, o dispositivo será marcado como regular e os dados da recuperação serão perdidos.
+                Tenha certeza que já tem o aparelho em mãos antes de prosseguir."
+                onConfirm={handleConfirmDialog}
+              >
+                <button
+                  type="button"
+                  className={cn(
+                    'w-full top-5 gap-2 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white',
+                    status === 'Roubado' &&
+                      'bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500',
+                    status === 'Furtado' &&
+                      'bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500',
+                    status === 'Perdido' &&
+                      'bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500',
+                    status === 'Recuperado' &&
+                      'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500 animate-pulse',
+                    status === 'Regular' &&
+                      'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500'
+                  )}
+                >
+                  <IoIosWarning size={28} />
+                  <span className="hidden md:block">
+                    {status === 'Recuperado'
+                      ? 'Confirmar recebimento'
+                      : 'Desativar alerta'}
+                  </span>
+                </button>
+              </ConfirmationDialog>
+            </div>
 
             {/* {events.length > 0 && (
               <div
