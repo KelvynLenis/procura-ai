@@ -39,6 +39,7 @@ export function NotificationButton({
       'Extravio ou Perda',
       'Roubo',
       'Recuperado',
+      'Regular'
     ]
 
     if (relevantTypes.includes(payload.type)) {
