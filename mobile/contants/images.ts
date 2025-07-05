@@ -7,7 +7,10 @@ import step2 from '../assets/icons/step2.png'
 import step3 from '../assets/icons/step3.png'
 import step4 from '../assets/icons/step4.png'
 import line1 from '../assets/images/line1.png'
+import line2 from '../assets/images/line2.png'
 import headerLogo from '../assets/icons/header-logo.png'
+import landingBg from '../assets/images/landing-bg.png'
+import footer from '../assets/images/footer.png'
 
 export const images = {
   hero,
@@ -19,5 +22,8 @@ export const images = {
   step4,
   headerLogo,
   line1,
-  logo
+  line2,
+  logo,
+  landingBg,
+  footer
 }
