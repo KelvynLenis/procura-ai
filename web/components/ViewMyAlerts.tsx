@@ -268,7 +268,7 @@ export function ViewMyAlerts({
                 <div className='w-60 flex flex-col items-center'>
                   <span className={cn('w-10 h-10 border-2 rounded-full', status === 'Recuperado' ? 'border-primary' : 'border-zinc-500')} />
                   <span className={cn('font-medium', status === 'Recuperado' ? 'text-primary' : 'text-zinc-500')}>Dispositivo recuperado</span>
-                  <span className={cn('text-sm', status === 'Recuperado' ? 'text-primary' : 'text-zinc-500')}>{formatDateTime(events[0].time_event)}</span>
+                  <span className={cn('text-sm', status === 'Recuperado' ? 'text-primary' : 'text-zinc-500')}>{ status === 'Recuperado' && formatDateTime(events[1].time_event)}</span>
                 </div>
 
                 {/* <div className='w-60 flex flex-col items-center'>
@@ -306,7 +306,7 @@ export function ViewMyAlerts({
 
                 <div className="flex">
                   <span className="font-medium w-44">Data e hora</span>
-                  <span className="w-full">{formatDateTime(events[0].time_event)}</span>
+                  <span className="w-full">{status === 'Recuperado' ? formatDateTime(events[1].time_event) : formatDateTime(events[0].time_event)}</span>
                 </div>
 
                 <div className="flex">
