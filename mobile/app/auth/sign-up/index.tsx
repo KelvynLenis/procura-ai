@@ -107,7 +107,7 @@ export default function signUp() {
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
       >
-        <View className="px-5 bg-white shadow-lg pt-2">
+        <View className="px-5 bg-primary shadow-lg pt-2">
           <Image source={images.headerLogo} />
         </View>
 

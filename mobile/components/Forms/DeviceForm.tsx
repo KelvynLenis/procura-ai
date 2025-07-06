@@ -216,7 +216,7 @@ const DeviceForm = ({ setIsModalVisible, device, onSuccess }: DeviceFormProps) =
             )}
           </View>
 
-          <View className='w-full rounded-lg px-5 py-2 flex flex-row' style={{ backgroundColor: 'rgba(216,169,18,0.3)' }}>
+          <View className='w-full rounded-lg px-5 py-2 flex flex-row' style={{ backgroundColor: '#C4F3F2' }}>
             <Text className='flex flex-row items-end gap-2'>
               <CircleAlert size={15} color='black' />{' '}
               O IMEI é composto por 15 números e pode ser encontrado na embalagem do aparelho ou digitando *#06# no teclado do aparelho.

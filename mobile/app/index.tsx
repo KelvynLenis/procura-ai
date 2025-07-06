@@ -10,25 +10,26 @@ export default function Index() {
   const router = useRouter();
 
   return (
-    <ScrollView className="flex-1" showsVerticalScrollIndicator={false} contentContainerStyle={{ minHeight: '100%', paddingBottom: 20 }} >
+    <ScrollView className="flex-1" showsVerticalScrollIndicator={false} contentContainerStyle={{ minHeight: '100%', paddingBottom: 0 }} >
       <View className="px-4 bg-primary shadow-lg">
         <Image source={images.headerLogo} className="h-20"/>
       </View>
+
       <ImageBackground
-        source={images.hero}
-        className="flex-1 flex-row pr-2 py-5 justify-between"
+        source={images.landingBg}
+        className="flex-1 flex-row pr-2 py-7 justify-end bg-primary"
       >
-        <View className="w-40 ">
-          <Image source={images.line1} style={{ width: '220%', height: '100%', left: 0, top:-18 }} />
-        </View>
+        {/* <View className="w-40">
+          <Image source={images.landingBg} style={{ width: '220%', height: '100%', left: 0, top:-18 }} />
+        </View> */}
         
-        <View className="flex w-72 gap-2 ">
-          <Text className="text-primary font-bold text-xl text-right leading-9">
+        <View className="flex w-80 gap-2 px-3">
+          <Text className="text-white font-bold text-xl text-right leading-9">
             Perdeu ou teve seu celular roubado?
             O Procura.Aí pode te ajudar!
           </Text>
 
-          <Text className="text-right w-full self-end font-medium">
+          <Text className="text-right text-white w-full self-end font-medium">
             Cadastre seus dispositivos e, se algo acontecer, acione as autoridades de forma rápida e segura. 
             Com ajuda da tecnologia, você aumenta as chances de recuperar seu aparelho e ainda contribui 
             para combater o mercado ilegal. Proteja-se agora e fique um passo à frente
@@ -139,10 +140,21 @@ export default function Index() {
           Cadastre-se
         </Button>
 
-        <View className="flex flex-row w-full justify-end">
-          <Text className="text-zinc-400">Versão 0.0.5</Text>
-        </View>
+
       </View>
+
+      <Text className='max-w-96 w-full text-lg font-medium self-center text-center mt-5'>
+        Faça o download nas principais lojas de aplicativos
+      </Text>
+
+      <View className='relative h-56'>
+        <Image source={images.line2} className="self-center absolute w-full -bottom-52 right-0" />
+      </View>
+      <ImageBackground source={images.footer} className="w-full h-56 flex flex-col justify-end mt-5 py-10 px-4">
+        <View className="flex flex-row justify-end -mb-8">
+          <Text className="text-zinc-400">Versão 0.0.8</Text>
+        </View>
+      </ImageBackground>
     </ScrollView>
   );
 }

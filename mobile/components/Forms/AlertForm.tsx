@@ -346,10 +346,10 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       className="flex-1"
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
     >
-      <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{ minHeight: '100%', backgroundColor: 'white', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: 24, gap: 20 }}>
-        {/* <View className='flex-col h-full flex-1 items-start p-6 gap-5 bg-transparent shadow-black shadow-md rounded-xl w-full'> */}
+      <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{ minHeight: '100%', backgroundColor: 'white', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: 20, gap: 20 }}>
+        {/* <View className='flex-col h-full flex-1 items-start p-6 gap-5 w-full'> */}
           <Text className='font-medium'>Preencha as informações:</Text>
           <View className='w-full h-0.5 bg-zinc-200' />
 
@@ -379,8 +379,10 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
             numberOfLines={4}
             placeholder="Descreva em poucas palavras como aconteceu."
             containerStyle='rounded-md items-start border-0 bg-zinc-100 w-full h-40'
-            inputStyle='h-40 break-words rounded-md'
+            inputStyle='rounded-md'
             textContentType="none"
+            multiline
+            editable
             value={form.description}
             onChangeText={(value) => setForm({ ...form, description: value })}
           />

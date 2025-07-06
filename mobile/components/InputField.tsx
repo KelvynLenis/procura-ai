@@ -44,7 +44,7 @@ const InputField = ({
           </View>
 
           <View
-            className={cn(`w-80 px-4 flex flex-row justify-start shadow-xl items-center relative bg-white rounded-full border ${error ? 'border-red-500' : 'border-primary'} focus:border-primary-500`, containerStyle)}
+            className={cn(`w-80 px-4 flex flex-row justify-start shadow-xl text-end relative bg-white rounded-full border ${error ? 'border-red-500' : 'border-primary'} focus:border-primary-500`, containerStyle)}
           >
             {icon && !iconEnd && icon}
             <TextInput
