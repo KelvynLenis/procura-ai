@@ -40,7 +40,7 @@ export function AlertRow({ index, occurrence, setOccurrences }: AlertRowProps) {
               occurrence?.device.status === 'Roubado' &&
                 'bg-robbery-bg text-robbery-text p-1',
               occurrence?.device.status === 'Recuperado' &&
-                'bg-regular-bg text-regular-text p-1',
+                'bg-recovered-bg text-recovered-text p-1',
               occurrence?.device.status === 'Regular' &&
                 'bg-regular-bg text-regular-text p-1',
               occurrence?.device.status === 'Furtado' &&
