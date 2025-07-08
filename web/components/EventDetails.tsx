@@ -34,7 +34,7 @@ export function EventDetails({
 
   return (
     <div
-      className={cn('w-2/5 flex ring-1 ring-zinc-200 rounded-md gap-2', styles)}
+      className={cn('w-/5 flex ring-1 ring-zinc-200 rounded-md gap-2', styles)}
     >
       <span className="w-1 h-full bg-procura-ai-blue" />
 

@@ -5,7 +5,7 @@ import { Map, Marker, GeoJson, Overlay, ZoomControl } from 'pigeon-maps'
 import type { OccurrencesProps } from '@/types'
 import { usePathname } from 'next/navigation'
 import { EventDetails } from '../EventDetails'
-import { Home, Triangle } from 'lucide-react'
+import { Home, Triangle, ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import theft from '../../assets/icons/theft.svg'
 import warning from '../../assets/icons/warning.png'
@@ -53,6 +53,10 @@ export function OccurrencesMap({
   const [localOccurrences, setLocalOccurrences] = useState<OccurrencesProps[]>(occurences || [])
   const [center, setCenter] = useState<[number, number]>(defaultCenter)
   const [zoom, setZoom] = useState(defaultZoom)
+  
+  // Navegação entre ocorrências na mesma localização
+  const [sameLocationOccurrences, setSameLocationOccurrences] = useState<OccurrencesProps[]>([])
+  const [currentIndex, setCurrentIndex] = useState(0)
 
   const pathname = usePathname().slice(1)
   const isFullScreen = pathname === 'map/ocorrencias'
@@ -60,15 +64,18 @@ export function OccurrencesMap({
   // Atualiza o centro do mapa e abre o popup quando uma localização é selecionada
   useEffect(() => {
     if (selectedLocation && occurences) {
-      const selectedOccurence = occurences.find(
+      // Encontra todas as ocorrências nesta mesma localização
+      const occurrencesAtLocation = occurences.filter(
         occ => occ.event?.last_location?.[0] === selectedLocation[0] && 
               occ.event?.last_location?.[1] === selectedLocation[1]
       )
 
-      if (selectedOccurence) {
+      if (occurrencesAtLocation.length > 0) {
         setCenter(selectedLocation)
         setZoom(15)
-        setOccurence(selectedOccurence)
+        setSameLocationOccurrences(occurrencesAtLocation)
+        setCurrentIndex(0)
+        setOccurence(occurrencesAtLocation[0])
         isFullScreen ? setIsOverlayOpen(true) : setIsInfoCardOpen(true)
       }
     }
@@ -82,13 +89,39 @@ export function OccurrencesMap({
   }, [occurences])
 
   function handleOpenPopup(event: OccurrencesProps) {
-    isFullScreen ? setIsOverlayOpen(true) : setIsInfoCardOpen(true)
+    // Encontra todas as ocorrências nesta mesma localização
+    if (!event.event?.last_location) return
+    
+    const occurrencesAtLocation = localOccurrences.filter(
+      occ => occ.event?.last_location && 
+            occ.event.last_location[0] === event.event.last_location[0] && 
+            occ.event.last_location[1] === event.event.last_location[1]
+    )
+    
+    setSameLocationOccurrences(occurrencesAtLocation)
+    setCurrentIndex(occurrencesAtLocation.indexOf(event))
     setOccurence(event)
+    isFullScreen ? setIsOverlayOpen(true) : setIsInfoCardOpen(true)
   }
 
   function closePopup() {
     setIsInfoCardOpen(false)
     setIsOverlayOpen(false)
+    setSameLocationOccurrences([])
+  }
+  
+  function nextOccurrence() {
+    if (sameLocationOccurrences.length <= 1) return
+    const nextIndex = (currentIndex + 1) % sameLocationOccurrences.length
+    setCurrentIndex(nextIndex)
+    setOccurence(sameLocationOccurrences[nextIndex])
+  }
+  
+  function prevOccurrence() {
+    if (sameLocationOccurrences.length <= 1) return
+    const prevIndex = (currentIndex - 1 + sameLocationOccurrences.length) % sameLocationOccurrences.length
+    setCurrentIndex(prevIndex)
+    setOccurence(sameLocationOccurrences[prevIndex])
   }
 
   const size = useWindowSize()
@@ -193,10 +226,40 @@ export function OccurrencesMap({
                 />
               )
           )}
-        {isOverlayOpen && (
+        {isOverlayOpen && occurence.event?.last_location && (
           <Overlay anchor={occurence.event?.last_location} offset={[0, 0]}>
             <div className="flex flex-col relative -translate-x-1/2 rounded-lg ring-1 ring-procura-ai-blue bg-white px-4 py-2">
               <Triangle className="text-white absolute fill-white -top-3 left-[46%]" />
+              
+              {/* Adiciona navegação entre ocorrências na mesma localização */}
+              {sameLocationOccurrences.length > 1 && (
+                <div className="flex justify-between items-center mb-2 border-b pb-2">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      prevOccurrence();
+                    }} 
+                    className="p-1 rounded-full hover:bg-gray-200"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  
+                  <span className="text-sm font-medium">
+                    {currentIndex + 1} de {sameLocationOccurrences.length}
+                  </span>
+                  
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      nextOccurrence();
+                    }} 
+                    className="p-1 rounded-full hover:bg-gray-200"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+              )}
+              
               <EventDetails
                 occurence={occurence}
                 closePopup={closePopup}
@@ -207,7 +270,32 @@ export function OccurrencesMap({
         )}
       </Map>
       {isInfoCardOpen && (
-        <EventDetails occurence={occurence} closePopup={closePopup} />
+        <div className="relative">
+          <EventDetails occurence={occurence} closePopup={closePopup} />
+          
+          {/* Adiciona controles de navegação no card também */}
+          {sameLocationOccurrences.length > 1 && (
+            <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex items-center bg-white px-3 py-1 rounded-full shadow-md">
+              <button 
+                onClick={prevOccurrence} 
+                className="p-1 rounded-full hover:bg-gray-200 mr-2"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              
+              <span className="text-sm font-medium">
+                {currentIndex + 1} de {sameLocationOccurrences.length}
+              </span>
+              
+              <button 
+                onClick={nextOccurrence} 
+                className="p-1 rounded-full hover:bg-gray-200 ml-2"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          )}
+        </div>
       )}
     </>
   )
