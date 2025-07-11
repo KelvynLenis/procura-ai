@@ -130,7 +130,7 @@ export function NotificationButton({
   return (
     <>
       <button
-        className="absolute right-10 top-3 bg-procura-ai-white p-2 rounded-full hover:bg-procura-ai-blue hover:ring-1 hover:ring-procura-ai-white hover:text-white transition-all duration-500"
+        className="absolute right-64 top-3 bg-procura-ai-white p-2 rounded-full hover:bg-procura-ai-blue hover:ring-1 hover:ring-procura-ai-white hover:text-white transition-all duration-500"
         onClick={toggleList}
       >
         <Bell className="size-7" />
@@ -141,7 +141,7 @@ export function NotificationButton({
         )}
       </button>
       {isListVisible && (
-        <div className="absolute right-0 top-12 bg-white shadow-lg rounded-md w-96 border z-100">
+        <div className="absolute right-32 top-14 bg-white shadow-lg rounded-md w-80 border z-100">
           <div className="p-2 text-gray-700 font-semibold border-b w-full flex justify-between items-center">
             Notificações
             <button onClick={() => setIsListVisible(false)} type='button'>
@@ -149,7 +149,7 @@ export function NotificationButton({
             </button>
           </div>
           <div className="max-h-96 overflow-y-auto flex flex-col items-center justify-center py-2 px-2">
-            <div className='w-full flex h-full px-5 py-3 rounded-lg bg-blue-100/40 gap-4'>
+            {/* <div className='w-full flex h-full px-5 py-3 rounded-lg bg-blue-100/40 gap-4'>
               <Image src={DeviceCheck} alt="device-check" className="w-6 h-6 self-center" />
               <div className='flex flex-col gap-4'>
                 <div className='flex justify-between items-center'>
@@ -170,7 +170,7 @@ export function NotificationButton({
                   <ChevronRight size={16} />
                 </span>
               </div>
-            </div>
+            </div> */}
             {filteredNotifications.length > 0 ? (
               filteredNotifications.map(notification => renderNotification(notification))
             ) : (

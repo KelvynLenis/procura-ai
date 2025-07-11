@@ -102,7 +102,7 @@ export function DeviceItem({
         <div className="self-end flex justify-end">
           <span
             className={cn(
-              'rounded-md w-14 flex self-center items-center justify-center capitalize',
+              'rounded-md w-14 flex self-center items-center justify-center capitalize font-medium',
               status === 'Roubado' && 'bg-robbery-bg text-robbery-text p-1',
               status === 'Recuperado' && 'bg-recovered-bg text-recovered-text p-1',
               status === 'Regular' && 'bg-regular-bg text-regular-text p-1',

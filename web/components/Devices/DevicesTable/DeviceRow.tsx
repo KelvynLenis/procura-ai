@@ -131,28 +131,27 @@ export function DeviceRow({
   return (
     <>
       <TableRow className="text-base">
-        <TableCell className="font-bold text-zinc-800 pl-5 hidden lg:table-cell">
+        <TableCell className="font-medium text-zinc-800 pl-5 hidden lg:table-cell">
           {index + 1}
         </TableCell>
-        <TableCell className="font-bold text-zinc-800 lg:flex">
+        <TableCell className="font-medium text-zinc-800 lg:flex">
           {phone_model}
         </TableCell>
-        <TableCell className="font-bold capitalize hidden md:table-cell">
+        <TableCell className="font-medium capitalize hidden md:table-cell">
           {brand}
         </TableCell>
-        <TableCell className="font-bold hidden md:table-cell">
+        <TableCell className="font-medium hidden md:table-cell">
           {`${imei.slice(0, 1)} ${imei.slice(1, 8)} ****** **`}
         </TableCell>
         <TableCell className="w-24">
           <span
             className={cn(
-              'rounded-md w-24 flex items-center justify-center capitalize',
+              'rounded-md w-24 flex items-center justify-center capitalize font-medium',
               status === 'Roubado' && 'bg-robbery-bg text-robbery-text p-1',
               status === 'Recuperado' && 'bg-regular-bg text-recovered-text p-1',
               status === 'Regular' && 'bg-regular-bg text-regular-text p-1',
               status === 'Furtado' && 'bg-theft-bg text-theft-text p-1',
               status === 'Perdido' && 'bg-lost-bg text-lost-text p-1'
-              // status === "Perdido" && "bg-violet-500/20 text-violet-700 p-1",
             )}
           >
             {status}

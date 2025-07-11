@@ -322,70 +322,70 @@ export function DeviceForm({
                     >
                       <InputOTPGroup>
                         <InputOTPSlot
-                          className="w-3 md:w-4 h-5 border-t-0 border-r-0 border-black  shadow-transparent"
+                          className="w-3 md:w-4 h-5 xl:w-6 border-t-0 border-r-0 border-black  shadow-transparent"
                           index={0}
                         />
                         <InputOTPSlot
-                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                           index={1}
                         />
                       </InputOTPGroup>
                       <span />
                       <InputOTPGroup>
                         <InputOTPSlot
-                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                           index={2}
                         />
                         <InputOTPSlot
-                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                           index={3}
                         />
                         <InputOTPSlot
-                          className="w-3 md:w-4 h-5 border-t-0 border-r-0 border-black shadow-transparent"
+                          className="w-3 md:w-4 h-5 xl:w-6 border-t-0 border-r-0 border-black shadow-transparent"
                           index={4}
                         />
                         <InputOTPSlot
-                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                           index={5}
                         />
                         <InputOTPSlot
-                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                           index={6}
                         />
                         <InputOTPSlot
-                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                           index={7}
                         />
                       </InputOTPGroup>
                       <InputOTPGroup>
                         <InputOTPSlot
-                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                           index={8}
                         />
                         <InputOTPSlot
-                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                           index={9}
                         />
                         <InputOTPSlot
-                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                           index={10}
                         />
                         <InputOTPSlot
-                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                           index={11}
                         />
                         <InputOTPSlot
-                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                           index={12}
                         />
                         <InputOTPSlot
-                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                           index={13}
                         />
                       </InputOTPGroup>
                       <InputOTPGroup>
                         <InputOTPSlot
-                          className="w-3 md:w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                           index={14}
                         />
                       </InputOTPGroup>
@@ -393,7 +393,7 @@ export function DeviceForm({
                   </FormControl>
                   <FormMessage>{imeiError}</FormMessage>
                 </div>
-                <span className="w-64 md:w-80 bg-[#D8A912]/30 text-procura-ai-black/60 font-medium py-2 px-4 rounded-xl">
+                <span className="w-64 md:w-80 bg-[#C4F3F2] text-procura-ai-black/60 font-medium py-2 px-4 rounded-xl">
                   🛈 O IMEI é composto por 15 números e pode ser encontrado na
                   embalagem do aparelho ou digitando *#06# no teclado do
                   aparelho.
@@ -423,7 +423,7 @@ export function DeviceForm({
                           type="button"
                           disabled
                           className={cn(
-                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100',
+                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100 xl:w-[25.5rem]',
                             !field.value &&
                               'text-muted-foreground text-zinc-500',
                             'cursor-not-allowed opacity-50'
@@ -458,7 +458,7 @@ export function DeviceForm({
                           type="button"
                           disabled
                           className={cn(
-                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100',
+                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100 xl:w-[25.5rem]',
                             !field.value &&
                               'text-muted-foreground text-zinc-500',
                             'cursor-not-allowed opacity-50'
@@ -493,11 +493,11 @@ export function DeviceForm({
                     <InputOTPGroup>
                       <span>(</span>
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5 border-t-0 border-r-0 border-black  shadow-transparent"
+                        className="w-4 md:w-5 h-5 xl:w-6 border-t-0 border-r-0 border-black  shadow-transparent"
                         index={0}
                       />
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                         index={1}
                       />
                       <span>)</span>
@@ -505,42 +505,42 @@ export function DeviceForm({
                     <span />
                     <InputOTPGroup>
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                         index={2}
                       />
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                         index={3}
                       />
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5 border-t-0 border-r-0 border-black shadow-transparent"
+                        className="w-4 md:w-5 h-5 xl:w-6 border-t-0 border-r-0 border-black shadow-transparent"
                         index={4}
                       />
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                         index={5}
                       />
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                         index={6}
                       />
                     </InputOTPGroup>
                     <InputOTPSeparator data-dash />
                     <InputOTPGroup>
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                         index={7}
                       />
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                         index={8}
                       />
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                         index={9}
                       />
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
                         index={10}
                       />
                     </InputOTPGroup>
@@ -571,7 +571,7 @@ export function DeviceForm({
                           role="combobox"
                           type="button"
                           className={cn(
-                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100',
+                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100 xl:w-[25.5rem]',
                             !field.value &&
                               'text-muted-foreground text-zinc-500'
                           )}
