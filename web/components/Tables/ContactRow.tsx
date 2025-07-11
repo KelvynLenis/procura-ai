@@ -44,17 +44,17 @@ export function ContactRow({ contact, index, setContacts }: ContactRowProps) {
           {index + 1}
         </TableCell>
         <TableCell className="break-words">
-          <div className="flex items-center text-lg font-bold">
+          <div className="flex items-center font-medium">
             {contact.name_contact}
           </div>
         </TableCell>
-        <TableCell className="font-bold text-lg break-words">
+        <TableCell className="font-medium break-words">
           {contact.email_contact || 'Não informado'}
         </TableCell>
-        <TableCell className={cn('font-bold break-words')}>
+        <TableCell className={cn('font-medium break-words')}>
           <span
             className={cn(
-              'font-bold text-lg break-words p-2 rounded-md capitalize'
+              'font-medium break-words p-2 rounded-md capitalize'
             )}
           >
             {`(${contact.number_contact.slice(0, 2)}) ${contact.number_contact.slice(2, 7)}-${contact.number_contact.slice(7, 11)}`}

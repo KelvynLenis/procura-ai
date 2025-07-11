@@ -31,6 +31,7 @@ import { useState } from 'react'
 import { LoadingToast } from './LoadingToast'
 import { toast } from 'react-toastify'
 import logo from '../assets/icons/logo-text-2.svg'
+// import logo from '../assets/icons/logo-text.svg'
 import Image from 'next/image'
 import { RiAlarmWarningFill } from 'react-icons/ri'
 
@@ -58,11 +59,11 @@ const securityGroup = [
     url: 'contatos-de-confianca',
     icon: <PiUsersThreeFill />,
   },
-  {
-    title: 'Editar perfil',
-    url: 'perfil',
-    icon: <Pencil />,
-  },
+  // {
+  //   title: 'Editar perfil',
+  //   url: 'perfil',
+  //   icon: <Pencil />,
+  // },
 ]
 
 const itemsForAdmins = [

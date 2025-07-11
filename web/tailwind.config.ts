@@ -9,6 +9,9 @@ export default {
   ],
   theme: {
     screens: {
+      'mobile-sm': '320px',
+      mobile: '375px',
+      'mobile-lg': '425px',
       sm: '640px',
       md: '768px',
       lg: '1024px',
@@ -41,8 +44,8 @@ export default {
         'heat-3': '#E78A33',
         'heat-4': '#DC662E',
         'heat-5': '#D04228',
-        primary: '#002E72',
-        secondary: '#0F2498',
+        primary: '#212A38',
+        secondary: '#0B7AF5',
         tertiary: '#96A6FF',
         sidebar: {
           DEFAULT: 'hsl(var(--sidebar-background))',
@@ -63,6 +66,7 @@ export default {
       },
       backgroundImage: {
         faq: "url('../assets/images/faq-bg.png')",
+        'faq-light': "url('../assets/images/faq-bg-light.png')",
         'landing-bg': "url('../assets/images/landing-bg.png')",
         'login-bg': "url('../assets/images/login-banner.png')",
         'device-bg': "url('../assets/images/devices-bg.png')",

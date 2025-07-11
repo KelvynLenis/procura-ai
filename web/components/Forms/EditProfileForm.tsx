@@ -39,6 +39,7 @@ import {
 import { formatCPF, validateCPF } from '@/lib/utils'
 import { uploadImage } from '@/functions/storage/upload-image'
 import { EditPassword } from './EditPassword'
+import ClipLoader from 'react-spinners/ClipLoader'
 
 const formSchema = z
   .object({
@@ -135,7 +136,7 @@ export function EditProfileForm() {
   }, [])
 
   return isLoading ? (
-    <p>Carregando...</p>
+    <ClipLoader color="#0F2498" size={45} className="self-center top-1/2 left-1/2" />
   ) : (
     <Form {...form}>
       <form
@@ -327,7 +328,7 @@ export function EditProfileForm() {
         </div>
       </form>
       <Dialog>
-        <DialogTrigger asChild className="mt-5">
+        <DialogTrigger asChild className="mt-5 ml-3">
           <Button variant="blue" type="button" className="text-base">
             Editar senha
           </Button>

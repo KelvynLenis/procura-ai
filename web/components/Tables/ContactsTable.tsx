@@ -29,7 +29,7 @@ export function ContactsTable({ contacts, setContacts }: ContactsTableProps) {
   return (
     <>
       <Table className="bg-white shadow-lg rounded-lg w-full">
-        <TableHeader className="bg-zinc-200/60">
+        <TableHeader className="bg-secondary/10">
           <TableRow>
             <TableHead className="text-black/80 text-lg font-medium text-center">
               ID

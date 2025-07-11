@@ -36,7 +36,7 @@ export function DevicesTable({
   return (
     <>
       <Table className="bg-white shadow-lg rounded-xl self-center">
-        <TableHeader className="bg-zinc-200/60 rounded-xl">
+        <TableHeader className="bg-secondary/10 rounded-xl">
           <TableRow>
             <TableHead className="text-black/80 text-lg pl-5 font-medium hidden lg:table-cell lg:w-1/12">
               ID

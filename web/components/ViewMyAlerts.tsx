@@ -206,19 +206,19 @@ export function ViewMyAlerts({
               </div>
             </div> */}
 
-            <p>
+            <div>
               {
                 status === 'Recuperado' 
-                ? `Seu dispositivo ${device.phone_model}, recuperado pela polícia já se encontra disponível para retirada.`
-                : `Seu dispositivo ${device.phone_model} foi registrado como ${device.status}.`
+                ? <span>Seu dispositivo <span className='font-bold'>{device.phone_model}</span>, recuperado pela polícia <span className='font-bold'>já se encontra disponível para retirada</span> .</span>
+                : <span>Seu dispositivo {device.phone_model} foi registrado como {device.status}.</span>
               }
               
-            </p>
+            </div>
 
             <p>
               {
                 status === 'Recuperado'
-                ? 'Para fazer a retirada do dispositivo dirija-se ao local indicado abaixo portando um documento oficial com foto.'
+                ? <span>Para fazer a retirada do dispositivo dirija-se ao local indicado abaixo portando <span className='font-bold'>um documento oficial com foto.</span></span>
                 : 'Assim que o dispositivo for recuperado você será notificado através do aplicativo e via e-mail para orientação sobre os próximos passos.'
               }
             </p>

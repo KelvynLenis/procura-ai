@@ -9,22 +9,22 @@ import { Footer } from "@/components/Footer";
 export default function Login() {
   return (
     <>
-      <header className="shadow-lg flex items-center h-15 pt-2 z-10 sticky">
+      <header className="shadow-lg bg-primary flex items-center h-15 pt-2 px-5 z-10 sticky">
         <Image src={logo} alt="logo" className="h-16 -left-8 relative" />
       </header>
-      <main className="flex flex-col row-start-2 items-center sm:items-start min-h-fit w-full">
-        <div className="flex relative flex-col w-full bg-login-bg bg-[length:80%_100%]">
+      <main className="flex flex-col row-start-2 items-center sm:items-start min-h-fit w-full bg-primary">
+        <div className="flex relative flex-col w-full bg-login-bg bg-[length:100%_100%]">
           <div className="w-full flex">
             <div className=" w-full items-center justify-center hidden md:flex">
-              <Image src={logoLogin} alt="login images" />
+              {/* <Image src={logoLogin} alt="login images" /> */}
             </div>
 
             <LoginForm />
           </div>
         </div>
 
-        <div className="relative w-full bg-[#F2F7FC]">
-          <FAQ />
+        <div className="relative w-full bg-[#F5F5F5]">
+          <FAQ light />
         </div>
         {/* <Footer /> */}
       </main>

@@ -26,7 +26,7 @@ export default function Button({
       className={cn(
         'rounded-full drop-shadow text-xs font-semibold text-center items-center justify-center flex w-fit px-6 py-2 transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0',
         variant === 'blue' &&
-          'bg-procura-ai-blue text-white hover:bg-white hover:text-procura-ai-blue hover:ring-1 hover:ring-procura-ai-blue',
+          'bg-secondary text-white hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary',
         variant === 'white' &&
           'bg-white border-[0.5px] border-primary text-primary hover:bg-primary hover:text-white',
         variant === 'red' &&
