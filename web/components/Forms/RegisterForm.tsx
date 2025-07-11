@@ -378,7 +378,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
             )}
           />
 
-          <Button className="bg-primary text-white rounded-full text-lg px-12 py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">
+          <Button className="bg-secondary text-white rounded-full text-lg px-12 py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">
             Criar conta
           </Button>
 
