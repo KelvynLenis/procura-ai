@@ -37,7 +37,7 @@ export default function Alert() {
             ),
           }}
         />
-        <View className='bg-[#F2F8FD] w-screen h-screen pb-20 px-5 pt-2'>
+        <View className='bg-[#F2F8FD] w-screen h-screen pb-40 px-5 pt-2'>
           <AlertForm 
             setIsModalVisible={() => {}} 
             device={device}

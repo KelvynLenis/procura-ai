@@ -3,7 +3,7 @@ import { account } from '@/lib/appwrite'
 import { router } from 'expo-router'
 import { View } from 'lucide-react-native'
 import { ReactNode, useEffect, useState } from 'react'
-import { Text } from 'react-native'
+import { ActivityIndicator, Text } from 'react-native'
 
 interface ProtectedRouteProps {
   admin?: boolean
@@ -52,10 +52,9 @@ export default function ProtectedRoute({
 
   if (isLoading) {
     return (
-      <View className="w-full h-screen flex justify-center items-center">
-        {/* <ClipLoader color="#0F2498" size={75} /> */}
-        <Text>Carregando...</Text>
-      </View>
+      <>
+        <ActivityIndicator size="large" color="#212A38" className='self-center absolute top-1/2 left-1/2'  />
+      </>
     )
   }
 
