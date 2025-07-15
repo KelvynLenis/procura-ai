@@ -1,0 +1,53 @@
+import { View, Text, useWindowDimensions } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { router, Stack, useLocalSearchParams } from 'expo-router'
+import Header from '@/components/Header'
+import ProtectedRoute from '@/components/ProtectedRoute'
+import AlertForm from '@/components/Forms/AlertForm'
+import { getDeviceById } from '@/functions/device/get-device-by-id'
+import { Device } from '@/interfaces'
+import ViewMyAlerts from '@/components/ViewMyAlerts'
+
+export default function ViewAlert() {
+  const params = useLocalSearchParams();
+  const id = params.id
+  const [device, setDevice] = useState<Device>({} as Device);
+  const { width, height } = useWindowDimensions();
+
+  useEffect(() => {
+    const fetchDevice = async () => {
+      try {
+        const device = await getDeviceById(id);
+        setDevice(device);
+      } catch (error) {
+        console.error('Erro ao buscar dispositivo:', error);
+      }
+    };
+
+    console.log('Largura da tela:', width);
+    console.log('Altura da tela:', height);
+
+    fetchDevice();
+  }, []) 
+
+  return (
+    <>
+      <ProtectedRoute>
+        <Stack.Screen
+          options={{
+            header: () => (
+              <Header title="Acionar Alerta" />
+            ),
+          }}
+        />
+        <View className='bg-[#F2F8FD] w-screen h-screen px-3 py-2'>
+          <ViewMyAlerts 
+            setIsModalVisible={() => {}} 
+            device={device} 
+            onSuccess={() => router.push('/(tabs)/my-devices')}
+          />
+        </View>
+      </ProtectedRoute>
+    </>
+  )
+}

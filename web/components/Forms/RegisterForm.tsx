@@ -21,7 +21,7 @@ import Link from 'next/link'
 import { account } from '@/lib/appwrite'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import logo from '../../assets/icons/procura-ai-logo-header.svg'
+import logo from '../../assets/icons/logo-text-2.svg'
 import Image from 'next/image'
 import { Button } from '../ui/button'
 import { validateCPF } from '@/lib/utils'
@@ -378,7 +378,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
             )}
           />
 
-          <Button className="bg-primary text-white rounded-full text-lg px-12 py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">
+          <Button className="bg-secondary text-white rounded-full text-lg px-12 py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">
             Criar conta
           </Button>
 

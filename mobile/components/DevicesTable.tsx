@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Modal, Pressable, FlatList, ActivityIndicator, ScrollView, Alert } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Eye, Pencil, Trash2, TriangleAlert } from 'lucide-react-native'
-import { router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, useNavigation } from 'expo-router';
 import ConfirmationDialog from './ConfirmationDialog';
 import DeviceForm from './Forms/DeviceForm';
 import AlertForm from './Forms/AlertForm';
@@ -38,6 +38,13 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
     onRefresh();
   };
 
+  const redirectToMyAlerts = () => {
+
+    // device.status === 'Recuperado' && router.push(`/device/${device.$id}/view-alert`)
+    
+    device.status === 'Regular' ? router.push(`/device/${device.$id}/create-alert`) : setIsAlertModalVisible(true)
+  };
+
   return (
     <>
       <View className='bg-white w-full h-[60px] flex flex-row gap-2 items-center rounded-lg px-2 border border-zinc-300'>
@@ -67,7 +74,7 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
           </View>
         </View>
           <View className='flex flex-row gap-2 w-fit'> 
-            <TouchableOpacity onPress={() => setIsAlertModalVisible(true)} className={cn(
+            <TouchableOpacity onPress={() => redirectToMyAlerts()} className={cn(
                 'flex items-center justify-center w-9 h-9 rounded-md ',
                 device.status === 'Recuperado' ? 'bg-recovered-bg text-recovered-text' : 'bg-red-500',
                )}
@@ -212,7 +219,7 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
 
       <Modal animationType='fade' transparent visible={isAlertModalVisible} onRequestClose={() => setIsAlertModalVisible(false)}>
         <Pressable className='flex-1 bg-black/50 flex items-center justify-center' onPress={() => setIsEditModalVisible(false)}>
-          <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '85%', width: '95%' }} className='bg-white flex rounded-2xl overflow-hidden'>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '80%', width: '90%' }} className='bg-white flex rounded-2xl overflow-hidden'>
             {
               device.status === 'Regular' ? (
                 <AlertForm 
