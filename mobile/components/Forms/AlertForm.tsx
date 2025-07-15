@@ -348,7 +348,7 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
       className="flex-1"
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
     >
-      <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{ minHeight: '100%', backgroundColor: 'white', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 20 }}>
+      <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{ minHeight: '100%', backgroundColor: 'white', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingBottom: 240, paddingHorizontal: 10, paddingTop: 10, borderRadius: 20, gap: 20 }}>
         {/* <View className='flex-col h-full flex-1 items-start p-6 gap-5 w-full'> */}
           <Text className='font-medium'>Preencha as informações:</Text>
           <View className='w-full h-0.5 bg-zinc-200' />

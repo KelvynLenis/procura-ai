@@ -54,7 +54,7 @@ export default function LoggedLayout() {
         }}
       >
         <Tabs.Screen 
-          name="my-devices" 
+          name="my-devices/index" 
           options={{ headerShown: true, title: 'Meus dispositivos', tabBarIcon: ({ focused }) => (
               <>
                 <TabIcon focused={focused} icon={<Smartphone size={20}  color={"black"} />} iconFocused={<Smartphone size={20}  color={"#002E72"} />} title="Meus dispositivos" />
@@ -90,8 +90,9 @@ export default function LoggedLayout() {
               </>
             )
           }} 
-        />      
+        />   
       </Tabs>
+
     </ProtectedRoute>
   )
 }
