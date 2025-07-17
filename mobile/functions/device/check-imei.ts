@@ -28,7 +28,8 @@ async function validateImeiWithExternalApi(
 ): Promise<ImeiValidationResult> {
   try {
     const response = await fetch(
-      `https://alpha.imeicheck.com/api/modelBrandName?imei=${imei}&format=json`
+      `https://alpha.imeicheck.com/api/free_with_key/modelBrandName?key=${process.env.EXPO_PUBLIC_API_KEY_IMEICHECK}&imei=${imei}&format=json`
+
     )
 
     if (!response.ok) {
@@ -157,7 +158,9 @@ export async function checkImei(
     // Se não tiver brand e model, faz apenas a validação com a API externa
     try {
       const response = await fetch(
-        `https://alpha.imeicheck.com/api/modelBrandName?imei=${imei}&format=json`
+        `https://alpha.imeicheck.com/api/free_with_key/modelBrandName?key=${process.env.EXPO_PUBLIC_API_KEY_IMEICHECK}&imei=${imei}&format=json`
+
+
       )
 
       if (!response.ok) {
