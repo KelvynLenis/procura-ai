@@ -175,7 +175,8 @@ export function DeviceForm({
         try {
           setIsLoading(true)
           const response = await fetch(
-            `https://alpha.imeicheck.com/api/modelBrandName?imei=${imeiValue}&format=json`
+            `https://alpha.imeicheck.com/api/free_with_key/modelBrandName?key=${process.env.NEXT_PUBLIC_API_KEY_IMEICHECK}&imei=${imeiValue}&format=json`
+
           )
 
           if (!response.ok) {
@@ -425,7 +426,7 @@ export function DeviceForm({
                           className={cn(
                             'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100 xl:w-[25.5rem]',
                             !field.value &&
-                              'text-muted-foreground text-zinc-500',
+                            'text-muted-foreground text-zinc-500',
                             'cursor-not-allowed opacity-50'
                           )}
                         >
@@ -460,7 +461,7 @@ export function DeviceForm({
                           className={cn(
                             'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100 xl:w-[25.5rem]',
                             !field.value &&
-                              'text-muted-foreground text-zinc-500',
+                            'text-muted-foreground text-zinc-500',
                             'cursor-not-allowed opacity-50'
                           )}
                         >
@@ -573,14 +574,14 @@ export function DeviceForm({
                           className={cn(
                             'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100 xl:w-[25.5rem]',
                             !field.value &&
-                              'text-muted-foreground text-zinc-500'
+                            'text-muted-foreground text-zinc-500'
                           )}
                         >
                           <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
                           {field.value
                             ? operatorOptions.find(
-                                op => op.value === field.value
-                              )?.label
+                              op => op.value === field.value
+                            )?.label
                             : 'Pesquise a operadora do dispositivo'}
                           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </ButtonShadcn>
