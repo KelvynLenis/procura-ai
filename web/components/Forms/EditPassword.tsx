@@ -125,11 +125,11 @@ export function EditPassword() {
           />
         </div>
         <div className="flex w-full gap-4 justify-between">
-          <Button variant="blue" type="submit">
-            Salvar alterações
-          </Button>
-          <Button variant="red" type="button">
+          <Button variant="white" type="button">
             Cancelar
+          </Button>
+          <Button variant="blue" type="submit">
+            Salvar
           </Button>
         </div>
       </form>

@@ -17,13 +17,13 @@ export function OccurrenceTypeDescription() {
         <button type="button" className="text-xs group md:hidden">
           <CircleHelp
             size={22}
-            className="fill-primary text-white"
+            className="fill-procura-ai-blue text-white"
             onClick={() => setIsHintOpen(!isHintOpen)}
           />
         </button>
       </div>
       {isHintOpen && (
-        <div className="flex w-full flex-col z-[100]  gap-2 bg-[#F3E5B7] font-normal p-2 rounded-md text-justify leading-5">
+        <div className="flex w-full flex-col z-[100]  gap-2 bg-[#C4F3F2] font-normal p-2 rounded-md text-justify leading-5">
           <Triangle className="hidden md:flex md:absolute md:top-[16.5rem] md:-left-[1rem] z-[100] top-[45%] -rotate-90 -left-4 fill-[#F3E5B7] text-[#F3E5B7]" />
           <p>
             Entenda a diferença entre{' '}

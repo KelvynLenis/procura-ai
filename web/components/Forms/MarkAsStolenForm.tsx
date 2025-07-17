@@ -352,6 +352,13 @@ export function MarkAsStolenForm({
         </div>
 
         <div className="flex justify-between w-full">
+          {isPopup && (
+            <DialogClose asChild>
+              <Button type="button" variant="white" className="text-sm ">
+                Cancelar
+              </Button>
+            </DialogClose>
+          )}
           <Button
             variant="blue"
             type="submit"
@@ -359,13 +366,6 @@ export function MarkAsStolenForm({
           >
             Salvar
           </Button>
-          {isPopup && (
-            <DialogClose asChild>
-              <Button type="button" variant="red" className="text-sm ">
-                Cancelar
-              </Button>
-            </DialogClose>
-          )}
         </div>
       </form>
     </Form>

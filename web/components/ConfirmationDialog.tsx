@@ -33,15 +33,15 @@ export function ConfirmationDialog({
             <AlertDialogDescription>{description}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex flex-row items-center justify-between w-full">
+            <AlertDialogCancel className="rounded-full text-center items-center justify-center flex w-fit px-2 py-2 transition-all duration-300 bg-white border-[0.5px] border-red-500 text-red-500 hover:bg-red-500 hover:text-white">
+              Cancelar
+            </AlertDialogCancel>
             <AlertDialogAction
               className="rounded-full text-center items-center self-end justify-center flex w-fit px-2 py-2 transition-all duration-300 bg-red-500 border-[0.5px] border-red-500 text-white hover:bg-white hover:text-red-500"
               onClick={() => onConfirm()}
             >
               Confirmar
             </AlertDialogAction>
-            <AlertDialogCancel className="rounded-full text-center items-center justify-center flex w-fit px-2 py-2 transition-all duration-300 bg-white border-[0.5px] border-primary text-primary hover:bg-primary hover:text-white">
-              Cancelar
-            </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -255,6 +255,9 @@ export function DeviceDetailsCard({
             <span className="">IMEI</span>
             <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
 
+            <span className="">Número</span>
+            <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+
             <span className="">Status</span>
           </div>
 
@@ -267,6 +270,11 @@ export function DeviceDetailsCard({
 
             <span className="font-semibold">
               {`${imei.slice(0, 1)} ${imei.slice(1, 8)} ${imei.slice(9, 15)}`}
+            </span>
+            <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+
+            <span className="font-semibold">
+              {`(${phone_number.slice(0, 2)}) ${phone_number.slice(2, 7)}-${phone_number.slice(7, 11)}`}
             </span>
             <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
 

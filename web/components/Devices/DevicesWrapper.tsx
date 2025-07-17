@@ -5,41 +5,22 @@ import type { DeviceProps } from '@/types'
 import { account } from '@/lib/appwrite'
 import Button from '../Button'
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { DevicesList } from './DevicesList/DevicesList'
-import { Pagination, PaginationContent, PaginationItem } from '../ui/pagination'
 import { DevicesTable } from './DevicesTable/DevicesTable'
 import { listDevices } from '@/functions/device/list-devices'
 
-export function DevicesComponent() {
+export function DevicesWrapper() {
   const [devices, setDevices] = useState<DeviceProps[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [pages, setPages] = useState(1)
   const [totalDevices, setTotalDevices] = useState(0)
 
-  const limit = 5
+  const limit = 100
 
   async function getUserId() {
     const { $id: userId } = await account.get()
     return userId
-  }
-
-  function handleGoToNextPage() {
-    if (page < pages) {
-      setPage(page + 1)
-    }
-  }
-
-  function handleGoToPage(pageNumber: number) {
-    setPage(pageNumber)
-  }
-
-  function handleGoToPreviousPage() {
-    if (page > 0) {
-      setPage(page - 1)
-    }
   }
 
   function showLoadingToast() {
@@ -96,49 +77,6 @@ export function DevicesComponent() {
           setIsLoading={setIsLoading}
         />
       </div>
-
-      <Pagination className="flex items-center justify-center w-full">
-        <PaginationContent className="py-1">
-          <PaginationItem>
-            <button
-              type="button"
-              disabled={page === 1}
-              className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent"
-              onClick={handleGoToPreviousPage}
-            >
-              <ChevronLeft className="h-4 w-4" />
-              <span>Anterior</span>
-            </button>
-          </PaginationItem>
-          {[...Array(pages)].map((_, index) => (
-            <PaginationItem key={index}>
-              <button
-                type="button"
-                onClick={() => handleGoToPage(index + 1)}
-                className={cn(
-                  'rounded-full px-3 py-1',
-                  index === page - 1
-                    ? 'bg-zinc-200 hover:bg-zinc-300'
-                    : 'hover:bg-zinc-200'
-                )}
-              >
-                {index + 1}
-              </button>
-            </PaginationItem>
-          ))}
-          <PaginationItem>
-            <button
-              type="button"
-              disabled={page * limit >= totalDevices}
-              className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent"
-              onClick={handleGoToNextPage}
-            >
-              Próximo
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
     </>
   )
 }

@@ -4,7 +4,7 @@ export default async function AddDevice() {
   return (
     <>
       <ProtectedRoute>
-        <div className="w-full flex flex-col items-center justify-center pr-20 my-5">
+        <div className="w-full flex flex-col items-center justify-center py-3 lg:pr-20 lg:py-5">
           <DeviceForm />
         </div>
       </ProtectedRoute>

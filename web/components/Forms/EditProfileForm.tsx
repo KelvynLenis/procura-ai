@@ -141,7 +141,7 @@ export function EditProfileForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col -mr-6 px-5 md:p-10 py-4 gap-4 bg-white w-full text-zinc-900 self-center  justify-center rounded-lg drop-shadow-sm"
+        className="flex flex-col px-5 md:p-10 py-4 gap-4 bg-white w-full text-zinc-900 self-center  justify-center rounded-lg drop-shadow-sm"
       >
         <div className="flex flex-row md:flex-row items-center gap-4">
           {preview ? (
@@ -319,17 +319,17 @@ export function EditProfileForm() {
           </div>
         </div>
         <div className="flex w-full justify-between">
-          <Button variant="blue" type="submit" className="text-base">
-            Salvar
-          </Button>
-          <Button variant="red" type="button" className="text-base">
+          <Button variant="white" type="button">
             Cancelar
+          </Button>
+          <Button variant="blue" type="submit">
+            Salvar
           </Button>
         </div>
       </form>
       <Dialog>
         <DialogTrigger asChild className="mt-5 ml-3">
-          <Button variant="blue" type="button" className="text-base">
+          <Button variant="blue" type="button">
             Editar senha
           </Button>
         </DialogTrigger>

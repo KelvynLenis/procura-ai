@@ -43,19 +43,19 @@ export function ViewOccurrenceMap({ position }: MarkAsStolenMapProps) {
   }, [])
 
   function setWidth() {
-    // if (window.innerWidth >= 1440) {
-    //   return 770
-    // } else if (window.innerWidth >= 1024) {
-    //   return 740
-    // } else if (window.innerWidth >= 768) {
-    //   return 680
-    // } else if (window.innerWidth >= 425) {
-    //   return 361
-    // } else if (window.innerWidth >= 375) {
-    //   return 310
-    // } else if (window.innerWidth >= 320) {
-    //   return 260
-    // }
+    if (window.innerWidth >= 1440) {
+      return 770
+    } else if (window.innerWidth >= 1024) {
+      return 740
+    } else if (window.innerWidth >= 768) {
+      return 680
+    } else if (window.innerWidth >= 425) {
+      return 370
+    } else if (window.innerWidth >= 375) {
+      return 320
+    } else if (window.innerWidth >= 320) {
+      return 270
+    }
 
     return 750
   }
@@ -80,7 +80,7 @@ export function ViewOccurrenceMap({ position }: MarkAsStolenMapProps) {
 
   return (
     <Map
-      width={750}
+      width={setWidth()}
       height={setHeight()}
       defaultCenter={position}
       defaultZoom={13}

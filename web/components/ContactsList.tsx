@@ -11,7 +11,7 @@ interface ContactsListProps {
 export function ContactsList({ contacts, setContacts }: ContactsListProps) {
   return (
     <>
-      <div className="flex flex-col items-center justify-center w-full ml-1 self-center gap-2 rounded-xl">
+      <div className="flex flex-col items-center justify-center w-full self-center gap-2 rounded-xl">
         {contacts.map((contact, index) => (
           <ContacItem key={index} contact={contact} setContacts={setContacts} />
         ))}
