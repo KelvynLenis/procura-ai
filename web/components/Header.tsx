@@ -1,6 +1,10 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
+import Image from 'next/image'
+import { toast } from 'react-toastify'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,15 +14,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import Link from 'next/link'
-import { Pencil } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Skeleton } from './ui/skeleton'
 import { LoadingToast } from './LoadingToast'
-import { toast } from 'react-toastify'
+
 import { getUserId } from '@/functions/user/get-user-id'
 import { getUser } from '@/functions/user/get-user'
 import { User } from '@/types'
-import { Skeleton } from './ui/skeleton'
+
+import { Pencil } from 'lucide-react'
+
+import logo from '../assets/icons/logo.svg'
 
 export function Header() {
   const router = useRouter()
@@ -118,11 +123,12 @@ export function Header() {
     !isFullScreen && (
       <>
         <div className="absolute w-full bg-primary inset-0 z-0 h-16" />
-        <header className="flex items-center drop-shadow-md justify-between pr-16 w-full h-16">
+        <header className="flex items-center drop-shadow-md lg:justify-between lg:pr-16 w-full h-16">
           {/* <div className="w-1/5 md:w-[35%] lg:w-[26%] xl:w-1/5 h-1" /> */}
-          <span className="text-xl text-white lg:-ml-4">{matchedRoute}</span>
+          <Image src={logo} alt="logo" className="w-16 md:w-44 lg:block" />
+          <span className="text-xl text-white -ml-2 lg:-ml-4">{matchedRoute}</span>
           <DropdownMenu>
-            <DropdownMenuTrigger className='flex flex-row text-white items-center justify-center gap-2'>
+            <DropdownMenuTrigger className='flex-row text-white items-center justify-center gap-2 hidden md:flex'>
               {
                 imgPreview ? (
                   <Avatar>

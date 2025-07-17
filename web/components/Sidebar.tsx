@@ -21,10 +21,8 @@ import {
   Siren,
   Smartphone,
 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { CustomSidebarTrigger } from './CustomSidebarTrigger'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { IoMdAddCircle } from 'react-icons/io'
 import { PiUsersThreeFill } from 'react-icons/pi'
 import { useState } from 'react'
@@ -97,9 +95,9 @@ interface SidebarProps {
 }
 
 export function AppSidebar({ admin }: SidebarProps) {
-  const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const { isMobile, toggleSidebar } = useSidebar()
+  const router = useRouter()
 
   const pathname = usePathname().slice(1)
 
@@ -133,7 +131,7 @@ export function AppSidebar({ admin }: SidebarProps) {
     <>
       <Sidebar
         collapsible="icon"
-        className="text-zinc-900 z-[1] shadow-md h-full"
+        className="text-zinc-900 z-[1] shadow-md h-full hidden lg:block"
       >
         <CustomSidebarTrigger />
         <SidebarContent className="bg-white flex flex-col">

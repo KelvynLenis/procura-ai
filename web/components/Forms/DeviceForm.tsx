@@ -288,7 +288,7 @@ export function DeviceForm({
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className={cn(
-            'w-fit md:w-10/12 lg:w-full bg-white flex flex-col px-5 md:px-10 py-4 gap-8 text-zinc-900 self-center items-center justify-center rounded-3xl shadow-md'
+            'w-full md:w-10/12 lg:w-full bg-white flex flex-col px-5 md:px-10 py-4 gap-8 text-zinc-900 self-center items-center justify-center rounded-3xl shadow-md'
             // !device && "shadow-form" // Adiciona "shadow-form" apenas se device estiver presente
           )}
         >
@@ -637,47 +637,47 @@ export function DeviceForm({
 
           {device ? (
             <div className="flex justify-between w-full">
-              <Button type="submit" variant="blue" className="px-2">
-                Salvar alterações
-              </Button>
               {isPopover ? (
                 <DialogClose asChild>
                   <Button
                     onClick={() => setModalOpen!(false)}
                     type="button"
-                    variant="red"
+                    variant="white"
                   >
                     Cancelar
                   </Button>
                 </DialogClose>
               ) : (
                 <Link href={'/meus-dispositivos'}>
-                  <Button onClick={() => goBack()} type="button" variant="red">
+                  <Button onClick={() => goBack()} type="button" variant="white">
                     Cancelar
                   </Button>
                 </Link>
               )}
+              <Button type="submit" variant="blue" className="px-2">
+                Salvar alterações
+              </Button>
             </div>
           ) : (
             <div className="flex justify-between w-full">
-              <Button type="submit" variant="blue">
-                Cadastrar dispositivo
-              </Button>
               {isPopover ? (
                 <Button
                   onClick={() => setModalOpen!(false)}
                   type="button"
-                  variant="red"
+                  variant="white"
                 >
                   Cancelar
                 </Button>
               ) : (
                 <Link href={'/meus-dispositivos'}>
-                  <Button onClick={() => goBack()} type="button" variant="red">
+                  <Button onClick={() => goBack()} type="button" variant="white">
                     Cancelar
                   </Button>
                 </Link>
               )}
+              <Button type="submit" variant="blue">
+                Cadastrar
+              </Button>
             </div>
           )}
         </form>

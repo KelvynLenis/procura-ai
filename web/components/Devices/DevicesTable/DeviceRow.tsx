@@ -148,7 +148,7 @@ export function DeviceRow({
             className={cn(
               'rounded-md w-24 flex items-center justify-center capitalize font-medium',
               status === 'Roubado' && 'bg-robbery-bg text-robbery-text p-1',
-              status === 'Recuperado' && 'bg-regular-bg text-recovered-text p-1',
+              status === 'Recuperado' && 'bg-recovered-bg text-recovered-text p-1',
               status === 'Regular' && 'bg-regular-bg text-regular-text p-1',
               status === 'Furtado' && 'bg-theft-bg text-theft-text p-1',
               status === 'Perdido' && 'bg-lost-bg text-lost-text p-1'
@@ -187,7 +187,7 @@ export function DeviceRow({
                     <div className="flex flex-col gap-2 border border-zinc-200 p-4 rounded-b-lg drop-shadow-sm">
                       <div className="flex">
                         <span className="w-28 font-medium">Número</span>
-                        <span className="w-full">{phone_number}</span>
+                        <span className="w-full">{`(${phone_number.slice(0, 2)}) ${phone_number.slice(2, 7)}-${phone_number.slice(7, 11)}`}</span>
                       </div>
                       <div className="flex">
                         <span className="w-28 font-medium">Operadora</span>
@@ -220,9 +220,9 @@ export function DeviceRow({
                               status === 'Perdido' &&
                                 'bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500',
                               status === 'Recuperado' &&
-                                'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500',
+                                'bg-recovered-bg text-recovered-textx-3 py-1 ring-lime-500',
                               status === 'Regular' &&
-                                'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500'
+                                'bg-lime-500/30 text-regular-text px-3 py-1 ring-lime-500'
                             )}
                           >
                             {status}

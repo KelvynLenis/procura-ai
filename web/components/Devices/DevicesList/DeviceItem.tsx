@@ -13,6 +13,8 @@ import { createEvent } from '@/functions/event/create-event'
 import { updateDeviceStatus } from '@/functions/device/update-device-status'
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
+import { ViewMyAlerts } from '@/components/ViewMyAlerts'
+import { useRouter } from 'next/navigation'
 
 interface DeviceItemProps {
   id: string // ID do dispositivo
@@ -42,6 +44,8 @@ export function DeviceItem({
   const [isViewDeviceDetailsCardOpen, setIsViewDeviceDetailsCardOpen] =
     useState(false)
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false)
+
+  const router = useRouter()
 
   const isRegular = status === 'Regular' || status === 'Recuperado'
 
@@ -97,12 +101,12 @@ export function DeviceItem({
 
   return (
     <>
-      <div className="text-xs grid grid-cols-3 gap-4 bg-white px-2 py-2 rounded-xl border border-zinc-300 items-center justify-center">
+      <div className="text-sm grid grid-cols-3 gap-4 h-[60px] bg-white px-2 py-2 rounded-xl border border-zinc-300 items-center justify-center">
         <span className="w-28">{phone_model}</span>
-        <div className="self-end flex justify-end">
+        <div className="self-center flex justify-end">
           <span
             className={cn(
-              'rounded-md w-14 flex self-center items-center justify-center capitalize font-medium',
+              'rounded-md mobile:w-24 mobile:text-sm mobile-sm:w-16 mobile-sm:text-xs flex self-center items-center justify-center capitalize font-medium',
               status === 'Roubado' && 'bg-robbery-bg text-robbery-text p-1',
               status === 'Recuperado' && 'bg-recovered-bg text-recovered-text p-1',
               status === 'Regular' && 'bg-regular-bg text-regular-text p-1',
@@ -110,7 +114,7 @@ export function DeviceItem({
               status === 'Perdido' && 'bg-lost-bg text-lost-text p-1'
             )}
           >
-            {status === 'Recuperado' ? 'Regular' : status.replace(' ', '')}
+            {status.replace(' ', '')}
           </span>
         </div>
         <div className="flex justify-center gap-2">
@@ -119,7 +123,7 @@ export function DeviceItem({
               <button
                 type="button"
                 className={cn(
-                  'rounded-lg group relative w-6 h-6 ring-1 flex flex-col md:flex-row items-center justify-center',
+                  'rounded-lg group relative w-8 h-8 ring-1 flex flex-col md:flex-row items-center justify-center',
                   isRegular
                     ? 'ring-zinc-300 bg-white text-red-600 hover:bg-red-300 hover:ring-red-500'
                     : 'ring-red-700 text-white bg-red-600 hover:bg-red-100 hover:text-red-600'
@@ -128,11 +132,11 @@ export function DeviceItem({
                 <IoIosWarning size={18} />
               </button>
             </DialogTrigger>
-            <DialogContent className="h-[95%] overflow-scroll flex flex-col w-[93%]">
-              {isStolen ? (
+            <DialogContent className="h-[95%] overflow-scroll flex flex-col w-[93%] px-0 pt-0">
+              {status !== 'Regular' ? (
                 <>
-                  <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
-                    Visualizar alerta
+                  <span className="w-full flex bg-secondary/10 py-4 items-center px-2">
+                    <h2 className='text-lg font-medium text-secondary'>Informações da ocorrência</h2>
                   </span>
                   <ViewMyAlert
                     id={id}
@@ -142,7 +146,7 @@ export function DeviceItem({
                   />
                 </>
               ) : (
-                <>
+                <div className='px-3 py-2'>
                   <h2 className="font-bold">Preencha as informações</h2>
                   <MarkAsStolenForm
                     id={id}
@@ -151,7 +155,7 @@ export function DeviceItem({
                     setIsDialogOpen={setIsAlertModalOpen}
                     isPopup
                   />
-                </>
+                </div>
               )}
             </DialogContent>
           </Dialog>
@@ -160,7 +164,7 @@ export function DeviceItem({
             <DialogTrigger asChild>
               <button
                 type="button"
-                className="rounded-lg w-6 h-6 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
+                className="rounded-lg w-8 h-8 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
               >
                 <Eye size={18} />
               </button>

@@ -349,7 +349,7 @@ export function RecoverDeviceForm({
                 <Button variant="blue">Salvar Alterações</Button>
                 <Button
                   onClick={() => setIsRecoverDeviceDialogOpen(false)}
-                  variant="red"
+                  variant="white"
                 >
                   Cancelar
                 </Button>

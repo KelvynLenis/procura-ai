@@ -114,7 +114,7 @@ export function ConctactForm({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 text-zinc-900 self-center items-center justify-between rounded-lg"
+          className="flex flex-col gap-4 text-zinc-900 self-center items-center justify-between rounded-xl px-2 py-4"
         >
           <FormField
             control={form.control}

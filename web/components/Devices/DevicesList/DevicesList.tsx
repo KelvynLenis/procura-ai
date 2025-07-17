@@ -29,7 +29,7 @@ export function DevicesList({
 
   return (
     <>
-      <div className="flex flex-col w-full ml-1 self-center gap-2 bg-[#F9F9F9] ring-1 ring-zinc-300 rounded-xl">
+      <div className="flex flex-col w-full self-center gap-2 bg-[#F9F9F9] ring-1 ring-zinc-300 rounded-xl">
         <div className="grid grid-cols-3 gap-2 px-2.5 bg-zinc-200/50 rounded-t-xl py-3 drop-shadow-sm">
           <span>Modelo</span>
           <span className="ml-9 text-center">Status</span>
