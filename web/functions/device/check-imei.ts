@@ -25,7 +25,7 @@ async function validateImeiWithExternalApi(
 ): Promise<ImeiValidationResult> {
   try {
     const response = await fetch(
-      `https://alpha.imeicheck.com/api/modelBrandName?imei=${imei}&format=json`
+     `https://alpha.imeicheck.com/api/free_with_key/modelBrandName?key=${process.env.NEXT_PUBLIC_API_KEY_IMEICHECK}&imei=${imei}&format=json`
     )
 
     if (!response.ok) {
