@@ -42,6 +42,8 @@ import { DialogClose } from '@radix-ui/react-dialog'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { OccurrenceTypeDescription } from '../OccurrenceTypeDescription'
 import { MarkAsStolenMapWithGeocoding2 } from '../Maps/MarkAsStolenMapWithGeocoding2'
+import { MarkAsStolenMapGoogle } from '../Maps/MarkAsStolenMapGoogle'
+import BermudaMap from '../Maps/GoogleMapTest'
 
 interface MarkAsStolenFormProps {
   id: string
@@ -338,10 +340,12 @@ export function MarkAsStolenForm({
                   </FormLabel>
                   <FormControl>
                     {/* <MarkAsStolenMap setPosition={handleSetPosition} setNeighborhoodId={handleSetNeighborhood} /> */}
-                    <MarkAsStolenMapWithGeocoding
+                    {/* <MarkAsStolenMapWithGeocoding
                       setPosition={handleSetPosition}
                       setNeighborhoodId={handleSetNeighborhood}
-                    />
+                    /> */}
+                    {/* <MarkAsStolenMapGoogle /> */}
+                    <BermudaMap />
                     {/* <Map /> */}
                   </FormControl>
                   <FormMessage />

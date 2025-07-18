@@ -50,7 +50,7 @@ export function ViewMyAlert({
           setDevice(device)
   
           // console.log('Detalhes do dispositivo:', device)
-          console.log('Detalhes do usuário:', userResponse)
+          // console.log('Detalhes do usuário:', userResponse)
           // console.log('Detalhes do alerta:', events)
   
           setEvents(events)
