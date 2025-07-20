@@ -420,14 +420,14 @@ export default function ParaibaMap() {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <div className="relative w-full max-w-xl mb-4">
-        {/* <input
+      {/* <div className="relative w-full max-w-xl mb-4">
+        <input
           type="text"
           placeholder="Buscar local..."
           value={search}
           onChange={(e) => handleSearchChange(e.target.value)}
           className="w-full h-10 px-4 border rounded shadow-sm text-sm"
-        /> */}
+        />
         {predictions.length > 0 && (
           <ul className="absolute z-50 w-full bg-white border rounded shadow max-h-60 overflow-auto">
             {predictions.map((place) => (
@@ -441,8 +441,8 @@ export default function ParaibaMap() {
             ))}
           </ul>
         )}
-      </div>
-      <div ref={mapRef} className="lg:w-[500px] h-[400px] mobile-sm:w-[280px] mobile:w-[320px] mobile-lg:w-[400px] md:w-[470px]"  />
+      </div> */}
+      <div ref={mapRef} className="lg:w-[500px] h-[400px] xl:h-[500px] mobile-sm:w-[280px] mobile:w-[320px] mobile-lg:w-[400px] md:w-[470px]"  />
     </div>
   )
 }
