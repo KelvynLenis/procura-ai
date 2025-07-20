@@ -15,7 +15,7 @@ export function OccurrenceTypeDescription() {
           Tipo de ocorrência
         </div>
         <button type="button" className="text-xs group md:hidden">
-          <CircleHelp
+          <CircleHelp 
             size={22}
             className="fill-procura-ai-blue text-white"
             onClick={() => setIsHintOpen(!isHintOpen)}
@@ -69,7 +69,7 @@ export function OccurrenceTypeDescription() {
         </div>
         <Popover>
           <PopoverTrigger className="hidden md:block">
-            <CircleHelp size={22} className="fill-primary text-white" />
+            <CircleHelp size={22} className="fill-procura-ai-blue text-white" />
           </PopoverTrigger>
           <PopoverContent className="relative bg-transparent shadow-none border-none">
             <div className="flex w-full flex-col absolute z-[100] left-[10.5rem] md:-top-[24rem] bg-[#F3E5B7] gap-2 font-normal p-2 rounded-md text-justify leading-5">

@@ -294,7 +294,7 @@ export function DeviceRow({
                     </span>
                   </button>
                 </DialogTrigger>
-                <DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-fit py-8">
+                <DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-fit py-8 lg:py-4">
                   <DialogHeader>
                     <DialogTitle>Preencha as informações</DialogTitle>
                   </DialogHeader>

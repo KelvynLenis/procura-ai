@@ -18,6 +18,10 @@
   display: none
 }
 
+.pac-container {
+  z-index: 10000 !important;
+}
+
 @layer base {
   :root {
     --sidebar-background: 0 0% 98%;

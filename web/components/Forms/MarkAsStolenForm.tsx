@@ -17,18 +17,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ChevronDown, CircleHelp, Triangle } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import { toast } from 'react-toastify'
 import type { DeviceProps } from '@/types'
 import { Textarea } from '../ui/textarea'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState } from 'react'
-import { MarkAsStolenMapWithGeocoding } from '../Maps/MarkAsStolenMapWithGeocoding'
-import dynamic from 'next/dynamic'
 import { validateCoordinates } from '@/lib/utils'
 import { getNeighborhood } from '@/functions/district/get-neighborhood'
-// biome-ignore lint/style/useImportType: <explanation>
 import {
   updateDistrict,
   UpdateDistrictData,
@@ -39,10 +36,7 @@ import {
   getDeviceStatus,
 } from '@/functions/device/update-device-status'
 import { DialogClose } from '@radix-ui/react-dialog'
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { OccurrenceTypeDescription } from '../OccurrenceTypeDescription'
-import { MarkAsStolenMapWithGeocoding2 } from '../Maps/MarkAsStolenMapWithGeocoding2'
-import { MarkAsStolenMapGoogle } from '../Maps/MarkAsStolenMapGoogle'
 import BermudaMap from '../Maps/GoogleMapTest'
 
 interface MarkAsStolenFormProps {
@@ -98,7 +92,6 @@ export function MarkAsStolenForm({
   isPopup,
 }: MarkAsStolenFormProps) {
   const size = useWindowSize()
-  const [isHintOpen, setIsHintOpen] = useState(false)
 
   const occurrenceTypes = [
     { label: 'Furto simples', value: 'Furto simples' },
@@ -234,7 +227,12 @@ export function MarkAsStolenForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex w-full flex-col gap-4 text-zinc-900 self-center items-center justify-between rounded-lg"
+        onKeyDown={e => {
+          if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault()
+          }
+        }}
+        className="flex w-full flex-col xl:gap-4 lg:h-[540px] xl:h-fit text-zinc-900 self-center items-center justify-between rounded-lg"
       >
         <div className="w-full flex flex-col md:flex-row justify-between gap-4">
           <div className="flex flex-col gap-5 w-full md:w-48 lg:w-56">
@@ -285,14 +283,6 @@ export function MarkAsStolenForm({
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
                   <FormLabel className="w-full text-center items-center flex flex-col">
-                    {/* <div className="flex justify-between w-full relative">
-                      <div className="flex items-center">
-                        <span className="text-red-500 h-6 flex align-text-bottom">
-                          *
-                        </span>
-                        Tipo de ocorrência
-                      </div>
-                    </div> */}
                     <OccurrenceTypeDescription />
                   </FormLabel>
                   <DropdownMenu>
