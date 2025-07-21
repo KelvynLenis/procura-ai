@@ -37,7 +37,7 @@ import {
 } from '@/functions/device/update-device-status'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { OccurrenceTypeDescription } from '../OccurrenceTypeDescription'
-import BermudaMap from '../Maps/GoogleMapTest'
+import GoogleMap from '../Maps/GoogleMap'
 
 interface MarkAsStolenFormProps {
   id: string
@@ -232,7 +232,7 @@ export function MarkAsStolenForm({
             e.preventDefault()
           }
         }}
-        className="flex w-full flex-col xl:gap-4 lg:h-[540px] xl:h-fit text-zinc-900 self-center items-center justify-between rounded-lg"
+        className="flex w-full flex-col gap-4 md:gap-0 xl:gap-4 lg:h-[540px] xl:h-fit text-zinc-900 self-center items-center justify-between rounded-lg"
       >
         <div className="w-full flex flex-col md:flex-row justify-between gap-4">
           <div className="flex flex-col gap-5 w-full md:w-48 lg:w-56">
@@ -335,7 +335,7 @@ export function MarkAsStolenForm({
                       setNeighborhoodId={handleSetNeighborhood}
                     /> */}
                     {/* <MarkAsStolenMapGoogle /> */}
-                    <BermudaMap />
+                    <GoogleMap setPosition={handleSetPosition} />
                     {/* <Map /> */}
                   </FormControl>
                   <FormMessage />
