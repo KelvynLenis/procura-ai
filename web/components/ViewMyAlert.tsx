@@ -208,7 +208,7 @@ export function ViewMyAlert({
                 <button
                   type="button"
                   className={cn(
-                    'w-full top-5 gap-2 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white',
+                    'w-full top-5 gap-2 group relative rounded-lg flex flex-row md:flex-row items-center justify-center hover:bg-white',
                     status === 'Roubado' &&
                       'bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500',
                     status === 'Furtado' &&
@@ -222,7 +222,7 @@ export function ViewMyAlert({
                   )}
                 >
                   <IoIosWarning size={28} />
-                  <span className="hidden md:block">
+                  <span className="">
                     {status === 'Recuperado'
                       ? 'Confirmar recebimento'
                       : 'Desativar alerta'}
