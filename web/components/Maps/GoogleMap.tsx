@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import * as turf from "@turf/turf";
 import { toast } from "react-toastify";
+import { getNeighborhoodId } from "@/functions/district/get-neighborhood-id";
 
 type geojsonType = z.infer<typeof FeatureCollectionSchema>;
 
@@ -18,11 +19,12 @@ interface GoogleMapProps {
   setNeighborhoodId: (districtId: string) => void;
 }
 
-export default function GoogleMap({ setPosition }: ParaibaMapProps) {
+export default function GoogleMap({ setPosition, setNeighborhoodId }: ParaibaMapProps) {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const markerRef = useRef<google.maps.Marker | null>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
   const geoJsonPBDataRef = useRef<geojsonType | null>(null);
+  const geoJsonNeighborhoodDataRef = useRef<geojsonType | null>(null);
 
   const [predictions, setPredictions] = useState<any[]>([]);
   const [search, setSearch] = useState("");
@@ -61,6 +63,33 @@ export default function GoogleMap({ setPosition }: ParaibaMapProps) {
     return false;
   };
 
+  const checkDistrict = async (latLng: google.maps.LatLngLiteral) => {
+    const data = geoJsonNeighborhoodDataRef.current;
+
+    if (!data?.features) {
+      toast.error("Houve um erro ao verificar o bairro.");
+    };
+
+    let foundFeature = null
+
+    const point = turf.point([latLng.lng, latLng.lat]);
+    for (const feature of data.features) {
+      if (turf.booleanPointInPolygon(point, feature)) {
+        foundFeature = feature
+        break
+      }
+    }
+    
+    if (foundFeature) {
+      const neighborhoodId = await getNeighborhoodId(
+        Number(foundFeature?.properties?.cod_bairro)
+      )
+      console.log(foundFeature);
+
+      setNeighborhoodId(neighborhoodId)
+    }
+  };
+
   const handlePredictionSelect = async (
     placeId: string,
     description: string
@@ -81,10 +110,12 @@ export default function GoogleMap({ setPosition }: ParaibaMapProps) {
 
       // const isInPB = checkIfPointIsInParaiba(latLng);
       // if (!isInPB) return;
+      checkDistrict(latLng)
 
       mapInstance.current.setCenter(latLng);
       mapInstance.current.setZoom(14);
       setMarker(latLng, mapInstance.current);
+      setPosition([latLng.lng, latLng.lat]);
     } catch (err) {
       console.error("Erro ao buscar detalhes do local:", err);
       toast.error("Erro ao selecionar o local.");
@@ -127,6 +158,7 @@ export default function GoogleMap({ setPosition }: ParaibaMapProps) {
       getGeoJsonData(geoJsonPB),
     ]).then(([neighborhoodData, paraibaData]) => {
       geoJsonPBDataRef.current = paraibaData;
+      geoJsonNeighborhoodDataRef.current = neighborhoodData;
       // Se precisar usar neighborhoodData também, adicione outra ref
     });
 
@@ -177,6 +209,9 @@ export default function GoogleMap({ setPosition }: ParaibaMapProps) {
         const isInPB = checkIfPointIsInParaiba(latLng);
         if (!isInPB) return;
 
+        checkDistrict(latLng);
+
+        setPosition([latLng.lat, latLng.lng]);
         setMarker(latLng, map);
       });
     };
