@@ -98,6 +98,21 @@ export function EditProfileForm() {
 
   const router = useRouter()
 
+  // Função helper para gerar as iniciais do usuário
+  const getUserInitials = (name: string | undefined): string => {
+    if (!name || name.trim() === '') return 'U';
+    
+    const words = name.trim().split(' ').filter(word => word.length > 0);
+    
+    if (words.length === 1) {
+      return words[0][0].toUpperCase();
+    } else if (words.length >= 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    
+    return 'U';
+  }
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -186,7 +201,7 @@ export function EditProfileForm() {
           name: values.name,
           email: values.email,
           cpf: values.cpf,
-          img_url: finalImageUrl || undefined,
+          img_url: finalImageUrl,
         })
 
         // Limpar preview se havia uma imagem temporária
@@ -291,9 +306,7 @@ export function EditProfileForm() {
                 />
               ) : (
                 <div className="md:w-24 md:h-24 w-16 h-16 p-10 rounded-full flex items-center justify-center text-[48px] font-medium text-white bg-primary">
-                  {user.name?.split(' ').length > 1
-                    ? user.name.split(' ')[0][0] + user.name.split(' ')[1][0]
-                    : user.name?.split(' ')[0][0] || ''}
+                  {getUserInitials(user?.name)}
                 </div>
               )}
 
@@ -422,11 +435,7 @@ export function EditProfileForm() {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-3xl font-medium text-white bg-primary">
-                  {user?.name ? (
-                    user.name.split(' ').length > 1
-                      ? user.name.split(' ')[0][0] + user.name.split(' ')[1][0]
-                      : user.name.split(' ')[0][0]
-                  ) : ''}
+                  {getUserInitials(user?.name)}
                 </div>
               )}
             </div>
