@@ -134,6 +134,11 @@ export function EditProfileForm() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      // Limpar blob URL anterior se existir
+      if (preview && preview.startsWith('blob:')) {
+        URL.revokeObjectURL(preview)
+      }
+      
       const previewUrl = URL.createObjectURL(file)
       setPreview(previewUrl)
       setFile(file)
@@ -153,6 +158,15 @@ export function EditProfileForm() {
       tempFile: null,
       isDeleted: true
     }))
+    // Limpar os valores dos inputs para permitir selecionar a mesma imagem novamente
+    const fileInput = document.getElementById('file') as HTMLInputElement
+    const fileMobileInput = document.getElementById('fileMobile') as HTMLInputElement
+    if (fileInput) {
+      fileInput.value = ''
+    }
+    if (fileMobileInput) {
+      fileMobileInput.value = ''
+    }
   }
 
   async function handleLogout() {
@@ -492,6 +506,11 @@ export function EditProfileForm() {
                                   tempFile: null,
                                   isDeleted: false
                                 }))
+                                // Limpar o valor do input para permitir selecionar a mesma imagem novamente
+                                const fileInput = document.getElementById('fileMobile') as HTMLInputElement
+                                if (fileInput) {
+                                  fileInput.value = ''
+                                }
                               }}
                               className="bg-zinc-100 rounded-md px-4 py-2 border border-zinc-400 text-sm hover:opacity-70 transition-opacity max-w-48"
                             >
