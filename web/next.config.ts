@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         hostname: 'fra.cloud.appwrite.io',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'cloud.appwrite.io',
+        pathname: '**',
+      },
     ],
   },
   typescript: {

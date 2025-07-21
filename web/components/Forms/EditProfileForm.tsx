@@ -189,9 +189,23 @@ export function EditProfileForm() {
           img_url: finalImageUrl || undefined,
         })
 
-        // Atualizar o estado da imagem após sucesso
+        // Limpar preview se havia uma imagem temporária
+        if (preview && preview.startsWith('blob:')) {
+          URL.revokeObjectURL(preview)
+        }
+        setPreview(null)
+        setFile(undefined)
+
+        // Recarregar dados do usuário para refletir mudanças do banco (como no mobile)
+        const updatedUserData = await getUser({ filters: [{
+          method: 'equal',
+          attribute: 'user_id',
+          values: [await getUserId()],
+        }] })
+        
+        setUser(updatedUserData[0])
         setImageState({
-          currentUrl: finalImageUrl,
+          currentUrl: updatedUserData[0].img_url || null,
           tempFile: null,
           isDeleted: false
         })
@@ -267,9 +281,9 @@ export function EditProfileForm() {
             className="flex flex-col px-5 md:p-10 py-4 gap-4 bg-white w-full text-zinc-900 self-center justify-center rounded-lg drop-shadow-sm"
           >
             <div className="flex flex-row md:flex-row items-center gap-4">
-              {preview ? (
+              {(imageState.tempFile || (!imageState.isDeleted && imageState.currentUrl)) && (preview || imageState.currentUrl) ? (
                 <Image
-                  src={preview}
+                  src={preview || imageState.currentUrl || ''}
                   alt="Preview"
                   width={128}
                   height={128}
@@ -299,7 +313,7 @@ export function EditProfileForm() {
                     <Upload className="w-5 h-5 lg:w-6 lg:h-6" />
                     Selecionar imagem
                   </label>
-                  {preview && (
+                  {(imageState.currentUrl || imageState.tempFile) && !imageState.isDeleted && (
                     <button
                       type="button"
                       onClick={handleRemoveImage}
@@ -398,7 +412,7 @@ export function EditProfileForm() {
           {/* Header com avatar e informações básicas */}
           <div className="w-full flex flex-col items-center justify-center pt-6 pb-4">
             <div className='w-24 h-24 rounded-full bg-zinc-300 overflow-hidden mb-2'>
-              {(imageState.tempFile || (!imageState.isDeleted && imageState.currentUrl)) ? (
+              {(imageState.tempFile || (!imageState.isDeleted && imageState.currentUrl)) && (preview || imageState.currentUrl) ? (
                 <Image
                   src={preview || imageState.currentUrl || ''}
                   alt="Preview"
