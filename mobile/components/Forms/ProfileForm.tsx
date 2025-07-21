@@ -34,7 +34,10 @@ const profileSchema = z.object({
     .max(100, 'E-mail deve ter no máximo 100 caracteres')
     .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Formato de e-mail inválido'),
   imgURL: z.string().nullable(),
-  cpf: z.string(),
+  cpf: z.string().min(1, 'O CPF é obrigatório'),
+}).refine(data => validateCPF(data.cpf), {
+  path: ['cpf'],
+  message: 'O CPF deve conter exatamente 11 dígitos numéricos.',
 });
 
 const passwordSchema = z.object({
@@ -69,6 +72,7 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
   const [errors, setErrors] = useState<Partial<Record<keyof ProfileFormData, string>>>({});
   const [passwordErrors, setPasswordErrors] = useState<Partial<Record<keyof PasswordFormData, string>>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isRemovingImage, setIsRemovingImage] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [tempImageUri, setTempImageUri] = useState<string | null>(null);
@@ -89,6 +93,21 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
     tempUri: null,
     isDeleted: false
   });
+
+  // Função helper para gerar as iniciais do usuário
+  const getUserInitials = (name: string | undefined): string => {
+    if (!name || name.trim() === '') return 'U';
+    
+    const words = name.trim().split(' ').filter(word => word.length > 0);
+    
+    if (words.length === 1) {
+      return words[0][0].toUpperCase();
+    } else if (words.length >= 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    
+    return 'U';
+  }
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
@@ -202,19 +221,55 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
     }));
   };
 
-  const handleRemoveImage = () => {
-    setImageState(prev => ({
-      ...prev,
-      tempUri: null,
-      isDeleted: true
-    }));
+  const handleRemoveImage = async () => {
+    try {
+      setIsRemovingImage(true);
+      
+      // Se há uma imagem atual, deletar do storage
+      if (imageState.currentUrl) {
+        try {
+          await deleteImage(imageState.currentUrl);
+        } catch (error) {
+          console.error('Mobile - Erro ao deletar imagem do storage:', error);
+        }
+      }
+      
+      // Atualizar no banco de dados imediatamente
+      if (userId && userId[0]?.$id) {
+        await updateUser(userId[0].$id, {
+          name: form.name,
+          email: form.email,
+          img_url: null,
+        });        
+        // Recarregar dados do usuário
+        await loadUserData();
+      }
+      
+      setImageState(prev => {
+        const newState = {
+          ...prev,
+          currentUrl: null,
+          tempUri: null,
+          isDeleted: false // Resetamos porque já foi processado
+        };
+        return newState;
+      });
+
+      Alert.alert('Sucesso', 'Imagem removida com sucesso!');
+      
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível remover a imagem. Tente novamente.');
+    } finally {
+      setIsRemovingImage(false);
+    }
   };
 
   async function handleSubmit() {
     try {
       Keyboard.dismiss();
       setIsLoading(true);
-
+      
+      // Validar o formulário
       await profileSchema.parseAsync(form);
       setErrors({});
 
@@ -224,6 +279,7 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
 
       let finalImageUrl = imageState.currentUrl;
 
+      // Se há uma nova imagem temporária, fazer upload
       if (imageState.tempUri) {
         const fileData = {
           uri: imageState.tempUri,
@@ -233,30 +289,32 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
         };
 
         try {
-          finalImageUrl = await uploadImage(fileData);
+          const uploadResult = await uploadImage(fileData);
+          finalImageUrl = uploadResult;
+          
+          // Se havia uma imagem antiga e agora temos uma nova, deletar a antiga
+          if (imageState.currentUrl) {
+            try {
+              await deleteImage(imageState.currentUrl);
+            } catch (error) {
+              console.error('Mobile - Erro ao deletar imagem antiga:', error);
+            }
+          }
         } catch (error: any) {
           console.error('Erro ao fazer upload da imagem:', error);
           throw new Error('Não foi possível fazer o upload da imagem. Tente novamente.');
         }
       }
-
-      if (imageState.currentUrl && (imageState.isDeleted || imageState.tempUri)) {
-        try {
-          await deleteImage(imageState.currentUrl);
-        } catch (error) {
-          console.error('Erro ao deletar imagem antiga:', error);
-        }
-      }
-
-      if (imageState.isDeleted && !imageState.tempUri) {
-        finalImageUrl = null;
-      }
+      
 
       await updateUser(userId[0].$id, {
         name: form.name,
         email: form.email,
         img_url: finalImageUrl,
       });
+
+      // Recarregar dados do usuário para refletir mudanças do banco
+      await loadUserData();
 
       setImageState({
         currentUrl: finalImageUrl,
@@ -274,7 +332,6 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
         setIsModalVisible(false);
       }
     } catch (error) {
-      console.log('Erro ao atualizar perfil:', error);
 
       if (error instanceof z.ZodError) {
         const newErrors: Partial<Record<keyof ProfileFormData, string>> = {};
@@ -313,7 +370,6 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
         confirmPassword: "",
       });
     } catch (error) {
-      console.log('Erro ao atualizar senha:', error);
 
       if (error instanceof z.ZodError) {
         const newErrors: Partial<Record<keyof PasswordFormData, string>> = {};
@@ -390,9 +446,7 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
               ) : (
                 <View className="w-full h-full items-center justify-center bg-primary">
                   <Text className="text-white text-3xl font-medium">
-                    {form.name.split(' ').length > 1
-                      ? form.name.split(' ')[0][0] + form.name.split(' ')[1][0]
-                      : form.name.split(' ')[0][0]}
+                    {getUserInitials(form.name)}
                   </Text>
                 </View>
               )}
@@ -439,9 +493,10 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
                         {(imageState.currentUrl || imageState.tempUri) && !imageState.isDeleted && (
                           <TouchableOpacity
                             onPress={handleRemoveImage}
-                            className='flex flex-row gap-2 bg-zinc-100 p-2 rounded-md border border-zinc-400 items-center'
+                            disabled={isRemovingImage}
+                            className={`flex flex-row gap-2 bg-zinc-100 p-2 rounded-md border border-zinc-400 items-center ${isRemovingImage ? 'opacity-50' : ''}`}
                           >
-                            <Text>Remover</Text>
+                            <Text>{isRemovingImage ? 'Removendo...' : 'Remover'}</Text>
                           </TouchableOpacity>
                         )}
                         
