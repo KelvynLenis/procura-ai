@@ -335,7 +335,7 @@ export function MarkAsStolenForm({
                       setNeighborhoodId={handleSetNeighborhood}
                     /> */}
                     {/* <MarkAsStolenMapGoogle /> */}
-                    <GoogleMap setPosition={handleSetPosition} />
+                    <GoogleMap setPosition={handleSetPosition} setNeighborhoodId={handleSetNeighborhood} />
                     {/* <Map /> */}
                   </FormControl>
                   <FormMessage />
