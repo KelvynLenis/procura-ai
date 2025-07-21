@@ -28,7 +28,7 @@ export async function getUserById(id: string): Promise<Device> {
 
     const { documents } = await response.json()
 
-    console.log(documents)
+    // console.log(documents)
 
     return documents[0]
   } catch (error) {
