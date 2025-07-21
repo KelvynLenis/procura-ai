@@ -134,6 +134,7 @@ export function MarkAsStolenForm({
 
   function handleSetPosition(coordinates: [number, number]) {
     form.setValue('coordinates', coordinates)
+    console.log(coordinates)
   }
 
   function handleSetNeighborhood(districtId: string) {
@@ -147,6 +148,8 @@ export function MarkAsStolenForm({
           const dataEvento = new Date(values.datetime)
           const timeZone = 'America/Sao_Paulo'
           const dataEventoISO = dataEvento.toISOString()
+
+          console.log(values)
 
           await createEvent({
             id_device: id,

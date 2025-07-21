@@ -115,7 +115,7 @@ export default function GoogleMap({ setPosition, setNeighborhoodId }: ParaibaMap
       mapInstance.current.setCenter(latLng);
       mapInstance.current.setZoom(14);
       setMarker(latLng, mapInstance.current);
-      setPosition([latLng.lng, latLng.lat]);
+      setPosition([latLng.lat, latLng.lng]);
     } catch (err) {
       console.error("Erro ao buscar detalhes do local:", err);
       toast.error("Erro ao selecionar o local.");
