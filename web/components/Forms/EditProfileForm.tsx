@@ -114,7 +114,7 @@ export function EditProfileForm() {
   }
 
   const form = useForm({
-    resolver: zodResolver(formSchema),
+    // resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       email: '',
@@ -181,6 +181,7 @@ export function EditProfileForm() {
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("subimited")
     try {
       setIsSubmitting(true)
       const callFunction = async () => {
