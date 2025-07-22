@@ -1,8 +1,7 @@
 import Image from 'next/image'
 import starsLine from '../assets/images/circles-line.png'
-import shapesLeft from '../assets/images/shapes-left.svg'
 import line from '../assets/images/line03.svg'
-import shapesRight from '../assets/images/shapes-right.svg'
+import googlePlay from '../assets/images/google-play.svg'
 import feat1 from '../assets/icons/feat1.svg'
 import feat2 from '../assets/icons/feat2.svg'
 import feat3 from '../assets/icons/feat3.svg'
@@ -41,14 +40,14 @@ export function Features() {
             </span>
             Crie uma conta
           </span>
-          <div className="bg-gradient-to-r from-[#F466F3] via-[#8170F4] to-[#0D79F4] w-72 mobile:w-80 mobile-lg:w-[300px] py-1 px-1 rounded-xl">
-            <div className='bg-[#f5f5f5] flex items-center justify-center gap-2 rounded-xl px-2 py-4'>
+            <div className='bg-[#B6D7FC] flex items-center justify-center gap-2 rounded-xl px-2 py-4 w-80 drop-shadow-lg'>
               <Image src={feat1} alt="feat1" className="h-24 self-center" />
               <span className="font-medium">
                 Cadastre-se no Procura.Aí informando alguns dados básicos
               </span>
             </div>
-          </div>
+          {/* <div className="bg-gradient-to-r from-[#F466F3] via-[#8170F4] to-[#0D79F4] w-72 mobile:w-80 mobile-lg:w-[300px] py-1 px-1 rounded-xl">
+          </div> */}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -58,14 +57,14 @@ export function Features() {
             </span>
             Cadastre seus dispositivos
           </span>
-          <div className="bg-gradient-to-r from-[#F466F3] via-[#8170F4] to-[#0D79F4] w-72 mobile:w-80 mobile-lg:w-[300px] py-1 px-1 rounded-xl flex gap-2">
-            <div className='bg-[#f5f5f5] flex items-center justify-center gap-2 rounded-xl px-2 py-4'>
+            <div className='bg-[#C5F4F3] flex items-center justify-center gap-2 rounded-xl px-2 py-4 w-80 drop-shadow-lg'>
               <Image src={feat2} alt="feat2" className="h-24 self-center" />
               <span className="font-medium">
                 Registre um ou mais celulares para mantê-los protegidos
               </span>
             </div>
-          </div>
+          {/* <div className="bg-gradient-to-r from-[#F466F3] via-[#8170F4] to-[#0D79F4] w-72 mobile:w-80 mobile-lg:w-[300px] py-1 px-1 rounded-xl flex gap-2">
+          </div> */}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -75,15 +74,15 @@ export function Features() {
             </span>
             Crie um alerta
           </span>
-          <div className="bg-gradient-to-r from-[#F466F3] via-[#8170F4] to-[#0D79F4] w-72 mobile:w-80 mobile-lg:w-[300px] py-1 px-1 rounded-xl flex gap-2">
-            <div className='bg-[#f5f5f5] flex items-center justify-center gap-2 rounded-xl px-2 py-4'>
+            <div className='bg-[#F2CDC6] flex items-center justify-center gap-2 rounded-xl px-2 py-4 w-80 drop-shadow-lg'>
               <Image src={feat3} alt="feat3" className="h-24 self-center" />
               <span className="font-medium">
                 Em caso de roubo, perda ou furto de algum dispositivo, crie um
                 alerta{' '}
               </span>
             </div>
-          </div>
+          {/* <div className="bg-gradient-to-r from-[#F466F3] via-[#8170F4] to-[#0D79F4] w-72 mobile:w-80 mobile-lg:w-[300px] py-1 px-1 rounded-xl flex gap-2">
+          </div> */}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -93,15 +92,15 @@ export function Features() {
             </span>
             Autoridades são acionadas
           </span>
-          <div className="bg-gradient-to-r from-[#F466F3] via-[#8170F4] to-[#0D79F4] w-72 mobile:w-80 mobile-lg:w-[300px] py-1 px-1 rounded-xl flex gap-2">
-            <div className='bg-[#f5f5f5] flex items-center justify-center gap-2 rounded-xl px-2 py-4'>
+            <div className='bg-[#f5df164d] flex items-center justify-center gap-2 rounded-xl px-2 py-4 w-80 drop-shadow-lg'>
               <Image src={feat4} alt="feat4" className="h-24 self-center" />
               <span className="font-medium">
                 Agora seu celular tem mais chances de ser recuperado pelas
                 autoridades{' '}
               </span>
             </div>
-          </div>
+          {/* <div className="bg-gradient-to-r from-[#F466F3] via-[#8170F4] to-[#0D79F4] w-72 mobile:w-80 mobile-lg:w-[300px] py-1 px-1 rounded-xl flex gap-2">
+          </div> */}
         </div>
       </div>
 
@@ -114,13 +113,10 @@ export function Features() {
             Cadastre-se
           </Button>
         </Link>
-        <span className="text-lg md:text-2xl font-bold text-procura-ai-black">
-          {/* Disponível em breve nas principais lojas de aplicativos */}
-          <button type='button' className='bg-black rounded-lg px-4 pt-2 pb-1.5 text-white'>
-            <a href={process.env.NEXT_PUBLIC_APK_DOWNLOAD_LINK}>
-              <AiFillAndroid className='inline ml-2 text-lime-400' size={40} />
-              Download para android
-            </a>
+        <span className="text-lg md:text-2xl font-bold flex flex-col items-center text-procura-ai-black 3xl:mb-20">
+          Disponível em breve nas principais lojas de aplicativos
+          <button type='button' className='rounded-lg px-4 pt-2 pb-1.5 text-white bg-none'>
+            <Image src={googlePlay} alt="disponível no google play" />
           </button>
         </span>
       </div>

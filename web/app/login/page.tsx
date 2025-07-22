@@ -13,7 +13,7 @@ export default function Login() {
         <Image src={logo} alt="logo" className="h-16 -left-8 relative" />
       </header>
       <main className="flex flex-col row-start-2 items-center sm:items-start min-h-fit w-full bg-primary">
-        <div className="flex relative flex-col w-full bg-login-bg bg-[length:100%_100%]">
+        <div className="flex relative flex-col w-full bg-login-bg bg-cover bg-no-repeat bg-center">
           <div className="w-full flex">
             <div className=" w-full items-center justify-center hidden md:flex">
               {/* <Image src={logoLogin} alt="login images" /> */}

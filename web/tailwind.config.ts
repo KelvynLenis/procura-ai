@@ -68,7 +68,7 @@ export default {
         faq: "url('../assets/images/faq-bg.png')",
         'faq-light': "url('../assets/images/faq-bg-light.png')",
         'landing-bg': "url('../assets/images/landing-bg.png')",
-        'login-bg': "url('../assets/images/login-banner.png')",
+        'login-bg': "url('../assets/images/login-bg.svg')",
         'device-bg': "url('../assets/images/devices-bg.png')",
         'hero-bg': "url('../assets/images/hero-bg.png')",
       },

@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import landingImages from '../assets/images/landing-images.png'
+import landingImages from '../assets/images/landing-image.svg'
 import line from '../assets/icons/line01.svg'
 import Button from './Button'
 
@@ -10,7 +10,7 @@ export function Hero() {
       <Image
         src={landingImages}
         alt="landing background"
-        className="w-full hidden lg:w-[70%] xl:w-full lg:block h-full z-0"
+        className="w-full hidden lg:w-[70%] xl:w-full lg:block h-full z-0 -ml-11"
       />
 
       <Image
@@ -26,7 +26,7 @@ export function Hero() {
           </span>{' '}
           pode te ajudar!
         </span>
-        <span className="font-medium text-xs md:text-lg lg:text-xl xl:text-2xl lg:mr-20 xl:mr-28 break-words w-[65%] lg:w-full text-white text-right">
+        <span className="font-medium text-xs md:text-lg lg:text-xl xl:text-2xl lg:mr-20 xl:mr-28 break-words w-[65%] lg:w-[75%] xl:w-[80%] text-white text-right">
           Cadastre seus dispositivos e, se algo acontecer, acione as autoridades
           de forma rápida e segura.
           Com ajuda da tecnologia, você aumenta as chances de recuperar seu
