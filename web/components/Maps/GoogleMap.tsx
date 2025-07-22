@@ -228,22 +228,22 @@ export default function GoogleMap({ setPosition, setNeighborhoodId }: ParaibaMap
           value={search}
           onChange={(e) => handleSearchChange(e.target.value)}
           className="w-full h-10 px-4 border rounded shadow-sm text-sm"
-        />
-        {predictions.length > 0 && (
-          <ul className="absolute z-50 w-full bg-white border rounded shadow max-h-60 overflow-auto">
-            {predictions.map((place) => (
-              <li
-                key={place.place_id}
-                onClick={() =>
-                  handlePredictionSelect(place.place_id, place.description)
-                }
-                className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-              >
-                {place.description}
-              </li>
-            ))}
-          </ul>
-        )}
+          />
+          {predictions.length > 0 && (
+            <ul className="relative z-50 w-full flex flex-col-reverse bg-white border rounded shadow max-h-60 overflow-auto">
+              {predictions.map((place) => (
+                <li
+                  key={place.place_id}
+                  onClick={() =>
+                    handlePredictionSelect(place.place_id, place.description)
+                  }
+                  className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                >
+                  {place.description}
+                </li>
+              ))}
+            </ul>
+          )}
       </div>
       <div
         ref={mapRef}
