@@ -12,14 +12,14 @@ export function FAQ({ bottom, light }: { bottom?: string, light?: boolean }) {
   return (
     <section
       className={cn(
-        'w-full h-fit  bg-faq bg-cover flex flex-col justify-between pt-28 pb-28 sm:pb-0 relative -top-28',
-        `top-${bottom}`,
+        'w-full h-fit  bg-faq bg-cover flex flex-col justify-between pt-28 pb-28 sm:pb-0 relative -top-16 3xl:-top-24',
+        `-top-${bottom}`,
         light ? 'bg-faq-light'
         : 'bg-faq'
       )}
     >
       <div className="flex flex-col gap-5 w-full h-full px-4 lg:px-32">
-        <h2 className="text-white font-bold text-3xl self-center text-center">
+        <h2 className={cn(" font-bold text-3xl self-center text-center", light ? 'text-primary' : 'text-white')}>
           Perguntas frequentes
         </h2>
 
