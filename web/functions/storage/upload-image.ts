@@ -11,7 +11,7 @@ export async function uploadImage(file: File) {
 
     const fileCreatedId = fileCreated.$id
 
-    const url = `https://cloud.appwrite.io/v1/storage/buckets/${process.env.NEXT_PUBLIC_APP_WRITE_STORAGE_ID}/files/${fileCreatedId}/view?project=${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}&mode=admin`
+    const url = `https://fra.cloud.appwrite.io/v1/storage/buckets/${process.env.NEXT_PUBLIC_APP_WRITE_STORAGE_ID}/files/${fileCreatedId}/view?project=${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}&mode=admin`
 
     return url
   } catch (error) {
