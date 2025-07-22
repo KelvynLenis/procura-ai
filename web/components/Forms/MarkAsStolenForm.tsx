@@ -24,7 +24,7 @@ import { Textarea } from '../ui/textarea'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState } from 'react'
-import { validateCoordinates } from '@/lib/utils'
+import { cn, validateCoordinates } from '@/lib/utils'
 import { getNeighborhood } from '@/functions/district/get-neighborhood'
 import {
   updateDistrict,
@@ -92,6 +92,7 @@ export function MarkAsStolenForm({
   isPopup,
 }: MarkAsStolenFormProps) {
   const size = useWindowSize()
+  const [isIOS, setIsIOS] = useState(false);
 
   const occurrenceTypes = [
     { label: 'Furto simples', value: 'Furto simples' },
@@ -226,6 +227,16 @@ export function MarkAsStolenForm({
     }
   }
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const userAgent = window.navigator.userAgent || window.navigator.vendor;
+
+      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        setIsIOS(true);
+      }
+    }
+  }, []);
+
   return (
     <Form {...form}>
       <form
@@ -235,7 +246,7 @@ export function MarkAsStolenForm({
             e.preventDefault()
           }
         }}
-        className="flex w-full flex-col gap-4 md:gap-0 xl:gap-4 lg:h-[540px] xl:h-fit text-zinc-900 self-center items-center justify-between rounded-lg"
+        className={cn("flex w-full flex-col gap-4 md:gap-0 xl:gap-4 lg:h-[540px] xl:h-fit text-zinc-900 self-center items-center justify-between rounded-lg", isIOS && "pb-24")}
       >
         <div className="w-full flex flex-col md:flex-row justify-between gap-4">
           <div className="flex flex-col gap-5 w-full md:w-48 lg:w-56">
