@@ -116,7 +116,7 @@ export function Features() {
         <span className="text-lg md:text-2xl font-bold flex flex-col items-center text-procura-ai-black">
           Disponível em breve nas principais lojas de aplicativos
           <button type='button' className='rounded-lg px-4 pt-2 pb-1.5 text-white bg-none'>
-            <Image src={googlePlay} alt="disponível na app store" />
+            <Image src={googlePlay} alt="disponível no google play" />
           </button>
         </span>
       </div>
