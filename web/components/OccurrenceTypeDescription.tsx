@@ -15,7 +15,7 @@ export function OccurrenceTypeDescription() {
           Tipo de ocorrência
         </div>
         <button type="button" className="text-xs group md:hidden">
-          <CircleHelp
+          <CircleHelp 
             size={22}
             className="fill-procura-ai-blue text-white"
             onClick={() => setIsHintOpen(!isHintOpen)}
@@ -69,10 +69,10 @@ export function OccurrenceTypeDescription() {
         </div>
         <Popover>
           <PopoverTrigger className="hidden md:block">
-            <CircleHelp size={22} className="fill-primary text-white" />
+            <CircleHelp size={22} className="fill-procura-ai-blue text-white" />
           </PopoverTrigger>
           <PopoverContent className="relative bg-transparent shadow-none border-none">
-            <div className="flex w-full flex-col absolute z-[100] left-[10.5rem] md:-top-[24rem] bg-[#F3E5B7] gap-2 font-normal p-2 rounded-md text-justify leading-5">
+            <div className="flex w-full flex-col absolute z-[100] left-[10.5rem] md:-top-[24rem] bg-[#C4F3F2] gap-2 font-normal p-2 rounded-md text-justify leading-5">
               <Triangle className="hidden md:flex md:absolute md:top-[22.2rem] md:-left-[1rem] z-[100] top-[45%] -rotate-90 -left-4 fill-[#F3E5B7] text-[#F3E5B7]" />
               <p>
                 Entenda a diferença entre{' '}

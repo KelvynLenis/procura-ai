@@ -51,47 +51,31 @@ export function DeviceItem({
 
   async function handleDeviceRecovery(id: string) {
     try {
-      const callFunction = async () => {
-        try {
-          await createEvent({
-            id_device: id,
-            time_event: new Date().toISOString(),
-            last_location: [0, 0],
-            description: 'Recuperado',
-            type: 'Recuperado',
-            is_alert_on: false,
-            id_district: '',
-          })
-
-          await updateDeviceStatus(id, {
-            is_stolen: false,
-            status: 'Recuperado',
-          })
-
-          return true
-        } catch (error) {
-          console.error('Ocorreu um erro em uma das operações:', error)
-          return false
-        }
-      }
-
-      const success = await toast.promise(callFunction, {
-        pending: 'Recuperando Dispositivo...',
-        success: 'Recuperado',
-        error: 'Erro ao recuperar',
+      await createEvent({
+        id_device: id,
+        time_event: new Date().toISOString(),
+        last_location: [0, 0],
+        description: 'Evento Cancelado pelo usuário',
+        type: 'Regular',
+        is_alert_on: false,
+        id_district: '',
+      })
+      const success = await updateDeviceStatus(id, {
+        is_stolen: false,
+        status: 'Regular',
       })
 
       if (success) {
         setDevices(prevDevices =>
           prevDevices.map(device =>
             device.$id === id
-              ? { ...device, is_stolen: false, status: 'Recuperado' }
+              ? { ...device, is_stolen: false, status: 'Regular' }
               : device
           )
         )
       }
     } catch (error) {
-      console.error('Erro ao recuperar dispositivo:', error)
+      console.error(error)
     }
   }
 
