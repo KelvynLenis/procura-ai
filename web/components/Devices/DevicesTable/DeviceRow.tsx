@@ -171,14 +171,14 @@ export function DeviceRow({
                   </span>
                 </button>
               </DialogTrigger>
-              <DialogContent className="flex flex-col p-0 gap-0 w-[40%] h-fit">
-                <DialogHeader className="flex items-start justify-center px-5 w-full h-20 text-lg font-medium bg-zinc-100 rounded-t-lg  border-zinc-200 gap-3">
+              <DialogContent className="flex flex-col p-0 gap-0 w-[30rem] h-fit">
+                <DialogHeader className="flex items-start justify-center px-5 w-full h-16 text-lg font-medium bg-[#E7F2FE] rounded-t-lg border-zinc-200 gap-3">
                   <DialogTitle className="flex gap-2 items-center justify-start">
-                    <Image
+                    {/* <Image
                       src={deviceInfo}
                       alt="device-info"
                       className="w-12 h-12"
-                    />
+                    /> */}
                     Informações do dispositivo
                   </DialogTitle>
                 </DialogHeader>
@@ -186,33 +186,33 @@ export function DeviceRow({
                   <div className="flex flex-col">
                     <div className="flex flex-col gap-2 border border-zinc-200 p-4 rounded-b-lg drop-shadow-sm">
                       <div className="flex">
-                        <span className="w-28 font-medium">Número</span>
+                        <span className="w-56 font-medium">Número</span>
                         <span className="w-full">{`(${phone_number.slice(0, 2)}) ${phone_number.slice(2, 7)}-${phone_number.slice(7, 11)}`}</span>
                       </div>
                       <div className="flex">
-                        <span className="w-28 font-medium">Operadora</span>
+                        <span className="w-56 font-medium">Operadora</span>
                         <span className="w-full">
                           {operator?.name_operator ?? 'Não informado'}
                         </span>
                       </div>
                       <div className="flex">
-                        <span className="w-28 font-medium">Modelo</span>
+                        <span className="w-56 font-medium">Modelo</span>
                         <span className="w-full">{phone_model}</span>
                       </div>
                       <div className="flex">
-                        <span className="w-28 font-medium">Fabricante</span>
+                        <span className="w-56 font-medium">Fabricante</span>
                         <span className="w-full">{brand}</span>
                       </div>
                       <div className="flex">
-                        <span className="w-28 font-medium">IMEI</span>
+                        <span className="w-56 font-medium">IMEI</span>
                         <span className="w-full">{imei}</span>
                       </div>
                       <div className="flex">
-                        <span className="w-28 font-medium">Status</span>
+                        <span className="w-56 font-medium">Status</span>
                         <div className="w-full">
                           <span
                             className={cn(
-                              'w-fit rounded-sm flex items-center justify-center hover:bg-white',
+                              'w-fit rounded-md flex items-center justify-center hover:bg-white px-2',
                               status === 'Roubado' &&
                                 'bg-robbery-bg text-red-600 px-3 py-1 ring-red-500',
                               status === 'Furtado' &&
@@ -294,9 +294,9 @@ export function DeviceRow({
                     </span>
                   </button>
                 </DialogTrigger>
-                <DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-fit py-8 lg:py-4">
-                  <DialogHeader>
-                    <DialogTitle>Preencha as informações</DialogTitle>
+                <DialogContent className="flex flex-col h-4/5 md:h-fit w-fit p-0 rounded-xl">
+                  <DialogHeader className='w-full bg-[#E7F2FE] px-4 py-5'>
+                    <DialogTitle>Criar ocorrência</DialogTitle>
                   </DialogHeader>
                   <MarkAsStolenForm
                     id={id}

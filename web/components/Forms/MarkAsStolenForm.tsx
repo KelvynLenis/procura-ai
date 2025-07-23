@@ -246,7 +246,7 @@ export function MarkAsStolenForm({
             e.preventDefault()
           }
         }}
-        className={cn("flex w-full flex-col gap-4 md:gap-0 xl:gap-4 lg:h-[540px] xl:h-fit text-zinc-900 self-center items-center justify-between rounded-lg", isIOS && "pb-24")}
+        className={cn("flex w-full flex-col gap-7 h-fit text-zinc-900 self-center items-center justify-between rounded-xl px-5 pb-4", isIOS && "pb-24")}
       >
         <div className="w-full flex flex-col md:flex-row justify-between gap-4">
           <div className="flex flex-col gap-5 w-full md:w-48 lg:w-56">
