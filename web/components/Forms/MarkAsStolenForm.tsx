@@ -320,6 +320,7 @@ export function MarkAsStolenForm({
                           onClick={() =>
                             form.setValue('type', occurrenceType.value)
                           }
+                          tabIndex={-1}
                           className="hover:bg-primary hover:text-procura-ai-white"
                         >
                           {occurrenceType.label}
