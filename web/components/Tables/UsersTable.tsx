@@ -162,7 +162,7 @@ export function UsersTable() {
         </Dialog>
 
         <Table className="bg-white shadow-lg rounded-lg w-full">
-          <TableHeader className="bg-zinc-200/60">
+          <TableHeader className="bg-[#E6F1FD]">
             <TableRow>
               <TableHead className="text-black/80 text-lg font-medium text-center">
                 ID

@@ -294,7 +294,7 @@ export function DeviceForm({
           )}
         >
           {!device && (
-            <div className="flex flex-col w-full gap-8">
+            <div className="flex flex-col w-full gap-1">
               <span className="font-medium">Insira os dados abaixo:</span>
               <div className="flex flex-col w-full gap-1">
                 <span className="h-0.5 w-full bg-zinc-400" />
@@ -405,79 +405,6 @@ export function DeviceForm({
 
           <FormField
             control={form.control}
-            name="brand"
-            render={({ field }) => (
-              <FormItem className="flex flex-col w-full md:w-fit self-start">
-                <FormLabel className="text-lg w-fit text-center items-start flex">
-                  Fabricante
-                </FormLabel>
-                <Popover
-                  open={isBrandsPopoverOpen}
-                  onOpenChange={setIsBrandsPopoverOpen}
-                >
-                  <PopoverTrigger asChild disabled>
-                    <div className="self-start w-full md:w-fit">
-                      <FormControl>
-                        <ButtonShadcn
-                          variant="outline"
-                          role="combobox"
-                          type="button"
-                          disabled
-                          className={cn(
-                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100 xl:w-[25.5rem]',
-                            !field.value &&
-                            'text-muted-foreground text-zinc-500',
-                            'cursor-not-allowed opacity-50'
-                          )}
-                        >
-                          {field.value || 'Aguardando IMEI...'}
-                        </ButtonShadcn>
-                      </FormControl>
-                      <FormMessage />
-                    </div>
-                  </PopoverTrigger>
-                </Popover>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="phone_model"
-            render={({ field }) => (
-              <FormItem className="flex flex-col w-full md:w-fit self-start">
-                <FormLabel className="text-lg w-fit text-center items-start flex">
-                  Modelo do dispositivo
-                </FormLabel>
-                <Popover open={open} onOpenChange={setOpen}>
-                  <PopoverTrigger asChild disabled>
-                    <div className="self-start w-full md:w-fit">
-                      <FormControl>
-                        <ButtonShadcn
-                          variant="outline"
-                          role="combobox"
-                          type="button"
-                          disabled
-                          className={cn(
-                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100 xl:w-[25.5rem]',
-                            !field.value &&
-                            'text-muted-foreground text-zinc-500',
-                            'cursor-not-allowed opacity-50'
-                          )}
-                        >
-                          {field.value || 'Aguardando IMEI...'}
-                        </ButtonShadcn>
-                      </FormControl>
-                      <FormMessage />
-                    </div>
-                  </PopoverTrigger>
-                </Popover>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
             name="phone_number"
             render={({ field }) => (
               <FormItem className="flex flex-col md:w-fit self-start">
@@ -551,6 +478,80 @@ export function DeviceForm({
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="brand"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full md:w-fit self-start">
+                <FormLabel className="text-lg w-fit text-center items-start flex">
+                  Fabricante
+                </FormLabel>
+                <Popover
+                  open={isBrandsPopoverOpen}
+                  onOpenChange={setIsBrandsPopoverOpen}
+                >
+                  <PopoverTrigger asChild disabled>
+                    <div className="self-start w-full md:w-fit">
+                      <FormControl>
+                        <ButtonShadcn
+                          variant="outline"
+                          role="combobox"
+                          type="button"
+                          disabled
+                          className={cn(
+                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100 xl:w-[25.5rem]',
+                            !field.value &&
+                            'text-muted-foreground text-zinc-500',
+                            'cursor-not-allowed opacity-50'
+                          )}
+                        >
+                          {field.value || 'Aguardando IMEI...'}
+                        </ButtonShadcn>
+                      </FormControl>
+                      <FormMessage />
+                    </div>
+                  </PopoverTrigger>
+                </Popover>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="phone_model"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full md:w-fit self-start">
+                <FormLabel className="text-lg w-fit text-center items-start flex">
+                  Modelo do dispositivo
+                </FormLabel>
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild disabled>
+                    <div className="self-start w-full md:w-fit">
+                      <FormControl>
+                        <ButtonShadcn
+                          variant="outline"
+                          role="combobox"
+                          type="button"
+                          disabled
+                          className={cn(
+                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100 xl:w-[25.5rem]',
+                            !field.value &&
+                            'text-muted-foreground text-zinc-500',
+                            'cursor-not-allowed opacity-50'
+                          )}
+                        >
+                          {field.value || 'Aguardando IMEI...'}
+                        </ButtonShadcn>
+                      </FormControl>
+                      <FormMessage />
+                    </div>
+                  </PopoverTrigger>
+                </Popover>
+              </FormItem>
+            )}
+          />
+          
 
           <FormField
             control={form.control}

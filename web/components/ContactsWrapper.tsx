@@ -53,7 +53,8 @@ export function ContactsComponent() {
                 <Button
                   type="button"
                   variant="blue"
-                  className="self-start mt-4"
+                  disabled={contacts.length >= 3}
+                  className={cn("self-start mt-4")}
                 >
                   Adicionar contato
                 </Button>

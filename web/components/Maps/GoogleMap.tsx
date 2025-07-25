@@ -247,7 +247,7 @@ export default function GoogleMap({ setPosition, setNeighborhoodId }: ParaibaMap
       </div>
       <div
         ref={mapRef}
-        className="lg:w-[500px] h-[400px] xl:h-[500px] mobile-sm:w-[280px] mobile:w-[320px] mobile-lg:w-[400px] md:w-[470px]"
+        className="lg:w-[500px] h-[278px] mobile-sm:w-[280px] mobile:w-[320px] mobile-lg:w-[400px] md:w-[470px]"
       />
     </div>
   );
