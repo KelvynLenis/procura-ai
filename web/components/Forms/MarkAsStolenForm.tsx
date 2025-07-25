@@ -266,6 +266,7 @@ export function MarkAsStolenForm({
                       type="datetime-local"
                       {...field}
                       className="ring-1 ring-zinc-300"
+                      tabIndex={-1}
                     />
                   </FormControl>
                   <FormMessage />
@@ -284,6 +285,7 @@ export function MarkAsStolenForm({
                       placeholder="Uma descrição breve"
                       {...field}
                       className="resize-none text-start h-36 ring-1 ring-zinc-300"
+                      tabIndex={-1}
                     />
                   </FormControl>
                   <FormMessage />
