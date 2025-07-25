@@ -10,6 +10,7 @@ import { toast } from 'react-toastify'
 import { getDeviceById } from '@/functions/device/get-device-by-id'
 import { getUserId } from '@/functions/user/get-user-id'
 import { getUserById } from '@/functions/user/get-user-by-id'
+import ViewOccurenceGoogleMap from './Maps/ViewOccurenceGoogleMap'
 
 interface ViewMyAlertProps {
   id: string
@@ -109,7 +110,7 @@ export function ViewMyAlert({
 
             <div>
               {events[0]?.last_location ? (
-                <ViewOccurrenceMap position={events[0]?.last_location} />
+                <ViewOccurenceGoogleMap position={events[0]?.last_location} />
               ) : (
                 <div>
                   <span className="font-bold">
