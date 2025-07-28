@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import starsLine from '../assets/images/circles-line.png'
-import line from '../assets/images/line03.svg'
+import shapesLeft from '../assets/images/shapes-left.svg'
+import shapesRight from '../assets/images/shapes-right.svg'
 import googlePlay from '../assets/images/google-play.svg'
 import feat1 from '../assets/icons/feat1.svg'
 import feat2 from '../assets/icons/feat2.svg'
@@ -13,19 +14,25 @@ import { AiFillAndroid } from "react-icons/ai";
 
 export function Features() {
   return (
-    <section className="w-full h-full lg:h-fit gap-6 lg:gap-20 relative flex flex-col items-center px-4 z-0 py-10 lg:py-2">
-      {/* <Image
+    <section className="w-full h-full lg:h-fit gap-6 lg:gap-10 relative flex flex-col items-center px-4 z-0 py-10 lg:py-2">
+      <Image
         src={shapesLeft}
         alt="formas esquerda"
-        className="absolute hidden md:block md:top-[900px] lg:top-96 2xl:top-[420px] left-0 z-0"
-      /> */}
-      <Image
+        className="absolute hidden md:block top-0 left-0 z-0"
+      />
+      {/* <Image
         src={line}
         alt="formas direita"
         className="absolute hidden lg:block -bottom-20 right-0 z-0"
+      /> */}
+
+      <Image
+        src={shapesRight}
+        alt="gradiente direito"
+        className="absolute hidden md:block -bottom-11 w-full right-0 z-0"
       />
 
-      <div className="flex flex-col w-full gap-0 z-10">
+      <div className="flex flex-col w-full gap-0 z-10 mt-14">
         <h1 className="text-xl md:text-4xl text-primary font-medium self-center">
           Veja como é fácil se proteger
         </h1>
@@ -104,7 +111,7 @@ export function Features() {
         </div>
       </div>
 
-      <div className="flex flex-col items-center gap-7 z-10">
+      <div className="flex flex-col items-center gap-10 z-10">
         <Link href={'/cadastro'}>
           <Button
             variant="blue"
