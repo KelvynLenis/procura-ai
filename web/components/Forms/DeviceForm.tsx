@@ -852,65 +852,67 @@ export function DeviceForm({
                 <>
                   {isPopover ? (
                     <DialogClose asChild>
-                      <ButtonShadcn
+                      <Button
                         onClick={() => setModalOpen!(false)}
                         type="button"
-                        variant="outline"
-                        className="flex-1 h-12 text-base border-gray-300 text-gray-700 hover:bg-gray-50"
+                        variant="white"
+                        className="flex-1"
                       >
                         Cancelar
-                      </ButtonShadcn>
+                      </Button>
                     </DialogClose>
                   ) : (
                     <Link href={'/meus-dispositivos'} className="flex-1">
-                      <ButtonShadcn
+                      <Button
                         onClick={() => goBack()}
                         type="button"
-                        variant="outline"
-                        className="w-full h-12 text-base border-gray-300 text-gray-700 hover:bg-gray-50"
+                        variant="white"
+                        className="w-full"
                       >
                         Cancelar
-                      </ButtonShadcn>
+                      </Button>
                     </Link>
                   )}
-                  <ButtonShadcn
+                  <Button
                     type="submit"
                     disabled={isLoading}
-                    className="flex-1 h-12 text-base bg-blue-600 hover:bg-blue-700 text-white"
+                    variant="blue"
+                    className="flex-1 px-2"
                   >
                     {isLoading ? 'Salvando...' : 'Salvar alterações'}
-                  </ButtonShadcn>
+                  </Button>
                 </>
               ) : (
                 <>
                   {isPopover ? (
-                    <ButtonShadcn
+                    <Button
                       onClick={() => setModalOpen!(false)}
                       type="button"
-                      variant="outline"
-                      className="flex-1 h-12 text-base border-gray-300 text-gray-700 hover:bg-gray-50"
+                      variant="white"
+                      className="flex-1"
                     >
                       Cancelar
-                    </ButtonShadcn>
+                    </Button>
                   ) : (
                     <Link href={'/meus-dispositivos'} className="flex-1">
-                      <ButtonShadcn
+                      <Button
                         onClick={() => goBack()}
                         type="button"
-                        variant="outline"
-                        className="w-full h-12 text-base border-gray-300 text-gray-700 hover:bg-gray-50"
+                        variant="white"
+                        className="w-full"
                       >
                         Cancelar
-                      </ButtonShadcn>
+                      </Button>
                     </Link>
                   )}
-                  <ButtonShadcn
+                  <Button
                     type="submit"
                     disabled={isLoading}
-                    className="flex-1 h-12 text-base bg-blue-600 hover:bg-blue-700 text-white"
+                    variant="blue"
+                    className="flex-1"
                   >
                     {isLoading ? 'Cadastrando...' : 'Cadastrar'}
-                  </ButtonShadcn>
+                  </Button>
                 </>
               )}
             </div>
