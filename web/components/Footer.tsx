@@ -17,13 +17,13 @@ export function Footer({ light }: { light?: boolean }) {
     pathname !== 'map/ocorrencias' &&
     (
       <footer className={cn("w-full relative bottom-0 md:mt-0 flex items-center justify-start z-[20]", light ? 'bg-white' : 'bg-primary')}>
-        <div className={cn('w-full flex items-center justify-start', light ? 'md:justify-between': 'justify-center hidden lg:flex md:justify-start py-0 px-8 h-14 md:h-fit')}>
+        <div className={cn('w-full h-20 flex items-center justify-start pl-9', light ? ' overflow-hidden': 'justify-center hidden lg:flex md:justify-start py-0 px-8 h-14 md:h-fit')}>
           {
             light ? (
               <>
-                <Image src={logo} alt="logo" className='w-32 md:w-44 hidden sm:block' />
-                <Image src={govFull} alt="logo" className='w-64 md:w-96' />
-                <Image src={line} alt="logo" className='h-20 self-end hidden sm:block md:w-36' />
+                {/* <Image src={logo} alt="logo" className='w-32 md:w-44 hidden sm:block' /> */}
+                <Image src={govFull} alt="logo" className='w-64 h-12 md:w-96 z-10' />
+                <Image src={line} alt="logo" className='h-full absolute right-0 self-end hidden sm:block md:w-[50%] lg:w-[80%] xl:w-[90%] z-0' />
               </>
             ) : (
               <>
