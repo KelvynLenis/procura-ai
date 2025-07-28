@@ -13,6 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 import Button from '../Button'
 import { Button as ButtonShadcn } from '../ui/button'
+import { Input } from '../ui/input'
 import {
   Popover,
   PopoverContent,
@@ -32,17 +33,8 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command'
 
 import { account } from '@/lib/appwrite'
-import { phoneBrands } from '@/utils/PhoneBrands'
 import type { Device, DeviceProps } from '@/types'
 import {
   cn,
@@ -51,7 +43,7 @@ import {
   validateImeiWithLuhn,
 } from '@/lib/utils'
 
-import { Check, ChevronDown, Search } from 'lucide-react'
+import { Check, ChevronDown } from 'lucide-react'
 import { DialogClose } from '@radix-ui/react-dialog'
 
 import { createDevice } from '@/functions/device/create-device'
@@ -66,14 +58,26 @@ async function getOperatorOptions(): Promise<
 > {
   try {
     const operators = await listOperators()
-    return operators.map((operator: Operator) => ({
+    
+    if (!operators || !Array.isArray(operators)) {
+      throw new Error('Dados inválidos da API')
+    }
+    
+    const mappedOperators = operators.map((operator: Operator) => ({
       label: operator.name_operator,
       value: operator.$id,
     }))
+    
+    return mappedOperators
   } catch (error) {
-    console.error('Failed to fetch operator options:', error)
-
-    return []
+    console.error('Erro ao buscar operadoras:', error)
+    // Retornar algumas operadoras padrão caso haja erro
+    return [
+      { label: 'Vivo', value: 'vivo' },
+      { label: 'Claro', value: 'claro' },
+      { label: 'TIM', value: 'tim' },
+      { label: 'Oi', value: 'oi' },
+    ]
   }
 }
 
@@ -90,13 +94,12 @@ export function DeviceForm({
 }: AddDeviceFormProps) {
   const [open, setOpen] = useState(false)
   const [isBrandsPopoverOpen, setIsBrandsPopoverOpen] = useState(false)
-  const [isOperatorPopoverOpen, setIsOperatorPopoverOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [imeiError, setImeiError] = useState<string>('')
-  const [searchQuery, setSearchQuery] = useState('')
   const [operatorOptions, setOperatorOptions] = useState<
     { label: string; value: string }[]
   >([])
+  const [operatorsLoaded, setOperatorsLoaded] = useState(false)
   const route = useRouter()
 
   const formSchema = z
@@ -130,19 +133,6 @@ export function DeviceForm({
         'O número de celular deve conter exatamente 11 dígitos numéricos.',
     })
 
-  const brands = [
-    { label: 'Apple', value: 'apple' },
-    { label: 'Samsung', value: 'samsung' },
-    { label: 'Xiaomi', value: 'xiaomi' },
-    { label: 'Oppo', value: 'oppo' },
-    { label: 'Vivo', value: 'vivo' },
-    { label: 'Motorola', value: 'motorola' },
-    { label: 'Realme', value: 'realme' },
-    { label: 'Asus', value: 'asus' },
-    { label: 'Huawei', value: 'huawei' },
-    { label: 'Sony', value: 'sony' },
-  ] as const
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -156,11 +146,25 @@ export function DeviceForm({
 
   useEffect(() => {
     const loadOperators = async () => {
-      const options = await getOperatorOptions()
-      setOperatorOptions(options)
+      try {
+        setOperatorsLoaded(false)
+        const options = await getOperatorOptions()
+        setOperatorOptions(options)
+        setOperatorsLoaded(true)
 
-      if (device?.operator_id) {
-        form.setValue('operator_id', device.operator_id)
+        if (device?.operator_id) {
+          form.setValue('operator_id', device.operator_id)
+        }
+      } catch (error) {
+        console.error('Erro ao carregar operadoras:', error)
+        setOperatorsLoaded(true)
+        // Define operadoras fallback para teste
+        setOperatorOptions([
+          { label: 'Vivo', value: 'vivo' },
+          { label: 'Claro', value: 'claro' },
+          { label: 'TIM', value: 'tim' },
+          { label: 'Oi', value: 'oi' },
+        ])
       }
     }
 
@@ -208,6 +212,23 @@ export function DeviceForm({
 
   function goBack() {
     router.back()
+  }
+
+  // Função para formatar IMEI (apenas mobile)
+  const formatImei = (value: string) => {
+    const numbers = value.replace(/\D/g, '').slice(0, 15)
+    if (numbers.length <= 2) return numbers
+    if (numbers.length <= 8) return `${numbers.slice(0, 2)} ${numbers.slice(2)}`
+    if (numbers.length <= 14) return `${numbers.slice(0, 2)} ${numbers.slice(2, 8)} ${numbers.slice(8)}`
+    return `${numbers.slice(0, 2)} ${numbers.slice(2, 8)} ${numbers.slice(8, 14)} ${numbers.slice(14)}`
+  }
+
+  // Função para formatar telefone (apenas mobile)
+  const formatPhone = (value: string) => {
+    const numbers = value.replace(/\D/g, '').slice(0, 11)
+    if (numbers.length <= 2) return numbers.length === 0 ? '' : `(${numbers}`
+    if (numbers.length <= 7) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`
+    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`
   }
 
   async function onSubmit(values: DeviceProps) {
@@ -285,25 +306,27 @@ export function DeviceForm({
   return (
     <>
       {isLoading && <LoadingToast isReactToastifyComponent={false} />}
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className={cn(
-            'w-full md:w-10/12 lg:w-full bg-white flex flex-col px-5 md:px-10 py-4 gap-8 text-zinc-900 self-center items-center justify-center rounded-3xl shadow-md'
-            // !device && "shadow-form" // Adiciona "shadow-form" apenas se device estiver presente
-          )}
-        >
-          {!device && (
-            <div className="flex flex-col w-full gap-1">
-              <span className="font-medium">Insira os dados abaixo:</span>
-              <div className="flex flex-col w-full gap-1">
-                <span className="h-0.5 w-full bg-zinc-400" />
-                <span className="text-red-500 text-sm flex items-start">
-                  *Campos obrigatórios
-                </span>
+      
+      {/* Layout Desktop - mantém o formato original */}
+      <div className="hidden md:block">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className={cn(
+              'w-full md:w-10/12 lg:w-full bg-white flex flex-col px-5 md:px-10 py-4 gap-8 text-zinc-900 self-center items-center justify-center rounded-3xl shadow-md'
+            )}
+          >
+            {!device && (
+              <div className="flex flex-col w-full gap-8">
+                <span className="font-medium">Insira os dados abaixo:</span>
+                <div className="flex flex-col w-full gap-1">
+                  <span className="h-0.5 w-full bg-zinc-400" />
+                  <span className="text-red-500 text-sm flex items-start">
+                    *Campos obrigatórios
+                  </span>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           <FormField
             control={form.control}
@@ -553,89 +576,52 @@ export function DeviceForm({
           />
           
 
-          <FormField
-            control={form.control}
-            name="operator_id"
-            render={({ field }) => (
-              <FormItem className="flex flex-col w-full md:w-fit self-start">
-                <FormLabel className="text-lg w-fit text-center items-start flex">
-                  Operadora do dispositivo
-                </FormLabel>
-                <Popover
-                  open={isOperatorPopoverOpen}
-                  onOpenChange={setIsOperatorPopoverOpen}
-                >
-                  <PopoverTrigger asChild>
-                    <div className="self-start w-full md:w-fit">
-                      <FormControl>
-                        <ButtonShadcn
-                          variant="outline"
-                          role="combobox"
-                          type="button"
-                          className={cn(
-                            'w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100 xl:w-[25.5rem]',
-                            !field.value &&
-                            'text-muted-foreground text-zinc-500'
-                          )}
-                        >
-                          <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 rotate-90" />
-                          {field.value
-                            ? operatorOptions.find(
-                              op => op.value === field.value
-                            )?.label
-                            : 'Pesquise a operadora do dispositivo'}
-                          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </ButtonShadcn>
-                      </FormControl>
-                      <FormMessage />
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                      <CommandInput
-                        placeholder="Digite a operadora."
-                        value={searchQuery}
-                        onValueChange={setSearchQuery}
-                      />
-                      <CommandList>
-                        <CommandEmpty>
-                          Nenhuma operadora encontrada.
-                        </CommandEmpty>
-                        <CommandGroup>
-                          {operatorOptions
-                            .filter(operator =>
-                              operator.label
-                                .toLowerCase()
-                                .includes(searchQuery.toLowerCase())
-                            )
-                            .map(operator => (
-                              <CommandItem
-                                value={operator.label}
-                                key={operator.value}
-                                onSelect={() => {
-                                  form.setValue('operator_id', operator.value)
-                                  setIsOperatorPopoverOpen(false)
-                                }}
-                              >
-                                {operator.label}
-                                <Check
-                                  className={cn(
-                                    'ml-auto',
-                                    operator.value === field.value
-                                      ? 'opacity-100'
-                                      : 'opacity-0'
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="operator_id"
+              render={({ field }) => (
+                <FormItem className="flex flex-col w-full md:w-fit self-start">
+                  <FormLabel className="text-lg w-fit text-center items-start flex">
+                    Operadora do dispositivo
+                  </FormLabel>
+                  
+                  {/* Versão alternativa usando select nativo */}
+                  <div className="self-start w-full md:w-fit relative">
+                    <FormControl>
+                      <select
+                        {...field}
+                        disabled={!operatorsLoaded || operatorOptions.length === 0}
+                        className={cn(
+                          'w-full md:w-96 xl:w-[25.5rem] h-10 px-3 pr-10 text-sm md:text-base bg-zinc-100 border border-input rounded-md shadow-sm appearance-none',
+                          'focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent',
+                          !field.value && 'text-muted-foreground text-zinc-500',
+                          (!operatorsLoaded || operatorOptions.length === 0) && 'cursor-not-allowed opacity-50'
+                        )}
+                        onChange={(e) => {
+                          field.onChange(e.target.value)
+                        }}
+                      >
+                        <option value="" disabled>
+                          {!operatorsLoaded 
+                            ? 'Carregando operadoras...' 
+                            : operatorOptions.length === 0 
+                              ? 'Nenhuma operadora disponível'
+                              : 'Selecione a operadora do dispositivo'
+                          }
+                        </option>
+                        {operatorOptions.map((operator) => (
+                          <option key={operator.value} value={operator.value}>
+                            {operator.label}
+                          </option>
+                        ))}
+                      </select>
+                    </FormControl>
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
 
           {device ? (
             <div className="flex justify-between w-full">
@@ -684,6 +670,257 @@ export function DeviceForm({
           )}
         </form>
       </Form>
+    </div>
+
+    {/* Layout Mobile - nova estilização baseada na imagem */}
+    <div className="block md:hidden min-h-screen bg-gray-50">
+      <div className="bg-white">
+        {/* Header */}
+        <div className="px-4 py-4 border-b border-gray-200">
+          <h1 className="text-lg font-medium text-gray-900">
+            {device ? 'Editar dispositivo' : 'Cadastrar dispositivo'}
+          </h1>
+          {!device && (
+            <p className="text-sm text-gray-600 mt-1">Insira os dados abaixo:</p>
+          )}
+        </div>
+        
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="p-4 space-y-4">
+            
+            {/* IMEI Field */}
+            <FormField
+              control={form.control}
+              name="imei"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    IMEI (obrigatório)
+                  </FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        placeholder="12 345678 901234 5"
+                        value={formatImei(field.value || '')}
+                        maxLength={19} // 15 números + 4 espaços
+                        className="h-12 bg-gray-50 border-gray-200 rounded-lg text-base placeholder:text-gray-400 text-center font-mono tracking-wider"
+                        onChange={(e) => {
+                          const rawValue = e.target.value.replace(/\D/g, '').slice(0, 15);
+                          field.onChange(rawValue);
+                        }}
+                      />
+                    </div>
+                  </FormControl>
+                  
+                  {/* Info Box */}
+                  <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-3">
+                    <p className="text-xs text-cyan-800 flex items-start gap-2">
+                      <span className="text-cyan-600 text-sm shrink-0">ℹ</span>
+                      O IMEI é composto por 15 números e pode ser encontrado na embalagem do aparelho ou digitando *#06# no teclado do aparelho.
+                    </p>
+                  </div>
+                  
+                  <FormMessage />
+                  {imeiError && (
+                    <p className="text-sm text-red-600">{imeiError}</p>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            {/* Phone Number Field */}
+            <FormField
+              control={form.control}
+              name="phone_number"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Número do celular (obrigatório)
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="(11) 99999-9999"
+                      value={formatPhone(field.value || '')}
+                      maxLength={15} // (11) 99999-9999
+                      className="h-12 bg-gray-50 border-gray-200 rounded-lg text-base placeholder:text-gray-400 text-center font-mono tracking-wide"
+                      onChange={(e) => {
+                        const rawValue = e.target.value.replace(/\D/g, '').slice(0, 11);
+                        field.onChange(rawValue);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Brand Field */}
+            <FormField
+              control={form.control}
+              name="brand"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Fabricante
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Pesquise o fabricante do dispositivo"
+                      {...field}
+                      disabled
+                      className="h-12 bg-gray-100 border-gray-200 rounded-lg text-base placeholder:text-gray-400 cursor-not-allowed"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Model Field */}
+            <FormField
+              control={form.control}
+              name="phone_model"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Modelo
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Selecione o modelo do dispositivo"
+                      {...field}
+                      disabled
+                      className="h-12 bg-gray-100 border-gray-200 rounded-lg text-base placeholder:text-gray-400 cursor-not-allowed"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Operator Field */}
+            <FormField
+              control={form.control}
+              name="operator_id"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Operadora
+                  </FormLabel>
+                  
+                  {/* Versão simplificada usando select nativo */}
+                  <div className="relative">
+                    <FormControl>
+                      <select
+                        {...field}
+                        disabled={!operatorsLoaded || operatorOptions.length === 0}
+                        className={cn(
+                          'w-full h-12 px-3 pr-10 text-base bg-gray-50 border-gray-200 rounded-lg appearance-none',
+                          'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                          !field.value && 'text-gray-400',
+                          (!operatorsLoaded || operatorOptions.length === 0) && 'cursor-not-allowed opacity-50'
+                        )}
+                        onChange={(e) => {
+                          field.onChange(e.target.value)
+                        }}
+                      >
+                        <option value="" disabled>
+                          {!operatorsLoaded 
+                            ? 'Carregando operadoras...' 
+                            : operatorOptions.length === 0 
+                              ? 'Nenhuma operadora disponível'
+                              : 'Selecione a operadora'
+                          }
+                        </option>
+                        {operatorOptions.map((operator) => (
+                          <option key={operator.value} value={operator.value}>
+                            {operator.label}
+                          </option>
+                        ))}
+                      </select>
+                    </FormControl>
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-6">
+              {device ? (
+                <>
+                  {isPopover ? (
+                    <DialogClose asChild>
+                      <Button
+                        onClick={() => setModalOpen!(false)}
+                        type="button"
+                        variant="white"
+                        className="flex-1"
+                      >
+                        Cancelar
+                      </Button>
+                    </DialogClose>
+                  ) : (
+                    <Link href={'/meus-dispositivos'} className="flex-1">
+                      <Button
+                        onClick={() => goBack()}
+                        type="button"
+                        variant="white"
+                        className="w-full"
+                      >
+                        Cancelar
+                      </Button>
+                    </Link>
+                  )}
+                  <Button
+                    type="submit"
+                    disabled={isLoading}
+                    variant="blue"
+                    className="flex-1 px-2"
+                  >
+                    {isLoading ? 'Salvando...' : 'Salvar alterações'}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  {isPopover ? (
+                    <Button
+                      onClick={() => setModalOpen!(false)}
+                      type="button"
+                      variant="white"
+                      className="flex-1"
+                    >
+                      Cancelar
+                    </Button>
+                  ) : (
+                    <Link href={'/meus-dispositivos'} className="flex-1">
+                      <Button
+                        onClick={() => goBack()}
+                        type="button"
+                        variant="white"
+                        className="w-full"
+                      >
+                        Cancelar
+                      </Button>
+                    </Link>
+                  )}
+                  <Button
+                    type="submit"
+                    disabled={isLoading}
+                    variant="blue"
+                    className="flex-1"
+                  >
+                    {isLoading ? 'Cadastrando...' : 'Cadastrar'}
+                  </Button>
+                </>
+              )}
+            </div>
+          </form>
+        </Form>
+      </div>
+    </div>
+
     </>
   )
 }
