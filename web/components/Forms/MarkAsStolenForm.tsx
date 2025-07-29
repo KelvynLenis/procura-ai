@@ -259,7 +259,7 @@ export function MarkAsStolenForm({
                     <span className="text-red-500 h-6 flex align-text-bottom">
                       *
                     </span>
-                    Data e hora do furto
+                    Data e hora da ocorrência
                   </FormLabel>
                   <FormControl>
                     <Input
