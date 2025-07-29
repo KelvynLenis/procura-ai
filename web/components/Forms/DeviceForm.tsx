@@ -899,7 +899,7 @@ export function DeviceForm({
                         onClick={() => goBack()}
                         type="button"
                         variant="white"
-                        className="w-full"
+                        className="w-fit"
                       >
                         Cancelar
                       </Button>
@@ -909,7 +909,7 @@ export function DeviceForm({
                     type="submit"
                     disabled={isLoading}
                     variant="blue"
-                    className="flex-1"
+                    className="w-fit"
                   >
                     {isLoading ? 'Cadastrando...' : 'Cadastrar'}
                   </Button>
