@@ -16,7 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </SidebarProvider>
 
           <div className="flex flex-col w-full">
-            <Header />
+            <Header isAdmin />
             {children}
           </div>
         </div>
