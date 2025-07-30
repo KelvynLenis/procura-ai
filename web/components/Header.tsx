@@ -19,18 +19,30 @@ import { LoadingToast } from './LoadingToast'
 
 import { getUserId } from '@/functions/user/get-user-id'
 import { getUser } from '@/functions/user/get-user'
-import { User } from '@/types'
+import { Notification, OccurrencesProps, User } from '@/types'
 
 import { Pencil } from 'lucide-react'
 
 import logo from '../assets/icons/logo.svg'
+import { NotificationButton } from './NotificationButton'
+import { joinDevicesEventsUsers } from '@/functions/occurences/get-occurrences'
 
-export function Header() {
-  const router = useRouter()
-  const pathname = usePathname().slice(1)
+interface HeaderProps {
+  isAdmin?: boolean
+}
+
+export function Header({ isAdmin }: HeaderProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [imgPreview, setImgPreview] = useState('')
   const [user, setUser] = useState<User>({} as User)
+  const [notifications, setNotifications] = useState<Notification[]>([])
+  const [occurrences, setOccurrences] = useState<OccurrencesProps[]>([])
+  const [selectedLocation, setSelectedLocation] = useState<
+    [number, number] | undefined
+  >()
+
+  const router = useRouter()
+  const pathname = usePathname().slice(1)
   
   const isFullScreen = pathname === 'map/ocorrencias'
 
@@ -76,6 +88,7 @@ export function Header() {
       value: 'Dispositivos notificados',
     },
   ]
+
   const regex = /^meus-dispositivos\/edit/
   const matchedRoute = regex.test(pathname)
     ? 'Editar dispositivo'
@@ -95,10 +108,24 @@ export function Header() {
     setIsLoading(false)
   }
 
+  const handleNotificationClick = (notification: Notification) => {
+    const relatedOccurrence = occurrences.find(
+      occ => occ.device.$id === notification.id_device
+    )
+
+    if (relatedOccurrence?.event?.last_location) {
+      // Reseta a localização antes de definir a nova para garantir que o useEffect seja disparado
+      setSelectedLocation(undefined)
+      setTimeout(() => {
+        setSelectedLocation(relatedOccurrence.event.last_location)
+      }, 0)
+    }
+  }
+
    useEffect(() => {
-      async function getUserData() {
+      async function getData() {
         const userId = await getUserId()
-  
+        
         const userFilter = {
           method: 'equal',
           attribute: 'user_id',
@@ -106,18 +133,23 @@ export function Header() {
         }
   
         const userData = await getUser({ filters: [userFilter] })
-
+        
         setUser(userData[0])
-  
+        
         if (userData[0].img_url) {
           setImgPreview(userData[0].img_url)
         }
-  
+
+        const occurrencesData = await joinDevicesEventsUsers()
+
+        setOccurrences(occurrencesData)
+        
         setIsLoading(false)
       }
   
-      getUserData()
+      getData()
     }, [])
+    
 
   return (
     !isFullScreen && (
@@ -127,45 +159,52 @@ export function Header() {
           {/* <div className="w-1/5 md:w-[35%] lg:w-[26%] xl:w-1/5 h-1" /> */}
           <Image src={logo} alt="logo" className="w-16 md:w-20 md:hidden" />
           <span className="text-xl text-white -ml-2 lg:-ml-4">{matchedRoute}</span>
-          <DropdownMenu>
-            <DropdownMenuTrigger className='flex-row text-white items-center justify-center gap-2 hidden mr-2 md:flex'>
-              {
-                imgPreview ? (
-                  <Avatar>
-                    <AvatarImage src={imgPreview} />
-                    <AvatarFallback className='text-primary text-2xl'>
-                      {
-                      user.name.split(' ').length > 1
-                        ? user.name.split(' ')[0][0] + user.name.split(' ')[1][0]
-                        : user.name.split(' ')[0][0]
-                      }
-                    </AvatarFallback>
-                  </Avatar>
+          <div className='flex items-center gap-4'>
+            <NotificationButton
+              notifications={notifications}
+              setNotifications={setNotifications}
+              onNotificationClick={handleNotificationClick}
+            />
+            <DropdownMenu>
+              <DropdownMenuTrigger className='flex-row text-white items-center justify-center gap-2 hidden mr-2 md:flex'>
+                {
+                  imgPreview ? (
+                    <Avatar>
+                      <AvatarImage src={imgPreview} />
+                      <AvatarFallback className='text-primary text-2xl'>
+                        {
+                        user.name.split(' ').length > 1
+                          ? user.name.split(' ')[0][0] + user.name.split(' ')[1][0]
+                          : user.name.split(' ')[0][0]
+                        }
+                      </AvatarFallback>
+                    </Avatar>
 
-                ) : (
-                  <Skeleton className='w-8 h-8 rounded-full' />
-                )
-              }
-              <div className='flex flex-col items-start'>
-                <span>
-                  {user.name}
-                </span>
-                <span>
-                  {user.email}
-                </span>
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className='w-[17rem]'>
-              <DropdownMenuLabel>Minha conta</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <button onClick={() => showLoadingToast('perfil')} className='flex flex-row items-center gap-2'>
-                  <Pencil size={16} />
-                  Editar perfil
-                </button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                  ) : (
+                    <Skeleton className='w-8 h-8 rounded-full' />
+                  )
+                }
+                <div className='flex flex-col items-start'>
+                  <span>
+                    {user.name}
+                  </span>
+                  <span>
+                    {user.email}
+                  </span>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className='w-[17rem]'>
+                <DropdownMenuLabel>Minha conta</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <button onClick={() => showLoadingToast('perfil')} className='flex flex-row items-center gap-2'>
+                    <Pencil size={16} />
+                    Editar perfil
+                  </button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </header>
       </>
     )

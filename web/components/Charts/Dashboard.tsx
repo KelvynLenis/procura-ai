@@ -10,7 +10,7 @@ import { OccurrencesMap } from '../Maps/OccurrencesMap'
 import { OccurrencesHeatMap } from '../Maps/OccurrencesHeatMap'
 import { BiExpandAlt } from 'react-icons/bi'
 
-import type { Device, District, Event, OccurrencesProps } from '@/types'
+import type { Device, District, Event, Notification, OccurrencesProps } from '@/types'
 import { LoadingToast } from '../LoadingToast'
 import PieChartRechart from './PieChartRechart'
 import { NotificationButton } from '../NotificationButton'
@@ -23,14 +23,6 @@ import { listDistricts } from '@/functions/district/list-districts'
 import { account } from '@/lib/appwrite'
 import { joinDevicesEventsUsers } from '@/functions/occurences/get-occurrences'
 
-interface Notification {
-  $id: string
-  type: string
-  description: string
-  time_event: string
-  id_device: string
-  is_alert_on: boolean
-}
 
 export function Dashboard() {
   const [occurrences, setOccurrences] = useState<OccurrencesProps[]>([])
@@ -155,13 +147,13 @@ export function Dashboard() {
   return (
     <>
       {isLoading && <LoadingToast isReactToastifyComponent={false} />}
-      <div className="absolute top-0 right-5 z-10">
+      {/* <div className="absolute top-2.5 right-72 z-10">
         <NotificationButton
           notifications={notifications}
           setNotifications={setNotifications}
           onNotificationClick={handleNotificationClick}
         />
-      </div>
+      </div> */}
 
       <div className="w-full h-full flex flex-col py-5 justify-start items-center gap-5">
         <div className="relative flex flex-col md:mr-2 self-start w-[100%] 2xl:w-[100%] bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center gap-4">
@@ -205,7 +197,7 @@ export function Dashboard() {
               className="mb-10"
             />
             <CardChart
-              variant="white"
+              variant="green"
               number={deviceStats.robbed}
               title="Dispositivos Roubados"
               className="mb-10"

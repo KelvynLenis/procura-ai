@@ -34,6 +34,15 @@ export interface OccurrencesProps {
   }
 }
 
+export interface Notification {
+  $id: string
+  type: string
+  description: string
+  time_event: string
+  id_device: string
+  is_alert_on: boolean
+}
+
 export type Device = z.infer<typeof DeviceSchema>
 export type Event = z.infer<typeof EventSchema>
 export type District = z.infer<typeof districtSchema>
