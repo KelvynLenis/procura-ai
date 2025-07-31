@@ -33,7 +33,7 @@ export function ConfirmationDialog({
             <AlertDialogDescription>{description}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex flex-row items-center justify-between w-full">
-            <AlertDialogCancel className="rounded-full text-center items-center justify-center flex w-fit px-2 py-2 transition-all duration-300 bg-white border-[0.5px] border-red-500 text-red-500 hover:bg-red-500 hover:text-white">
+            <AlertDialogCancel className="rounded-full text-center items-center justify-center flex w-fit px-6 py-2 transition-all duration-300 bg-white border-[0.5px] border-red-500 text-red-500 hover:bg-red-500 hover:text-white">
               Cancelar
             </AlertDialogCancel>
             <AlertDialogAction

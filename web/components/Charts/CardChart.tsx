@@ -27,7 +27,7 @@ export function CardChart({
         <Image
           src={registeredIcon}
           alt="registered-icon"
-          className="size-10 "
+          className="size-10 xl:size-16 1.5xl:size-16"
         />
       )
     } else if (variant === 'green') {
@@ -35,7 +35,7 @@ export function CardChart({
         <Image
           src={recoveredIcon}
           alt="recovered-icon"
-          className="size-10 xl:size-11"
+          className="size-10 xl:size-16 1.5xl:size-16"
         />
       )
     } else if (variant === 'red') {
@@ -43,23 +43,23 @@ export function CardChart({
         <Image
           src={robIcon}
           alt="recovered-icon"
-          className="size-10 xl:size-11"
+          className="size-10 xl:size-16 1.5xl:size-16"
         />
       )
     } else if (variant === 'city') {
       return (
-        <Image src={cities} alt="cities-icon" className="size-10 xl:size-11" />
+        <Image src={cities} alt="cities-icon" className="size-10 xl:size-16 1.5xl:size-16" />
       )
     } else if (variant === 'yellow') {
       return (
-        <Image src={lostIcon} alt="theft-icon" className="size-10 xl:size-11" />
+        <Image src={lostIcon} alt="theft-icon" className="size-10 xl:size-16 1.5xl:size-16" />
       )
     } else if (variant === 'orange') {
       return (
         <Image
           src={theftIcon}
           alt="theft-icon"
-          className="size-10 xl:size-11"
+          className="size-10 xl:size-16 1.5xl:size-16"
         />
       )
     }
