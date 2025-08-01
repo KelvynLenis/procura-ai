@@ -175,7 +175,7 @@ export function AppSidebar({ admin }: SidebarProps) {
                             onClick={() => showLoadingToast(item.url)}
                           >
                             {pathname === item.url && (
-                              <span className="w-0.5 h-full absolute left-0 rounded-xl bg-procura-ai-dark-yellow" />
+                              <span className="w-0.5 h-full absolute left-0 rounded-xl bg-secondary" />
                             )}
                             {item.icon}
                             <span>{item.title}</span>
@@ -194,7 +194,7 @@ export function AppSidebar({ admin }: SidebarProps) {
                             onClick={() => showLoadingToast(item.url)}
                           >
                             {pathname === item.url && (
-                              <span className="w-0.5 h-full absolute left-0 rounded-xl bg-procura-ai-dark-yellow" />
+                              <span className="w-0.5 h-full absolute left-0 rounded-xl bg-secondary" />
                             )}
                             {item.icon}
                             <span>{item.title}</span>
