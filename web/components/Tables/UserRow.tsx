@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { DeviceProps, User } from '@/types'
+import { Contact, type DeviceProps, type User } from '@/types'
 import {
   Table,
   TableBody,
@@ -26,8 +26,10 @@ import { deleteUserSession } from '@/functions/user/delete-user'
 import { listUserDevices } from '@/functions/device/list-user-devices'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import deviceInfo from '../../assets/icons/device-info.svg'
+import contactIcon from '../../assets/icons/contact-table-header.svg'
 import Image from 'next/image'
 import { getOperator } from '@/functions/operators/get-operator'
+import { listContacts } from '@/functions/contact/list-contacts'
 
 // interface User {
 //   $id: string
@@ -50,6 +52,7 @@ interface UserRowProps {
 
 export function UserRow({ user, index, setUsers }: UserRowProps) {
   const [devices, setDevices] = useState<DeviceProps[]>([] as DeviceProps[])
+  const [contacts, setContacts] = useState<Contact[]>([] as Contact[])
   const [isLoading, setIsLoading] = useState(true)
   const [color, setColor] = useState('')
 
@@ -141,6 +144,18 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
       }
     }
 
+    const getContacts = async () => {
+      try {
+        const contact = await listContacts({ userIdParam: user.user_id })
+        if (contact) {
+          setContacts(contact)
+        }
+      } catch (error) {
+        console.error('Erro ao buscar contato:', error)
+      }
+    }
+
+    getContacts()
     getDevices()
     getRandomProfileColor()
   }, [user.user_id])
@@ -220,7 +235,7 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
 
                 <div className="flex flex-col gap-4 px-4 pb-4 overflow-y-scroll custom-scroll">
                   <div className="flex flex-col">
-                    <div className="flex items-center gap-2 py-2 px-5 w-full text-lg font-medium bg-zinc-100 rounded-t-lg  border-zinc-200">
+                    <div className="flex items-center gap-2 py-2 px-4 w-full text-lg font-medium bg-zinc-100 rounded-t-lg  border-zinc-200">
                       {user.img_url ? (
                         <Image
                           src={user.img_url}
@@ -237,7 +252,7 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                             : user.name!.split(' ')[0][0]}
                         </div>
                       )}
-                      Informações do proprietário
+                      Dados pessoais
                     </div>
                     <div className="flex flex-col gap-2 border border-zinc-200 p-4 rounded-b-3xl drop-shadow-sm">
                       <div className="flex">
@@ -272,7 +287,7 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                   </div>
 
                   <div className="flex flex-col">
-                    <div className="flex items-center gap-2 py-2 px-5 w-full bg-zinc-100 rounded-t-lg border-zinc-200">
+                    <div className="flex items-center gap-2 py-2 px-4 w-full bg-zinc-100 rounded-t-lg border-zinc-200">
                       <Image
                         src={deviceInfo}
                         alt="device-info"
@@ -282,7 +297,7 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                         Dispositivos
                       </span>
                     </div>
-                    <div className="border rounded-lg">
+                    <div className="border rounded-b-lg">
                       <Table>
                         <TableHeader className="bg-zinc-100 border-t border-zinc-200">
                           <TableRow>
@@ -354,6 +369,59 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                             <TableRow>
                               <TableCell colSpan={5} className="text-center">
                                 Nenhum dispositivo cadastrado
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-2 py-2 px-4 w-full bg-zinc-100 rounded-t-lg border-zinc-200">
+                      <Image
+                        src={contactIcon}
+                        alt="device-info"
+                        className="w-10 h-10"
+                      />
+                      <span className="text-lg text-procura-ai-zinc font-medium">
+                        Contatos de confiança
+                      </span>
+                    </div>
+                    <div className="border rounded-b-lg">
+                      <Table>
+                        <TableHeader className="bg-zinc-100 border-t border-zinc-200">
+                          <TableRow>
+                            <TableHead className="font-medium text-procura-ai-zinc">
+                              Nome
+                            </TableHead>
+                            <TableHead className="font-medium text-procura-ai-zinc">
+                              E-mail
+                            </TableHead>
+                            <TableHead className="font-medium text-procura-ai-zinc">
+                              Número
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {contacts.length > 0 ? (
+                            contacts.map((contact, index) => (
+                              <TableRow key={index}>
+                                <TableCell className="capitalize">
+                                  {contact.email_contact}
+                                </TableCell>
+                                <TableCell className="capitalize">
+                                  {contact.name_contact}
+                                </TableCell>
+                                <TableCell className="">
+                                  {`(${contact.number_contact.slice(0, 2)}) ${contact.number_contact.slice(2, 7)}-${contact.number_contact.slice(7, 11)}`}
+                                </TableCell>
+                              </TableRow>
+                            ))
+                          ) : (
+                            <TableRow>
+                              <TableCell colSpan={5} className="text-center">
+                                Nenhum contato cadastrado
                               </TableCell>
                             </TableRow>
                           )}
