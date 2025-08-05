@@ -506,7 +506,7 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
                     <InputField
                       label="Nome"
                       placeholder="Nome"
-                      icon={<Pencil size={20} color="gray" className='right-0 absolute' />}
+                      icon={<Pencil size={20} color="gray" />}
                       iconEnd
                       containerStyle='rounded-md border-0 bg-zinc-100 w-full'
                       textContentType="name"

@@ -46,13 +46,17 @@ const InputField = ({
           <View
             className={cn(`w-80 px-4 flex flex-row justify-start shadow-xl text-end relative bg-white rounded-full border ${error ? 'border-red-500' : 'border-primary'} focus:border-primary-500`, containerStyle)}
           >
-            {icon && !iconEnd && icon}
+            <View className="mt-4">
+              {icon && !iconEnd && icon}
+            </View>
             <TextInput
               className={cn('rounded-full py-4 px-0 text-[15px] flex-1 text-justify', inputStyle)}
               secureTextEntry={secureTextEntry} 
               {...props}
             />
-            {icon && iconEnd && icon}
+            <View className="mt-4">
+              {icon && iconEnd && icon}
+            </View>
           </View>
           {error && (
             <Text className="text-red-500 text-sm mt-1 ml-4">{error}</Text>

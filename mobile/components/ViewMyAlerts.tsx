@@ -84,12 +84,12 @@ const ViewMyAlerts = ({ setIsModalVisible, device, onSuccess }: ViewMyAlertsProp
 
   return (
     <>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{  paddingBottom: 20 }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{  paddingBottom: 50 }}>
       <View className='gap-2 w-full h-fit'>
-        <View className='w-full h-20 bg-blue-100 flex-row justify-between p-5'>
+        {/* <View className='w-full h-20 bg-blue-100 flex-row justify-between p-5'>
           <Text className='font-semibold text-2xl'>Informações da ocorrência</Text>
           <X size={30} color={'#000'} onPress={() => setIsModalVisible!(false)}/>
-        </View>
+        </View> */}
 
           <View className='px-5 py-1 gap-1'>  
             <View className='gap-2 mb-2'>
@@ -174,7 +174,14 @@ const ViewMyAlerts = ({ setIsModalVisible, device, onSuccess }: ViewMyAlertsProp
             
             {
               device.status !== 'Recuperado' ? (
-                <Button variant='white' className='mt-4' onPress={() => setIsConfirmationDialogVisible(true)}>Cancelar o alerta</Button>              
+                <Button variant='white' className='mt-4' onPress={() => setIsConfirmationDialogVisible(true)}>
+                  <View className='flex flex-row items-center gap-2'>
+                    <TriangleAlert size={28} color={device.status === 'Recuperado' ? '#3cd9d680' : device.status === 'Regular' ? 'white' : 'red'} fill={device.status === 'Recuperado' ? '#009c99' : device.status === 'Regular' ? 'red' : 'white'} />
+                    <Text className='text-red-500'>
+                      Desativar alerta
+                    </Text>
+                  </View>
+                </Button>              
               ) : (
                 <Button variant='blue' className='mt-2' onPress={() => setIsConfirmationDialogVisible(true)}>
                   <Text className='text-white font-medium'>Recuperei meu aparelho</Text>

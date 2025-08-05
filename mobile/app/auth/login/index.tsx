@@ -115,7 +115,7 @@ export default function signIn() {
         <InputField
           label="Email"
           placeholder="Digite seu email"
-          icon={<Mail size={20} color="gray" />}
+          // icon={<Mail size={20} color="gray" />}
           textContentType="emailAddress"
           keyboardType="email-address"
           value={form.email}
@@ -129,7 +129,7 @@ export default function signIn() {
         <InputField
           label="Senha"
           placeholder="Digite sua senha"
-          icon={<Lock size={20} color="gray" />}
+          // icon={<Lock size={20} color="gray" />}
           secureTextEntry={true}
           textContentType="password"
           value={form.password}

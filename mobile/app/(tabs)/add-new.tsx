@@ -27,7 +27,7 @@ export default function AddNew() {
       <Stack.Screen
         options={{
           header: () => (
-            <Header title="Adicionar Novo Dispositivo" />
+            <Header title="Cadastrar dispositivo" />
           ),
         }}
       />
