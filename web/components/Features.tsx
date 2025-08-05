@@ -32,7 +32,7 @@ export function Features() {
         className="absolute hidden md:block -bottom-11 w-full right-0 z-0"
       />
 
-      <div className="flex flex-col w-full gap-0 z-10 mt-14">
+      <div className="flex flex-col w-full gap-0 z-10 mt-10">
         <h1 className="text-xl md:text-4xl text-primary font-medium self-center">
           Veja como é fácil se proteger
         </h1>
@@ -115,7 +115,7 @@ export function Features() {
         <Link href={'/cadastro'}>
           <Button
             variant="blue"
-            className="self-center px-4 py-2 md:px-9 md:py-4 text-xl"
+            className="self-center px-4 py-2 md:px-9 md:py-4 lg:text-xl"
           >
             Cadastre-se
           </Button>

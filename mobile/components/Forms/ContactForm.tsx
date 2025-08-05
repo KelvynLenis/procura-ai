@@ -144,6 +144,7 @@ const ContactForm = ({ setIsModalVisible, onSuccess, initialData }: ContactFormP
             placeholder="Nome completo"
             required
             containerStyle='rounded-md border-0 bg-zinc-100 w-full'
+            labelStyle='font-medium'
             textContentType="name"
             value={form.name_contact}
             onChangeText={(value) => handleFieldChange('name_contact', value)}
@@ -152,24 +153,9 @@ const ContactForm = ({ setIsModalVisible, onSuccess, initialData }: ContactFormP
             returnKeyType="next"
           />
 
-          <InputField
-            label="Email"
-            placeholder="Email"
-            required
-            containerStyle='rounded-md border-0 bg-zinc-100 w-full'
-            textContentType="emailAddress"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={form.email_contact}
-            onChangeText={(value) => handleFieldChange('email_contact', value)}
-            error={errors.email_contact}
-            maxLength={100}
-            returnKeyType="next"
-          />
-
           <View className="w-full">
-            <Text className="text-sm font-medium mb-1">
-              Número de telefone <Text className="text-red-500">*</Text>
+            <Text className="text-base font-medium mb-1">
+              Número do contato (obrigatório)
             </Text>
             <MaskInput
               value={form.number_contact}
@@ -184,6 +170,23 @@ const ContactForm = ({ setIsModalVisible, onSuccess, initialData }: ContactFormP
               <Text className="text-red-500 text-sm mt-1">{errors.number_contact}</Text>
             )}
           </View>
+
+          <InputField
+            label="Email"
+            placeholder="Email"
+            containerStyle='rounded-md border-0 bg-zinc-100 w-full'
+            labelStyle='font-medium'
+            textContentType="emailAddress"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={form.email_contact}
+            onChangeText={(value) => handleFieldChange('email_contact', value)}
+            error={errors.email_contact}
+            maxLength={100}
+            returnKeyType="next"
+          />
+
+          
 
           <View className='flex flex-row w-full gap-4 mt-2'>
           <Button 
@@ -201,7 +204,7 @@ const ContactForm = ({ setIsModalVisible, onSuccess, initialData }: ContactFormP
             >
               {isLoading 
                 ? (initialData ? 'Atualizando...' : 'Adicionando...') 
-                : (initialData ? 'Atualizar contato' : 'Adicionar contato')}
+                : (initialData ? 'Atualizar' : 'Adicionar')}
             </Button>
            
           </View>

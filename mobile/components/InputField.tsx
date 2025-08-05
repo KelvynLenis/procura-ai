@@ -33,13 +33,13 @@ const InputField = ({
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View className="my-2 w-full">
           <View className="flex flex-row gap-2">
-            {
-              required && (
-                <Text style={{ color: 'red' }}>*</Text>
-              )
-            }
-            <Text className={cn(`text-lg mb-3`, labelStyle)}>
+            <Text className={cn(`text-base mb-3`, labelStyle)}>
               {label}
+              {
+                required && (
+                  <Text>(obrigatório)</Text>
+                )
+              }
             </Text>
           </View>
 
@@ -48,7 +48,7 @@ const InputField = ({
           >
             {icon && !iconEnd && icon}
             <TextInput
-              className={cn('rounded-full p-4 text-[15px] flex-1 text-justify', inputStyle)}
+              className={cn('rounded-full py-4 px-0 text-[15px] flex-1 text-justify', inputStyle)}
               secureTextEntry={secureTextEntry} 
               {...props}
             />

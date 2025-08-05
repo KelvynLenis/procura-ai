@@ -31,7 +31,7 @@ export default function AddNew() {
           ),
         }}
       />
-      <View className='flex-1 bg-zinc-100 px-5 py-5'>
+      <View className='flex-1 bg-zinc-100 px-3 py-5'>
         <DeviceForm onSuccess={handleSuccess} />
       </View>
     </ProtectedRoute>

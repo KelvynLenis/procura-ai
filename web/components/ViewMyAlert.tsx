@@ -49,12 +49,12 @@ export function ViewMyAlert({
   
           setUser(userResponse)
           setDevice(device)
+          setEvents(events)
   
           // console.log('Detalhes do dispositivo:', device)
           // console.log('Detalhes do usuário:', userResponse)
           // console.log('Detalhes do alerta:', events)
   
-          setEvents(events)
         } catch (error) {
           console.error('Erro ao buscar eventos:', error)
           toast.error('Erro ao buscar detalhes do alerta. Tente novamente.')
@@ -147,7 +147,7 @@ export function ViewMyAlert({
               </div>
             </div> */}
 
-            <div className="rounded-lg flex flex-col gap-2 p-4">
+            <div className="rounded-lg flex flex-col gap-2 py-4">
               <h2 className="font-medium text-lg">Detalhes da ocorrência</h2>
               <div className="flex flex-col gap-5">
 

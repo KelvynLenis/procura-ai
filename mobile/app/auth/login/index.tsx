@@ -158,7 +158,7 @@ export default function signIn() {
           Não possui conta?
         </Text>
         
-        <Button variant='white' onPress={() => router.push('/auth/sign-up')}>
+        <Button variant='black' onPress={() => router.push('/auth/sign-up')}>
           Cadastre-se
         </Button>
       </View>

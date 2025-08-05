@@ -185,17 +185,10 @@ export function RegisterForm({ admin }: RegisterFormProps) {
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full lg:w-[400px] h-fit flex flex-col gap-6 bg-white items-center self-center pl-0 px-0 py-5 rounded-xl"
         >
-          <Image src={logo} alt="logo" width={200} height={100} />
-
-          {admin ? (
-            <h3 className="text-center text-secondary font-bold">
-              Acesso do Admin
-            </h3>
-          ) : (
-            <h3 className="text-center flex">
-              Para se cadastrar, preencha as informações a seguir:
-            </h3>
-          )}
+          {/* <Image src={logo} alt="logo" width={200} height={100} /> */}
+          <h3 className="text-center flex">
+            Para se cadastrar, preencha as informações a seguir:
+          </h3>
 
           <FormField
             control={form.control}
@@ -390,7 +383,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
                 <Button
                   onClick={showLoadingToast}
                   type="button"
-                  className="bg-secondary text-white rounded-full flex w-full text-lg py-3 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300"
+                  className="bg-secondary text-white rounded-full flex w-fit text-sm lg:text-lg px-6 py-2 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300"
                 >
                   Retroceder à página do usuário
                 </Button>

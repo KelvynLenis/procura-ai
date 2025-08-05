@@ -12,7 +12,7 @@ export function FAQ({ bottom, light }: { bottom?: string, light?: boolean }) {
   return (
     <section
       className={cn(
-        'w-full h-fit  bg-faq bg-cover flex flex-col justify-between pt-28 pb-28 sm:pb-0 relative -top-16 3xl:-top-24',
+        'w-full h-fit bg-faq bg-cover flex flex-col justify-between pt-28 pb-28 sm:pb-0 relative -top-16 3xl:-top-24',
         `-top-${bottom}`,
         light ? 'bg-faq-light'
         : 'bg-faq'

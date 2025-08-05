@@ -37,7 +37,7 @@ export function ConfirmationDialog({
               Cancelar
             </AlertDialogCancel>
             <AlertDialogAction
-              className="rounded-full text-center items-center self-end justify-center flex w-fit px-2 py-2 transition-all duration-300 bg-red-500 border-[0.5px] border-red-500 text-white hover:bg-white hover:text-red-500"
+              className="rounded-full text-center items-center self-end justify-center flex w-fit px-2 py-2 transition-all duration-300 bg-secondary border-[0.5px] border-secondary text-white hover:bg-white hover:text-secondary"
               onClick={() => onConfirm()}
             >
               Confirmar

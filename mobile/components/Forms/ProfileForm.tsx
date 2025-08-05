@@ -531,11 +531,11 @@ const ProfileForm = ({ setIsModalVisible, onSuccess }: ProfileFormProps) => {
                       maxLength={100}
                       returnKeyType="next"
                     />
-                    <View className="w-full mb-2">
+                    <View className="w-fit mb-2">
                       <Text className="text-sm font-medium mb-1">
                         CPF
                       </Text>
-                      <View className="bg-zinc-100 rounded-md p-2">
+                      <View className="bg-zinc-100 rounded-md py-4 px-5 w-fit">
                         <Text>{form.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}</Text>
                       </View>
                     </View>

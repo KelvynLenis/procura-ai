@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import landingImages from '../assets/images/landing-image.svg'
-import line from '../assets/icons/line01.svg'
+import line from '../assets/images/line01.svg'
 import Button from './Button'
 
 export function Hero() {
@@ -34,7 +34,7 @@ export function Hero() {
           agora e fique um passo à frente
         </span>
         <Link href={'/login'} className="self-end flex lg:self-end mb-4 lg:mb-10 lg:mr-20 xl:mr-28 xl:mt-20">
-          <Button variant="blue" className="px-4 py-2 md:px-9 md:py-4 text-xl">
+          <Button variant="blue" className="px-4 py-2 md:px-9 md:py-4 lg:text-xl">
             Entrar
           </Button>
         </Link>

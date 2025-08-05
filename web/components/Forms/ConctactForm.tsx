@@ -116,6 +116,11 @@ export function ConctactForm({
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4 text-zinc-900 self-center items-center justify-between rounded-xl px-2 py-4"
         >
+          {
+            contact 
+              ? 'Atualize as informações do seu contato de confiança.'
+              : 'Adicione um contato de confiança para eventuais contatos de emergência.'
+          }
           <FormField
             control={form.control}
             name="contact_name"
@@ -223,7 +228,7 @@ export function ConctactForm({
             render={({ field }) => (
               <FormItem className="flex flex-col w-full">
                 <FormLabel className="w-fit text-center items-center flex">
-                  email
+                  Email
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -240,7 +245,7 @@ export function ConctactForm({
           <Button
             variant="blue"
             type="submit"
-            className="w-fit px-5 h-10 flex items-center justify-center text-xl text-white self-center"
+            className="w-fit h-10 flex items-center justify-center text-white self-center"
           >
             Salvar
           </Button>
