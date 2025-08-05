@@ -28,8 +28,6 @@ export async function getUserById(id: string): Promise<User> {
 
     const { documents } = await response.json()
 
-    // console.log(documents)
-
     return documents[0]
   } catch (error) {
     console.error('Erro ao listar dispositivos:', error)

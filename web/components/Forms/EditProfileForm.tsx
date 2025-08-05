@@ -181,7 +181,6 @@ export function EditProfileForm() {
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("subimited")
     try {
       setIsSubmitting(true)
       const callFunction = async () => {

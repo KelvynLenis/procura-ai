@@ -14,7 +14,7 @@ import { AiFillAndroid } from "react-icons/ai";
 
 export function Features() {
   return (
-    <section className="w-full h-full lg:h-fit gap-6 lg:gap-10 relative flex flex-col items-center px-4 z-0 py-10 lg:py-2">
+    <section className="w-full h-full lg:h-fit gap-6 lg:gap-10 relative flex flex-col items-center px-4 z-0 py-5 lg:py-2">
       <Image
         src={shapesLeft}
         alt="formas esquerda"
@@ -32,7 +32,7 @@ export function Features() {
         className="absolute hidden md:block -bottom-11 w-full right-0 z-0"
       />
 
-      <div className="flex flex-col w-full gap-0 z-10 mt-10">
+      <div className="flex flex-col w-full gap-0 z-10 mt-5">
         <h1 className="text-xl md:text-4xl text-primary font-medium self-center">
           Veja como é fácil se proteger
         </h1>
@@ -47,12 +47,12 @@ export function Features() {
             </span>
             Crie uma conta
           </span>
-            <div className='bg-[#B6D7FC] flex items-center justify-center gap-2 rounded-xl px-2 py-4 w-80 drop-shadow-lg'>
-              <Image src={feat1} alt="feat1" className="h-24 self-center" />
-              <span className="font-medium">
-                Cadastre-se no Procura.Aí informando alguns dados básicos
-              </span>
-            </div>
+          <div className='bg-[#B6D7FC] flex items-center justify-center gap-2 rounded-xl px-2 py-4 mobile-sm:w-72 mobile:w-80 drop-shadow-lg'>
+            <Image src={feat1} alt="feat1" className="h-24 self-center" />
+            <span className="font-medium">
+              Cadastre-se no Procura.Aí informando alguns dados básicos
+            </span>
+          </div>
           {/* <div className="bg-gradient-to-r from-[#F466F3] via-[#8170F4] to-[#0D79F4] w-72 mobile:w-80 mobile-lg:w-[300px] py-1 px-1 rounded-xl">
           </div> */}
         </div>
@@ -64,7 +64,7 @@ export function Features() {
             </span>
             Cadastre seus dispositivos
           </span>
-            <div className='bg-[#C5F4F3] flex items-center justify-center gap-2 rounded-xl px-2 py-4 w-80 drop-shadow-lg'>
+            <div className='bg-[#C5F4F3] flex items-center justify-center gap-2 rounded-xl px-2 py-4 mobile-sm:w-72 mobile:w-80 drop-shadow-lg'>
               <Image src={feat2} alt="feat2" className="h-24 self-center" />
               <span className="font-medium">
                 Registre um ou mais celulares para mantê-los protegidos
@@ -81,7 +81,7 @@ export function Features() {
             </span>
             Crie um alerta
           </span>
-            <div className='bg-[#F2CDC6] flex items-center justify-center gap-2 rounded-xl px-2 py-4 w-80 drop-shadow-lg'>
+            <div className='bg-[#F2CDC6] flex items-center justify-center gap-2 rounded-xl px-2 py-4 mobile-sm:w-72 mobile:w-80 drop-shadow-lg'>
               <Image src={feat3} alt="feat3" className="h-24 self-center" />
               <span className="font-medium">
                 Em caso de roubo, perda ou furto de algum dispositivo, crie um
@@ -99,7 +99,7 @@ export function Features() {
             </span>
             Autoridades são acionadas
           </span>
-            <div className='bg-[#f5df164d] flex items-center justify-center gap-2 rounded-xl px-2 py-4 w-80 drop-shadow-lg'>
+            <div className='bg-[#f5df164d] flex items-center justify-center gap-2 rounded-xl px-2 py-4 mobile-sm:w-72 mobile:w-80 drop-shadow-lg'>
               <Image src={feat4} alt="feat4" className="h-24 self-center" />
               <span className="font-medium">
                 Agora seu celular tem mais chances de ser recuperado pelas

@@ -85,35 +85,38 @@ export function DeviceItem({
 
   return (
     <>
-      <div className="text-sm grid grid-cols-3 gap-4 h-[60px] bg-white px-2 py-2 rounded-xl border border-zinc-300 items-center justify-center">
+      <div className="text-sm flex w-full gap-4 h-[60px] bg-white px-2 py-2 rounded-xl border border-zinc-300 items-center justify-between">
         <span className="w-28">{phone_model}</span>
-        <div className="self-center flex justify-end">
+        {/* <div className="self-center flex justify-end">
+        </div> */}
+        <div className="flex justify-center gap-2">
           <span
             className={cn(
-              'rounded-md mobile:w-24 mobile:text-sm mobile-sm:w-16 mobile-sm:text-xs flex self-center items-center justify-center capitalize font-medium',
-              status === 'Roubado' && 'bg-robbery-bg text-robbery-text p-1',
-              status === 'Recuperado' && 'bg-recovered-bg text-recovered-text p-1',
-              status === 'Regular' && 'bg-regular-bg text-regular-text p-1',
-              status === 'Furtado' && 'bg-theft-bg text-theft-text p-1',
-              status === 'Perdido' && 'bg-lost-bg text-lost-text p-1'
+              'rounded-md mobile:w-24 mobile:text-sm mobile-sm:w-20 mobile-sm:text-xs mobile: flex self-center items-center justify-center capitalize font-medium',
+              status === 'Roubado' && 'bg-robbery-bg text-robbery-text p-2',
+              status === 'Recuperado' && 'bg-recovered-bg text-recovered-text p-2',
+              status === 'Regular' && 'bg-regular-bg text-regular-text p-2',
+              status === 'Furtado' && 'bg-theft-bg text-theft-text p-2',
+              status === 'Perdido' && 'bg-lost-bg text-lost-text p-2'
             )}
           >
             {status.replace(' ', '')}
           </span>
-        </div>
-        <div className="flex justify-center gap-2">
+
           <Dialog open={isAlertModalOpen} onOpenChange={setIsAlertModalOpen}>
             <DialogTrigger asChild>
               <button
                 type="button"
                 className={cn(
                   'rounded-lg group relative w-8 h-8 ring-1 flex flex-col md:flex-row items-center justify-center',
-                  isRegular
+                  status === 'Recuperado' 
+                  ? 'bg-recovered-bg text-recovered-text' 
+                  : status === 'Regular' 
                     ? 'ring-zinc-300 bg-white text-red-600 hover:bg-red-300 hover:ring-red-500'
                     : 'ring-red-700 text-white bg-red-600 hover:bg-red-100 hover:text-red-600'
                 )}
               >
-                <IoIosWarning size={18} />
+                <IoIosWarning size={28} />
               </button>
             </DialogTrigger>
             <DialogContent className="h-[95%] overflow-scroll flex flex-col w-[93%] px-0 pt-0">
@@ -150,7 +153,7 @@ export function DeviceItem({
                 type="button"
                 className="rounded-lg w-8 h-8 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
               >
-                <Eye size={18} />
+                <Eye size={28} />
               </button>
             </DialogTrigger>
             <DialogContent className="bg-transparent ml-5 p-0 border-none ring-0 w-full">

@@ -21,7 +21,7 @@ export function Hero() {
       <div className="flex flex-col items-end gap-4 lg:gap-5 w-full z-10">
         <span className="font-bold w-[80%] lg:w-[76%] text-end md:text-2xl md:mr-16 md:w-[60%] lg:mr-20 lg:mt-20 xl:mr-28 xl:text-4xl text-white leading-7">
           Perdeu ou teve seu celular roubado? O{''}
-          <span className="text-secondary  rounded-lg px-1.5 pt-1 h-fit leading-snug">
+          <span className="text-white rounded-lg px-1.5 pt-1 h-fit leading-snug">
             Procura.AÍ
           </span>{' '}
           pode te ajudar!
