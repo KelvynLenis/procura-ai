@@ -33,6 +33,11 @@ export default {
       output: "static",
       favicon: "./assets/icons/favicon.png"
     },
+    splash: {
+      image: "./assets/images/logo.png",
+      resizeMode: "contain",
+      backgroundColor: "#212A38"
+    },
     plugins: [
       "expo-router",
       [
@@ -41,7 +46,7 @@ export default {
           image: "./assets/images/logo.png",
           imageWidth: 200,
           resizeMode: "contain",
-          backgroundColor: "#ffffff"
+          backgroundColor: "#212A38",
         }
       ]
     ],
