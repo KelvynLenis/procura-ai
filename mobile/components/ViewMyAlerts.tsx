@@ -174,17 +174,17 @@ const ViewMyAlerts = ({ setIsModalVisible, device, onSuccess }: ViewMyAlertsProp
             
             {
               device.status !== 'Recuperado' ? (
-                <Button variant='white' className='mt-4' onPress={() => setIsConfirmationDialogVisible(true)}>
+                <Button variant='red' className='mt-4' onPress={() => setIsConfirmationDialogVisible(true)}>
                   <View className='flex flex-row items-center gap-2'>
                     <TriangleAlert size={28} color={device.status === 'Recuperado' ? '#3cd9d680' : device.status === 'Regular' ? 'white' : 'red'} fill={device.status === 'Recuperado' ? '#009c99' : device.status === 'Regular' ? 'red' : 'white'} />
-                    <Text className='text-red-500'>
+                    <Text className='text-white'>
                       Desativar alerta
                     </Text>
                   </View>
                 </Button>              
               ) : (
                 <Button variant='blue' className='mt-2' onPress={() => setIsConfirmationDialogVisible(true)}>
-                  <Text className='text-white font-medium'>Recuperei meu aparelho</Text>
+                  <Text className='text-white font-medium'>Confirmar recebimento</Text>
                 </Button>
               )
             }
@@ -193,7 +193,7 @@ const ViewMyAlerts = ({ setIsModalVisible, device, onSuccess }: ViewMyAlertsProp
             <Text className='bg-zinc-100 w-full p-2 text-center font-semibold text-lg mt-2'>Visualizar histórico</Text>
           </TouchableOpacity> */}
 
-          {
+          {/* {
             isHistoryVisible && (
               <FlatList
               data={events}
@@ -207,7 +207,7 @@ const ViewMyAlerts = ({ setIsModalVisible, device, onSuccess }: ViewMyAlertsProp
                 
                 />
               )
-            }
+            } */}
 
         <ConfirmationDialog
           isModalVisible={isConfirmationDialogVisible}
