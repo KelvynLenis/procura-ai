@@ -116,7 +116,7 @@ export default function Index() {
       </View>
       <ImageBackground source={images.footer} className="w-full h-56 flex flex-col justify-end mt-5 py-10 px-4">
         <View className="flex flex-row justify-end -mb-8">
-          <Text className="text-zinc-400">Versão 0.0.8</Text>
+          <Text className="text-zinc-400">Versão 0.0.9</Text>
         </View>
       </ImageBackground>
     </ScrollView>

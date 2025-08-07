@@ -1,8 +1,8 @@
 'use client'
 
 import Image from 'next/image'
-import logo from '../assets/icons/logo-footer.svg'
-import fapesq from '../assets/icons/fapesq-logo.png'
+// import logo from '../assets/icons/logo-footer.svg'
+// import fapesq from '../assets/icons/fapesq-logo.png'
 import secties from '../assets/images/SECTIES_branco.png'
 import gov from '../assets/icons/gov.svg'
 import govFull from '../assets/icons/gov.png'
@@ -10,7 +10,7 @@ import { usePathname } from 'next/navigation'
 import line from '../assets/images/line02.svg'
 import { cn } from '@/lib/utils'
 
-export function Footer({ light }: { light?: boolean }) {
+export function Footer({ light, homepage }: { light?: boolean, homepage?: boolean }) {
   const pathname = usePathname().slice(1)
 
   return (
