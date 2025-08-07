@@ -266,11 +266,11 @@ const DeviceForm = ({ setIsModalVisible, device, onSuccess }: DeviceFormProps) =
             setValue={(value) => handleFieldChange('operator_id', value)}
           />
 
-          <View className='flex flex-row w-full' style={{ justifyContent: 'space-between' }}>
-            <Button variant='white' onPress={onCancel}>
+          <View className='flex flex-row w-full gap-4' style={{ justifyContent: 'space-between' }}>
+            <Button variant='white' onPress={onCancel} className='flex-1'>
               Cancelar
             </Button>
-            <Button variant='blue' onPress={handleSubmit}>
+            <Button variant='blue' onPress={handleSubmit} className='flex-1'>
               {isLoading ? <ActivityIndicator color="#fff" /> : device ? 'Atualizar' : 'Cadastrar'}
             </Button>
           </View>

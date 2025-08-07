@@ -23,6 +23,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { getOperator } from '@/functions/operators/get-operator'
+import { ConfirmationDialog } from '@/components/ConfirmationDialog'
 
 interface DeviceDetailsCardProps {
   id: string // ID do dispositivo
@@ -226,7 +227,21 @@ export function DeviceDetailsCard({
             </DialogContent>
           </Dialog>
 
-          <Dialog>
+          <ConfirmationDialog
+            onConfirm={() => handleDeleteDevice(id)}
+            title="Tem certeza que deseja excluir esse dispositivo?"
+            description="Essa ação não pode ser desfeita. Isso excluirá permanentemente o
+            dispositivo e removerá seus dados de nossos servidores."
+          >
+            <button
+              type="button"
+              className="flex rounded-lg w-10 h-10 bg-white group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90"
+            >
+              <Trash2 size={20} />
+            </button>
+          </ConfirmationDialog>
+
+          {/* <Dialog>
             <DialogTrigger>
               <button
                 type="button"
@@ -241,7 +256,7 @@ export function DeviceDetailsCard({
                 handleDeleteDevice={handleDeleteDevice}
               />
             </DialogContent>
-          </Dialog>
+          </Dialog> */}
         </div>
 
         <div className="flex w-full h-full">

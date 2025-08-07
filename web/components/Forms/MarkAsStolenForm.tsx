@@ -246,7 +246,7 @@ export function MarkAsStolenForm({
             e.preventDefault()
           }
         }}
-        className={cn("flex w-full flex-col gap-7 h-fit text-zinc-900 self-center items-center justify-between rounded-xl px-5 pb-4", isIOS && "pb-24")}
+        className={cn("flex w-full flex-col gap-7 h-fit text-zinc-900 self-center items-center justify-between rounded-xl px-0 pb-4", isIOS && "pb-24")}
       >
         <div className="w-full flex flex-col md:flex-row justify-between gap-4">
           <div className="flex flex-col gap-5 w-full md:w-48 lg:w-56">
@@ -362,10 +362,10 @@ export function MarkAsStolenForm({
           </div>
         </div>
 
-        <div className="flex justify-between w-full">
+        <div className="flex w-full gap-4">
           {isPopup && (
             <DialogClose asChild>
-              <Button type="button" variant="white" className="text-sm ">
+              <Button type="button" variant="white" className="text-sm flex-1">
                 Cancelar
               </Button>
             </DialogClose>
@@ -373,7 +373,7 @@ export function MarkAsStolenForm({
           <Button
             variant="blue"
             type="submit"
-            className="w-fit px-5 h-10 flex items-center justify-center text-sm  text-white self-center"
+            className="text-sm flex-1 text-white self-center"
           >
             Salvar
           </Button>

@@ -24,9 +24,9 @@ const ConfirmationDialog = ({ isModalVisible, setIsModalVisible, title, descript
             <Text className='text-lg'>
               {description}
             </Text>
-            <View className='flex flex-row w-full' style={{ justifyContent: 'space-between' }}>
-              <Button onPress={() => setIsModalVisible(false)} variant='white'>Cancelar</Button>
-              <Button onPress={onConfirm} variant='blue'>Confirmar</Button>
+            <View className='flex flex-row w-full gap-4' style={{ justifyContent: 'space-between' }}>
+              <Button onPress={() => setIsModalVisible(false)} variant='white' className='flex-1'>Cancelar</Button>
+              <Button onPress={onConfirm} variant='blue' className='flex-1'>Confirmar</Button>
             </View>
         </Pressable>
       </Pressable>

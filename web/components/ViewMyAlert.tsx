@@ -231,7 +231,7 @@ export function ViewMyAlert({
                   </span>
                 </button> */}
 
-                <Button variant={status === 'Recuperado' ? 'red' : 'blue'}>
+                <Button variant={status === 'Recuperado' ? 'red' : 'blue'} className='mobile-sm:w-full lg:w-fit mx-auto mt-4 gap-2'>
                   <IoIosWarning size={28} />
                   <span className="">{status === 'Recuperado' ? 'Confirmar recebimento' : 'Desativar alerta'}</span>
                 </Button>

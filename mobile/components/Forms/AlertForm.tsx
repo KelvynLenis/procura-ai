@@ -460,11 +460,11 @@ const AlertForm = ({ setIsModalVisible, device, onSuccess }: AlertFormProps) => 
             </View>
           </View>
 
-          <View className='flex flex-row w-full' style={{ justifyContent: 'space-between' }}>
-            <Button variant='white' onPress={setIsModalVisible ? () => setIsModalVisible(false) : () => console.log('cancelar')}>
+          <View className='flex flex-row w-full gap-4' style={{ justifyContent: 'space-between' }}>
+            <Button variant='white' className='flex-1' onPress={() => router.push('/(tabs)/my-devices')}>
               Cancelar
             </Button>
-            <Button variant='blue' onPress={onSubmit}>
+            <Button variant='blue' className='flex-1' onPress={onSubmit}>
               {isLoading ? 'Criando...' : 'Criar alerta'}
             </Button>
           </View>
