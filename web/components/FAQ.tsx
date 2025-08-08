@@ -7,18 +7,20 @@ import {
 import { questions } from '@/utils/FAQ'
 import { Footer } from './Footer'
 import { cn } from '@/lib/utils'
+import Image from 'next/image'
+import govFull from '../assets/icons/gov-full-light.svg'
+import logo from '../assets/icons/logo-footer.svg'
 
-export function FAQ({ bottom, light }: { bottom?: string, light?: boolean }) {
+export function FAQ({ bottom, light, homepage }: { bottom?: string, light?: boolean, homepage?: boolean  }) {
   return (
     <section
       className={cn(
-        'w-full h-fit  bg-faq bg-cover flex flex-col justify-between pt-28 pb-28 sm:pb-0 relative -top-16 3xl:-top-24',
+        'w-full h-fit bg-none lg:bg-faq bg-cover flex flex-col justify-between lg:pt-28 lg:pb-28 sm:pb-0 relative lg:-top-16 3xl:-top-24',
         `-top-${bottom}`,
-        light ? 'bg-faq-light'
-        : 'bg-faq'
+        light ? 'bg-faq-light': 'bg-faq',
       )}
     >
-      <div className="flex flex-col gap-5 w-full h-full px-4 lg:px-32">
+      <div className=" flex-col gap-5 w-full h-full px-4 lg:px-32 hidden lg:flex">
         <h2 className={cn(" font-bold text-3xl self-center text-center", light ? 'text-primary' : 'text-white')}>
           Perguntas frequentes
         </h2>
@@ -41,12 +43,16 @@ export function FAQ({ bottom, light }: { bottom?: string, light?: boolean }) {
           ))}
         </div>
       </div>
-
-      <div
-        className={cn('flex w-full absolute -bottom-28', `bottom-${bottom}`)}
-      >
-        <Footer light={!light} />
+        
+      <div className='w-full flex-col flex items-center justify-center h-fit py-4 bg-primary lg:hidden'>
+        <Image src={logo} alt="logo" className='h-full' />
+        <Image src={govFull} alt="gov" className='h-full' />
       </div>
+      
+      <div className={cn(' w-full absolute -bottom-20 hidden lg:flex', `bottom-${bottom}`)}>
+          <Footer light={!light} homepage={homepage} />
+      </div>
+
     </section>
   )
 }

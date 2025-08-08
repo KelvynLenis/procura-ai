@@ -11,6 +11,7 @@ import { getDeviceById } from '@/functions/device/get-device-by-id'
 import { getUserId } from '@/functions/user/get-user-id'
 import { getUserById } from '@/functions/user/get-user-by-id'
 import ViewOccurenceGoogleMap from './Maps/ViewOccurenceGoogleMap'
+import Button from './Button'
 
 interface ViewMyAlertProps {
   id: string
@@ -49,12 +50,12 @@ export function ViewMyAlert({
   
           setUser(userResponse)
           setDevice(device)
+          setEvents(events)
   
           // console.log('Detalhes do dispositivo:', device)
           // console.log('Detalhes do usuário:', userResponse)
           // console.log('Detalhes do alerta:', events)
   
-          setEvents(events)
         } catch (error) {
           console.error('Erro ao buscar eventos:', error)
           toast.error('Erro ao buscar detalhes do alerta. Tente novamente.')
@@ -147,7 +148,7 @@ export function ViewMyAlert({
               </div>
             </div> */}
 
-            <div className="rounded-lg flex flex-col gap-2 p-4">
+            <div className="rounded-lg flex flex-col gap-2 py-4">
               <h2 className="font-medium text-lg">Detalhes da ocorrência</h2>
               <div className="flex flex-col gap-5">
 
@@ -189,9 +190,9 @@ export function ViewMyAlert({
                         device.status === 'Perdido' &&
                           'bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500',
                         device.status === 'Recuperado' &&
-                          'bg-lime-500/30 text-recovered-text p-1',
+                          'bg-recovered-bg text-recovered-text p-1',
                         device.status === 'Regular' &&
-                          'bg-lime-500/30 text-regular-text p-1'
+                          'bg-regular-bg text-regular-text p-1'
                       )}
                     >
                       {device.status}
@@ -206,7 +207,7 @@ export function ViewMyAlert({
                 Tenha certeza que já tem o aparelho em mãos antes de prosseguir."
                 onConfirm={handleConfirmDialog}
               >
-                <button
+                {/* <button
                   type="button"
                   className={cn(
                     'w-full top-5 gap-2 group relative rounded-lg flex flex-row md:flex-row items-center justify-center hover:bg-white',
@@ -228,7 +229,12 @@ export function ViewMyAlert({
                       ? 'Confirmar recebimento'
                       : 'Desativar alerta'}
                   </span>
-                </button>
+                </button> */}
+
+                <Button variant={status === 'Recuperado' ? 'blue' : 'red'} className='mobile-sm:w-full lg:w-fit mx-auto mt-4 gap-2'>
+                  <IoIosWarning size={28} />
+                  <span className="">{status === 'Recuperado' ? 'Confirmar recebimento' : 'Desativar alerta'}</span>
+                </Button>
               </ConfirmationDialog>
             </div>
         </div>

@@ -1,6 +1,6 @@
 import { View, Text, ActivityIndicator, ScrollView, Modal, Alert, TouchableOpacity, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { DeviceProps, Event } from '@/interfaces'
+import { DeviceProps, Event, User } from '@/interfaces'
 import { getAllDeviceEvents, getDeviceEvents } from '@/functions/event/get-device-events'
 import { formatISODateString } from '@/lib/utils'
 import MapView, { Marker } from 'react-native-maps'
@@ -10,6 +10,9 @@ import { TriangleAlert, X } from 'lucide-react-native'
 import ConfirmationDialog from './ConfirmationDialog'
 import { cn } from '@/utils/cn'
 import { createEvent } from '@/functions/event/create-event'
+import { getUserId } from '@/functions/user/get-user-id'
+import { getUserInfo } from '@/functions/user/get-user-info'
+import { getUserById } from '@/functions/user/get-user-by-id'
 
 interface ViewMyAlertsProps {
   setIsModalVisible?: React.Dispatch<React.SetStateAction<boolean>>
@@ -18,10 +21,11 @@ interface ViewMyAlertsProps {
 }
 
 const ViewMyAlerts = ({ setIsModalVisible, device, onSuccess }: ViewMyAlertsProps) => {
-  const [events, setEvents] = useState<Event[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] = useState(false)
   const [isHistoryVisible, setIsHistoryVisible] = useState(false)
+  const [user, setUser] = useState<User>({} as User)
+  const [events, setEvents] = useState<Event[]>([])
 
   async function handleDeviceRecovery() {
     try {
@@ -55,10 +59,16 @@ const ViewMyAlerts = ({ setIsModalVisible, device, onSuccess }: ViewMyAlertsProp
   useEffect(() => {
     const fetchEvents = async () => {
       const events = await getAllDeviceEvents(device.$id!)
+      
+      const userId = await getUserId()
+      const userResponse = await getUserById(userId)
+      
+      setUser(userResponse)
       setEvents(events)
 
       setIsLoading(false)
     }
+
     fetchEvents()
   }, [device.$id])
 
@@ -74,20 +84,74 @@ const ViewMyAlerts = ({ setIsModalVisible, device, onSuccess }: ViewMyAlertsProp
 
   return (
     <>
-      <View className='gap-2 w-full'>
-        <View className='w-full h-20 bg-blue-100 flex-row justify-between p-5'>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{  paddingBottom: 50 }}>
+      <View className='gap-2 w-full h-fit'>
+        {/* <View className='w-full h-20 bg-blue-100 flex-row justify-between p-5'>
           <Text className='font-semibold text-2xl'>Informações da ocorrência</Text>
           <X size={30} color={'#000'} onPress={() => setIsModalVisible!(false)}/>
-        </View>
+        </View> */}
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ minHeight: '100%', paddingBottom: 20 }}>
-          <View className='px-5 py-1 gap-1'>
-            <View className='gap-1 flex-row'>
-              <Text className='font-semibold text-lg'>
-                Tipo de alerta:
+          <View className='px-5 py-1 gap-1'>  
+            <View className='gap-2 mb-2'>
+              <Text>
+                Seu dispositivo <Text className='font-bold'>{device.phone_model}</Text> foi registrado como <Text className='font-bold'>{device.status}</Text>.
+              </Text>
+              <Text>
+                Assim que o dispositivo for recuperado você será notificado através do aplicativo e via e-mail para orientação sobre os próximos passos.
+              </Text>
+
+              <Text>
+                Informaremos também aos seus contatos de confiança.
+              </Text>
+            </View>          
+
+            <View className='flex flex-col w-full gap-1'>
+              <View className='w-[100%] self-center h-72 gap-2'>
+                <MapView 
+                  initialRegion={{
+                    latitude: events[0].last_location[0],
+                    longitude: events[0].last_location[1],
+                    latitudeDelta: 0.05,
+                    longitudeDelta: 0.05,
+                  }}
+                  style={{ flex: 1 }} 
+                >
+                <Marker coordinate={{ latitude: events[0].last_location[0], longitude: events[0].last_location[1] }} />
+                </MapView>
+              </View>
+            </View>
+
+            <Text className='font-semibold text-xl mt-5'>Detalhes da ocorrência</Text>
+            
+            <View className='flex gap-3'>
+              <View className='flex flex-row'>
+                <Text className='font-semibold text-lg w-32'>Dispositivo</Text>
+                <Text className='text-lg break-words max-w-64'>{`${device.phone_model} / ${device.brand}`}</Text>
+              </View>
+
+              <View className='flex flex-row'>
+                <Text className='font-semibold text-lg w-32'>Proprietário</Text>
+                <Text className='text-lg break-words max-w-64'>{`${user.name}`}</Text>
+              </View>
+
+              <View className='flex flex-row'>
+                <Text className='font-semibold text-lg w-32'>Data e hora</Text>
+                <Text className='text-lg break-words max-w-64'>{formatISODateString(events[0].time_event)}</Text>
+              </View>
+
+              <View className='flex flex-row'>
+                <Text className='font-semibold text-lg w-32'>Descrição</Text>
+                <Text className='text-lg'>{events[0].description ? events[0].description : 'Sem descrição'}</Text>
+                
+              </View>
+
+            </View>
+            <View className='flex-row'>
+              <Text className='font-semibold text-lg w-32'>
+                Status
               </Text>
               <View className={cn(
-                'w-fitrounded-md p-1',
+                'w-fit rounded-md p-2',
                 device.status === 'Roubado' && 'bg-robbery-bg text-robbery-text',
                 device.status === 'Recuperado' && 'bg-recovered-bg text-recovered-text',
                 device.status === 'Regular' && 'bg-regular-bg text-regular-text',
@@ -107,33 +171,20 @@ const ViewMyAlerts = ({ setIsModalVisible, device, onSuccess }: ViewMyAlertsProp
                 </Text>
               </View>
             </View>
-            <Text className='font-semibold text-lg'>Descrição do alerta: <Text className='font-normal'>{events[0].description}</Text></Text>
-            <Text className='font-semibold text-lg'>Data e hora da ocorrência: <Text className='font-normal'>{formatISODateString(events[0].time_event)}</Text></Text>
-            <Text className='font-semibold text-lg'>Local de recuperação: <Text className='font-normal'>{events[0].retrieval_location || "Esse dispositivo ainda não foi recuperado"}</Text></Text>
-            <Text className='font-semibold text-lg'>Endereço: <Text className='font-normal'>{events[0].address || 'Esse dispositivo ainda não foi recuperado'}</Text></Text>
-            
-            <View className='flex flex-col w-full gap-1'>
-              <View className='w-[100%] self-center h-72 gap-2'>
-                <MapView 
-                  initialRegion={{
-                    latitude: events[0].last_location[0],
-                    longitude: events[0].last_location[1],
-                    latitudeDelta: 0.05,
-                    longitudeDelta: 0.05,
-                  }}
-                  style={{ flex: 1 }} 
-                >
-                <Marker coordinate={{ latitude: events[0].last_location[0], longitude: events[0].last_location[1] }} />
-                </MapView>
-              </View>
-            </View>
             
             {
               device.status !== 'Recuperado' ? (
-                <Button variant='white' className='mt-4' onPress={() => setIsConfirmationDialogVisible(true)}>Cancelar o alerta</Button>              
+                <Button variant='red' className='mt-4' onPress={() => setIsConfirmationDialogVisible(true)}>
+                  <View className='flex flex-row items-center gap-2'>
+                    <TriangleAlert size={28} color={device.status === 'Recuperado' ? '#3cd9d680' : device.status === 'Regular' ? 'white' : 'red'} fill={device.status === 'Recuperado' ? '#009c99' : device.status === 'Regular' ? 'red' : 'white'} />
+                    <Text className='text-white'>
+                      Desativar alerta
+                    </Text>
+                  </View>
+                </Button>              
               ) : (
                 <Button variant='blue' className='mt-2' onPress={() => setIsConfirmationDialogVisible(true)}>
-                  <Text className='text-white font-medium'>Recuperei meu aparelho</Text>
+                  <Text className='text-white font-medium'>Confirmar recebimento</Text>
                 </Button>
               )
             }
@@ -142,7 +193,7 @@ const ViewMyAlerts = ({ setIsModalVisible, device, onSuccess }: ViewMyAlertsProp
             <Text className='bg-zinc-100 w-full p-2 text-center font-semibold text-lg mt-2'>Visualizar histórico</Text>
           </TouchableOpacity> */}
 
-          {
+          {/* {
             isHistoryVisible && (
               <FlatList
               data={events}
@@ -156,8 +207,7 @@ const ViewMyAlerts = ({ setIsModalVisible, device, onSuccess }: ViewMyAlertsProp
                 
                 />
               )
-            }
-        </ScrollView>
+            } */}
 
         <ConfirmationDialog
           isModalVisible={isConfirmationDialogVisible}
@@ -168,6 +218,7 @@ const ViewMyAlerts = ({ setIsModalVisible, device, onSuccess }: ViewMyAlertsProp
           onConfirm={handleDeviceRecovery}
         />
       </View>
+          </ScrollView>
     </>
       
   )

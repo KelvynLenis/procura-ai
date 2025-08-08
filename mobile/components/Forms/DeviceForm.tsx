@@ -189,8 +189,8 @@ const DeviceForm = ({ setIsModalVisible, device, onSuccess }: DeviceFormProps) =
 
           <View className="w-full mb-2 gap-2">
             <Text className="text-lg ml-1">
-              <Text className="text-red-500">*</Text>
-              IMEI
+              {/* <Text className="text-red-500">*</Text> */}
+              IMEI (obrigatório)
             </Text>
             <View className='rounded-md border-0 bg-zinc-100 px-4'>
               <MaskInput
@@ -223,28 +223,10 @@ const DeviceForm = ({ setIsModalVisible, device, onSuccess }: DeviceFormProps) =
             </Text>
           </View>
 
-          <InputField
-            label="Modelo"
-            placeholder="Modelo"
-            containerStyle='rounded-md border-0 bg-zinc-100 w-full'
-            textContentType="none"
-            value={form.phone_model}
-            onChangeText={(value) => setForm({ ...form, phone_model: value })}
-          />
-
-          <InputField
-            label="Fabricante"
-            placeholder="Fabricante"
-            containerStyle='rounded-md border-0 bg-zinc-100 w-full'
-            textContentType="none"
-            value={form.brand}
-            onChangeText={(value) => setForm({ ...form, brand: value })}
-          />
-
           <View className="w-full mb-2 gap-2">
             <Text className="text-lg ml-1">
-              <Text className="text-red-500">*</Text>
-              Número do celular
+              {/* <Text className="text-red-500">*</Text> */}
+              Número do celular (obrigatório)
             </Text>
             <View className='rounded-md border-0 bg-zinc-100 px-4'>
               <MaskInput
@@ -260,17 +242,35 @@ const DeviceForm = ({ setIsModalVisible, device, onSuccess }: DeviceFormProps) =
               <Text className="text-red-500 text-sm mt-1 ml-4">{errors.phone_number}</Text>
             )}
           </View>
+          
+          <InputField
+            label="Fabricante"
+            placeholder="Fabricante"
+            containerStyle='rounded-md border-0 bg-zinc-100 w-full'
+            textContentType="none"
+            value={form.brand}
+            onChangeText={(value) => setForm({ ...form, brand: value })}
+          />
+
+          <InputField
+            label="Modelo"
+            placeholder="Modelo"
+            containerStyle='rounded-md border-0 bg-zinc-100 w-full'
+            textContentType="none"
+            value={form.phone_model}
+            onChangeText={(value) => setForm({ ...form, phone_model: value })}
+          />
 
           <OperatorPickerComponent 
             value={form.operator_id} 
             setValue={(value) => handleFieldChange('operator_id', value)}
           />
 
-          <View className='flex flex-row w-full' style={{ justifyContent: 'space-between' }}>
-            <Button variant='white' onPress={onCancel}>
+          <View className='flex flex-row w-full gap-4' style={{ justifyContent: 'space-between' }}>
+            <Button variant='white' onPress={onCancel} className='flex-1'>
               Cancelar
             </Button>
-            <Button variant='blue' onPress={handleSubmit}>
+            <Button variant='blue' onPress={handleSubmit} className='flex-1'>
               {isLoading ? <ActivityIndicator color="#fff" /> : device ? 'Atualizar' : 'Cadastrar'}
             </Button>
           </View>

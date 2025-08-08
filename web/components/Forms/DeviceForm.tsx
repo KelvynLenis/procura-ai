@@ -847,7 +847,7 @@ export function DeviceForm({
             />
 
             {/* Action Buttons */}
-            <div className="flex gap-3 pt-6">
+            <div className="flex w-full gap-4 pt-6">
               {device ? (
                 <>
                   {isPopover ? (
@@ -867,7 +867,7 @@ export function DeviceForm({
                         onClick={() => goBack()}
                         type="button"
                         variant="white"
-                        className="w-full"
+                        className="w-full lg:w-fit"
                       >
                         Cancelar
                       </Button>
@@ -877,7 +877,7 @@ export function DeviceForm({
                     type="submit"
                     disabled={isLoading}
                     variant="blue"
-                    className="flex-1 px-2"
+                    className="flex-1 lg:w-fit px-2"
                   >
                     {isLoading ? 'Salvando...' : 'Salvar alterações'}
                   </Button>
@@ -889,17 +889,17 @@ export function DeviceForm({
                       onClick={() => setModalOpen!(false)}
                       type="button"
                       variant="white"
-                      className="flex-1"
+                      className="w-full lg:w-fit"
                     >
                       Cancelar
                     </Button>
                   ) : (
-                    <Link href={'/meus-dispositivos'} className="flex-1">
+                    <Link href={'/meus-dispositivos'} className="w-full">
                       <Button
                         onClick={() => goBack()}
                         type="button"
                         variant="white"
-                        className="w-fit"
+                        className="w-full lg:w-fit"
                       >
                         Cancelar
                       </Button>
@@ -909,7 +909,7 @@ export function DeviceForm({
                     type="submit"
                     disabled={isLoading}
                     variant="blue"
-                    className="w-fit"
+                    className="w-full lg:w-fit"
                   >
                     {isLoading ? 'Cadastrando...' : 'Cadastrar'}
                   </Button>

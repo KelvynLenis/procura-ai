@@ -21,6 +21,7 @@ import { getUserInfo } from '@/functions/user/get-user-info'
 import { getUserId } from '@/functions/user/get-user-id'
 import { getUserById } from '@/functions/user/get-user-by-id'
 import ViewOccurenceGoogleMap from './Maps/ViewOccurenceGoogleMap'
+import Button from './Button'
 
 interface ViewMyAlertProps {
   id: string
@@ -347,7 +348,7 @@ export function ViewMyAlerts({
                 Tenha certeza que já tem o aparelho em mãos antes de prosseguir."
                 onConfirm={handleConfirmDialog}
               >
-                <button
+                {/* <button
                   type="button"
                   className={cn(
                     'w-full top-5 gap-2 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white',
@@ -369,7 +370,12 @@ export function ViewMyAlerts({
                       ? 'Confirmar recebimento'
                       : 'Desativar alerta'}
                   </span>
-                </button>
+                </button> */}
+
+                <Button variant={status === 'Recuperado' ? 'blue' : 'red'} className='w-full mt-4 gap-2'>
+                  <IoIosWarning size={28} />
+                  <span className="">{status === 'Recuperado' ? 'Confirmar recebimento' : 'Desativar alerta'}</span>
+                </Button>
               </ConfirmationDialog>
             </div>
 

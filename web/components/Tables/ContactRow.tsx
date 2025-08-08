@@ -95,9 +95,8 @@ export function ContactRow({ contact, index, setContacts }: ContactRowProps) {
               </DialogTrigger>
               <DialogContent className='rounded-xl p-0'>
                 <DialogHeader className='bg-secondary/10 p-2'>
-                  <DialogTitle className='text-secondary'>Editar contato</DialogTitle>
+                  <DialogTitle className='text-secondary text-left w-full'>Editar contato</DialogTitle>
                   <DialogDescription className='text-secondary'>
-                    Edite as informações do contato.
                   </DialogDescription>
                 </DialogHeader>
                 <ConctactForm

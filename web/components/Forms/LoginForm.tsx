@@ -157,9 +157,9 @@ export function LoginForm() {
           <span
             aria-disabled
             title="Em breve"
-            className="underline cursor-default aria-disabled:text-zinc-400 self-start pl-10 text-sm "
+            className="underline cursor-default aria-disabled:text-zinc-700 self-start pl-10 text-sm "
           >
-            Esqueceu sua senha?
+            Esqueci minha senha
           </span>
 
           <Button type="submit" variant="blue" className="text-base">
@@ -167,7 +167,7 @@ export function LoginForm() {
           </Button>
 
           <div className="w-full flex flex-col gap-9">
-            <span className="w-full h-[1px] rounded-full bg-secondary" />
+            <span className="w-full h-[1px] rounded-full bg-primary" />
 
             <div className="flex flex-col gap-3">
               <span className="font-bold self-center">
@@ -182,7 +182,7 @@ export function LoginForm() {
               </span>
             </div>
 
-            <span className="w-full h-[1px] rounded-full bg-secondary" />
+            <span className="w-full h-[1px] rounded-full bg-primary" />
 
             <div className="w-full flex flex-col gap-3">
               <span className="font-bold self-center">Não possui conta?</span>
@@ -193,7 +193,7 @@ export function LoginForm() {
                 <Button
                   onClick={showLoadingToast}
                   type="button"
-                  variant="blue"
+                  variant="black"
                   className="text-base"
                 >
                   Cadastre-se

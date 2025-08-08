@@ -1,7 +1,7 @@
 'use client'
 
 import type { Contact } from '@/types'
-import { Pencil, Trash2 } from 'lucide-react'
+import { Mail, Pencil, Phone, Trash2 } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
 
@@ -83,12 +83,12 @@ export function ContacItem({ contact, setContacts }: ContactItemProps) {
         </div>
 
         <div className="flex w-full h-full">
-          <div className="flex flex-col items-start justify-center gap-2 bg-procura-ai-zinc/10 px-4 pt-4 pb-4 h-full">
+          <div className="flex flex-col items-start justify-center gap-2 px-4 pt-4 pb-4 h-full">
             <span className="">Nome</span>
 
-            <span className="">E-mail</span>
+            <span className=""><Mail /> E-mail</span>
 
-            <span className="">Contato</span>
+            <span className=""><Phone /> Contato</span>
           </div>
 
           <div className="flex flex-col items-start justify-center gap-2 px-4 pt-4 w-full h-full">

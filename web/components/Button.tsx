@@ -7,7 +7,7 @@ import { useState } from 'react'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode
-  variant: 'orange' | 'blue' | 'white' | 'red'
+  variant: 'orange' | 'blue' | 'white' | 'red' | 'black'
   isLoader?: boolean
   className?: string
 }
@@ -24,11 +24,13 @@ export default function Button({
   return (
     <button
       className={cn(
-        'rounded-full drop-shadow text-sm font-semibold text-center items-center justify-center flex w-fit px-6 py-2 transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0',
+        'rounded-full drop-shadow text-sm lg:text-xl font-semibold text-center items-center justify-center flex w-fit px-6 py-2 transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0',
         variant === 'blue' &&
-          'bg-secondary text-white hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary',
+          'bg-secondary border-[0.5px] border-secondary text-white hover:bg-white hover:text-secondary',
         variant === 'white' &&
           'bg-white border-[0.5px] border-red-500 text-red-500 hover:bg-red-500 hover:text-white',
+        variant === 'black' &&
+          'bg-white border-[0.5px] border-black text-black hover:bg-black hover:text-white',
         variant === 'red' &&
           'bg-red-500 border-[0.5px] border-red-500 text-white hover:bg-white hover:text-red-500',
         className

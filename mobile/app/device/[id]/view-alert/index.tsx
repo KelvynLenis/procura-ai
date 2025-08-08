@@ -11,6 +11,7 @@ import ViewMyAlerts from '@/components/ViewMyAlerts'
 export default function ViewAlert() {
   const params = useLocalSearchParams();
   const id = params.id
+  console.log('ID do dispositivo:', id);
   const [device, setDevice] = useState<Device>({} as Device);
   const { width, height } = useWindowDimensions();
 
@@ -36,7 +37,7 @@ export default function ViewAlert() {
         <Stack.Screen
           options={{
             header: () => (
-              <Header title="Acionar Alerta" />
+              <Header title="Acompanhamento" />
             ),
           }}
         />

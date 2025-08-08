@@ -160,11 +160,15 @@ export function Header({ isAdmin }: HeaderProps) {
           <Image src={logo} alt="logo" className="w-16 md:w-20 md:hidden" />
           <span className="text-xl text-white -ml-2 lg:-ml-4">{matchedRoute}</span>
           <div className='flex items-center gap-4'>
-            <NotificationButton
-              notifications={notifications}
-              setNotifications={setNotifications}
-              onNotificationClick={handleNotificationClick}
-            />
+            {
+              isAdmin && (
+                <NotificationButton
+                  notifications={notifications}
+                  setNotifications={setNotifications}
+                  onNotificationClick={handleNotificationClick}
+                />
+              )
+            }
             <DropdownMenu>
               <DropdownMenuTrigger className='flex-row text-white items-center justify-center gap-2 hidden mr-2 md:flex'>
                 {

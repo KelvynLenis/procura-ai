@@ -1,4 +1,4 @@
-import { User } from '@/types'
+import { User } from '@/interfaces'
 
 export async function getUserById(id: string): Promise<User> {
   try {
@@ -11,12 +11,12 @@ export async function getUserById(id: string): Promise<User> {
     })
    
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
+      `${process.env.EXPO_PUBLIC_API_URL}/databases/${process.env.EXPO_PUBLIC_DATABASE_ID}/collections/${process.env.EXPO_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
       {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+          'X-Appwrite-Project': `${process.env.EXPO_PUBLIC_APP_WRITE_PROJECT_ID}`,
         },
       }
     )
@@ -27,6 +27,8 @@ export async function getUserById(id: string): Promise<User> {
     }
 
     const { documents } = await response.json()
+
+    // console.log(documents)
 
     return documents[0]
   } catch (error) {

@@ -30,15 +30,17 @@ export function DevicesList({
   return (
     <>
       <div className="flex flex-col w-full self-center gap-2 bg-[#F9F9F9] ring-1 ring-zinc-300 rounded-xl">
-        <div className="grid grid-cols-3 gap-2 px-2.5 bg-zinc-200/50 rounded-t-xl py-3 drop-shadow-sm">
+        <div className="flex w-full gap-2 px-2.5 bg-zinc-200/50 rounded-t-xl py-3 drop-shadow-sm justify-between">
           <span>Modelo</span>
-          <span className="ml-9 text-center">Status</span>
-          <span className="ml-1 text-center">Ações</span>
+          <div className='flex -ml-10'>
+            <span className="text-left mobile-sm:w-20 mobile:w-24">Status</span>
+            <span className="text-left mobile-sm:w-20 mobile:w-20">Ações</span>
+          </div>
         </div>
         <div className="flex flex-col w-full self-center gap-1 px-1 py-2">
           {isLoading ? (
             <div className="flex flex-col w-full h-fit bg-white rounded-lg ring-1 ring-zinc-200">
-              <div className="grid grid-cols-3 justify-end gap-5 px-2.5 py-3">
+              <div className="flex w-full justify-end gap-5 px-2.5 py-3">
                 <Skeleton className="w-20 h-6" />
                 <Skeleton className="w-16 h-6 ml-6" />
                 <div className="flex gap-1 ml-3">

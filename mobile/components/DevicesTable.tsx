@@ -41,8 +41,8 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
   const redirectToMyAlerts = () => {
 
     // device.status === 'Recuperado' && router.push(`/device/${device.$id}/view-alert`)
-    
-    device.status === 'Regular' ? router.push(`/device/${device.$id}/create-alert`) : setIsAlertModalVisible(true)
+    // device.status === 'Regular' ? router.push(`/device/${device.$id}/create-alert`) : setIsAlertModalVisible(true)
+    device.status === 'Regular' ? router.push(`/device/${device.$id}/create-alert`) : router.push(`/device/${device.$id}/view-alert`)
   };
 
   return (
@@ -62,11 +62,11 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
             )}
           >
             <Text className={cn(
-                device.status === 'Roubado' && 'text-robbery-text',
-                device.status === 'Recuperado' && 'text-recovered-text',
-                device.status === 'Regular' && 'text-regular-text',
-                device.status === 'Furtado' && 'text-theft-text',
-                device.status === 'Perdido' && 'text-lost-text'
+                device.status === 'Roubado' && 'font-medium text-robbery-text',
+                device.status === 'Recuperado' && 'font-medium text-recovered-text',
+                device.status === 'Regular' && 'font-medium text-regular-text',
+                device.status === 'Furtado' && 'font-medium text-theft-text',
+                device.status === 'Perdido' && 'font-medium text-lost-text'
               )}
             >
               {device.status}
@@ -76,10 +76,10 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
           <View className='flex flex-row gap-2 w-fit'> 
             <TouchableOpacity onPress={() => redirectToMyAlerts()} className={cn(
                 'flex items-center justify-center w-9 h-9 rounded-md ',
-                device.status === 'Recuperado' ? 'bg-recovered-bg text-recovered-text' : 'bg-red-500',
+                device.status === 'Recuperado' ? 'bg-recovered-bg text-recovered-text' : device.status === 'Regular' ? 'bg-white border border-zinc-400' : 'bg-red-500'
                )}
               >
-              <TriangleAlert size={28} color={device.status === 'Recuperado' ? '#3cd9d680' :'red'} fill={device.status === 'Recuperado' ? '#009c99' : 'white'} />
+              <TriangleAlert size={28} color={device.status === 'Recuperado' ? '#3cd9d680' : device.status === 'Regular' ? 'white' : 'red'} fill={device.status === 'Recuperado' ? '#009c99' : device.status === 'Regular' ? 'red' : 'white'} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setIsModalVisible(true)} className='bg-white border border-zinc-400 flex items-center justify-center w-9 h-9 rounded-md'>
               <Eye size={24} color='black' />
@@ -219,7 +219,7 @@ const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () =>
 
       <Modal animationType='fade' transparent visible={isAlertModalVisible} onRequestClose={() => setIsAlertModalVisible(false)}>
         <Pressable className='flex-1 bg-black/50 flex items-center justify-center' onPress={() => setIsEditModalVisible(false)}>
-          <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '80%', width: '90%' }} className='bg-white flex rounded-2xl overflow-hidden'>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ height: '90%', width: '90%' }} className='bg-white flex rounded-2xl '>            
             {
               device.status === 'Regular' ? (
                 <AlertForm 
@@ -295,7 +295,7 @@ const DevicesTable = () => {
         <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
       }
     >
-      <View className='bg-zinc-100/50 border border-zinc-200 w-full h-fit gap-2 rounded-xl flex'>
+      <View className='bg-zinc-100/90 border border-zinc-200 w-full h-fit gap-2 rounded-xl flex'>
         <View className='bg-zinc-200/70 w-full h-10 flex flex-row items-center rounded-t-xl pr-5 pl-3'>
           <View className='w-full max-w-[13.5rem]'>
             <Text>Modelo</Text>
