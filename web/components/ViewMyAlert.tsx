@@ -190,9 +190,9 @@ export function ViewMyAlert({
                         device.status === 'Perdido' &&
                           'bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500',
                         device.status === 'Recuperado' &&
-                          'bg-lime-500/30 text-recovered-text p-1',
+                          'bg-recovered-bg text-recovered-text p-1',
                         device.status === 'Regular' &&
-                          'bg-lime-500/30 text-regular-text p-1'
+                          'bg-regular-bg text-regular-text p-1'
                       )}
                     >
                       {device.status}
@@ -231,7 +231,7 @@ export function ViewMyAlert({
                   </span>
                 </button> */}
 
-                <Button variant={status === 'Recuperado' ? 'red' : 'blue'} className='mobile-sm:w-full lg:w-fit mx-auto mt-4 gap-2'>
+                <Button variant={status === 'Recuperado' ? 'blue' : 'red'} className='mobile-sm:w-full lg:w-fit mx-auto mt-4 gap-2'>
                   <IoIosWarning size={28} />
                   <span className="">{status === 'Recuperado' ? 'Confirmar recebimento' : 'Desativar alerta'}</span>
                 </Button>
