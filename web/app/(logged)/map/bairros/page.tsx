@@ -10,7 +10,6 @@ export default async function Dashboard() {
   try {
     const dashboardData = await listDistricts()
     districtsData = dashboardData
-    console.log(districtsData)
   } catch (error) {
     console.error(error)
   }

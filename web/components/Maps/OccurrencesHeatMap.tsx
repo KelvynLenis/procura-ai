@@ -53,7 +53,6 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
         district.cod_neighborhood === Number(payload.properties.cod_bairro)
     )
 
-    console.log(district)
 
     setOverlayData({
       district,
