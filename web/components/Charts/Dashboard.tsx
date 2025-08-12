@@ -197,7 +197,7 @@ export function Dashboard() {
               className="mb-10"
             />
             <CardChart
-              variant="green"
+              variant="red"
               number={deviceStats.robbed}
               title="Dispositivos Roubados"
               className="mb-10"
