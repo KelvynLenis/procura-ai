@@ -10,15 +10,10 @@ export async function listDistricts(): Promise<District[]> {
   while (offset < total) {
     const params = new URLSearchParams({
       'queries[0]': JSON.stringify({
-        method: 'equal',
-        attribute: 'name_municipality',
-        values: ['João Pessoa'],
-      }),
-      'queries[1]': JSON.stringify({
         method: 'limit',
         values: [limit],
       }),
-      'queries[2]': JSON.stringify({
+      'queries[1]': JSON.stringify({
         method: 'offset',
         values: [offset],
       }),
