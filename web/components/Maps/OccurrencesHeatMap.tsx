@@ -52,7 +52,7 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
       district =>
         district.cod_neighborhood === Number(payload.properties.cod_bairro)
     )
-
+    
 
     setOverlayData({
       district,
@@ -267,16 +267,16 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
             </div>
             <div className="py-0.5 px-2">
               <span className="font-bold">
-                {OverlayData.district?.robbery_counter &&
-                  OverlayData.district.robbery_counter}{' '}
+                {OverlayData.district?.robbery_counter ?
+                  OverlayData.district.robbery_counter : 0}{' '}
                 {OverlayData.district?.robbery_counter > 1 ? 'roubos' : 'roubo'}{' '}
                 <br />
-                {OverlayData.district?.theft_counter &&
-                  OverlayData.district.theft_counter}{' '}
+                {OverlayData.district?.theft_counter ?
+                  OverlayData.district.theft_counter : 0}{' '}
                 {OverlayData.district?.theft_counter > 1 ? 'furtos' : 'furto'}{' '}
                 <br />
-                {OverlayData.district?.lost_counter &&
-                  OverlayData.district.lost_counter}{' '}
+                {OverlayData.district?.lost_counter ?
+                  OverlayData.district.lost_counter : 0}{' '}
                 {OverlayData.district?.lost_counter > 1 ? 'perdas' : 'perda'}{' '}
                 <br />
               </span>
