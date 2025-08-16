@@ -186,7 +186,7 @@ export function EventDetails({
       <div className="flex flex-col gap-2">
         <div className="flex justify-between items-center mb-2">
           <h3 className="font-semibold text-procura-ai-blue">
-            Ocorrências na Orla de Cabo Branco ({sameLocationOccurrences.length})
+            Ocorrências ({sameLocationOccurrences.length})
           </h3>
           <button type="button" onClick={closePopup}>
             <X className="w-6 h-6 cursor-pointer" />
