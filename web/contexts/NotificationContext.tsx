@@ -1,0 +1,183 @@
+'use client'
+
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react'
+import { Notification, OccurrencesProps } from '@/types'
+import { joinDevicesEventsUsers } from '@/functions/occurences/get-occurrences'
+import { client } from '@/lib/appwrite'
+
+interface NotificationContextType {
+  notifications: Notification[]
+  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>
+  selectedLocation: [number, number] | undefined
+  setSelectedLocation: React.Dispatch<React.SetStateAction<[number, number] | undefined>>
+  selectedOccurrence: OccurrencesProps | undefined
+  setSelectedOccurrence: React.Dispatch<React.SetStateAction<OccurrencesProps | undefined>>
+  occurrences: OccurrencesProps[]
+  setOccurrences: React.Dispatch<React.SetStateAction<OccurrencesProps[]>>
+  handleNotificationClick: (notification: Notification, occurrences?: OccurrencesProps[]) => void
+  refreshOccurrences: () => Promise<void>
+  clearSelection: () => void
+}
+
+const NotificationContext = createContext<NotificationContextType | undefined>(undefined)
+
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value)
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value)
+    }, delay)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [value, delay])
+
+  return debouncedValue
+}
+
+export function NotificationProvider({ children }: { children: ReactNode }) {
+  const [notifications, setNotifications] = useState<Notification[]>([])
+  const [selectedLocation, setSelectedLocation] = useState<[number, number] | undefined>()
+  const [selectedOccurrence, setSelectedOccurrence] = useState<OccurrencesProps | undefined>()
+  const [occurrences, setOccurrences] = useState<OccurrencesProps[]>([])
+  const [updateTrigger, setUpdateTrigger] = useState(0)
+
+  const debouncedUpdateTrigger = useDebounce(updateTrigger, 500)
+
+  const refreshOccurrences = useCallback(async () => {
+    try {
+      console.log('Contexto: Buscando ocorrências...')
+      const data = await joinDevicesEventsUsers()
+      setOccurrences(data || [])
+      console.log('Contexto: Ocorrências atualizadas', data?.length || 0)
+    } catch (error) {
+      console.error('Erro ao atualizar ocorrências:', error)
+    }
+  }, [])
+
+  useEffect(() => {
+    console.log('Contexto: Iniciando subscription do Appwrite...')
+    
+    const handleNewNotification = (response: any) => {
+      const { payload } = response
+      const relevantTypes = [
+        'Furto simples',
+        'Extravio ou Perda', 
+        'Roubo',
+        'Recuperado',
+        'Regular'
+      ]
+
+      console.log('Contexto: Nova notificação recebida', { 
+        type: payload.type, 
+        id: payload.$id,
+        isRelevant: relevantTypes.includes(payload.type)
+      })
+
+      if (relevantTypes.includes(payload.type)) {
+        setNotifications(prevNotifications => {
+          const exists = prevNotifications.some(n => n.$id === payload.$id)
+          if (!exists) {
+            console.log('Contexto: Adicionando nova notificação')
+            setUpdateTrigger(prev => prev + 1)
+            return [...prevNotifications, payload]
+          }
+          console.log('Contexto: Notificação já existe, ignorando')
+          return prevNotifications
+        })
+      }
+    }
+
+    const unsubscribe = client.subscribe(
+      `databases.${process.env.NEXT_PUBLIC_DATABASE_ID}.collections.${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}.documents`,
+      handleNewNotification
+    )
+
+    return () => {
+      console.log('Contexto: Cancelando subscription do Appwrite...')
+      unsubscribe()
+    }
+  }, [])
+
+  useEffect(() => {
+    console.log('Contexto: Carregando dados iniciais...')
+    refreshOccurrences()
+  }, [refreshOccurrences])
+
+  useEffect(() => {
+    if (debouncedUpdateTrigger > 0) {
+      console.log('Contexto: Atualizando ocorrências devido a nova notificação...')
+      refreshOccurrences()
+    }
+  }, [debouncedUpdateTrigger, refreshOccurrences])
+
+  const handleNotificationClick = useCallback((notification: Notification, occurrencesList?: OccurrencesProps[]) => {
+    const currentOccurrences = occurrencesList || occurrences
+    
+    console.log('Contexto: Processando clique na notificação', { 
+      deviceId: notification.id_device,
+      availableOccurrences: currentOccurrences.length
+    })
+    
+    const relatedOccurrence = currentOccurrences.find(
+      occ => occ.device.$id === notification.id_device
+    )
+
+    if (relatedOccurrence?.event?.last_location) {
+      console.log('Contexto: Ocorrência encontrada', { 
+        deviceId: notification.id_device, 
+        location: relatedOccurrence.event.last_location,
+        eventType: relatedOccurrence.event.type
+      })
+      
+      setSelectedOccurrence(relatedOccurrence)
+      
+      setSelectedLocation(undefined)
+      
+      requestAnimationFrame(() => {
+        setSelectedLocation(relatedOccurrence.event.last_location)
+        console.log('Contexto: Localização definida', relatedOccurrence.event.last_location)
+      })
+    } else {
+      console.warn('Contexto: Ocorrência não encontrada ou sem localização', {
+        deviceId: notification.id_device,
+        found: !!relatedOccurrence,
+        hasLocation: !!relatedOccurrence?.event?.last_location
+      })
+    }
+  }, [occurrences])
+
+  const clearSelection = useCallback(() => {
+    console.log('Contexto: Limpando seleção')
+    setSelectedLocation(undefined)
+    setSelectedOccurrence(undefined)
+  }, [])
+
+  return (
+    <NotificationContext.Provider value={{
+      notifications,
+      setNotifications,
+      selectedLocation,
+      setSelectedLocation,
+      selectedOccurrence,
+      setSelectedOccurrence,
+      occurrences,
+      setOccurrences,
+      handleNotificationClick,
+      refreshOccurrences,
+      clearSelection
+    }}>
+      {children}
+    </NotificationContext.Provider>
+  )
+}
+
+export function useNotification() {
+  const context = useContext(NotificationContext)
+  if (context === undefined) {
+    throw new Error('useNotification must be used within a NotificationProvider')
+  }
+  return context
+}

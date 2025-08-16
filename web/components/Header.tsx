@@ -26,6 +26,7 @@ import { Pencil } from 'lucide-react'
 import logo from '../assets/icons/logo.svg'
 import { NotificationButton } from './NotificationButton'
 import { joinDevicesEventsUsers } from '@/functions/occurences/get-occurrences'
+import { useNotification } from '@/contexts/NotificationContext'
 
 interface HeaderProps {
   isAdmin?: boolean
@@ -35,11 +36,13 @@ export function Header({ isAdmin }: HeaderProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [imgPreview, setImgPreview] = useState('')
   const [user, setUser] = useState<User>({} as User)
-  const [notifications, setNotifications] = useState<Notification[]>([])
-  const [occurrences, setOccurrences] = useState<OccurrencesProps[]>([])
-  const [selectedLocation, setSelectedLocation] = useState<
-    [number, number] | undefined
-  >()
+
+  const {
+    notifications,
+    setNotifications,
+    handleNotificationClick,
+    occurrences,
+  } = useNotification()
 
   const router = useRouter()
   const pathname = usePathname().slice(1)
@@ -108,18 +111,8 @@ export function Header({ isAdmin }: HeaderProps) {
     setIsLoading(false)
   }
 
-  const handleNotificationClick = (notification: Notification) => {
-    const relatedOccurrence = occurrences.find(
-      occ => occ.device.$id === notification.id_device
-    )
-
-    if (relatedOccurrence?.event?.last_location) {
-      // Reseta a localização antes de definir a nova para garantir que o useEffect seja disparado
-      setSelectedLocation(undefined)
-      setTimeout(() => {
-        setSelectedLocation(relatedOccurrence.event.last_location)
-      }, 0)
-    }
+  const handleNotificationClickLocal = (notification: Notification) => {
+    handleNotificationClick(notification)
   }
 
    useEffect(() => {
@@ -139,10 +132,6 @@ export function Header({ isAdmin }: HeaderProps) {
         if (userData[0].img_url) {
           setImgPreview(userData[0].img_url)
         }
-
-        const occurrencesData = await joinDevicesEventsUsers()
-
-        setOccurrences(occurrencesData)
         
         setIsLoading(false)
       }
@@ -165,7 +154,7 @@ export function Header({ isAdmin }: HeaderProps) {
                 <NotificationButton
                   notifications={notifications}
                   setNotifications={setNotifications}
-                  onNotificationClick={handleNotificationClick}
+                  onNotificationClick={handleNotificationClickLocal}
                 />
               )
             }

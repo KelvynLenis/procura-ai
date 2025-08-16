@@ -22,10 +22,10 @@ import { listDevices } from '@/functions/device/list-devices'
 import { listDistricts } from '@/functions/district/list-districts'
 import { account } from '@/lib/appwrite'
 import { joinDevicesEventsUsers } from '@/functions/occurences/get-occurrences'
+import { useNotification } from '@/contexts/NotificationContext'
 
 
 export function Dashboard() {
-  const [occurrences, setOccurrences] = useState<OccurrencesProps[]>([])
   const [deviceStats, setDeviceStats] = useState({
     total: 0,
     recovered: 0,
@@ -35,10 +35,16 @@ export function Dashboard() {
   })
   const [isLoading, setIsLoading] = useState(false)
   const [districts, setDistricts] = useState<District[]>([])
-  const [notifications, setNotifications] = useState<Notification[]>([])
-  const [selectedLocation, setSelectedLocation] = useState<
-    [number, number] | undefined
-  >()
+
+  const {
+    notifications,
+    selectedLocation,
+    selectedOccurrence,
+    occurrences,
+    refreshOccurrences,
+    clearSelection,
+  } = useNotification()
+
   const router = useRouter()
 
   async function getDashboardData(): Promise<OccurrencesProps[]> {
@@ -70,6 +76,7 @@ export function Dashboard() {
           user: {
             name: ownerInfo?.name || 'Usuário excluído',
             email: ownerInfo?.email || 'N/A',
+            cpf: ownerInfo?.cpf || 'N/A',
           },
         }
       }
@@ -95,7 +102,6 @@ export function Dashboard() {
         const isAdmin = authUser.labels?.[0] === 'admin'
 
         const [
-          dashboardData,
           recoveredDevices,
           lostDevices,
           robbedDevices,
@@ -103,7 +109,6 @@ export function Dashboard() {
           allDevices,
           allDistricts,
         ] = await Promise.all([
-          joinDevicesEventsUsers(),
           listDevicesByStatus({ status: 'Recuperado', userId, isAdmin }),
           listDevicesByStatus({ status: 'Perdido', userId, isAdmin }),
           listDevicesByStatus({ status: 'Roubado', userId, isAdmin }),
@@ -112,7 +117,6 @@ export function Dashboard() {
           listDistricts(),
         ])
 
-        setOccurrences(dashboardData)
         setDeviceStats({
           total: allDevices.total || 0,
           recovered: recoveredDevices.length,
@@ -121,6 +125,8 @@ export function Dashboard() {
           theft: theftDevices.length,
         })
         setDistricts(allDistricts)
+
+        await refreshOccurrences()
       } catch (error) {
         console.error('Erro ao carregar dados:', error)
         toast.error('Erro ao carregar dados do dashboard')
@@ -128,32 +134,29 @@ export function Dashboard() {
     }
 
     fetchData()
-  }, [notifications])
+  }, [])
 
-  const handleNotificationClick = (notification: Notification) => {
-    const relatedOccurrence = occurrences.find(
-      occ => occ.device.$id === notification.id_device
-    )
-
-    if (relatedOccurrence?.event?.last_location) {
-      // Reseta a localização antes de definir a nova para garantir que o useEffect seja disparado
-      setSelectedLocation(undefined)
-      setTimeout(() => {
-        setSelectedLocation(relatedOccurrence.event.last_location)
-      }, 0)
+  useEffect(() => {
+    if (selectedLocation && selectedOccurrence) {
+      console.log('Dashboard: Nova notificação selecionada', { 
+        selectedLocation, 
+        selectedOccurrence: selectedOccurrence.device.$id,
+        eventType: selectedOccurrence.event?.type
+      })
     }
-  }
+  }, [selectedLocation, selectedOccurrence])
+
+  useEffect(() => {
+    console.log('Dashboard: Ocorrências atualizadas', occurrences.length)
+    if (selectedOccurrence && !occurrences.find(occ => occ.device.$id === selectedOccurrence.device.$id)) {
+      console.log('Dashboard: Ocorrência selecionada não encontrada, limpando seleção')
+      clearSelection()
+    }
+  }, [occurrences, selectedOccurrence, clearSelection])
 
   return (
     <>
       {isLoading && <LoadingToast isReactToastifyComponent={false} />}
-      {/* <div className="absolute top-2.5 right-72 z-10">
-        <NotificationButton
-          notifications={notifications}
-          setNotifications={setNotifications}
-          onNotificationClick={handleNotificationClick}
-        />
-      </div> */}
 
       <div className="w-full h-full flex flex-col py-5 justify-start items-center gap-5">
         <div className="relative flex flex-col md:mr-2 self-start w-[100%] 2xl:w-[100%] bg-white rounded-xl ring-1 ring-zinc-300 p-4 justify-center gap-4">
@@ -175,9 +178,8 @@ export function Dashboard() {
           <div className="flex w-full gap-4">
             <OccurrencesMap
               occurences={occurrences}
-              notifications={notifications}
-              setNotifications={setNotifications}
               selectedLocation={selectedLocation}
+              selectedOccurrence={selectedOccurrence}
             />
           </div>
         </div>
