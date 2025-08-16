@@ -303,34 +303,6 @@ export function OccurrencesMap({
             <div className="flex flex-col relative -translate-x-1/2 rounded-lg ring-1 ring-procura-ai-blue bg-white px-4 py-2">
               <Triangle className="text-white absolute fill-white -top-3 left-[46%]" />
               
-              {sameLocationOccurrences.length > 1 && (
-                <div className="flex justify-between items-center mb-2 border-b pb-2">
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      prevOccurrence();
-                    }} 
-                    className="p-1 rounded-full hover:bg-gray-200"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  
-                  <span className="text-sm font-medium">
-                    {currentIndex + 1} de {sameLocationOccurrences.length}
-                  </span>
-                  
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      nextOccurrence();
-                    }} 
-                    className="p-1 rounded-full hover:bg-gray-200"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
-              )}
-              
               <EventDetails
                 occurence={occurence}
                 closePopup={closePopup}
