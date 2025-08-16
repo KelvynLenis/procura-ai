@@ -36,7 +36,6 @@ export function EventDetails({
   const lastLocation = occurence.event?.last_location
   const googleMapsUrl = `https://www.google.com/maps?q=${lastLocation[0]},${lastLocation[1]}`
 
-  // Calcular itens da página atual
   const totalPages = hasMultipleOccurrences ? Math.ceil(sameLocationOccurrences!.length / itemsPerPage) : 0
   const startIndex = currentPage * itemsPerPage
   const endIndex = startIndex + itemsPerPage
@@ -51,19 +50,16 @@ export function EventDetails({
     return type
   }
 
-  // Função para lidar com clique em ocorrência
   function handleOccurrenceClick(occurrence: OccurrencesProps) {
     setSelectedOccurrence(occurrence)
     setIsViewingDetails(true)
   }
 
-  // Função para voltar à lista
   function handleBackToList() {
     setIsViewingDetails(false)
     setSelectedOccurrence(null)
   }
 
-  // Função para navegar entre páginas
   function goToPage(page: number) {
     setCurrentPage(page)
   }
@@ -80,7 +76,6 @@ export function EventDetails({
     }
   }
 
-  // Componente para renderizar detalhes de uma ocorrência específica
   function renderOccurrenceDetails(occ: OccurrencesProps) {
     return (
       <div className="flex flex-col gap-4">
@@ -178,7 +173,6 @@ export function EventDetails({
       </div>
     )
   }
-  // Componente para renderizar lista de múltiplas ocorrências
   function renderMultipleOccurrencesList() {
     if (!hasMultipleOccurrences || !sameLocationOccurrences) return null
 
@@ -193,7 +187,6 @@ export function EventDetails({
           </button>
         </div>
         
-        {/* Cabeçalho da tabela */}
         <div className="grid grid-cols-4 gap-1 text-xs font-semibold text-gray-600 border-b pb-2">
           <span>Data</span>
           <span>Dispositivo</span>
@@ -201,7 +194,6 @@ export function EventDetails({
           <span></span>
         </div>
 
-        {/* Lista de ocorrências da página atual */}
         <div className="min-h-[240px]">
           {currentPageItems.map((occ, index) => (
             <div 
@@ -242,7 +234,6 @@ export function EventDetails({
           ))}
         </div>
 
-        {/* Sistema de paginação */}
         {totalPages > 1 && (
           <div className="flex justify-between items-center mt-2.5 pt-1.5 border-t">
             <div className="flex items-center gap-1">
@@ -286,7 +277,6 @@ export function EventDetails({
           </div>
         )}
 
-        {/* Informações da paginação */}
         <div className="text-xs text-gray-500 text-center mt-1">
           Mostrando {startIndex + 1} - {Math.min(endIndex, sameLocationOccurrences.length)} de {sameLocationOccurrences.length} ocorrências
         </div>
