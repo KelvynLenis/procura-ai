@@ -408,13 +408,13 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                             contacts.map((contact, index) => (
                               <TableRow key={index}>
                                 <TableCell className="capitalize">
-                                  {contact.email_contact}
+                                  {contact.name_contact ? contact.name_contact : 'Não Informado'}
                                 </TableCell>
                                 <TableCell className="capitalize">
-                                  {contact.name_contact}
+                                  {contact.email_contact ? contact.email_contact : 'Não Informado'}
                                 </TableCell>
                                 <TableCell className="">
-                                  {`(${contact.number_contact.slice(0, 2)}) ${contact.number_contact.slice(2, 7)}-${contact.number_contact.slice(7, 11)}`}
+                                  {`(${contact.number_contact.slice(0, 2)}) ${contact.number_contact.slice(2, 7)}-${contact.number_contact.slice(7, 11)}` ? `(${contact.number_contact.slice(0, 2)}) ${contact.number_contact.slice(2, 7)}-${contact.number_contact.slice(7, 11)}` : 'Não Informado'}
                                 </TableCell>
                               </TableRow>
                             ))
