@@ -35,6 +35,7 @@ interface OccurrencesMapProps {
   notifications?: Notification[]
   setNotifications?: React.Dispatch<React.SetStateAction<Notification[]>>
   selectedLocation?: [number, number]
+  selectedOccurrence?: OccurrencesProps
 }
 
 export function OccurrencesMap({
@@ -46,6 +47,7 @@ export function OccurrencesMap({
   notifications,
   setNotifications,
   selectedLocation,
+  selectedOccurrence,
 }: OccurrencesMapProps) {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false)
   const [occurence, setOccurence] = useState<OccurrencesProps>({} as OccurrencesProps)
@@ -54,23 +56,47 @@ export function OccurrencesMap({
   const [center, setCenter] = useState<[number, number]>(defaultCenter)
   const [zoom, setZoom] = useState(defaultZoom)
   
-  // Navegação entre ocorrências na mesma localização
   const [sameLocationOccurrences, setSameLocationOccurrences] = useState<OccurrencesProps[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
 
   const pathname = usePathname().slice(1)
   const isFullScreen = pathname === 'map/ocorrencias'
 
-  // Atualiza o centro do mapa e abre o popup quando uma localização é selecionada
   useEffect(() => {
     if (selectedLocation && occurences) {
-      // Encontra todas as ocorrências nesta mesma localização
+      console.log('OccurrencesMap: Recebida nova localização selecionada', selectedLocation)
+      
+      if (selectedOccurrence && selectedOccurrence.event?.last_location) {
+        console.log('OccurrencesMap: Processando ocorrência específica', selectedOccurrence.device.$id)
+        
+        const occurrencesAtLocation = occurences.filter(
+          occ => occ.event?.last_location?.[0] === selectedLocation[0] && 
+                occ.event?.last_location?.[1] === selectedLocation[1]
+        )
+
+        setCenter(selectedLocation)
+        setZoom(15)
+        setSameLocationOccurrences(occurrencesAtLocation)
+        
+        const selectedIndex = occurrencesAtLocation.findIndex(
+          occ => occ.device.$id === selectedOccurrence.device.$id
+        )
+        
+        setCurrentIndex(selectedIndex >= 0 ? selectedIndex : 0)
+        setOccurence(selectedOccurrence)
+        isFullScreen ? setIsOverlayOpen(true) : setIsInfoCardOpen(true)
+        
+        console.log('OccurrencesMap: Popup aberto para ocorrência específica')
+        return
+      }
+
       const occurrencesAtLocation = occurences.filter(
         occ => occ.event?.last_location?.[0] === selectedLocation[0] && 
               occ.event?.last_location?.[1] === selectedLocation[1]
       )
 
       if (occurrencesAtLocation.length > 0) {
+        console.log('OccurrencesMap: Encontradas', occurrencesAtLocation.length, 'ocorrências na localização')
         setCenter(selectedLocation)
         setZoom(15)
         setSameLocationOccurrences(occurrencesAtLocation)
@@ -79,17 +105,42 @@ export function OccurrencesMap({
         isFullScreen ? setIsOverlayOpen(true) : setIsInfoCardOpen(true)
       }
     }
-  }, [selectedLocation, occurences, isFullScreen])
+  }, [selectedLocation, selectedOccurrence, occurences, isFullScreen])
 
-  // Atualiza os dados iniciais quando as props mudarem
   useEffect(() => {
     if (occurences) {
       setLocalOccurrences(occurences)
+      console.log('OccurrencesMap: dados atualizados', occurences.length)
     }
-  }, [occurences])
+  }, [occurences, notifications])
+
+  function getOccurrenceCount(targetLocation: [number, number]): number {
+    if (!localOccurrences || localOccurrences.length === 0) return 1
+    
+    return localOccurrences.filter(
+      occ => occ.event?.last_location && 
+            occ.event.last_location[0] === targetLocation[0] && 
+            occ.event.last_location[1] === targetLocation[1]
+    ).length
+  }
+
+  function isFirstOccurrenceAtLocation(currentOccurrence: OccurrencesProps, currentIndex: number): boolean {
+    if (!currentOccurrence.event?.last_location || !localOccurrences) return false
+    
+    const targetLocation = currentOccurrence.event.last_location
+    
+    for (let i = 0; i < currentIndex; i++) {
+      const prevOcc = localOccurrences[i]
+      if (prevOcc.event?.last_location && 
+          prevOcc.event.last_location[0] === targetLocation[0] && 
+          prevOcc.event.last_location[1] === targetLocation[1]) {
+        return false 
+      }
+    }
+    return true 
+  }
 
   function handleOpenPopup(event: OccurrencesProps) {
-    // Encontra todas as ocorrências nesta mesma localização
     if (!event.event?.last_location) return
     
     const occurrencesAtLocation = localOccurrences.filter(
@@ -215,55 +266,51 @@ export function OccurrencesMap({
       >
         {localOccurrences &&
           localOccurrences.map(
-            (occurence, index) =>
-              occurence.event?.last_location && (
+            (occurence, index) => {
+              if (!occurence.event?.last_location) return null
+              
+              const shouldShowBadge = isFirstOccurrenceAtLocation(occurence, index)
+              const count = getOccurrenceCount(occurence.event.last_location)
+              
+              return (
                 <Marker
-                  key={index}
+                  key={`${occurence.event.last_location[0]}-${occurence.event.last_location[1]}-${index}`}
                   width={50}
                   anchor={occurence.event?.last_location}
                   color={getColor(occurence.event?.type)}
                   onClick={() => handleOpenPopup(occurence)}
-                />
+                >
+                  {shouldShowBadge && count > 1 ? (
+                    <div 
+                      className="bg-white text-red-500 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-red-500 shadow-lg"
+                      style={{ 
+                        position: 'absolute',
+                        top: '-7px',
+                        right: '-47px',
+                        pointerEvents: 'none',
+                        zIndex: 999,
+                      }}
+                    >
+                      {count}
+                    </div>
+                  ) : undefined}
+                </Marker>
               )
+            }
           )}
         {isOverlayOpen && occurence.event?.last_location && (
           <Overlay anchor={occurence.event?.last_location} offset={[0, 0]}>
             <div className="flex flex-col relative -translate-x-1/2 rounded-lg ring-1 ring-procura-ai-blue bg-white px-4 py-2">
               <Triangle className="text-white absolute fill-white -top-3 left-[46%]" />
               
-              {/* Adiciona navegação entre ocorrências na mesma localização */}
-              {sameLocationOccurrences.length > 1 && (
-                <div className="flex justify-between items-center mb-2 border-b pb-2">
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      prevOccurrence();
-                    }} 
-                    className="p-1 rounded-full hover:bg-gray-200"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  
-                  <span className="text-sm font-medium">
-                    {currentIndex + 1} de {sameLocationOccurrences.length}
-                  </span>
-                  
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      nextOccurrence();
-                    }} 
-                    className="p-1 rounded-full hover:bg-gray-200"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
-              )}
-              
               <EventDetails
                 occurence={occurence}
                 closePopup={closePopup}
                 styles="w-full ring-0 h-fit"
+                sameLocationOccurrences={sameLocationOccurrences}
+                currentIndex={currentIndex}
+                onNextOccurrence={nextOccurrence}
+                onPrevOccurrence={prevOccurrence}
               />
             </div>
           </Overlay>
@@ -271,30 +318,15 @@ export function OccurrencesMap({
       </Map>
       {isInfoCardOpen && (
         <div className="relative">
-          <EventDetails occurence={occurence} closePopup={closePopup} />
-          
-          {/* Adiciona controles de navegação no card também */}
-          {sameLocationOccurrences.length > 1 && (
-            <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex items-center bg-white px-3 py-1 rounded-full shadow-md">
-              <button 
-                onClick={prevOccurrence} 
-                className="p-1 rounded-full hover:bg-gray-200 mr-2"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              
-              <span className="text-sm font-medium">
-                {currentIndex + 1} de {sameLocationOccurrences.length}
-              </span>
-              
-              <button 
-                onClick={nextOccurrence} 
-                className="p-1 rounded-full hover:bg-gray-200 ml-2"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-          )}
+          <EventDetails 
+            occurence={occurence} 
+            closePopup={closePopup}
+            sameLocationOccurrences={sameLocationOccurrences}
+            currentIndex={currentIndex}
+            onNextOccurrence={nextOccurrence}
+            onPrevOccurrence={prevOccurrence}
+          />
+
         </div>
       )}
     </>

@@ -27,6 +27,15 @@ import logo from '../assets/icons/logo.svg'
 import { NotificationButton } from './NotificationButton'
 import { joinDevicesEventsUsers } from '@/functions/occurences/get-occurrences'
 
+// Importação condicional do contexto
+let useNotification: any = null
+try {
+  const notificationModule = require('@/contexts/NotificationContext')
+  useNotification = notificationModule.useNotification
+} catch {
+  // Contexto não disponível
+}
+
 interface HeaderProps {
   isAdmin?: boolean
 }
@@ -35,11 +44,29 @@ export function Header({ isAdmin }: HeaderProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [imgPreview, setImgPreview] = useState('')
   const [user, setUser] = useState<User>({} as User)
-  const [notifications, setNotifications] = useState<Notification[]>([])
-  const [occurrences, setOccurrences] = useState<OccurrencesProps[]>([])
-  const [selectedLocation, setSelectedLocation] = useState<
-    [number, number] | undefined
-  >()
+
+  // Usar contexto apenas para admins
+  let notificationData = {
+    notifications: [] as Notification[],
+    setNotifications: () => {},
+    handleNotificationClick: (notification: Notification) => {},
+    occurrences: [] as OccurrencesProps[],
+  }
+
+  if (isAdmin && useNotification) {
+    try {
+      notificationData = useNotification()
+    } catch (error) {
+      console.warn('Contexto de notificação não disponível:', error)
+    }
+  }
+
+  const {
+    notifications,
+    setNotifications,
+    handleNotificationClick,
+    occurrences,
+  } = notificationData
 
   const router = useRouter()
   const pathname = usePathname().slice(1)
@@ -108,18 +135,8 @@ export function Header({ isAdmin }: HeaderProps) {
     setIsLoading(false)
   }
 
-  const handleNotificationClick = (notification: Notification) => {
-    const relatedOccurrence = occurrences.find(
-      occ => occ.device.$id === notification.id_device
-    )
-
-    if (relatedOccurrence?.event?.last_location) {
-      // Reseta a localização antes de definir a nova para garantir que o useEffect seja disparado
-      setSelectedLocation(undefined)
-      setTimeout(() => {
-        setSelectedLocation(relatedOccurrence.event.last_location)
-      }, 0)
-    }
+  const handleNotificationClickLocal = (notification: Notification) => {
+    handleNotificationClick(notification)
   }
 
    useEffect(() => {
@@ -139,10 +156,6 @@ export function Header({ isAdmin }: HeaderProps) {
         if (userData[0].img_url) {
           setImgPreview(userData[0].img_url)
         }
-
-        const occurrencesData = await joinDevicesEventsUsers()
-
-        setOccurrences(occurrencesData)
         
         setIsLoading(false)
       }
@@ -165,7 +178,7 @@ export function Header({ isAdmin }: HeaderProps) {
                 <NotificationButton
                   notifications={notifications}
                   setNotifications={setNotifications}
-                  onNotificationClick={handleNotificationClick}
+                  onNotificationClick={handleNotificationClickLocal}
                 />
               )
             }

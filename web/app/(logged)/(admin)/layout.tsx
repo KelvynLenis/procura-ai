@@ -4,24 +4,27 @@ import { Header } from '@/components/Header'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { AppSidebar } from '@/components/Sidebar'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { NotificationProvider } from '@/contexts/NotificationContext'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ProtectedRoute admin>
-      <main className="w-full min-h-[calc(100svh-theme(spacing.18))] flex flex-col bg-[#F2F8FD] overflow-hidden">
-        <div className="flex h-fit">
-          <SidebarProvider className="flex flex-col w-fit mr-10 md:flex-row ">
-            <SidebarTrigger className="absolute z-1 top-16" />
-            <AppSidebar admin />
-          </SidebarProvider>
+      <NotificationProvider>
+        <main className="w-full min-h-[calc(100svh-theme(spacing.18))] flex flex-col bg-[#F2F8FD] overflow-hidden">
+          <div className="flex h-fit">
+            <SidebarProvider className="flex flex-col w-fit mr-10 md:flex-row ">
+              <SidebarTrigger className="absolute z-1 top-16" />
+              <AppSidebar admin />
+            </SidebarProvider>
 
-          <div className="flex flex-col w-full">
-            <Header isAdmin />
-            {children}
+            <div className="flex flex-col w-full">
+              <Header isAdmin />
+              {children}
+            </div>
           </div>
-        </div>
-      </main>
-      <Footer />
+        </main>
+        <Footer />
+      </NotificationProvider>
     </ProtectedRoute>
   )
 }
