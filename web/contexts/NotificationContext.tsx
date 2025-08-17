@@ -37,7 +37,7 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue
 }
 
-export function NotificationProvider({ children }: { children: ReactNode }) {
+export function NotificationProvider({ children, isAdmin = true }: { children: ReactNode, isAdmin?: boolean }) {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [selectedLocation, setSelectedLocation] = useState<[number, number] | undefined>()
   const [selectedOccurrence, setSelectedOccurrence] = useState<OccurrencesProps | undefined>()
@@ -47,6 +47,8 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const debouncedUpdateTrigger = useDebounce(updateTrigger, 500)
 
   const refreshOccurrences = useCallback(async () => {
+    if (!isAdmin) return // Só buscar ocorrências para admins
+    
     try {
       console.log('Contexto: Buscando ocorrências...')
       const data = await joinDevicesEventsUsers()
@@ -55,10 +57,15 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error('Erro ao atualizar ocorrências:', error)
     }
-  }, [])
+  }, [isAdmin])
 
   useEffect(() => {
-    console.log('Contexto: Iniciando subscription do Appwrite...')
+    if (!isAdmin) {
+      console.log('Contexto: Usuário não é admin, realtime desabilitado')
+      return
+    }
+
+    console.log('Contexto: Iniciando subscription do Appwrite para admin...')
     
     const handleNewNotification = (response: any) => {
       const { payload } = response
@@ -70,7 +77,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         'Regular'
       ]
 
-      console.log('Contexto: Nova notificação recebida', { 
+      console.log('Contexto: Nova notificação recebida para admin', { 
         type: payload.type, 
         id: payload.$id,
         isRelevant: relevantTypes.includes(payload.type)
@@ -80,7 +87,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         setNotifications(prevNotifications => {
           const exists = prevNotifications.some(n => n.$id === payload.$id)
           if (!exists) {
-            console.log('Contexto: Adicionando nova notificação')
+            console.log('Contexto: Adicionando nova notificação para admin')
             setUpdateTrigger(prev => prev + 1)
             return [...prevNotifications, payload]
           }
@@ -99,21 +106,25 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       console.log('Contexto: Cancelando subscription do Appwrite...')
       unsubscribe()
     }
-  }, [])
+  }, [isAdmin])
 
   useEffect(() => {
-    console.log('Contexto: Carregando dados iniciais...')
-    refreshOccurrences()
-  }, [refreshOccurrences])
+    if (isAdmin) {
+      console.log('Contexto: Carregando dados iniciais para admin...')
+      refreshOccurrences()
+    }
+  }, [refreshOccurrences, isAdmin])
 
   useEffect(() => {
-    if (debouncedUpdateTrigger > 0) {
+    if (debouncedUpdateTrigger > 0 && isAdmin) {
       console.log('Contexto: Atualizando ocorrências devido a nova notificação...')
       refreshOccurrences()
     }
-  }, [debouncedUpdateTrigger, refreshOccurrences])
+  }, [debouncedUpdateTrigger, refreshOccurrences, isAdmin])
 
   const handleNotificationClick = useCallback((notification: Notification, occurrencesList?: OccurrencesProps[]) => {
+    if (!isAdmin) return // Só funciona para admins
+    
     const currentOccurrences = occurrencesList || occurrences
     
     console.log('Contexto: Processando clique na notificação', { 
@@ -147,7 +158,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         hasLocation: !!relatedOccurrence?.event?.last_location
       })
     }
-  }, [occurrences])
+  }, [occurrences, isAdmin])
 
   const clearSelection = useCallback(() => {
     console.log('Contexto: Limpando seleção')

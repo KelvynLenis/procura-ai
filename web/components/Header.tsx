@@ -26,7 +26,15 @@ import { Pencil } from 'lucide-react'
 import logo from '../assets/icons/logo.svg'
 import { NotificationButton } from './NotificationButton'
 import { joinDevicesEventsUsers } from '@/functions/occurences/get-occurrences'
-import { useNotification } from '@/contexts/NotificationContext'
+
+// Importação condicional do contexto
+let useNotification: any = null
+try {
+  const notificationModule = require('@/contexts/NotificationContext')
+  useNotification = notificationModule.useNotification
+} catch {
+  // Contexto não disponível
+}
 
 interface HeaderProps {
   isAdmin?: boolean
@@ -37,12 +45,28 @@ export function Header({ isAdmin }: HeaderProps) {
   const [imgPreview, setImgPreview] = useState('')
   const [user, setUser] = useState<User>({} as User)
 
+  // Usar contexto apenas para admins
+  let notificationData = {
+    notifications: [] as Notification[],
+    setNotifications: () => {},
+    handleNotificationClick: (notification: Notification) => {},
+    occurrences: [] as OccurrencesProps[],
+  }
+
+  if (isAdmin && useNotification) {
+    try {
+      notificationData = useNotification()
+    } catch (error) {
+      console.warn('Contexto de notificação não disponível:', error)
+    }
+  }
+
   const {
     notifications,
     setNotifications,
     handleNotificationClick,
     occurrences,
-  } = useNotification()
+  } = notificationData
 
   const router = useRouter()
   const pathname = usePathname().slice(1)
