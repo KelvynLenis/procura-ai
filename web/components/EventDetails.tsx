@@ -203,10 +203,10 @@ export function EventDetails({
             >
               <div className="flex flex-col">
                 <span className="font-medium text-xs">
-                  {formatDateTime(occ.event.time_event).split(' ')[0]}
+                  {formatDateTime(occ.event.time_event).split('-')[0]}
                 </span>
                 <span className="text-xs text-gray-500">
-                  {formatDateTime(occ.event.time_event).split(' ')[1]}
+                  {formatDateTime(occ.event.time_event).split('-')[1]}
                 </span>
               </div>
               
