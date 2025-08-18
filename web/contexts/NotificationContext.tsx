@@ -1,20 +1,21 @@
 'use client'
 
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react'
-import { Notification, OccurrencesProps } from '@/types'
+import { NotificationProps, OccurrencesProps } from '@/types'
 import { joinDevicesEventsUsers } from '@/functions/occurences/get-occurrences'
-import { client } from '@/lib/appwrite'
+import { account, client } from '@/lib/appwrite'
+import { listUserDevices } from '@/functions/device/list-user-devices'
 
 interface NotificationContextType {
-  notifications: Notification[]
-  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>
+  notifications: NotificationProps[]
+  setNotifications: React.Dispatch<React.SetStateAction<NotificationProps[]>>
   selectedLocation: [number, number] | undefined
   setSelectedLocation: React.Dispatch<React.SetStateAction<[number, number] | undefined>>
   selectedOccurrence: OccurrencesProps | undefined
   setSelectedOccurrence: React.Dispatch<React.SetStateAction<OccurrencesProps | undefined>>
   occurrences: OccurrencesProps[]
   setOccurrences: React.Dispatch<React.SetStateAction<OccurrencesProps[]>>
-  handleNotificationClick: (notification: Notification, occurrences?: OccurrencesProps[]) => void
+  handleNotificationClick: (notification: NotificationProps, occurrences?: OccurrencesProps[]) => void
   refreshOccurrences: () => Promise<void>
   clearSelection: () => void
 }
@@ -37,8 +38,8 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue
 }
 
-export function NotificationProvider({ children, isAdmin = true }: { children: ReactNode, isAdmin?: boolean }) {
-  const [notifications, setNotifications] = useState<Notification[]>([])
+export function NotificationProvider({ children, isAdmin }: { children: ReactNode, isAdmin?: boolean }) {
+  const [notifications, setNotifications] = useState<NotificationProps[]>([])
   const [selectedLocation, setSelectedLocation] = useState<[number, number] | undefined>()
   const [selectedOccurrence, setSelectedOccurrence] = useState<OccurrencesProps | undefined>()
   const [occurrences, setOccurrences] = useState<OccurrencesProps[]>([])
@@ -47,7 +48,7 @@ export function NotificationProvider({ children, isAdmin = true }: { children: R
   const debouncedUpdateTrigger = useDebounce(updateTrigger, 500)
 
   const refreshOccurrences = useCallback(async () => {
-    if (!isAdmin) return // Só buscar ocorrências para admins
+    // if (!isAdmin) return // Só buscar ocorrências para admins
     
     try {
       console.log('Contexto: Buscando ocorrências...')
@@ -60,16 +61,16 @@ export function NotificationProvider({ children, isAdmin = true }: { children: R
   }, [isAdmin])
 
   useEffect(() => {
-    if (!isAdmin) {
-      console.log('Contexto: Usuário não é admin, realtime desabilitado')
-      return
-    }
+    // if (!isAdmin) {
+    //   console.log('Contexto: Usuário não é admin, realtime desabilitado')
+    //   return
+    // }
 
     console.log('Contexto: Iniciando subscription do Appwrite para admin...')
     
-    const handleNewNotification = (response: any) => {
+    const handleNewNotification = async (response: any) => {
       const { payload } = response
-      const relevantTypes = [
+      const relevantTypes = !isAdmin ? ['Recuperado'] : [
         'Furto simples',
         'Extravio ou Perda', 
         'Roubo',
@@ -84,6 +85,19 @@ export function NotificationProvider({ children, isAdmin = true }: { children: R
       })
 
       if (relevantTypes.includes(payload.type)) {
+
+        if (!isAdmin) {
+          const idDevice = payload.id_device
+
+          const userAuth = await account.get()
+          const userDevices = await listUserDevices(userAuth.$id)
+
+          if (!userDevices.some(device => device.$id === idDevice)) {
+            console.log('Contexto: Ignorando notificação de um dispositivo que o usuário não possui')
+            return
+          }
+        }
+
         setNotifications(prevNotifications => {
           const exists = prevNotifications.some(n => n.$id === payload.$id)
           if (!exists) {
@@ -122,7 +136,7 @@ export function NotificationProvider({ children, isAdmin = true }: { children: R
     }
   }, [debouncedUpdateTrigger, refreshOccurrences, isAdmin])
 
-  const handleNotificationClick = useCallback((notification: Notification, occurrencesList?: OccurrencesProps[]) => {
+  const handleNotificationClick = useCallback((notification: NotificationProps, occurrencesList?: OccurrencesProps[]) => {
     if (!isAdmin) return // Só funciona para admins
     
     const currentOccurrences = occurrencesList || occurrences

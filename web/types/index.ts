@@ -7,6 +7,7 @@ import type ContactSchema from './contactSchema'
 import type { QueryFilterSchema } from './queryFilter'
 import type { UserSchema } from './userSchema'
 import type OperatorSchema from './operatorSchema'
+import NotificationSchema from './NotificationSchema'
 
 export interface DeviceProps {
   $id?: string // ID do dispositivo
@@ -34,7 +35,7 @@ export interface OccurrencesProps {
   }
 }
 
-export interface Notification {
+export interface NotificationProps {
   $id: string
   type: string
   description: string
@@ -51,3 +52,4 @@ export type Contact = z.infer<typeof ContactSchema>
 export type QueryFilter = z.infer<typeof QueryFilterSchema>
 export type User = z.infer<typeof UserSchema>
 export type Operator = z.infer<typeof OperatorSchema>
+export type Notification = z.infer<typeof NotificationSchema>

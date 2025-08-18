@@ -1,0 +1,124 @@
+'use client'
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Bell, ChevronRight, X } from 'lucide-react'
+import Image from "next/image"
+import { useState } from 'react'
+import DeviceCheck from '../assets/icons/device-check.svg'
+import { NotificationProps } from "@/types"
+import { formatDateTime } from "@/lib/utils"
+import { getDeviceById } from "@/functions/device/get-device-by-id"
+import Link from "next/link"
+
+interface ClientNotificationButtonProps {
+  notifications: NotificationProps[]
+  setNotifications: React.Dispatch<React.SetStateAction<NotificationProps[]>>
+  onNotificationClick?: (notification: NotificationProps) => void
+}
+
+function ClientNotificationButton({
+  notifications,
+  setNotifications,
+  onNotificationClick,
+}: ClientNotificationButtonProps) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+
+  const sortedNotifications = [...notifications].sort((a, b) => {
+    const dateA = new Date(a.time_event).getTime()
+    const dateB = new Date(b.time_event).getTime()
+    
+    // Debug: verificar ordenação
+    console.log('NotificationButton: Ordenando notificações', {
+      a: { id: a.$id.slice(0, 8), date: a.time_event, timestamp: dateA },
+      b: { id: b.$id.slice(0, 8), date: b.time_event, timestamp: dateB },
+      result: dateB - dateA
+    })
+    
+    // Retorna a diferença para ordenação decrescente (mais recente primeiro)
+    return dateB - dateA
+  })
+
+  function renderNotification(notification: NotificationProps) {
+    const isRecovered = notification.type === 'Recuperado'
+    
+    return (
+      <div key={notification.$id} className="w-full">
+        <DropdownMenuSeparator />
+        <DropdownMenuItem 
+          className={`py-3 w-full flex items-start flex-col gap-2 relative ${
+            isRecovered ? '' : 'hover:bg-zinc-50 cursor-pointer'
+          }`}
+          // onClick={() => !isRecovered && handleNotificationClick(notification)}
+        >
+          <div className='w-full flex h-full px-5 py-3 rounded-lg bg-blue-100/40 gap-4'>
+              <Image src={DeviceCheck} alt="device-check" className="w-6 h-6 self-center" />
+              <div className='flex flex-col gap-4'>
+                <div className='flex justify-between items-center'>
+                  <h1 className='font-bold text-sm text-primary'>Seu dispositivo foi recuperado</h1>
+                  
+                  <span className='w-2 h-2 rounded-full bg-[#004EC1]'></span>
+                </div>
+                <p className='text-sm'>
+                  Informamos que o seu dispositivo {getDeviceById(notification.id_device)?.then(device => device.phone_model)}, <strong className="font-semibold">foi localizado e recuperado pela polícia.</strong> 
+                  Acompanhe todas as atualizações desta ocorrência na página de recuperação.
+                </p>
+                <span className='text-xs'>
+                  {formatDateTime(notification.time_event)}
+                </span>
+
+                <span className='text-primary flex self-end text-sm underline'>
+                  Acompanhar atualizações
+                  <ChevronRight size={16} />
+                </span>
+              </div>
+            </div>
+        </DropdownMenuItem>
+      </div>
+    )
+  }
+
+  return (
+    <DropdownMenu open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DropdownMenuTrigger className="relative bg-procura-ai-white p-2 rounded-full hover:bg-procura-ai-blue hover:ring-1 hover:ring-procura-ai-white hover:text-white transition-all duration-500">
+            <Bell className="size-7" />
+            {sortedNotifications.length > 0 && (
+              <span className="bg-secondary text-white rounded-full w-6 h-6 font-bold flex items-center justify-center absolute -top-1 right-3">
+                {sortedNotifications.length}
+              </span>
+            )}
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className='bg-white shadow-lg rounded-md w-96 border'>
+            <div className="p-2 text-gray-700 font-semibold border-b w-full flex justify-between items-center">
+              Notificações
+              <button type='button' onClick={() => setIsDialogOpen(false)}>
+                <X className="ml-2" size={24}/>
+              </button>
+            </div>
+            <div className="max-h-96 overflow-y-auto flex flex-col items-center justify-center py-2 px-2">
+              
+              {notifications.length > 0 ? (
+                notifications.map(notification => renderNotification(notification))
+              ) : (
+                <p className="p-3 text-gray-500 text-sm">Nenhuma notificação</p>
+              )}
+
+              <DropdownMenuItem className="w-full p-0">
+                <Link href="/notificacoes" className="w-full text-center hover:bg-zinc-100 p-2">
+                  Ver tudo
+                </Link>
+              </DropdownMenuItem>
+            </div>
+        </DropdownMenuContent>
+      </DropdownMenu>
+  )
+}
+
+export default ClientNotificationButton

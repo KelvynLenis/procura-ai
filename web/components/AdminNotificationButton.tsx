@@ -15,27 +15,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { NotificationProps } from '@/types'
 
-interface Notification {
-  $id: string
-  type: string
-  description: string
-  time_event: string
-  id_device: string
-  is_alert_on: boolean
+interface AdminNotificationButtonProps {
+  notifications: NotificationProps[]
+  setNotifications: React.Dispatch<React.SetStateAction<NotificationProps[]>>
+  onNotificationClick?: (notification: NotificationProps) => void
 }
 
-interface NotificationButtonProps {
-  notifications: Notification[]
-  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>
-  onNotificationClick?: (notification: Notification) => void
-}
-
-export function NotificationButton({
+export function AdminNotificationButton({
   notifications,
   setNotifications,
   onNotificationClick,
-}: NotificationButtonProps) {
+}: AdminNotificationButtonProps) {
   const [isListVisible, setIsListVisible] = useState(false)
 
   const toggleList = () => setIsListVisible(prev => !prev)
@@ -56,7 +48,7 @@ export function NotificationButton({
     return dateB - dateA
   })
 
-  function handleNotificationClick(notification: Notification) {
+  function handleNotificationClick(notification: NotificationProps) {
     if (notification.type === 'Recuperado') return
 
     // Fechar o dropdown antes de navegar
@@ -77,7 +69,7 @@ export function NotificationButton({
     }
   }
 
-  function renderNotification(notification: Notification) {
+  function renderNotification(notification: NotificationProps) {
     const isRecovered = notification.type === 'Recuperado'
     
     return (
@@ -121,12 +113,11 @@ export function NotificationButton({
 
   return (
     <>
-
-    <DropdownMenu open={isListVisible} onOpenChange={toggleList}>
+      <DropdownMenu open={isListVisible} onOpenChange={toggleList}>
         <DropdownMenuTrigger className="relative bg-procura-ai-white p-2 rounded-full hover:bg-procura-ai-blue hover:ring-1 hover:ring-procura-ai-white hover:text-white transition-all duration-500">
             <Bell className="size-7" />
             {sortedNotifications.length > 0 && (
-              <span className="bg-red-500 text-white rounded-full w-6 h-6 font-bold flex items-center justify-center absolute -top-1 right-3">
+              <span className="bg-secondary text-white rounded-full w-6 h-6 font-bold flex items-center justify-center absolute -top-1 right-3">
                 {sortedNotifications.length}
               </span>
             )}

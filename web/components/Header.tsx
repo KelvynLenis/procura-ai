@@ -19,13 +19,14 @@ import { LoadingToast } from './LoadingToast'
 
 import { getUserId } from '@/functions/user/get-user-id'
 import { getUser } from '@/functions/user/get-user'
-import { Notification, OccurrencesProps, User } from '@/types'
+import { NotificationProps, OccurrencesProps, User } from '@/types'
 
 import { Pencil } from 'lucide-react'
 
 import logo from '../assets/icons/logo.svg'
-import { NotificationButton } from './NotificationButton'
+import { AdminNotificationButton } from './AdminNotificationButton'
 import { joinDevicesEventsUsers } from '@/functions/occurences/get-occurrences'
+import ClientNotificationButton from './ClientNotificationButton'
 
 // Importação condicional do contexto
 let useNotification: any = null
@@ -47,13 +48,13 @@ export function Header({ isAdmin }: HeaderProps) {
 
   // Usar contexto apenas para admins
   let notificationData = {
-    notifications: [] as Notification[],
+    notifications: [] as NotificationProps[],
     setNotifications: () => {},
-    handleNotificationClick: (notification: Notification) => {},
+    handleNotificationClick: (notification: NotificationProps) => {},
     occurrences: [] as OccurrencesProps[],
   }
 
-  if (isAdmin && useNotification) {
+  if (useNotification) {
     try {
       notificationData = useNotification()
     } catch (error) {
@@ -135,7 +136,7 @@ export function Header({ isAdmin }: HeaderProps) {
     setIsLoading(false)
   }
 
-  const handleNotificationClickLocal = (notification: Notification) => {
+  const handleNotificationClickLocal = (notification: NotificationProps) => {
     handleNotificationClick(notification)
   }
 
@@ -174,31 +175,49 @@ export function Header({ isAdmin }: HeaderProps) {
           <span className="text-xl text-white -ml-2 lg:-ml-4">{matchedRoute}</span>
           <div className='flex items-center gap-4'>
             {
-              isAdmin && (
-                <NotificationButton
+              isAdmin ? (
+                <AdminNotificationButton
                   notifications={notifications}
                   setNotifications={setNotifications}
                   onNotificationClick={handleNotificationClickLocal}
                 />
+              ) : (
+                <>
+                  <ClientNotificationButton
+                    notifications={notifications}
+                    setNotifications={setNotifications}
+                    onNotificationClick={handleNotificationClickLocal}
+                  />
+                </>
               )
             }
             <DropdownMenu>
               <DropdownMenuTrigger className='flex-row text-white items-center justify-center gap-2 hidden mr-2 md:flex'>
                 {
-                  imgPreview ? (
-                    <Avatar>
-                      <AvatarImage src={imgPreview} />
-                      <AvatarFallback className='text-primary text-2xl'>
+                  isLoading ? (
+                    <Skeleton className='size-10 bg-secondary rounded-full flex items-center justify-center' />
+                  ) : (
+                    imgPreview ? (
+                      <Avatar>
+                        <AvatarImage src={imgPreview} />
+                        <AvatarFallback className='text-primary text-2xl'>
+                          {
+                            user.name.split(' ').length > 1
+                            ? user.name.split(' ')[0][0] + user.name.split(' ')[1][0]
+                            : user.name.split(' ')[0][0]
+                          }
+                        </AvatarFallback>
+                      </Avatar>
+
+                    ) : (
+                      <span className='size-10 bg-secondary rounded-full flex items-center justify-center'>
                         {
-                        user.name.split(' ').length > 1
+                          user.name.split(' ').length > 1
                           ? user.name.split(' ')[0][0] + user.name.split(' ')[1][0]
                           : user.name.split(' ')[0][0]
                         }
-                      </AvatarFallback>
-                    </Avatar>
-
-                  ) : (
-                    <Skeleton className='w-8 h-8 rounded-full' />
+                      </span>
+                    )
                   )
                 }
                 <div className='flex flex-col items-start'>
