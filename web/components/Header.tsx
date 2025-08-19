@@ -169,11 +169,11 @@ export function Header({ isAdmin }: HeaderProps) {
     !isFullScreen && (
       <>
         <div className="absolute w-full bg-primary inset-0 z-0 h-16" />
-        <header className="flex items-center drop-shadow-md md:justify-between lg:pr-16 w-full h-16">
+        <header className="flex items-center drop-shadow-md justify-between lg:pr-16 w-full h-16">
           {/* <div className="w-1/5 md:w-[35%] lg:w-[26%] xl:w-1/5 h-1" /> */}
           <Image src={logo} alt="logo" className="w-16 md:w-20 md:hidden" />
           <span className="text-xl text-white -ml-2 lg:-ml-4">{matchedRoute}</span>
-          <div className='flex items-center gap-4'>
+          <div className='flex items-center gap-4 justify-between'>
             {
               isAdmin ? (
                 <AdminNotificationButton

@@ -51,10 +51,10 @@ export function NotificationProvider({ children, isAdmin }: { children: ReactNod
     // if (!isAdmin) return // Só buscar ocorrências para admins
     
     try {
-      console.log('Contexto: Buscando ocorrências...')
+      // console.log('Contexto: Buscando ocorrências...')
       const data = await joinDevicesEventsUsers()
       setOccurrences(data || [])
-      console.log('Contexto: Ocorrências atualizadas', data?.length || 0)
+      // console.log('Contexto: Ocorrências atualizadas', data?.length || 0)
     } catch (error) {
       console.error('Erro ao atualizar ocorrências:', error)
     }
@@ -66,7 +66,7 @@ export function NotificationProvider({ children, isAdmin }: { children: ReactNod
     //   return
     // }
 
-    console.log('Contexto: Iniciando subscription do Appwrite para admin...')
+    // console.log('Contexto: Iniciando subscription do Appwrite para admin...')
     
     const handleNewNotification = async (response: any) => {
       const { payload } = response
@@ -78,11 +78,11 @@ export function NotificationProvider({ children, isAdmin }: { children: ReactNod
         'Regular'
       ]
 
-      console.log('Contexto: Nova notificação recebida para admin', { 
-        type: payload.type, 
-        id: payload.$id,
-        isRelevant: relevantTypes.includes(payload.type)
-      })
+      // console.log('Contexto: Nova notificação recebida para admin', { 
+      //   type: payload.type, 
+      //   id: payload.$id,
+      //   isRelevant: relevantTypes.includes(payload.type)
+      // })
 
       if (relevantTypes.includes(payload.type)) {
 
@@ -93,7 +93,7 @@ export function NotificationProvider({ children, isAdmin }: { children: ReactNod
           const userDevices = await listUserDevices(userAuth.$id)
 
           if (!userDevices.some(device => device.$id === idDevice)) {
-            console.log('Contexto: Ignorando notificação de um dispositivo que o usuário não possui')
+            // console.log('Contexto: Ignorando notificação de um dispositivo que o usuário não possui')
             return
           }
         }
@@ -101,11 +101,11 @@ export function NotificationProvider({ children, isAdmin }: { children: ReactNod
         setNotifications(prevNotifications => {
           const exists = prevNotifications.some(n => n.$id === payload.$id)
           if (!exists) {
-            console.log('Contexto: Adicionando nova notificação para admin')
+            // console.log('Contexto: Adicionando nova notificação para admin')
             setUpdateTrigger(prev => prev + 1)
             return [...prevNotifications, payload]
           }
-          console.log('Contexto: Notificação já existe, ignorando')
+          // console.log('Contexto: Notificação já existe, ignorando')
           return prevNotifications
         })
       }
@@ -117,21 +117,21 @@ export function NotificationProvider({ children, isAdmin }: { children: ReactNod
     )
 
     return () => {
-      console.log('Contexto: Cancelando subscription do Appwrite...')
+      // console.log('Contexto: Cancelando subscription do Appwrite...')
       unsubscribe()
     }
   }, [isAdmin])
 
   useEffect(() => {
     if (isAdmin) {
-      console.log('Contexto: Carregando dados iniciais para admin...')
+      // console.log('Contexto: Carregando dados iniciais para admin...')
       refreshOccurrences()
     }
   }, [refreshOccurrences, isAdmin])
 
   useEffect(() => {
     if (debouncedUpdateTrigger > 0 && isAdmin) {
-      console.log('Contexto: Atualizando ocorrências devido a nova notificação...')
+      // console.log('Contexto: Atualizando ocorrências devido a nova notificação...')
       refreshOccurrences()
     }
   }, [debouncedUpdateTrigger, refreshOccurrences, isAdmin])
@@ -141,21 +141,21 @@ export function NotificationProvider({ children, isAdmin }: { children: ReactNod
     
     const currentOccurrences = occurrencesList || occurrences
     
-    console.log('Contexto: Processando clique na notificação', { 
-      deviceId: notification.id_device,
-      availableOccurrences: currentOccurrences.length
-    })
+    // console.log('Contexto: Processando clique na notificação', { 
+    //   deviceId: notification.id_device,
+    //   availableOccurrences: currentOccurrences.length
+    // })
     
     const relatedOccurrence = currentOccurrences.find(
       occ => occ.device.$id === notification.id_device
     )
 
     if (relatedOccurrence?.event?.last_location) {
-      console.log('Contexto: Ocorrência encontrada', { 
-        deviceId: notification.id_device, 
-        location: relatedOccurrence.event.last_location,
-        eventType: relatedOccurrence.event.type
-      })
+      // console.log('Contexto: Ocorrência encontrada', { 
+      //   deviceId: notification.id_device, 
+      //   location: relatedOccurrence.event.last_location,
+      //   eventType: relatedOccurrence.event.type
+      // })
       
       setSelectedOccurrence(relatedOccurrence)
       
@@ -163,7 +163,7 @@ export function NotificationProvider({ children, isAdmin }: { children: ReactNod
       
       requestAnimationFrame(() => {
         setSelectedLocation(relatedOccurrence.event.last_location)
-        console.log('Contexto: Localização definida', relatedOccurrence.event.last_location)
+        // console.log('Contexto: Localização definida', relatedOccurrence.event.last_location)
       })
     } else {
       console.warn('Contexto: Ocorrência não encontrada ou sem localização', {
@@ -175,7 +175,7 @@ export function NotificationProvider({ children, isAdmin }: { children: ReactNod
   }, [occurrences, isAdmin])
 
   const clearSelection = useCallback(() => {
-    console.log('Contexto: Limpando seleção')
+    // console.log('Contexto: Limpando seleção')
     setSelectedLocation(undefined)
     setSelectedOccurrence(undefined)
   }, [])

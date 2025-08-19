@@ -141,7 +141,7 @@ export function RecoverDeviceForm({
             read: false,
             type: 'Recuperado',
             event_id: eventRequest.$id,
-            id_device: occurrence?.device.$id
+            id_device: occurrence.device.$id
           })
           
           await updateDeviceStatus(occurrence?.device.$id!, {
