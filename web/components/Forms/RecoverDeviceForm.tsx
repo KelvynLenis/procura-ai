@@ -140,7 +140,8 @@ export function RecoverDeviceForm({
             message: `O dispositivo ${occurrence?.device.phone_model} foi recuperado!`,
             read: false,
             type: 'Recuperado',
-            event_id: eventRequest.$id
+            event_id: eventRequest.$id,
+            id_device: occurrence?.device.$id
           })
           
           await updateDeviceStatus(occurrence?.device.$id!, {

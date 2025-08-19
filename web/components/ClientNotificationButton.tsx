@@ -10,12 +10,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Bell, ChevronRight, X } from 'lucide-react'
 import Image from "next/image"
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import DeviceCheck from '../assets/icons/device-check.svg'
-import { NotificationProps } from "@/types"
+import { Notification, NotificationProps } from "@/types"
 import { formatDateTime } from "@/lib/utils"
 import { getDeviceById } from "@/functions/device/get-device-by-id"
 import Link from "next/link"
+import { getNotificationsUnread } from "@/functions/notification/get-notifications-unread"
 
 interface ClientNotificationButtonProps {
   notifications: NotificationProps[]
@@ -29,22 +30,8 @@ function ClientNotificationButton({
   onNotificationClick,
 }: ClientNotificationButtonProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-
-
-  const sortedNotifications = [...notifications].sort((a, b) => {
-    const dateA = new Date(a.time_event).getTime()
-    const dateB = new Date(b.time_event).getTime()
-    
-    // Debug: verificar ordenação
-    console.log('NotificationButton: Ordenando notificações', {
-      a: { id: a.$id.slice(0, 8), date: a.time_event, timestamp: dateA },
-      b: { id: b.$id.slice(0, 8), date: b.time_event, timestamp: dateB },
-      result: dateB - dateA
-    })
-    
-    // Retorna a diferença para ordenação decrescente (mais recente primeiro)
-    return dateB - dateA
-  })
+  const [notificationsCount, setNotificationsCount] = useState(0)
+  const [previousNotifications, setPreviousNotifications] = useState([])
 
   function renderNotification(notification: NotificationProps) {
     const isRecovered = notification.type === 'Recuperado'
@@ -85,13 +72,83 @@ function ClientNotificationButton({
     )
   }
 
+   function renderPreviousNotification(notification: Notification) {
+    const isRecovered = notification.type === 'Recuperado'
+    
+    return (
+      <div key={notification.$id} className="w-full">
+        <DropdownMenuSeparator />
+        <DropdownMenuItem 
+          className={`py-3 w-full flex items-start flex-col gap-2 relative ${
+            isRecovered ? '' : 'hover:bg-zinc-50 cursor-pointer'
+          }`}
+          // onClick={() => !isRecovered && handleNotificationClick(notification)}
+        >
+          <div className='w-full flex h-full px-5 py-3 rounded-lg bg-blue-100/40 gap-4'>
+              <Image src={DeviceCheck} alt="device-check" className="w-6 h-6 self-center" />
+              <div className='flex flex-col gap-4'>
+                <div className='flex justify-between items-center'>
+                  <h1 className='font-bold text-sm text-primary'>Seu dispositivo foi recuperado</h1>
+                  
+                  <span className='w-2 h-2 rounded-full bg-[#004EC1]'></span>
+                </div>
+                <p className='text-sm'>
+                  Informamos que o seu dispositivo {getDeviceById(notification?.id_device!)?.then(device => device.phone_model)}, <strong className="font-semibold">foi localizado e recuperado pela polícia.</strong> 
+                  Acompanhe todas as atualizações desta ocorrência na página de recuperação.
+                </p>
+                <span className='text-xs'>
+                  {formatDateTime(notification.$createdAt!)}
+                </span>
+
+                <span className='text-primary flex self-end text-sm underline'>
+                  Acompanhar atualizações
+                  <ChevronRight size={16} />
+                </span>
+              </div>
+            </div>
+        </DropdownMenuItem>
+      </div>
+    )
+  }
+  
+  const sortedNotifications = [...notifications].sort((a, b) => {
+    const dateA = new Date(a.time_event).getTime()
+    const dateB = new Date(b.time_event).getTime()
+    
+    // Debug: verificar ordenação
+    console.log('NotificationButton: Ordenando notificações', {
+      a: { id: a.$id.slice(0, 8), date: a.time_event, timestamp: dateA },
+      b: { id: b.$id.slice(0, 8), date: b.time_event, timestamp: dateB },
+      result: dateB - dateA
+    })
+    
+    // Retorna a diferença para ordenação decrescente (mais recente primeiro)
+    return dateB - dateA
+  })
+
+  useEffect(() => {
+    const fetchNotificationsUnread = async () => {
+      const { documents, total } = await getNotificationsUnread()
+
+
+      // setNotifications(notifications)
+      setNotificationsCount(total + sortedNotifications.length)
+    }
+
+    fetchNotificationsUnread()
+  }, [])
+
+  useEffect(() => {   
+    setNotificationsCount(notificationsCount + 1)
+  }, [notifications])
+
   return (
     <DropdownMenu open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DropdownMenuTrigger className="relative bg-procura-ai-white p-2 rounded-full hover:bg-procura-ai-blue hover:ring-1 hover:ring-procura-ai-white hover:text-white transition-all duration-500">
             <Bell className="size-7" />
-            {sortedNotifications.length > 0 && (
+            {notificationsCount > 0 && (
               <span className="bg-secondary text-white rounded-full w-6 h-6 font-bold flex items-center justify-center absolute -top-1 right-3">
-                {sortedNotifications.length}
+                {notificationsCount}
               </span>
             )}
         </DropdownMenuTrigger>
@@ -104,8 +161,15 @@ function ClientNotificationButton({
             </div>
             <div className="max-h-96 overflow-y-auto flex flex-col items-center justify-center py-2 px-2">
               
-              {notifications.length > 0 ? (
-                notifications.map(notification => renderNotification(notification))
+              {sortedNotifications.length > 0 ? (
+                <>
+                  {
+                    sortedNotifications.map(notification => renderNotification(notification))
+                  }
+                  { previousNotifications.length > 0 &&
+                    previousNotifications.map(notification => renderPreviousNotification(notification))
+                  }
+                </>
               ) : (
                 <p className="p-3 text-gray-500 text-sm">Nenhuma notificação</p>
               )}

@@ -13,6 +13,7 @@ const NotificationSchema = z.object({
   read: z.boolean(),
   type: z.string(),
   event_id: z.string(),
+  id_device: z.string().optional(), 
 })
 
 export default NotificationSchema
