@@ -3,6 +3,7 @@
 import { getDeviceById } from '@/functions/device/get-device-by-id'
 import { getEventById } from '@/functions/event/get-event-by-id'
 import { getNotifications } from '@/functions/notification/get-notifications'
+import { account } from '@/lib/appwrite'
 import { cn } from '@/lib/utils'
 import { Device, Notification } from '@/types'
 import { ChevronRight } from 'lucide-react'
@@ -53,7 +54,9 @@ export function NotificationsList() {
 
   useEffect(() => {
     const fetchNotifications = async () => {
-      const notifications = await getNotifications()
+      const user = await account.get()
+      
+      const notifications = await getNotifications(user.$id)
 
       const filteredNotifications = notifications.map(notification => ({
         ...notification,

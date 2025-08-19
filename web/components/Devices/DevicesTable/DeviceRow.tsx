@@ -161,15 +161,15 @@ export function DeviceRow({
           <div className="flex flex-col md:flex-row items-center w-full gap-2">
             <Dialog>
               <DialogTrigger asChild>
-                <button
-                  type="button"
+                <div
+                  // type="button"
                   className="rounded-lg w-10 h-10 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
                 >
                   <Eye size={26} />
                   <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
                     Exibir informações
                   </span>
-                </button>
+                </div>
               </DialogTrigger>
               <DialogContent className="flex flex-col p-0 gap-0 w-[30rem] h-fit">
                 <DialogHeader className="flex items-start justify-center px-5 w-full h-16 text-lg font-medium bg-[#E7F2FE] rounded-t-lg border-zinc-200 gap-3">
@@ -257,15 +257,15 @@ export function DeviceRow({
                 handleDeleteDevice(id)
               }}
             >
-              <button
-                type="button"
+              <div
+                // type="button"
                 className="hidden md:flex rounded-lg w-10 h-10 group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90"
               >
                 <Trash2 size={20} />
                 <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
                   Deletar dispositivo
                 </span>
-              </button>
+              </div>
             </ConfirmationDialog>
 
             {status !== 'Regular' ? (
@@ -282,8 +282,8 @@ export function DeviceRow({
             ) : (
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <button
-                    type="button"
+                  <div
+                    // type="button"
                     className={cn(
                       'rounded-lg group relative w-10 h-10 ring-1 ring-zinc-300 flex flex-col md:flex-row items-center justify-center text-red-600 hover:bg-red-300 hover:ring-red-500'
                     )}
@@ -292,7 +292,7 @@ export function DeviceRow({
                     <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-28 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
                       Acionar alerta
                     </span>
-                  </button>
+                  </div>
                 </DialogTrigger>
                 <DialogContent className="flex flex-col h-4/5 md:h-fit w-fit p-0 rounded-xl">
                   <DialogHeader className='w-full bg-[#E7F2FE] px-4 py-5'>
