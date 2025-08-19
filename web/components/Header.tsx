@@ -200,17 +200,17 @@ export function Header({ isAdmin }: HeaderProps) {
                     imgPreview ? (
                       <Avatar>
                         <AvatarImage src={imgPreview} />
-                        <AvatarFallback className='text-primary text-2xl'>
-                          {
-                            user.name.split(' ').length > 1
-                            ? user.name.split(' ')[0][0] + user.name.split(' ')[1][0]
-                            : user.name.split(' ')[0][0]
-                          }
+                        <AvatarFallback className='text-primary text-2xl uppercase'>
+                            {
+                              user.name.split(' ').length > 1
+                              ? user.name.split(' ')[0][0] + user.name.split(' ')[1][0]
+                              : user.name.split(' ')[0][0]
+                            }
                         </AvatarFallback>
                       </Avatar>
 
                     ) : (
-                      <span className='size-10 bg-secondary rounded-full flex items-center justify-center'>
+                      <span className='size-10 bg-secondary rounded-full flex items-center justify-center uppercase'>
                         {
                           user.name.split(' ').length > 1
                           ? user.name.split(' ')[0][0] + user.name.split(' ')[1][0]

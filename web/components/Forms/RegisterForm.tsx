@@ -53,10 +53,10 @@ const formSchema = z
       message: 'A senha deve conter pelo menos 8 caracteres.',
     }),
   })
-  .refine(data => validateCPF(data.cpf), {
-    path: ['cpf'],
-    message: 'CPF inválido. Por favor, verifique os dígitos informados.',
-  })
+  // .refine(data => validateCPF(data.cpf), {
+  //   path: ['cpf'],
+  //   message: 'CPF inválido. Por favor, verifique os dígitos informados.',
+  // })
   .refine(data => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
     message: 'As senhas precisam ser iguais',

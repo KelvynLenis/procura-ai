@@ -17,6 +17,7 @@ import { formatDateTime } from "@/lib/utils"
 import { getDeviceById } from "@/functions/device/get-device-by-id"
 import Link from "next/link"
 import { getNotificationsUnread } from "@/functions/notification/get-notifications-unread"
+import { account } from "@/lib/appwrite"
 
 interface ClientNotificationButtonProps {
   notifications: NotificationProps[]
@@ -128,7 +129,9 @@ function ClientNotificationButton({
 
   useEffect(() => {
     const fetchNotificationsUnread = async () => {
-      const { documents, total } = await getNotificationsUnread()
+      const user = await account.get()
+      
+      const { documents, total } = await getNotificationsUnread(user.$id)
 
 
       // setNotifications(notifications)

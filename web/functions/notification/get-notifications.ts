@@ -1,9 +1,16 @@
 
 import { Notification } from "@/types"
 
-export async function getNotifications(): Promise<Notification[]> {
+export async function getNotifications(userId: string): Promise<Notification[]> {
+  const params = new URLSearchParams({
+    'queries[0]': JSON.stringify({
+      method: 'equal',
+      attribute: 'receiver_id',
+      values: [userId],
+    })
+  })
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_NOTIFICATION}/documents`,
+    `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_NOTIFICATION}/documents?${params.toString()}`,
     {
       method: 'GET',
       headers: {

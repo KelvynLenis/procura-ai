@@ -1,11 +1,16 @@
 
 import { Notification } from "@/types"
 
-export async function getNotificationsUnread(): Promise<{ documents: Notification[], total: number}> {
+export async function getNotificationsUnread(userId: string): Promise<{ documents: Notification[], total: number}> {
 
   try {
     const params = new URLSearchParams({
       'queries[0]': JSON.stringify({
+        method: 'equal',
+        attribute: 'receiver_id',
+        values: [userId],
+      }),
+      'queries[1]': JSON.stringify({
         method: 'equal',
         attribute: 'read',
         values: [false],
