@@ -230,7 +230,7 @@ export default function GoogleMap({ setPosition, setNeighborhoodId }: ParaibaMap
           className="w-full h-10 px-4 border rounded shadow-sm text-sm"
           />
           {predictions.length > 0 && (
-            <ul className="relative z-50 w-full flex flex-col-reverse bg-white border rounded shadow max-h-24 overflow-auto">
+            <ul className="relative z-50 w-full flex flex-col-reverse bg-white border rounded shadow max-h-32 overflow-auto">
               {predictions.map((place) => (
                 <li
                   key={place.place_id}
