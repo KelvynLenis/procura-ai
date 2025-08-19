@@ -1,10 +1,10 @@
 'use client'
 
 import { OccurrencesMap } from '@/components/Maps/OccurrencesMap'
-import { Device, Event, OccurrencesProps } from '@/types'
+import { Device, Event, NotificationProps, OccurrencesProps } from '@/types'
 import Link from 'next/link'
 import { TbArrowsMinimize } from 'react-icons/tb'
-import { NotificationButton } from '@/components/NotificationButton'
+import { AdminNotificationButton } from '@/components/AdminNotificationButton'
 import { useEffect, useState } from 'react'
 import { joinDevicesEventsUsers } from '@/functions/occurences/get-occurrences'
 import { toast } from 'react-toastify'
@@ -59,7 +59,7 @@ export default function Dashboard() {
     fetchData()
   }, [notifications])
 
-  const handleNotificationClick = (notification: Notification) => {
+  const handleNotificationClick = (notification: NotificationProps) => {
     const relatedOccurrence = occurencesData.find(
       occ => occ.device.$id === notification.id_device
     )
@@ -76,7 +76,7 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col">
       <div className="absolute top-0 right-16 z-10">
-        <NotificationButton
+        <AdminNotificationButton
           notifications={notifications}
           setNotifications={setNotifications}
           onNotificationClick={handleNotificationClick}

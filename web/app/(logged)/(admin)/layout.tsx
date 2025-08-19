@@ -9,7 +9,7 @@ import { NotificationProvider } from '@/contexts/NotificationContext'
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ProtectedRoute admin>
-      <NotificationProvider>
+      <NotificationProvider isAdmin>
         <main className="w-full min-h-[calc(100svh-theme(spacing.18))] flex flex-col bg-[#F2F8FD] overflow-hidden">
           <div className="flex h-fit">
             <SidebarProvider className="flex flex-col w-fit mr-10 md:flex-row ">

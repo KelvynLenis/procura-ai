@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { IoIosWarning } from 'react-icons/io'
-import { MarkAsStolenForm } from '../../Forms/MarkAsStolenForm'
+import { AlertForm } from '../../Forms/AlertForm'
 import type { DeviceProps, Operator } from '@/types'
 import { Trash2 } from 'lucide-react'
 import { ViewMyAlert } from '../../ViewMyAlert'
@@ -196,7 +196,7 @@ export function DeviceDetailsCard({
               ) : (
                 <>
                   <h2 className="font-bold">Preencha as informações</h2>
-                  <MarkAsStolenForm
+                  <AlertForm
                     id={id}
                     isStolen={isStolen}
                     setDevices={setDevices}

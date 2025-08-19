@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { Map, Marker, GeoJson, Overlay, ZoomControl } from 'pigeon-maps'
-import type { OccurrencesProps } from '@/types'
+import type { NotificationProps, OccurrencesProps } from '@/types'
 import { usePathname } from 'next/navigation'
 import { EventDetails } from '../EventDetails'
 import { Home, Triangle, ChevronLeft, ChevronRight } from 'lucide-react'
@@ -32,7 +32,7 @@ interface OccurrencesMapProps {
   defaultCenter?: [number, number]
   defaultZoom?: number
   occurences?: OccurrencesProps[]
-  notifications?: Notification[]
+  notifications?: NotificationProps[]
   setNotifications?: React.Dispatch<React.SetStateAction<Notification[]>>
   selectedLocation?: [number, number]
   selectedOccurrence?: OccurrencesProps

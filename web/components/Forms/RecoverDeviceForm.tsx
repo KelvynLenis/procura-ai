@@ -38,8 +38,9 @@ import { updateDeviceStatus } from '@/functions/device/update-device-status'
 import { toast } from 'react-toastify'
 import { emailClient } from '@/services/email-client'
 import { getUser } from '@/functions/user/get-user'
-import { account } from '@/lib/appwrite'
+import { account, ID } from '@/lib/appwrite'
 import { getUserInfo } from '@/functions/user/get-user-info'
+import { createNotification } from '@/functions/notification/create-notification'
 
 interface RecoverDeviceFormProps {
   occurrence: OccurrencesProps
@@ -97,6 +98,21 @@ export function RecoverDeviceForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const callFunction = async () => {
+        const user = await account.get()
+        // fetch('api/create-notification', { method: 'POST', body: JSON.stringify({
+        //   documentId: ID.unique(),
+        //   data: {
+        //     sender_id: user.$id,
+        //     receiver_id: occurrence?.device.auth_id,
+        //     message: `O dispositivo ${occurrence?.device.phone_model} foi recuperado!`,
+        //     read: false,
+        //     type: 'Recuperado',
+        //     event_id: ID.unique(),
+        //   }
+        // }) });
+
+        
+        
         const location = options.find(
           option => option.label === values.location
         )
@@ -105,12 +121,12 @@ export function RecoverDeviceForm({
 
           const user = await getUserInfo(authUser.$id)
 
-          await createEvent({
+          const eventRequest = await createEvent({
             id_device: occurrence?.device.$id!,
             time_event: new Date().toISOString(),
             last_location: location?.value as [number, number],
             retrieval_location: `Retirar o dispositivo no(a) ${values.location}`,
-            description: `${values.description}`,
+            description: `${values.description.length > 0 ? values.description : 'Dispositivo recuperado pela polícia'}`,
             address: `${location?.address}`,
             admin_id: `${user[0].user_id}`,
             type: 'Recuperado',
@@ -118,6 +134,15 @@ export function RecoverDeviceForm({
             id_district: '',
           })
 
+          await createNotification({
+            sender_id: authUser.$id,
+            receiver_id: occurrence?.device.auth_id,
+            message: `O dispositivo ${occurrence?.device.phone_model} foi recuperado!`,
+            read: false,
+            type: 'Recuperado',
+            event_id: eventRequest.$id
+          })
+          
           await updateDeviceStatus(occurrence?.device.$id!, {
             is_stolen: false,
             status: 'Recuperado',

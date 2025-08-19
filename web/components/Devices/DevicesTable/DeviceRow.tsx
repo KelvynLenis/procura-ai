@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { MarkAsStolenForm } from '../../Forms/MarkAsStolenForm'
+import { AlertForm } from '../../Forms/AlertForm'
 import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
 import { ViewMyAlerts } from '../../ViewMyAlerts'
@@ -298,7 +298,7 @@ export function DeviceRow({
                   <DialogHeader className='w-full bg-[#E7F2FE] px-4 py-5'>
                     <DialogTitle>Criar ocorrência</DialogTitle>
                   </DialogHeader>
-                  <MarkAsStolenForm
+                  <AlertForm
                     id={id}
                     isStolen={isStolen}
                     setDevices={setDevices}
