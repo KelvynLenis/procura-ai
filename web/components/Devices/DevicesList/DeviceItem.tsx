@@ -7,7 +7,7 @@ import type { DeviceProps } from '@/types'
 import { Eye, X } from 'lucide-react'
 import { ViewMyAlert } from '../../ViewMyAlert'
 import { toast } from 'react-toastify'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DeviceDetailsCard } from './DeviceDetailsCard'
 import { createEvent } from '@/functions/event/create-event'
 import { updateDeviceStatus } from '@/functions/device/update-device-status'
@@ -27,6 +27,7 @@ interface DeviceItemProps {
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
   index: number
   status: string
+  deviceNotificationId?: string
 }
 
 export function DeviceItem({
@@ -40,6 +41,7 @@ export function DeviceItem({
   status,
   setDevices,
   index,
+  deviceNotificationId
 }: DeviceItemProps) {
   const [isViewDeviceDetailsCardOpen, setIsViewDeviceDetailsCardOpen] =
     useState(false)
@@ -82,6 +84,19 @@ export function DeviceItem({
   function handleViewDevice() {
     setIsViewDeviceDetailsCardOpen(true)
   }
+
+  useEffect(() => {
+    console.log(deviceNotificationId, id)
+    
+    if (window.innerWidth >= 1080) {
+      return
+    }
+
+    if (deviceNotificationId && deviceNotificationId === id) {
+      setIsAlertModalOpen(true)
+    }
+
+  }, [])
 
   return (
     <>

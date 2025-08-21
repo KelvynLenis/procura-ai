@@ -1,10 +1,7 @@
 import Image from "next/image";
-import loginBanner from '../../assets/images/login-banner.png'
 import { LoginForm } from "@/components/Forms/LoginForm";
 import { FAQ } from "@/components/FAQ";
-import logo from '../../assets/icons/logo-text.svg'
-import logoLogin from '../../assets/icons/logo-login.svg'
-import { Footer } from "@/components/Footer";
+import logo from '../../assets/icons/logo-text.svg';
 
 export default function Login() {
   return (

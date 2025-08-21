@@ -19,6 +19,7 @@ import Link from "next/link"
 import { getNotificationsUnread } from "@/functions/notification/get-notifications-unread"
 import { account } from "@/lib/appwrite"
 import { Skeleton } from "./ui/skeleton"
+import { markNotificationsAsRead } from "@/functions/notification/mark-as-read"
 
 function RenderNotification({ notification } : { notification: NotificationProps }) {
   const isRecovered = notification.type === 'Recuperado'
@@ -85,6 +86,12 @@ function PreviousNotification({ notification } : {notification: Notification}) {
   const [device, setDevice] = useState<Device>()
   const [isLoading, setIsLoading] = useState(true)
 
+  async function markAsReadAndRedirect() {
+    await markNotificationsAsRead(notification.$id!)
+
+    window.location.href = `/meus-dispositivos?id=${device?.$id}`
+  }
+
   useEffect(() => {
     const fetchDevice = async () => {
     try {
@@ -127,10 +134,10 @@ function PreviousNotification({ notification } : {notification: Notification}) {
                     {formatDateTime(notification.$createdAt!)}
                   </span>
 
-                  <span className='text-primary flex self-end text-sm underline'>
+                  <button onClick={markAsReadAndRedirect} type='button' className='text-secondary flex self-end text-sm underline hover:opacity-70'>
                     Acompanhar atualizações
                     <ChevronRight size={16} />
-                  </span>
+                  </button>
                 </div>
               </div>
           </DropdownMenuItem>
@@ -177,15 +184,15 @@ function ClientNotificationButton({
       const { documents, total } = await getNotificationsUnread(user.$id)
 
       setPreviousNotifications(documents)
-      setNotificationsCount(total + sortedNotifications.length)
+      setNotificationsCount(total)
     }
 
     fetchNotificationsUnread()
-  }, [])
-
-  useEffect(() => {   
-    setNotificationsCount(notificationsCount + 1)
   }, [notifications])
+
+  // useEffect(() => {   
+  //   setNotificationsCount(notificationsCount + 1)
+  // }, [notifications])
 
   return (
     <DropdownMenu open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -205,15 +212,16 @@ function ClientNotificationButton({
               </button>
             </div>
             <div className="max-h-96 overflow-y-auto flex flex-col py-2 px-2">
-              { sortedNotifications.length > 0 && previousNotifications.length > 0 && 
+              {/* { sortedNotifications.length > 0 && previousNotifications.length > 0 && 
                 <p className="p-3 text-gray-500 text-sm">Notificação mais recente</p>
-              }
-              {sortedNotifications.length > 0 &&
+              } */}
+              {/* {sortedNotifications.length > 0 &&
                 sortedNotifications.map(notification => <RenderNotification notification={notification} />)                 
-              }
+              } */}
               
-              { previousNotifications.length > 0 &&
-                previousNotifications.map(notification => <PreviousNotification notification={notification} />)
+              { previousNotifications.length > 0 
+                ? previousNotifications.map(notification => <PreviousNotification notification={notification} />)
+                : <p className="p-3 text-gray-500 text-sm">Nenhuma notificação encontrada</p>
               }
 
               <DropdownMenuItem className="w-full p-0">

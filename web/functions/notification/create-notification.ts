@@ -17,7 +17,7 @@ export async function createNotification(values: Notification) {
           sender_id: values.sender_id,
           receiver_id: values.receiver_id,
           message: values.message,
-          read: false,
+          is_read: false,
           type: values.type,
           event_id: values.event_id,
           id_device: values.id_device

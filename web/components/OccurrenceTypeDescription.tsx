@@ -9,7 +9,9 @@ export function OccurrenceTypeDescription() {
 
   return (
     <>
-      <div className="flex justify-between w-full relative md:hidden">
+      {/* versão mobile */}
+
+      <div className="flex gap-2 w-full relative md:hidden">
         <div className="flex items-center">
           <span className="text-red-500 h-6 flex align-text-bottom">*</span>
           Tipo de ocorrência
@@ -17,11 +19,12 @@ export function OccurrenceTypeDescription() {
         <button type="button" className="text-xs group md:hidden">
           <CircleHelp 
             size={22}
-            className="fill-procura-ai-blue text-white"
+            className="fill-secondary text-white"
             onClick={() => setIsHintOpen(!isHintOpen)}
           />
         </button>
       </div>
+
       {isHintOpen && (
         <div className="flex w-full flex-col z-[100]  gap-2 bg-[#C4F3F2] font-normal p-2 rounded-md text-justify leading-5">
           <Triangle className="hidden md:flex md:absolute md:top-[16.5rem] md:-left-[1rem] z-[100] top-[45%] -rotate-90 -left-4 fill-[#F3E5B7] text-[#F3E5B7]" />
@@ -62,14 +65,17 @@ export function OccurrenceTypeDescription() {
           </p>
         </div>
       )}
-      <div className="justify-between w-full relative hidden md:flex">
+
+      {/* versão desktop */}
+      
+      <div className="w-full relative hidden md:flex">
         <div className="flex items-center">
           <span className="text-red-500 h-6 flex align-text-bottom">*</span>
           Tipo de ocorrência
         </div>
         <Popover>
           <PopoverTrigger className="hidden md:block">
-            <CircleHelp size={22} className="fill-procura-ai-blue text-white" />
+            <CircleHelp size={22} className="fill-secondary text-white" />
           </PopoverTrigger>
           <PopoverContent className="relative bg-transparent shadow-none border-none">
             <div className="flex w-full flex-col absolute z-[100] left-[10.5rem] md:-top-[24rem] bg-[#C4F3F2] gap-2 font-normal p-2 rounded-md text-justify leading-5">

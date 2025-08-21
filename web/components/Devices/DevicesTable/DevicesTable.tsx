@@ -13,6 +13,7 @@ import type { DeviceProps } from '@/types'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { DeviceRow } from './DeviceRow'
+import { useEffect } from 'react'
 
 interface DevicesTableProps {
   devices: DeviceProps[]
@@ -22,6 +23,7 @@ interface DevicesTableProps {
   pages: number
   limit: number
   isLoading: boolean
+  deviceNotificationId?: string
 }
 
 export function DevicesTable({
@@ -32,7 +34,9 @@ export function DevicesTable({
   pages,
   limit,
   isLoading,
+  deviceNotificationId
 }: DevicesTableProps) {
+
   return (
     <>
       <Table className="bg-white shadow-lg rounded-xl self-center">
@@ -101,6 +105,7 @@ export function DevicesTable({
                 status={device.status!}
                 operator_id={device.operator_id}
                 setDevices={setDevices}
+                deviceNotificationId={deviceNotificationId}
               />
             ))
           ) : (

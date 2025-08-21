@@ -10,7 +10,7 @@ const NotificationSchema = z.object({
   sender_id: z.string(),
   receiver_id: z.string(),
   message: z.string(),
-  read: z.boolean(),
+  is_read: z.boolean(),
   type: z.string(),
   event_id: z.string(),
   id_device: z.string().optional(), 
