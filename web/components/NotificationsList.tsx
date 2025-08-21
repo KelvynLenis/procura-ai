@@ -3,6 +3,7 @@
 import { getDeviceById } from '@/functions/device/get-device-by-id'
 import { getEventById } from '@/functions/event/get-event-by-id'
 import { getNotifications } from '@/functions/notification/get-notifications'
+import { markNotificationsAsRead } from '@/functions/notification/mark-as-read'
 import { account } from '@/lib/appwrite'
 import { cn } from '@/lib/utils'
 import { Device, Notification } from '@/types'
@@ -17,6 +18,12 @@ interface NotitificationItemProps {
 
 function NotificationItem({ isRead, notification }: NotitificationItemProps) {
   const [device, setDevice] = useState<Device>()
+
+  async function markAsReadAndRedirect() {
+    await markNotificationsAsRead(notification.$id!)
+
+    window.location.href = `/meus-dispositivos?id=${device?.$id}`
+  }
 
   
   useEffect(() => {
@@ -38,10 +45,10 @@ function NotificationItem({ isRead, notification }: NotitificationItemProps) {
           Informamos que o seu dispositivo  {device?.phone_model}, foi localizado e recuperado pela polícia. 
           Acompanhe todas as atualizações desta ocorrência na página de recuperação.
         </p>
-        <Link href={'/meus-dispositivos'} className='text-secondary underline text-sm mt-2 flex self-end'>
+        <button onClick={markAsReadAndRedirect} type='button' className='text-secondary underline text-sm mt-2 flex self-end'>
           ir para página de recuperação
           <ChevronRight className='h-4 w-4' />
-        </Link>
+        </button>
       </div>
     </div>
   )
@@ -96,7 +103,7 @@ export function NotificationsList() {
       {
         oldNotifications.length > 0 ? (
           oldNotifications.map(notification => (
-            <NotificationItem key={notification.$id} notification={notification} />
+            <NotificationItem key={notification.$id} notification={notification} isRead={notification.is_read} />
           ))
 
         ) : (

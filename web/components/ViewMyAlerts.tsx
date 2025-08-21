@@ -47,9 +47,21 @@ export function ViewMyAlerts({
   const [device, setDevice] = useState<DeviceProps>({} as DeviceProps)
 
   async function handleConfirmDialog() {
-    await handleDeviceRecovery(id)
-    if (setModalOpen) {
-      setModalOpen(false)
+    try {
+      const callFunction = async () => {
+        await handleDeviceRecovery(id)
+        if (setModalOpen) {
+          setModalOpen(false)
+        }
+      }
+
+      const success = await toast.promise(callFunction, {
+        pending: 'Confirmando que o dispositivo foi recuperado...',
+        success: 'Recuperado',
+        error: 'Erro ao recuperar',
+      })
+    } catch (error) {
+      console.error('Erro ao recuperar dispositivo:', error)
     }
   }
 
@@ -264,13 +276,13 @@ export function ViewMyAlerts({
                 <div className='w-60 flex flex-col items-center'>
                   <span className={cn('w-10 h-10 border-2 border-secondary rounded-full')} />
                   <span className='text-secondary font-medium'>Ocorrência criada</span>
-                  <span className='text-secondary text-sm'>{formatDateTime(events[0].time_event)}</span>
+                  <span className='text-secondary text-sm'>{formatDateTime(events[1].time_event)}</span>
                 </div>
 
                 <div className='w-60 flex flex-col items-center'>
                   <span className={cn('w-10 h-10 border-2 rounded-full', status === 'Recuperado' ? 'border-secondary' : 'border-zinc-500')} />
                   <span className={cn('font-medium', status === 'Recuperado' ? 'text-secondary' : 'text-zinc-500')}>Dispositivo recuperado</span>
-                  <span className={cn('text-sm', status === 'Recuperado' ? 'text-secondary' : 'text-zinc-500')}>{ status === 'Recuperado' && formatDateTime(events[1].time_event)}</span>
+                  <span className={cn('text-sm', status === 'Recuperado' ? 'text-secondary' : 'text-zinc-500')}>{ status === 'Recuperado' && formatDateTime(events[0].time_event)}</span>
                 </div>
 
                 {/* <div className='w-60 flex flex-col items-center'>
@@ -348,30 +360,6 @@ export function ViewMyAlerts({
                 Tenha certeza que já tem o aparelho em mãos antes de prosseguir."
                 onConfirm={handleConfirmDialog}
               >
-                {/* <button
-                  type="button"
-                  className={cn(
-                    'w-full top-5 gap-2 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white',
-                    status === 'Roubado' &&
-                      'bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500',
-                    status === 'Furtado' &&
-                      'bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500',
-                    status === 'Perdido' &&
-                      'bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500',
-                    status === 'Recuperado' &&
-                      'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500 animate-pulse',
-                    status === 'Regular' &&
-                      'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500'
-                  )}
-                >
-                  <IoIosWarning size={28} />
-                  <span className="hidden md:block">
-                    {status === 'Recuperado'
-                      ? 'Confirmar recebimento'
-                      : 'Desativar alerta'}
-                  </span>
-                </button> */}
-
                 <Button variant={status === 'Recuperado' ? 'blue' : 'red'} className='w-full mt-4 gap-2'>
                   <IoIosWarning size={28} />
                   <span className="">{status === 'Recuperado' ? 'Confirmar recebimento' : 'Desativar alerta'}</span>

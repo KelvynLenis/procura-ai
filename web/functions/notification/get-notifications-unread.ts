@@ -12,7 +12,7 @@ export async function getNotificationsUnread(userId: string): Promise<{ document
       }),
       'queries[1]': JSON.stringify({
         method: 'equal',
-        attribute: 'read',
+        attribute: 'is_read',
         values: [false],
       })
     })

@@ -13,6 +13,7 @@ interface DevicesListProps {
   limit: number
   isLoading: boolean
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  deviceNotificationId?: string
 }
 
 export function DevicesList({
@@ -22,6 +23,7 @@ export function DevicesList({
   limit,
   isLoading,
   setIsLoading,
+  deviceNotificationId
 }: DevicesListProps) {
   function showLoadingToast() {
     setIsLoading(true)
@@ -63,6 +65,7 @@ export function DevicesList({
                 isStolen={device.is_stolen!}
                 status={device.status!}
                 setDevices={setDevices}
+                deviceNotificationId={deviceNotificationId}
               />
             ))
           )}

@@ -9,7 +9,7 @@ import { DevicesList } from './DevicesList/DevicesList'
 import { DevicesTable } from './DevicesTable/DevicesTable'
 import { listDevices } from '@/functions/device/list-devices'
 
-export function DevicesWrapper() {
+export function DevicesWrapper({ deviceNotificationId }: { deviceNotificationId?: string }) {
   const [devices, setDevices] = useState<DeviceProps[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [page, setPage] = useState(1)
@@ -59,6 +59,7 @@ export function DevicesWrapper() {
           totalDevices={totalDevices}
           pages={pages}
           isLoading={isLoading}
+          deviceNotificationId={deviceNotificationId}
         />
         <Link href={'/cadastrar-dispositivo'} className="self-end">
           <Button onClick={showLoadingToast} variant="blue" className="my-3">
@@ -75,6 +76,7 @@ export function DevicesWrapper() {
           limit={limit}
           isLoading={isLoading}
           setIsLoading={setIsLoading}
+          deviceNotificationId={deviceNotificationId}
         />
       </div>
     </>

@@ -138,7 +138,7 @@ export function RecoverDeviceForm({
             sender_id: authUser.$id,
             receiver_id: occurrence?.device.auth_id,
             message: `O dispositivo ${occurrence?.device.phone_model} foi recuperado!`,
-            read: false,
+            is_read: false,
             type: 'Recuperado',
             event_id: eventRequest.$id,
             id_device: occurrence.device.$id

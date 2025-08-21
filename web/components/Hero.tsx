@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import landingImages from '../assets/images/landing-image.svg'
+import landingImages from '../assets/images/landing-image.png'
 import line from '../assets/images/line01.svg'
 import Button from './Button'
 
@@ -10,7 +10,7 @@ export function Hero() {
       <Image
         src={landingImages}
         alt="landing background"
-        className="w-full hidden lg:w-[70%] xl:w-full lg:block h-full z-0 -ml-11"
+        className="w-full hidden lg:w-auto lg:block h-full z-0 -ml-11"
       />
 
       <Image

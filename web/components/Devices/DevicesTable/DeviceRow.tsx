@@ -38,6 +38,7 @@ interface DeviceRowProps {
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
   index: number
   status: string
+  deviceNotificationId?: string
 }
 
 export function DeviceRow({
@@ -51,9 +52,10 @@ export function DeviceRow({
   operator_id,
   setDevices,
   index,
+  deviceNotificationId
 }: DeviceRowProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(deviceNotificationId === id ? true : false)
   const [isViewAlertModalOpen, setIsViewAlertModalOpen] = useState(false)
   const [operator, setOperator] = useState<Operator>()
 
@@ -126,7 +128,38 @@ export function DeviceRow({
 
   useEffect(() => {
     fetchOperator()
+
+    if (typeof window === "undefined") return;
+
+    // Detecta se a navegação atual foi um "reload"
+    let isReload = false;
+
+    const navEntries = performance.getEntriesByType("navigation");
+    if (navEntries && navEntries.length > 0) {
+      // Moderno
+      isReload = (navEntries[0] as PerformanceNavigationTiming).type === "reload";
+    } else if ("navigation" in performance) {
+      // Fallback (API antiga / Safari)
+      // @ts-ignore
+      isReload = performance.navigation.type === 1; // 1 === reload
+    }
+
+    if (isReload) {
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState(null, "", cleanUrl);
+      setIsDialogOpen(false)
+      return
+    }
+    
+    if (deviceNotificationId && deviceNotificationId === id) {
+      setIsDialogOpen(true)
+    }
+
   }, [])
+
+  useEffect(() => {
+    
+  }, []);
 
   return (
     <>
