@@ -276,7 +276,7 @@ export function ViewMyAlerts({
                 <div className='w-60 flex flex-col items-center'>
                   <span className={cn('w-10 h-10 border-2 border-secondary rounded-full')} />
                   <span className='text-secondary font-medium'>Ocorrência criada</span>
-                  <span className='text-secondary text-sm'>{formatDateTime(events[1].time_event)}</span>
+                  <span className='text-secondary text-sm'>{events.length > 1 ? formatDateTime(events[1].time_event) : formatDateTime(events[0].time_event)}</span>
                 </div>
 
                 <div className='w-60 flex flex-col items-center'>
