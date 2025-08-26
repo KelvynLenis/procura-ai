@@ -233,25 +233,21 @@ export function OccurrencesMap({
           setZoom(zoom)
         }}
       >
-        {/* Primeiro: renderizar todos os markers */}
         {localOccurrences &&
           localOccurrences.map(
             (occurence, index) => {
               if (!occurence.event?.last_location) return null
               
-              // Se é o primeiro marker dessa localização, usar cor do evento mais recente
               const shouldShowBadge = isFirstOccurrenceAtLocation(occurence, index)
               let markerColor = getColor(occurence.event?.type)
               
               if (shouldShowBadge) {
-                // Encontrar o evento mais recente nessa localização
                 const occurrencesAtLocation = localOccurrences.filter(
                   occ => occ.event?.last_location && 
                         occ.event.last_location[0] === occurence.event.last_location[0] && 
                         occ.event.last_location[1] === occurence.event.last_location[1]
                 )
                 
-                // Encontrar o evento mais recente (maior timestamp)
                 const mostRecentOccurrence = occurrencesAtLocation.reduce((latest, current) => {
                   const latestTime = new Date(latest.event?.time_event || 0).getTime()
                   const currentTime = new Date(current.event?.time_event || 0).getTime()
