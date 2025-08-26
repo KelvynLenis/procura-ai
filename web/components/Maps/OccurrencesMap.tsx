@@ -217,6 +217,7 @@ export function OccurrencesMap({
     } else if (type === 'Perda' || type === 'Extravio ou Perda') {
       return '#EAB308'
     }
+    return '#3B82F6'
   }
 
   return (
@@ -238,32 +239,66 @@ export function OccurrencesMap({
               if (!occurence.event?.last_location) return null
               
               const shouldShowBadge = isFirstOccurrenceAtLocation(occurence, index)
-              const count = getOccurrenceCount(occurence.event.last_location)
+              let markerColor = getColor(occurence.event?.type)
+              
+              if (shouldShowBadge) {
+                const occurrencesAtLocation = localOccurrences.filter(
+                  occ => occ.event?.last_location && 
+                        occ.event.last_location[0] === occurence.event.last_location[0] && 
+                        occ.event.last_location[1] === occurence.event.last_location[1]
+                )
+                
+                const mostRecentOccurrence = occurrencesAtLocation.reduce((latest, current) => {
+                  const latestTime = new Date(latest.event?.time_event || 0).getTime()
+                  const currentTime = new Date(current.event?.time_event || 0).getTime()
+                  return currentTime > latestTime ? current : latest
+                })
+                
+                markerColor = getColor(mostRecentOccurrence.event?.type)
+              }
               
               return (
                 <Marker
-                  key={`${occurence.event.last_location[0]}-${occurence.event.last_location[1]}-${index}`}
+                  key={`marker-${index}`}
                   width={50}
                   anchor={occurence.event?.last_location}
-                  color={getColor(occurence.event?.type)}
+                  color={markerColor}
                   onClick={() => handleOpenPopup(occurence)}
-                >
-                  {shouldShowBadge && count > 1 ? (
+                />
+              )
+            }
+          )}
+        
+        {localOccurrences &&
+          localOccurrences.map(
+            (occurence, index) => {
+              if (!occurence.event?.last_location) return null
+              
+              const shouldShowBadge = isFirstOccurrenceAtLocation(occurence, index)
+              const count = getOccurrenceCount(occurence.event.last_location)
+              
+              if (shouldShowBadge && count > 1) {
+                return (
+                  <Overlay
+                    key={`badge-${index}`}
+                    anchor={occurence.event?.last_location}
+                    offset={[-4, 55]}
+                  >
                     <div 
-                      className="bg-white text-red-500 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-red-500 shadow-lg"
+                      className="bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-xl"
                       style={{ 
-                        position: 'absolute',
-                        top: '-7px',
-                        right: '-47px',
                         pointerEvents: 'none',
-                        zIndex: 999,
+                        zIndex: 999999,
+                        position: 'relative'
                       }}
                     >
                       {count}
                     </div>
-                  ) : undefined}
-                </Marker>
-              )
+                  </Overlay>
+                )
+              }
+              
+              return null
             }
           )}
         {isOverlayOpen && occurence.event?.last_location && (
