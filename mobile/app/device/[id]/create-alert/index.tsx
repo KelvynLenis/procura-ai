@@ -23,8 +23,6 @@ export default function Alert() {
       }
     };
 
-    console.log('Largura da tela:', width);
-    console.log('Altura da tela:', height);
 
     fetchDevice();
   }, []) 

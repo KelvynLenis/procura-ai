@@ -14,7 +14,7 @@ import { deleteDevice } from '@/functions/device/delete-device';
 import { RefreshControl } from 'react-native';
 import ViewMyAlerts from './ViewMyAlerts';
 
-const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () => void}) => {
+const DeviceRow = ({ device, onRefresh }: {device: DeviceProps, onRefresh: () => void }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);

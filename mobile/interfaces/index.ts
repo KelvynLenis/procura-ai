@@ -6,6 +6,7 @@ import OperatorSchema from './operatorSchema'
 import EventSchema from './eventSchema'
 import districtSchema from './districtSchema'
 import { UserSchema } from './userSchema'
+import NotificationSchema from './notificationSchema'
 
 
 export interface DeviceProps {
@@ -55,6 +56,15 @@ export interface ImeiValidationResult {
   error?: string
 }
 
+export interface NotificationProps {
+  $id: string
+  type: string
+  description: string
+  time_event: string
+  id_device: string
+  is_alert_on: boolean
+}
+
 export type Device = z.infer<typeof DeviceSchema>
 export type CreateUserFormData = z.infer<typeof createUserSchema>
 export type CreateDevice = z.infer<typeof CreateDeviceSchema>
@@ -62,3 +72,4 @@ export type Operator = z.infer<typeof OperatorSchema>
 export type Event = z.infer<typeof EventSchema>
 export type District = z.infer<typeof districtSchema>
 export type User = z.infer<typeof UserSchema>
+export type Notification = z.infer<typeof NotificationSchema>
