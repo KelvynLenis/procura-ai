@@ -16,6 +16,8 @@ export default {
        bundleIdentifier: "com.procuraai.mobile"
     },
     android: {
+      "googleServicesFile": "./google-services.json",
+      "package": "com.procuraai.mobile",
       adaptiveIcon: {
         foregroundImage: "./assets/icons/favicon.png",
         backgroundColor: "#ffffff"
@@ -80,6 +82,8 @@ export default {
       GMAIL_APP_PASSWORD: process.env.EXPO_PUBLIC_GMAIL_APP_PASSWORD,
       MAPTILER_API_KEY: process.env.EXPO_PUBLIC_MAPTILER_API_KEY,
       GEOCODE_API_KEY: process.env.EXPO_PUBLIC_GEOCODE_API_KEY,
+      COLLECTION_NOTIFICATION: process.env.EXPO_PUBLIC_COLLECTION_NOTIFICATION
+
     }
   }
 };

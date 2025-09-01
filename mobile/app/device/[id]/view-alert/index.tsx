@@ -1,4 +1,4 @@
-import { View, Text, useWindowDimensions } from 'react-native'
+import { View, Text, useWindowDimensions, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { router, Stack, useLocalSearchParams } from 'expo-router'
 import Header from '@/components/Header'
@@ -20,13 +20,17 @@ export default function ViewAlert() {
       try {
         const device = await getDeviceById(id);
         setDevice(device);
+
+
+        if(device.status === 'Regular') {
+          Alert.alert('Info', 'O dispositivo já foi recuperado.')
+          router.replace('/(tabs)/my-devices')
+        }
       } catch (error) {
         console.error('Erro ao buscar dispositivo:', error);
       }
     };
 
-    console.log('Largura da tela:', width);
-    console.log('Altura da tela:', height);
 
     fetchDevice();
   }, []) 

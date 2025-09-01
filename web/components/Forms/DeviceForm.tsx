@@ -317,7 +317,7 @@ export function DeviceForm({
             )}
           >
             {!device && (
-              <div className="flex flex-col w-full gap-8">
+              <div className="flex flex-col w-full gap-2">
                 <span className="font-medium">Insira os dados abaixo:</span>
                 <div className="flex flex-col w-full gap-1">
                   <span className="h-0.5 w-full bg-zinc-400" />

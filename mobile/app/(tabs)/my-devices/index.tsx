@@ -1,7 +1,7 @@
 import { View } from 'react-native'
 import React from 'react'
 import Header from '@/components/Header'
-import { Stack } from 'expo-router'
+import { Stack, useLocalSearchParams } from 'expo-router'
 import DevicesTable from '@/components/DevicesTable'
 import ProtectedRoute from '@/components/ProtectedRoute'
 
