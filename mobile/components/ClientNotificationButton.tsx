@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import DeviceCheck from '../assets/icons/device-check.svg'
 import { getDeviceById } from "@/functions/device/get-device-by-id"
-import { account } from "@/lib/appwrite"
+import { account, client } from "@/lib/appwrite"
 import { FlatList, Image, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { Device, Notification, NotificationProps } from '@/interfaces'
 import { Bell, ChevronRight, X } from 'lucide-react-native'
@@ -108,6 +108,31 @@ function ClientNotificationButton({
 
     fetchNotificationsUnread()
   }, [notifications])
+
+   useEffect(() => {
+      
+      const handleNewNotification = async (response: any) => {
+        const user = await account.get()
+      
+        const { documents: notificationsUnread, total } = await getNotificationsUnread(user.$id)
+
+        const { documents: notificationsRead } = await getNotificationsRead(user.$id)
+
+        setDatabaseNotificationsRead(notificationsRead)
+        setDatabaseNotificationsUnread(notificationsUnread)
+        setNotificationsCount(total)
+      }
+  
+      const unsubscribe = client.subscribe(
+        `databases.${process.env.EXPO_PUBLIC_DATABASE_ID}.collections.${process.env.EXPO_PUBLIC_COLLECTION_EVENTS}.documents`,
+        handleNewNotification
+      )
+  
+      return () => {
+        // console.log('Contexto: Cancelando subscription do Appwrite...')
+        unsubscribe()
+      }
+    }, [])
 
   return (
     <View>

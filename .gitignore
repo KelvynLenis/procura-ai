@@ -51,3 +51,4 @@ yarn.lock
 mobile/eas.json
 
 mobile-build
+mobile/google-services.json

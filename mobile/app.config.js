@@ -16,6 +16,8 @@ export default {
        bundleIdentifier: "com.procuraai.mobile"
     },
     android: {
+      "googleServicesFile": "./google-services.json",
+      "package": "com.procuraai.mobile",
       adaptiveIcon: {
         foregroundImage: "./assets/icons/favicon.png",
         backgroundColor: "#ffffff"
