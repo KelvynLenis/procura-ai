@@ -1,5 +1,5 @@
 import { RegisterForm } from '@/components/Forms/RegisterForm'
-import loginImages from '../../assets/images/landing-images.png'
+import loginImages from '../../assets/images/landing-image.png'
 import Image from 'next/image'
 import { Footer } from '@/components/Footer'
 import logo from '../../assets/icons/logo-text.svg'
