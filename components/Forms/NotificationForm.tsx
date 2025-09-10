@@ -19,6 +19,7 @@ import { Textarea } from '../ui/textarea'
 import NotificationTable from '../Tables/NotificationTable'
 
 function NotificationForm() {
+
   const formSchema = z
   .object({
     title: z.string().min(1, {
@@ -37,8 +38,16 @@ function NotificationForm() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await fetch("/api/send-push-notification", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        pushToken: "ExponentPushToken[XXyN5eEpAYVMK2_kuoyE5Q]",
+        title: values.title,
+        message: values.description,
+      }),
+    });
   }
 
   return (
@@ -83,7 +92,7 @@ function NotificationForm() {
 
             <FormField
               control={form.control}
-              name="title"
+              name="description"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
                   <FormLabel className="w-fit text-center items-center flex">
@@ -188,7 +197,7 @@ function NotificationForm() {
                 type="button"
                 className="xl:text-base"
               >
-                Salvar
+                Cancelar
               </Button>
               <Button
                 variant="blue"
