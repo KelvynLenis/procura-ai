@@ -10,7 +10,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
 
   const response = await expo.sendPushNotificationsAsync([
-    { to: pushToken, sound: "default", body: message, title: title },
+    { to: pushToken, icon: '../../../assets/icons/logo-black.png' , sound: "default", body: message, title: title, richContent: {
+      image: 'https://template.canva.com/EAE1YAgPM_U/1/0/400w-R-Meu_EcnME.jpg'
+    }, },
   ]);
 
   return NextResponse.json(response);
