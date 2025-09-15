@@ -849,7 +849,7 @@ export function DeviceForm({
             />
 
             {/* Action Buttons */}
-            <div className="flex w-full gap-4 pt-6">
+            <div className="flex justify-center gap-4 w-full pt-6">
               {device ? (
                 <>
                   {isPopover ? (
