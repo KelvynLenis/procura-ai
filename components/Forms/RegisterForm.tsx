@@ -23,7 +23,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import logo from '../../assets/icons/logo-text-2.svg'
 import Image from 'next/image'
-import { Button } from '../ui/button'
+import Button from '../Button'
 import { validateCPF } from '@/lib/utils'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -371,7 +371,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
             )}
           />
 
-          <Button className="bg-secondary text-white rounded-full text-lg px-12 py-4 shadow hover:bg-white hover:text-primary hover:ring-1 hover:ring-primary transition-all duration-300">
+          <Button type="submit" variant="blue" className="text-base !w-40">
             Criar conta
           </Button>
 
@@ -383,7 +383,8 @@ export function RegisterForm({ admin }: RegisterFormProps) {
                 <Button
                   onClick={showLoadingToast}
                   type="button"
-                  className="bg-secondary text-white rounded-full flex w-fit text-sm lg:text-lg px-6 py-2 shadow hover:bg-white hover:text-secondary hover:ring-1 hover:ring-secondary transition-all duration-300"
+                  variant="blue"
+                  className="text-base !w-40"
                 >
                   Retroceder à página do usuário
                 </Button>

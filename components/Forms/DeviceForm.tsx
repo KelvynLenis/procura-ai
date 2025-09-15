@@ -631,18 +631,19 @@ export function DeviceForm({
                     onClick={() => setModalOpen!(false)}
                     type="button"
                     variant="white"
+                    className="!w-60"
                   >
                     Cancelar
                   </Button>
                 </DialogClose>
               ) : (
                 <Link href={'/meus-dispositivos'}>
-                  <Button onClick={() => goBack()} type="button" variant="white">
+                  <Button onClick={() => goBack()} type="button" variant="white" className="!w-60">
                     Cancelar
                   </Button>
                 </Link>
               )}
-              <Button type="submit" variant="blue" className="px-2">
+              <Button type="submit" variant="blue" className="!w-60">
                 Salvar alterações
               </Button>
             </div>
@@ -653,17 +654,18 @@ export function DeviceForm({
                   onClick={() => setModalOpen!(false)}
                   type="button"
                   variant="white"
+                  className="!w-60"
                 >
                   Cancelar
                 </Button>
               ) : (
                 <Link href={'/meus-dispositivos'}>
-                  <Button onClick={() => goBack()} type="button" variant="white">
+                  <Button onClick={() => goBack()} type="button" variant="white" className="!w-60">
                     Cancelar
                   </Button>
                 </Link>
               )}
-              <Button type="submit" variant="blue">
+              <Button type="submit" variant="blue" className="!w-60">
                 Cadastrar
               </Button>
             </div>
@@ -856,18 +858,18 @@ export function DeviceForm({
                         onClick={() => setModalOpen!(false)}
                         type="button"
                         variant="white"
-                        className="flex-1"
+                        className="!w-40"
                       >
                         Cancelar
                       </Button>
                     </DialogClose>
                   ) : (
-                    <Link href={'/meus-dispositivos'} className="flex-1">
+                    <Link href={'/meus-dispositivos'}>
                       <Button
                         onClick={() => goBack()}
                         type="button"
                         variant="white"
-                        className="w-full lg:w-fit"
+                        className="!w-40"
                       >
                         Cancelar
                       </Button>
@@ -877,7 +879,7 @@ export function DeviceForm({
                     type="submit"
                     disabled={isLoading}
                     variant="blue"
-                    className="flex-1 lg:w-fit px-2"
+                    className="!w-40"
                   >
                     {isLoading ? 'Salvando...' : 'Salvar alterações'}
                   </Button>
@@ -889,17 +891,17 @@ export function DeviceForm({
                       onClick={() => setModalOpen!(false)}
                       type="button"
                       variant="white"
-                      className="w-full lg:w-fit"
+                      className="!w-40"
                     >
                       Cancelar
                     </Button>
                   ) : (
-                    <Link href={'/meus-dispositivos'} className="w-full">
+                    <Link href={'/meus-dispositivos'}>
                       <Button
                         onClick={() => goBack()}
                         type="button"
                         variant="white"
-                        className="w-full lg:w-fit"
+                        className="!w-40"
                       >
                         Cancelar
                       </Button>
@@ -909,7 +911,7 @@ export function DeviceForm({
                     type="submit"
                     disabled={isLoading}
                     variant="blue"
-                    className="w-full lg:w-fit"
+                    className="!w-40"
                   >
                     {isLoading ? 'Cadastrando...' : 'Cadastrar'}
                   </Button>
