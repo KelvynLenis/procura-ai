@@ -162,7 +162,7 @@ export function LoginForm() {
             Esqueci minha senha
           </span>
 
-          <Button type="submit" variant="blue" className="text-base">
+          <Button type="submit" variant="blue" className="text-base !w-40">
             Entrar
           </Button>
 
@@ -194,7 +194,7 @@ export function LoginForm() {
                   onClick={showLoadingToast}
                   type="button"
                   variant="black"
-                  className="text-base"
+                  className="text-base !w-40"
                 >
                   Cadastre-se
                 </Button>
