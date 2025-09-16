@@ -29,7 +29,7 @@ export function Features() {
       <Image
         src={shapesRight}
         alt="gradiente direito"
-        className="absolute hidden md:block -bottom-11 w-full right-0 z-0"
+        className="absolute hidden md:block -bottom-11 w-full right-0 z-[-1]"
       />
 
       <div className="flex flex-col w-full gap-0 z-10 mt-5">
