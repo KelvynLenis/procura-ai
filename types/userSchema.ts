@@ -19,4 +19,5 @@ export const UserSchema = z.object({
   accessed_at: z.string().datetime(),
   status: z.string(),
   img_url: z.string().url(),
+  push_token: z.string().optional(),
 })
