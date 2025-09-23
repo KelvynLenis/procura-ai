@@ -11,23 +11,20 @@ import {
 import { Input } from '../ui/input'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { object, z } from 'zod'
+import { z } from 'zod'
 import Button from '../Button'
 import { Checkbox } from '../ui/checkbox'
-import { Search } from 'lucide-react'
 import { Textarea } from '../ui/textarea'
 import NotificationTable from '../Tables/NotificationTable'
-import { useState } from 'react'
-import { listAllUsers } from '@/functions/user/list-all-users'
+import { useEffect, useState } from 'react'
 import { User } from '@/types'
+import AddUserToPushNotificationList from '../AddUserToPushNotificationList'
+import { getDevices } from '@/functions/devices/list-devices'
 import { getUser } from '@/functions/user/get-user'
 
 function NotificationForm() {
   const [allUsers, setAllUsers] = useState(true)
-  const [predictions, setPredictions] = useState<any[]>([]);
-  const [countdownId, setcountdownId] = useState<NodeJS.Timeout>();
-  const [search, setSearch] = useState("");
-  const [targets, setTargets] = useState<string[]>([])
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([])
   const [statusOptions, setStatusOptions] = useState({
     'Regular': false,
     'Roubado': false,
@@ -46,11 +43,13 @@ function NotificationForm() {
   const formSchema = z
   .object({
     title: z.string().min(1, {
-      message: 'O nome é obrigatório.',
-    }),
-    description: z.string().min(1, {
-      message: 'A descrição é obrigatória.',
+      message: 'O título é obrigatório.',
     })
+    .max(65, 'O título deve ter no máximo 65 caracteres'),
+    description: z.string().min(1, {
+      message: 'O corpo da notificação é obrigatória.',
+    })
+    .max(240, 'O corpo da notificação deve ter no máximo 240 caracteres'),
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -62,7 +61,40 @@ function NotificationForm() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(allUsers)
+    const statusTarget = Object.keys(statusOptions).filter(key => statusOptions[key] === true)
+
+    const queryFiltersDevices = statusTarget.length > 0
+      ? [{
+          method: 'equal',
+          attribute: 'status',
+          values: statusTarget
+        }]
+      : []
+
+    const allStatusDeviceSource = await getDevices({ filters: queryFiltersDevices })
+
+    const deviceUserTargets = allStatusDeviceSource.map(device => device.auth_id)
+
+    const queryFiltersUsers = deviceUserTargets.length > 0
+      ? [{
+          method: 'equal',
+          attribute: 'user_id',
+          values: deviceUserTargets
+        }]
+      : []
+    
+    const targetUsersFromStatusOptions = await getUser({ filters: queryFiltersUsers })
+
+    const mergeTargets = [...selectedUsers, ...targetUsersFromStatusOptions]
+
+    const removeDuplicated = mergeTargets.filter((value, index) => {
+      const _value = JSON.stringify(value)
+      return index === mergeTargets.findIndex(obj => {
+        return JSON.stringify(obj) === _value
+      })
+    })
+
+    const targets = removeDuplicated.map(user => user.push_token)
 
     const response = await fetch("/api/send-push-notification", {
       method: "POST",
@@ -81,43 +113,6 @@ function NotificationForm() {
     const data = await response.json();
     console.log(data);
   }
-
-  const handleSearchChange = (text: string) => {
-    clearTimeout(countdownId);
-    setSearch(text);
-
-    if (text.length < 3) {
-      setPredictions([]);
-      return;
-    }
-
-    const timerId = setTimeout(async () => {
-      try {
-        const users = await getUser({ filters: 
-          [{
-            method: 'contains',
-            attribute: 'name',
-            values: [text]
-          }]
-        });
-
-        if (users.length > 0) {
-          setPredictions(users);
-        } else {
-          setPredictions([]);
-        }
-      } catch (err) {
-        console.error("Erro no autocomplete:", err);
-      }
-    }, 500);
-
-    setcountdownId(timerId);
-  };
-
-  function handlePredictionSelect(pushToken: string | undefined) {
-    if (!pushToken) return
-    setTargets([...targets, pushToken])
-  };
 
   function toggleAllStatusOptions() {
     if (statusOptions['Regular'] && statusOptions['Roubado'] && statusOptions['Furtado'] && statusOptions['Perdido'] && statusOptions['Recuperado'] ) {
@@ -160,6 +155,16 @@ function NotificationForm() {
       'SantaRita': true
     })
   }
+
+  useEffect(() => {
+    if (selectedUsers.length > 0) {
+      setAllUsers(false)
+    }
+
+    if (selectedUsers.length === 0) {
+      setAllUsers(true)
+    }
+  }, [selectedUsers])
 
   return (
     <>
@@ -233,7 +238,9 @@ function NotificationForm() {
                 </div>
                 <span>Ou selecione  usuários específicos</span>
 
-                <div className='flex flex-col'>
+
+                <AddUserToPushNotificationList targets={selectedUsers} setTargets={setSelectedUsers} />
+                {/* <div className='flex flex-col'>
                   <div className='ring-1 ring-zinc-300 flex items-center gap-2 bg-white px-4 py-2 w-fit'>
                     <Search className='w-6 h-6' />
                     <input value={search} onChange={(e) => handleSearchChange(e.target.value)} placeholder='Pesquise por nome ou CPF' className='px-4 py-1 w-56 focus:outline-none' />
@@ -251,7 +258,7 @@ function NotificationForm() {
                       ))}
                     </ul>
                   )}
-                </div>
+                </div> */}
               </div>
 
               <div className='flex flex-col gap-2'>
@@ -287,30 +294,30 @@ function NotificationForm() {
 
               <div className='flex flex-col gap-2'>
                 <h3 className='font-medium'>Localidade ou região</h3>
-                <div className='flex gap-2 items-center'>
-                  <Checkbox onClick={toggleAllLocationsOptions} className='drop-shadow-sm shadow-sm bg-white' />
+                <div className='flex gap-2 items-center text-zinc-500'>
+                  <Checkbox disabled onClick={toggleAllLocationsOptions} className='drop-shadow-sm shadow-sm bg-white' />
                   Todos
                 </div>
 
                 <div className='flex gap-2 items-start flex-col pl-4'>
-                  <div className='flex gap-2 items-center'>
-                    <Checkbox checked={locationOptions.JoaoPessoa} onClick={() => setLocationOptions({ ...locationOptions, 'JoaoPessoa': !locationOptions['JoaoPessoa'] })} className='drop-shadow-sm shadow-sm bg-white' />
+                  <div className='flex gap-2 items-center text-zinc-500'>
+                    <Checkbox disabled checked={locationOptions.JoaoPessoa} onClick={() => setLocationOptions({ ...locationOptions, 'JoaoPessoa': !locationOptions['JoaoPessoa'] })} className='drop-shadow-sm shadow-sm bg-white' />
                     João Pessoa
                   </div>
-                  <div className='flex gap-2 items-center'>
-                    <Checkbox checked={locationOptions.Cabedelo} onClick={() => setLocationOptions({ ...locationOptions, 'Cabedelo': !locationOptions['Cabedelo'] })} className='drop-shadow-sm shadow-sm bg-white' />
+                  <div className='flex gap-2 items-center text-zinc-500'>
+                    <Checkbox disabled checked={locationOptions.Cabedelo} onClick={() => setLocationOptions({ ...locationOptions, 'Cabedelo': !locationOptions['Cabedelo'] })} className='drop-shadow-sm shadow-sm bg-white' />
                     Cabedelo
                   </div>
-                  <div className='flex gap-2 items-center'>
-                    <Checkbox checked={locationOptions.CampinaGrande} onClick={() => setLocationOptions({ ...locationOptions, 'CampinaGrande': !locationOptions['CampinaGrande'] })} className='drop-shadow-sm shadow-sm bg-white' />
+                  <div className='flex gap-2 items-center text-zinc-500'>
+                    <Checkbox disabled checked={locationOptions.CampinaGrande} onClick={() => setLocationOptions({ ...locationOptions, 'CampinaGrande': !locationOptions['CampinaGrande'] })} className='drop-shadow-sm shadow-sm bg-white' />
                     Campina Grande
                   </div>
-                  <div className='flex gap-2 items-center'>
-                    <Checkbox checked={locationOptions.Bayeux} onClick={() => setLocationOptions({ ...locationOptions, 'Bayeux': !locationOptions['Bayeux'] })} className='drop-shadow-sm shadow-sm bg-white' />
+                  <div className='flex gap-2 items-center text-zinc-500'>
+                    <Checkbox disabled checked={locationOptions.Bayeux} onClick={() => setLocationOptions({ ...locationOptions, 'Bayeux': !locationOptions['Bayeux'] })} className='drop-shadow-sm shadow-sm bg-white' />
                     Bayeux
                   </div>
-                  <div className='flex gap-2 items-center'>
-                    <Checkbox checked={locationOptions.SantaRita} onClick={() => setLocationOptions({ ...locationOptions, 'SantaRita': !locationOptions['SantaRita'] })} className='drop-shadow-sm shadow-sm bg-white' />
+                  <div className='flex gap-2 items-center text-zinc-500'>
+                    <Checkbox disabled checked={locationOptions.SantaRita} onClick={() => setLocationOptions({ ...locationOptions, 'SantaRita': !locationOptions['SantaRita'] })} className='drop-shadow-sm shadow-sm bg-white' />
                     Santa Rita
                   </div>
                 </div>
