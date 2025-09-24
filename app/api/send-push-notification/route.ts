@@ -68,6 +68,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
         sound: "default", 
         body: message, 
         title: title, 
+        data: {
+          screen: "/my-devices",
+          teste: 'teste'
+        }
       },
     )
   }
@@ -75,7 +79,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
   // console.log(pushToken)
 
   // const response = await expo.sendPushNotificationsAsync([
-  //   { to: pushToken, icon: '../../../assets/icons/logo-notification.png' , sound: "default", body: message, title: title, },
+  //   { to: pushToken, icon: '../../../assets/icons/logo-notification.png' , sound: "default", body: message, title: title, data: { screen: "/my-devices", teste: 'teste' } },
   // ]);
 
   const response = expo.chunkPushNotifications(messages);

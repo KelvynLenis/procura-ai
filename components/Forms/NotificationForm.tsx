@@ -100,7 +100,7 @@ function NotificationForm() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        pushToken: "ExponentPushToken[oNVbyrNRF7pdU_65Y4q8u-]",
+        pushToken: "ExponentPushToken[_VFcvcCCGvdKT4jQ3L3K45]",
         statusOptions: statusOptions,
         locationOptions: locationOptions,
         allUsers: allUsers,
