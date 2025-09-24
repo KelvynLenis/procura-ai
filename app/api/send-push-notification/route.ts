@@ -78,22 +78,21 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
   let tickets = [];
 
-    (async () => {
-      for (let chunk of response) {
-        try {
-          let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-          console.log(ticketChunk);
-          tickets.push(...ticketChunk);
-        } catch (error) {
-          console.error(error);
-        }
+  (async () => {
+    for (let chunk of response) {
+      try {
+        let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+        console.log(ticketChunk);
+        tickets.push(...ticketChunk);
+      } catch (error) {
+        console.error(error);
       }
-    })();
+    }
+  })();
 
   // const response = await expo.sendPushNotificationsAsync([
   //   { to: pushToken, icon: '../../../assets/icons/logo-notification.png' , sound: "default", body: message, title: title, data: { screen: "/my-devices", teste: 'teste' } },
   // ]);
-
 
   console.log(response)
 
