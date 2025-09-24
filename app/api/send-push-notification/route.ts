@@ -25,10 +25,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
             title: title, 
           },
         );
-        console.log(user)
-         const response = await expo.sendPushNotificationsAsync([
-            { to: user.push_token, icon: '../../../assets/icons/logo-notification.png' , sound: "default", body: message, title: title, },
-          ]);
       }
     }
     console.log(messages)
