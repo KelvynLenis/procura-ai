@@ -85,6 +85,8 @@ function NotificationForm() {
     
     const targetUsersFromStatusOptions = await getUser({ filters: queryFiltersUsers })
 
+    // console.log(targetUsersFromStatusOptions)
+
     const mergeTargets = [...selectedUsers, ...targetUsersFromStatusOptions]
 
     const removeDuplicated = mergeTargets.filter((value, index) => {
@@ -94,7 +96,11 @@ function NotificationForm() {
       })
     })
 
-    const targets = removeDuplicated.map(user => user.push_token)
+    const removeAdmin = removeDuplicated.filter(user => user.type !== 'Administrador')
+
+    const targets = removeAdmin.map(user => user.push_token)
+
+    // console.log(targets)
 
     const response = await fetch("/api/send-push-notification", {
       method: "POST",

@@ -82,8 +82,10 @@ function AddUserToPushNotificationList({ targets, setTargets }: AddUserToPushNot
   useEffect(() => {
     const fetchUsers = async () => {
       const usersResponse = await listAllUsers()
+
+      const filterAdmin = usersResponse.filter(user => user.type !== 'Administrador')
     
-      setUsers(usersResponse)
+      setUsers(filterAdmin)
       setPredictions(usersResponse)
     };
 
