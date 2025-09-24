@@ -14,19 +14,42 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import Button from '../Button'
 import { Checkbox } from '../ui/checkbox'
-import { Search } from 'lucide-react'
 import { Textarea } from '../ui/textarea'
 import NotificationTable from '../Tables/NotificationTable'
+import { useEffect, useState } from 'react'
+import { User } from '@/types'
+import AddUserToPushNotificationList from '../AddUserToPushNotificationList'
+import { getDevices } from '@/functions/devices/list-devices'
+import { getUser } from '@/functions/user/get-user'
 
 function NotificationForm() {
+  const [allUsers, setAllUsers] = useState(true)
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([])
+  const [statusOptions, setStatusOptions] = useState({
+    'Regular': false,
+    'Roubado': false,
+    'Furtado': false,
+    'Perdido': false,
+    'Recuperado': false
+  })
+  const [locationOptions, setLocationOptions] = useState({
+    'JoaoPessoa': false,
+    'Cabedelo': false,
+    'CampinaGrande': false,
+    'Bayeux': false,
+    'SantaRita': false
+  })  
+
   const formSchema = z
   .object({
     title: z.string().min(1, {
-      message: 'O nome é obrigatório.',
-    }),
-    description: z.string().min(1, {
-      message: 'A descrição é obrigatória.',
+      message: 'O título é obrigatório.',
     })
+    .max(65, 'O título deve ter no máximo 65 caracteres'),
+    description: z.string().min(1, {
+      message: 'O corpo da notificação é obrigatória.',
+    })
+    .max(240, 'O corpo da notificação deve ter no máximo 240 caracteres'),
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -37,9 +60,117 @@ function NotificationForm() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const statusTarget = Object.keys(statusOptions).filter(key => statusOptions[key] === true)
+
+    const queryFiltersDevices = statusTarget.length > 0
+      ? [{
+          method: 'equal',
+          attribute: 'status',
+          values: statusTarget
+        }]
+      : []
+
+    const allStatusDeviceSource = await getDevices({ filters: queryFiltersDevices })
+
+    const deviceUserTargets = allStatusDeviceSource.map(device => device.auth_id)
+
+    const queryFiltersUsers = deviceUserTargets.length > 0
+      ? [{
+          method: 'equal',
+          attribute: 'user_id',
+          values: deviceUserTargets
+        }]
+      : []
+    
+    const targetUsersFromStatusOptions = await getUser({ filters: queryFiltersUsers })
+
+    // console.log(targetUsersFromStatusOptions)
+
+    const mergeTargets = [...selectedUsers, ...targetUsersFromStatusOptions]
+
+    const removeDuplicated = mergeTargets.filter((value, index) => {
+      const _value = JSON.stringify(value)
+      return index === mergeTargets.findIndex(obj => {
+        return JSON.stringify(obj) === _value
+      })
+    })
+
+    const removeAdmin = removeDuplicated.filter(user => user.type !== 'Administrador')
+
+    const targets = removeAdmin.map(user => user.push_token)
+
+    // console.log(targets)
+
+    const response = await fetch("/api/send-push-notification", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        pushToken: "ExponentPushToken[_VFcvcCCGvdKT4jQ3L3K45]",
+        statusOptions: statusOptions,
+        locationOptions: locationOptions,
+        allUsers: allUsers,
+        targets: targets,
+        title: values.title,
+        message: values.description,
+      }),
+    });
+
+    const data = await response.json();
+    console.log(data);
   }
+
+  function toggleAllStatusOptions() {
+    if (statusOptions['Regular'] && statusOptions['Roubado'] && statusOptions['Furtado'] && statusOptions['Perdido'] && statusOptions['Recuperado'] ) {
+      setStatusOptions({
+        'Regular': false,
+        'Roubado': false,
+        'Furtado': false,
+        'Perdido': false,
+        'Recuperado': false
+      })
+      return
+    }
+
+    setStatusOptions({
+      'Regular': true,
+      'Roubado': true,
+      'Furtado': true,
+      'Perdido': true,
+      'Recuperado': true
+    })
+  }
+
+  function toggleAllLocationsOptions() {
+    if (locationOptions['JoaoPessoa'] && locationOptions['Cabedelo'] && locationOptions['CampinaGrande'] && locationOptions['Bayeux'] && locationOptions['SantaRita'] ) {
+      setLocationOptions({
+        'JoaoPessoa': false,
+        'Cabedelo': false,
+        'CampinaGrande': false,
+        'Bayeux': false,
+        'SantaRita': false
+      })
+      return
+    }
+
+    setLocationOptions({
+      'JoaoPessoa': true,
+      'Cabedelo': true,
+      'CampinaGrande': true,
+      'Bayeux': true,
+      'SantaRita': true
+    })
+  }
+
+  useEffect(() => {
+    if (selectedUsers.length > 0) {
+      setAllUsers(false)
+    }
+
+    if (selectedUsers.length === 0) {
+      setAllUsers(true)
+    }
+  }, [selectedUsers])
 
   return (
     <>
@@ -83,7 +214,7 @@ function NotificationForm() {
 
             <FormField
               control={form.control}
-              name="title"
+              name="description"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full">
                   <FormLabel className="w-fit text-center items-center flex">
@@ -108,43 +239,60 @@ function NotificationForm() {
                 <h3 className='font-medium'>Usuários</h3>
 
                 <div className='flex gap-2 items-center'>
-                  <Checkbox className='drop-shadow-sm shadow-sm bg-white' />
+                  <Checkbox checked={allUsers} onClick={() => setAllUsers(!allUsers)} className='drop-shadow-sm shadow-sm bg-white' />
                   Todos os usuários
                 </div>
                 <span>Ou selecione  usuários específicos</span>
 
-                <div className='ring-1 ring-zinc-300 flex items-center gap-2 bg-white px-4 py-2 w-fit'>
-                  <Search className='w-6 h-6' />
-                  <Input placeholder='Pesquise por nome ou CPF' className='ring-0 border-none' />
-                </div>
+
+                <AddUserToPushNotificationList targets={selectedUsers} setTargets={setSelectedUsers} />
+                {/* <div className='flex flex-col'>
+                  <div className='ring-1 ring-zinc-300 flex items-center gap-2 bg-white px-4 py-2 w-fit'>
+                    <Search className='w-6 h-6' />
+                    <input value={search} onChange={(e) => handleSearchChange(e.target.value)} placeholder='Pesquise por nome ou CPF' className='px-4 py-1 w-56 focus:outline-none' />
+                  </div>
+                  {predictions.length > 0 && (
+                    <ul className="w-full h-20 flex flex-col bg-zinc-100 ring-1 ring-zinc-300 max-h-32 overflow-auto">
+                      {predictions && predictions.map((user: User) => (
+                        <li
+                          key={user.$id}
+                          className="px-4 py-2 cursor-pointer hover:bg-white ring-1 ring-zinc-300 italic"
+                          onClick={() => handlePredictionSelect(user.push_token)}
+                        >
+                          {user.name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div> */}
               </div>
 
               <div className='flex flex-col gap-2'>
                 <h3 className='font-medium'>Status de dispositivo</h3>
                 <div className='flex gap-2 items-center'>
-                  <Checkbox className='drop-shadow-sm shadow-sm bg-white' />
+                  <Checkbox onClick={toggleAllStatusOptions} className='drop-shadow-sm shadow-sm bg-white' />
                   Todos
                 </div>
 
                 <div className='flex gap-2 items-start flex-col pl-4'>
                   <div className='flex gap-2 items-center'>
-                    <Checkbox className='drop-shadow-sm shadow-sm bg-white' />
+                    <Checkbox checked={statusOptions.Regular} onClick={() => setStatusOptions({ ...statusOptions, 'Regular': !statusOptions['Regular'] })} className='drop-shadow-sm shadow-sm bg-white' />
                     Regular
                   </div>
                   <div className='flex gap-2 items-center'>
-                    <Checkbox className='drop-shadow-sm shadow-sm bg-white' />
+                    <Checkbox checked={statusOptions.Roubado} onClick={() => setStatusOptions({ ...statusOptions, 'Roubado': !statusOptions['Roubado'] })} className='drop-shadow-sm shadow-sm bg-white' />
                     Roubado
                   </div>
                   <div className='flex gap-2 items-center'>
-                    <Checkbox className='drop-shadow-sm shadow-sm bg-white' />
+                    <Checkbox checked={statusOptions.Furtado} onClick={() => setStatusOptions({ ...statusOptions, 'Furtado': !statusOptions['Furtado'] })} className='drop-shadow-sm shadow-sm bg-white' />
                     Furtado
                   </div>
                   <div className='flex gap-2 items-center'>
-                    <Checkbox className='drop-shadow-sm shadow-sm bg-white' />
+                    <Checkbox checked={statusOptions.Perdido} onClick={() => setStatusOptions({ ...statusOptions, 'Perdido': !statusOptions['Perdido'] })} className='drop-shadow-sm shadow-sm bg-white' />
                     Perdido
                   </div>
                   <div className='flex gap-2 items-center'>
-                    <Checkbox className='drop-shadow-sm shadow-sm bg-white' />
+                    <Checkbox checked={statusOptions.Recuperado} onClick={() => setStatusOptions({ ...statusOptions, 'Recuperado': !statusOptions['Recuperado'] })} className='drop-shadow-sm shadow-sm bg-white' />
                     Recuperado
                   </div>
                 </div>
@@ -152,30 +300,30 @@ function NotificationForm() {
 
               <div className='flex flex-col gap-2'>
                 <h3 className='font-medium'>Localidade ou região</h3>
-                <div className='flex gap-2 items-center'>
-                  <Checkbox className='drop-shadow-sm shadow-sm bg-white' />
+                <div className='flex gap-2 items-center text-zinc-500'>
+                  <Checkbox disabled onClick={toggleAllLocationsOptions} className='drop-shadow-sm shadow-sm bg-white' />
                   Todos
                 </div>
 
                 <div className='flex gap-2 items-start flex-col pl-4'>
-                  <div className='flex gap-2 items-center'>
-                    <Checkbox className='drop-shadow-sm shadow-sm bg-white' />
+                  <div className='flex gap-2 items-center text-zinc-500'>
+                    <Checkbox disabled checked={locationOptions.JoaoPessoa} onClick={() => setLocationOptions({ ...locationOptions, 'JoaoPessoa': !locationOptions['JoaoPessoa'] })} className='drop-shadow-sm shadow-sm bg-white' />
                     João Pessoa
                   </div>
-                  <div className='flex gap-2 items-center'>
-                    <Checkbox className='drop-shadow-sm shadow-sm bg-white' />
+                  <div className='flex gap-2 items-center text-zinc-500'>
+                    <Checkbox disabled checked={locationOptions.Cabedelo} onClick={() => setLocationOptions({ ...locationOptions, 'Cabedelo': !locationOptions['Cabedelo'] })} className='drop-shadow-sm shadow-sm bg-white' />
                     Cabedelo
                   </div>
-                  <div className='flex gap-2 items-center'>
-                    <Checkbox className='drop-shadow-sm shadow-sm bg-white' />
+                  <div className='flex gap-2 items-center text-zinc-500'>
+                    <Checkbox disabled checked={locationOptions.CampinaGrande} onClick={() => setLocationOptions({ ...locationOptions, 'CampinaGrande': !locationOptions['CampinaGrande'] })} className='drop-shadow-sm shadow-sm bg-white' />
                     Campina Grande
                   </div>
-                  <div className='flex gap-2 items-center'>
-                    <Checkbox className='drop-shadow-sm shadow-sm bg-white' />
+                  <div className='flex gap-2 items-center text-zinc-500'>
+                    <Checkbox disabled checked={locationOptions.Bayeux} onClick={() => setLocationOptions({ ...locationOptions, 'Bayeux': !locationOptions['Bayeux'] })} className='drop-shadow-sm shadow-sm bg-white' />
                     Bayeux
                   </div>
-                  <div className='flex gap-2 items-center'>
-                    <Checkbox className='drop-shadow-sm shadow-sm bg-white' />
+                  <div className='flex gap-2 items-center text-zinc-500'>
+                    <Checkbox disabled checked={locationOptions.SantaRita} onClick={() => setLocationOptions({ ...locationOptions, 'SantaRita': !locationOptions['SantaRita'] })} className='drop-shadow-sm shadow-sm bg-white' />
                     Santa Rita
                   </div>
                 </div>
@@ -188,7 +336,7 @@ function NotificationForm() {
                 type="button"
                 className="xl:text-base"
               >
-                Salvar
+                Cancelar
               </Button>
               <Button
                 variant="blue"

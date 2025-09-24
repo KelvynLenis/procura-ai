@@ -1,4 +1,5 @@
-import { User } from '@/types';
+import {  User } from '@/types';
+
 
 export async function listAllUsers(): Promise<User[]> {
   const allUsers: User[] = [];
@@ -36,6 +37,7 @@ export async function listAllUsers(): Promise<User[]> {
       }
 
       const { documents, total: fetchedTotal } = await response.json();
+
       allUsers.push(...documents);
       total = fetchedTotal;
       offset += limit;

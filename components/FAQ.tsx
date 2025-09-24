@@ -8,15 +8,19 @@ import { questions } from '@/utils/FAQ'
 import { Footer } from './Footer'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
-import govFull from '../assets/icons/gov-full-light.svg'
+import govFullLight from '../assets/icons/gov-full-light.svg'
+import govFull from '../assets/icons/gov.png'
 import logo from '../assets/icons/logo-footer.svg'
+import line from '../assets/images/line02.svg'
+import secties from '../assets/images/SECTIES_branco.png'
+import gov from '../assets/icons/gov.svg'
 
-export function FAQ({ bottom, light, homepage }: { bottom?: string, light?: boolean, homepage?: boolean  }) {
+export function FAQ({ light, homepage }: { bottom?: string, light?: boolean, homepage?: boolean  }) {
   return (
     <section
       className={cn(
-        'w-full h-fit bg-none lg:bg-faq bg-cover flex flex-col justify-between lg:pt-28 lg:pb-28 sm:pb-0 relative lg:-top-16 3xl:-top-24',
-        `-top-${bottom}`,
+        'w-full h-fit bg-none lg:bg-faq bg-cover flex flex-col justify-between z-[1]',
+        homepage ? 'lg:pt-10' : 'lg:pt-28 lg:pb-0 sm:pb-0 relative lg:-top-16 3xl:-top-24',
         light ? 'bg-faq-light': 'bg-faq',
       )}
     >
@@ -44,14 +48,31 @@ export function FAQ({ bottom, light, homepage }: { bottom?: string, light?: bool
         </div>
       </div>
         
-      <div className='w-full flex-col flex items-center justify-center h-fit py-4 bg-primary lg:hidden'>
+      <div className='w-full flex-col flex items-center justify-center h-fit py-4 bg-primary md:hidden'>
         <Image src={logo} alt="logo" className='h-full' />
-        <Image src={govFull} alt="gov" className='h-full' />
+        <Image src={govFullLight} alt="gov" className='h-full' />
       </div>
       
-      <div className={cn(' w-full absolute -bottom-20 hidden lg:flex', `bottom-${bottom}`)}>
-          <Footer light={!light} homepage={homepage} />
-      </div>
+      {
+        homepage ? (
+          <footer className={cn("w-full relative h-20 md:mt-0 lg:mt-4 flex items-center justify-start z-[20] bg-white")}>
+              <Image src={govFull} alt="logo" className='w-64 h-12 md:w-96 z-10' />
+              <Image src={line} alt="logo" className='h-full absolute right-0 self-end hidden sm:block md:w-[50%] lg:w-[80%] xl:w-[90%] z-0' />
+            {/* <div className={cn('w-full h-20 flex items-center -mb-4 justify-start pl-9 overflow-hidden')}>
+            </div> */}
+          </footer>
+        ) : (
+          <footer className={cn("w-full relative -bottom-20 md:mt-0 lg:mt-4 flex items-center justify-start z-[20] bg-primary py-4")}>
+            <div className={cn('w-full items-center pl-9 justify-center hidden lg:flex md:justify-start py-0 px-8 h-14 md:h-fit')}>
+              <Image src={secties} alt="logo" className='w-28 md:w-auto md:h-12' />
+              <Image src={gov} alt="logo" className='w-28 md:w-auto md:h-12' />            
+            </div>
+          </footer>
+        )
+      }
+      {/* <div className={cn('w-full absolute -bottom-20 hidden lg:flex', `bottom-${bottom}`)}>
+        <Footer light={!light} homepage={homepage} />
+      </div> */}
 
     </section>
   )
