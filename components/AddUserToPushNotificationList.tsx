@@ -69,6 +69,9 @@ function AddUserToPushNotificationList({ targets, setTargets }: AddUserToPushNot
 
   function handlePredictionSelect(user: User | undefined) {
     if (!user) return
+
+    if(targets.includes(user)) return
+
     setTargets([...targets, user])
   };
 
@@ -100,7 +103,7 @@ function AddUserToPushNotificationList({ targets, setTargets }: AddUserToPushNot
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex gap-2 h-full">
+        <div className="flex gap-2 h-full max-h-[20rem]">
           <div className='flex flex-col h-full'>
             <div className='ring-1 ring-zinc-300 flex items-center gap-2 bg-white px-4 py-2 w-fit'>
               <Search className='w-6 h-6' />
