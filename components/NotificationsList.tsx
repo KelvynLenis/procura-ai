@@ -8,7 +8,6 @@ import { account } from '@/lib/appwrite'
 import { cn } from '@/lib/utils'
 import { Device, Notification } from '@/types'
 import { ChevronRight } from 'lucide-react'
-import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
 interface NotitificationItemProps {
@@ -28,9 +27,12 @@ function NotificationItem({ isRead, notification }: NotitificationItemProps) {
   
   useEffect(() => {
     const fetchDevice = async () => {
-      const event = await getEventById(notification.event_id)
-      const device = await getDeviceById(event.id_device!)
-      setDevice(device)
+      if (notification.type !== 'push') {
+        const event = await getEventById(notification.event_id!)
+        const device = await getDeviceById(event.id_device!)
+        
+        setDevice(device)
+      }
     }
 
     fetchDevice()
@@ -42,8 +44,14 @@ function NotificationItem({ isRead, notification }: NotitificationItemProps) {
       <div className='flex flex-col gap-2'>
         <h1 className='font-medium text-lg'>Seu dispositivo foi recuperado</h1>
         <p className='text-sm'>
-          Informamos que o seu dispositivo  {device?.phone_model}, foi localizado e recuperado pela polícia. 
-          Acompanhe todas as atualizações desta ocorrência na página de recuperação.
+
+          {
+            notification.type === 'push' ? (
+              notification.message
+            ) : (
+              `Informamos que o seu dispositivo ${device?.phone_model}, foi localizado e recuperado pela polícia. Acompanhe todas as atualizações desta ocorrência na página de recuperação.`
+            )
+          }
         </p>
         <button onClick={markAsReadAndRedirect} type='button' className='text-secondary underline text-sm mt-2 flex self-end'>
           ir para página de recuperação

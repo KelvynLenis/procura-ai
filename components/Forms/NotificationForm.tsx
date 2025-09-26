@@ -21,6 +21,7 @@ import { User } from '@/types'
 import AddUserToPushNotificationList from '../AddUserToPushNotificationList'
 import { getDevices } from '@/functions/devices/list-devices'
 import { getUser } from '@/functions/user/get-user'
+import { toast } from 'react-toastify'
 
 function NotificationForm() {
   const [allUsers, setAllUsers] = useState(true)
@@ -60,48 +61,7 @@ function NotificationForm() {
     },
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    const statusTarget = Object.keys(statusOptions).filter(key => statusOptions[key] === true)
-
-    const queryFiltersDevices = statusTarget.length > 0
-      ? [{
-          method: 'equal',
-          attribute: 'status',
-          values: statusTarget
-        }]
-      : []
-
-    const allStatusDeviceSource = await getDevices({ filters: queryFiltersDevices })
-
-    const deviceUserTargets = allStatusDeviceSource.map(device => device.auth_id)
-
-    const queryFiltersUsers = deviceUserTargets.length > 0
-      ? [{
-          method: 'equal',
-          attribute: 'user_id',
-          values: deviceUserTargets
-        }]
-      : []
-    
-    const targetUsersFromStatusOptions = await getUser({ filters: queryFiltersUsers })
-
-    // console.log(targetUsersFromStatusOptions)
-
-    const mergeTargets = [...selectedUsers, ...targetUsersFromStatusOptions]
-
-    const removeDuplicated = mergeTargets.filter((value, index) => {
-      const _value = JSON.stringify(value)
-      return index === mergeTargets.findIndex(obj => {
-        return JSON.stringify(obj) === _value
-      })
-    })
-
-    const removeAdmin = removeDuplicated.filter(user => user.type !== 'Administrador')
-
-    const targets = removeAdmin.map(user => user.push_token)
-
-    // console.log(targets)
-
+  async function sendPushNotification(values: z.infer<typeof formSchema>, targets: string[]) {
     const response = await fetch("/api/send-push-notification", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -116,8 +76,77 @@ function NotificationForm() {
       }),
     });
 
-    const data = await response.json();
-    console.log(data);
+    return response
+  }
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const statusTarget = Object.keys(statusOptions).filter(key => statusOptions[key] === true)
+    
+    // console.log("statusTarget", statusTarget)
+
+    const queryFiltersDevices = statusTarget.length > 0
+      ? [{
+          method: 'equal',
+          attribute: 'status',
+          values: statusTarget
+        }]
+      : []
+
+    const allStatusDeviceSource = queryFiltersDevices.length > 0 ? await getDevices({ filters: queryFiltersDevices }) : []
+
+    const deviceUserTargets = allStatusDeviceSource.map(device => device.auth_id)
+
+    // console.log("deviceUserTargets", deviceUserTargets)
+
+    const queryFiltersUsers = deviceUserTargets.length > 0
+      ? [{
+          method: 'equal',
+          attribute: 'user_id',
+          values: deviceUserTargets
+        }]
+      : []
+    
+    const targetUsersFromStatusOptions = queryFiltersUsers.length > 0 ? await getUser({ filters: queryFiltersUsers }) : []
+
+    // console.log("targetUsersFromStatusOptions", targetUsersFromStatusOptions)
+
+    const mergeTargets = [...selectedUsers, ...targetUsersFromStatusOptions]
+
+    const removeDuplicated = mergeTargets.filter((value, index) => {
+      const _value = JSON.stringify(value)
+      return index === mergeTargets.findIndex(obj => {
+        return JSON.stringify(obj) === _value
+      })
+    })
+
+    const removeAdmin = removeDuplicated.filter(user => user.type !== 'Administrador')
+
+    const targets = removeAdmin.map(user => user.push_token)
+
+    // console.log("targets", targets)
+
+    toast.promise(sendPushNotification(values, targets), {
+      pending: 'Enviando notificação...',
+      success: 'Notificação enviada com sucesso!',
+      error: 'Erro ao enviar notificação',
+    })
+
+    // const response = await fetch("/api/send-push-notification", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({
+    //     pushToken: "ExponentPushToken[_VFcvcCCGvdKT4jQ3L3K45]",
+    //     statusOptions: statusOptions,
+    //     locationOptions: locationOptions,
+    //     allUsers: allUsers,
+    //     targets: targets,
+    //     title: values.title,
+    //     message: values.description,
+    //   }),
+    // });
+
+    // const data = await response.json();
+    // console.log(data);
   }
 
   function toggleAllStatusOptions() {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Expo } from 'expo-server-sdk'
 import { listAllUsers } from '@/functions/user/list-all-users';
+import { createNotification } from '@/functions/notification/create-notification';
 
 export async function POST(req: NextRequest, res: NextResponse) {
   const expo = new Expo();
@@ -15,6 +16,14 @@ export async function POST(req: NextRequest, res: NextResponse) {
     let messages = [];
 
     for (let user of users) {
+      // await createNotification({
+      //   sender_id: user.$id,
+      //   receiver_id: user.$id,
+      //   message: message,
+      //   is_read: false,
+      //   type: 'push',
+      // })
+
       if (user.push_token) {
         messages.push(
           { 
@@ -52,6 +61,14 @@ export async function POST(req: NextRequest, res: NextResponse) {
   let messages = [];
 
   for (let target of targets) {
+    // await createNotification({
+    //   sender_id: target.$id,
+    //   receiver_id: target.$id,
+    //   message: message,
+    //   is_read: false,
+    //   type: 'push',
+    // })
+
     if (!Expo.isExpoPushToken(target)) {
       console.error(`Push token ${target} is not a valid Expo push token`);
       continue;
