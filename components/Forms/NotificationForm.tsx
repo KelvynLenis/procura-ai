@@ -61,24 +61,6 @@ function NotificationForm() {
     },
   })
 
-  async function sendPushNotification(values: z.infer<typeof formSchema>, targets: string[]) {
-    const response = await fetch("/api/send-push-notification", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        pushToken: "ExponentPushToken[_VFcvcCCGvdKT4jQ3L3K45]",
-        statusOptions: statusOptions,
-        locationOptions: locationOptions,
-        allUsers: allUsers,
-        targets: targets,
-        title: values.title,
-        message: values.description,
-      }),
-    });
-
-    return response
-  }
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const statusTarget = Object.keys(statusOptions).filter(key => statusOptions[key] === true)
     
@@ -121,29 +103,30 @@ function NotificationForm() {
 
     const removeAdmin = removeDuplicated.filter(user => user.type !== 'Administrador')
 
-    const targets = removeAdmin.map(user => user.push_token)
+    const targets = removeAdmin.map(user => { return { id: user.user_id, push_token: user.push_token } })
 
     // console.log("targets", targets)
 
-    toast.promise(sendPushNotification(values, targets), {
-      pending: 'Enviando notificação...',
-      success: 'Notificação enviada com sucesso!',
-      error: 'Erro ao enviar notificação',
-    })
+    // const response = await sendPushNotification(values, targets)
+    const response = await fetch("/api/send-push-notification", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        pushToken: "ExponentPushToken[_VFcvcCCGvdKT4jQ3L3K45]",
+        statusOptions: statusOptions,
+        locationOptions: locationOptions,
+        allUsers: allUsers,
+        targets: targets,
+        title: values.title,
+        message: values.description,
+      }),
+    });
 
-    // const response = await fetch("/api/send-push-notification", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({
-    //     pushToken: "ExponentPushToken[_VFcvcCCGvdKT4jQ3L3K45]",
-    //     statusOptions: statusOptions,
-    //     locationOptions: locationOptions,
-    //     allUsers: allUsers,
-    //     targets: targets,
-    //     title: values.title,
-    //     message: values.description,
-    //   }),
-    // });
+    // console.log("response", response)
+
+    response.ok
+      ? toast.success("Notificação enviada com sucesso!")
+      : toast.error("Erro ao enviar notificação")
 
     // const data = await response.json();
     // console.log(data);
