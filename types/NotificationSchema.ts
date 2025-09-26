@@ -14,6 +14,7 @@ const NotificationSchema = z.object({
   type: z.string(),
   event_id: z.string().optional(),
   id_device: z.string().optional(), 
+  title: z.string().optional(),
 })
 
 export default NotificationSchema

@@ -40,6 +40,7 @@ function NotificationForm() {
     'Bayeux': false,
     'SantaRita': false
   })  
+  const [refresh, setRefresh] = useState(false)
 
   const formSchema = z
   .object({
@@ -127,6 +128,8 @@ function NotificationForm() {
     response.ok
       ? toast.success("Notificação enviada com sucesso!")
       : toast.error("Erro ao enviar notificação")
+
+      setRefresh(!refresh)
 
     // const data = await response.json();
     // console.log(data);
@@ -367,7 +370,7 @@ function NotificationForm() {
           Historico de notificações
         </div>
         
-        <NotificationTable />
+        <NotificationTable form={form} refresh={refresh} />
       </div>
     </>
   )

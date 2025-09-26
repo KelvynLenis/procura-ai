@@ -17,13 +17,16 @@ export async function POST(req: NextRequest, res: NextResponse) {
       let messages = [];
   
       for (let user of users) {
-        // await createNotification({
-        //   sender_id: user.$id,
-        //   receiver_id: user.$id,
-        //   message: message,
-        //   is_read: false,
-        //   type: 'push',
-        // })
+        await createNotification({
+          sender_id: undefined,
+          receiver_id: user.user_id,
+          message: message,
+          is_read: false,
+          type: 'push',
+          event_id: undefined,
+          id_device: undefined,
+          title: title
+        })
   
         if (user.push_token) {
           messages.push(
@@ -69,7 +72,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
         is_read: false,
         type: 'push',
         event_id: undefined,
-        id_device: undefined
+        id_device: undefined,
+        title: title
       })
   
       if (!Expo.isExpoPushToken(target.push_token)) {
