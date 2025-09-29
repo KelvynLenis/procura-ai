@@ -28,16 +28,26 @@ const formSchema = z
 interface NotificationTableProps {
   form: ReturnType<typeof useForm<z.infer<typeof formSchema>>>
   refresh: boolean
+  restoreNotification: ({ 
+    is_all_users_checked, 
+    selected_targets, 
+    device_options, 
+    location_options }: { 
+      is_all_users_checked: boolean, 
+      selected_targets: string[], 
+      device_options: string[], 
+      location_options: string[] 
+    }) => void
 }
 
 
-function NotificationTable({ form, refresh }: NotificationTableProps) {
+function NotificationTable({ form, refresh, restoreNotification }: NotificationTableProps) {
   const [notifications, setNotifications] = useState<Notification[]>([])
 
   useEffect(() => {
     const fetchNotifications = async () => {
       const notifications = await getPushNotificationHistory()
-      setNotifications(notifications)
+      setNotifications(notifications.toReversed())
     }
 
     fetchNotifications()
@@ -69,6 +79,7 @@ function NotificationTable({ form, refresh }: NotificationTableProps) {
           notifications.map((notification, index) => (
             <NotificationRow
               key={index}
+              restoreNotification={restoreNotification}
               notification={notification}
               form={form}
             />

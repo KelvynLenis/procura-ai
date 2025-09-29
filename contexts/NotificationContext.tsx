@@ -87,10 +87,8 @@ export function NotificationProvider({ children, isAdmin }: { children: ReactNod
 
       if (relevantTypes.includes(payload.type)) {
 
-        if (payload.type === 'push') {
-          
-        }
-        else if (!isAdmin) {
+        if (!isAdmin) {
+          if (payload.type === 'push') return
           const idDevice = payload.id_device
 
           const userAuth = await account.get()

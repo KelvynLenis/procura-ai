@@ -22,6 +22,7 @@ import AddUserToPushNotificationList from '../AddUserToPushNotificationList'
 import { getDevices } from '@/functions/devices/list-devices'
 import { getUser } from '@/functions/user/get-user'
 import { toast } from 'react-toastify'
+import { getUserById } from '@/functions/user/get-user-by-id'
 
 function NotificationForm() {
   const [allUsers, setAllUsers] = useState(true)
@@ -62,8 +63,39 @@ function NotificationForm() {
     },
   })
 
+  async function restoreFilterFromHistory({ 
+    is_all_users_checked, 
+    selected_targets, 
+    device_options, 
+    location_options }: { 
+      is_all_users_checked: boolean, 
+      selected_targets: string[], 
+      device_options: string[], 
+      location_options: string[] 
+    }) {
+    setAllUsers(is_all_users_checked)
+    statusOptions && setStatusOptions(device_options.reduce((acc, option) => {
+      acc[option] = true
+      return acc
+    }, {}))
+    locationOptions && setLocationOptions(location_options.reduce((acc, option) => {
+      acc[option] = true
+      return acc
+    }, {}))
+
+    let users: User[] = []
+
+    for (let target of selected_targets) {
+      const user = await getUserById(target)
+      users.push(user)
+    }
+
+    setSelectedUsers(users)
+  }
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const statusTarget = Object.keys(statusOptions).filter(key => statusOptions[key] === true)
+    const locationTarget = Object.keys(locationOptions).filter(key => locationOptions[key] === true)
     
     // console.log("statusTarget", statusTarget)
 
@@ -108,15 +140,20 @@ function NotificationForm() {
 
     // console.log("targets", targets)
 
+    console.log(statusTarget)
+
+    const selectedTargetsId = selectedUsers.map(user => user.user_id)
+
     // const response = await sendPushNotification(values, targets)
     const response = await fetch("/api/send-push-notification", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         pushToken: "ExponentPushToken[_VFcvcCCGvdKT4jQ3L3K45]",
-        statusOptions: statusOptions,
-        locationOptions: locationOptions,
-        allUsers: allUsers,
+        statusOptions: statusTarget,
+        locationOptions: locationTarget,
+        isAllUsersChecked: allUsers,
+        selectedTargets: selectedTargetsId,
         targets: targets,
         title: values.title,
         message: values.description,
@@ -186,6 +223,12 @@ function NotificationForm() {
       setAllUsers(true)
     }
   }, [selectedUsers])
+
+  useEffect(() => {
+    if (allUsers) {
+      setSelectedUsers([])
+    }
+  }, [allUsers])
 
   return (
     <>
@@ -370,7 +413,7 @@ function NotificationForm() {
           Historico de notificações
         </div>
         
-        <NotificationTable form={form} refresh={refresh} />
+        <NotificationTable form={form} refresh={refresh} restoreNotification={restoreFilterFromHistory} />
       </div>
     </>
   )

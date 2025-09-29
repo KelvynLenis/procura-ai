@@ -31,14 +31,32 @@ const formSchema = z
 interface NotificationRowProps {
   notification: Notification
   form: ReturnType<typeof useForm<z.infer<typeof formSchema>>>
+  restoreNotification: ({ 
+    is_all_users_checked, 
+    selected_targets, 
+    device_options, 
+    location_options }: { 
+      is_all_users_checked: boolean, 
+      selected_targets: string[], 
+      device_options: string[], 
+      location_options: string[] 
+    }) => void
 }
 
-function NotificationRow({ notification, form }: NotificationRowProps) {
+function NotificationRow({ notification, form, restoreNotification }: NotificationRowProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   function handleFillForm() {
     form.setValue('title', notification.title!)
     form.setValue('description', notification.message)
+
+    restoreNotification({
+      is_all_users_checked: notification.is_all_users_checked,
+      selected_targets: notification.selected_targets,
+      device_options: notification.device_options,
+      location_options: notification.location_options
+    })
+
     window.scrollTo(0, 0)
   }
   
@@ -52,8 +70,10 @@ function NotificationRow({ notification, form }: NotificationRowProps) {
           {notification.message}
         </div>
       </TableCell>
-      <TableCell className="font-medium break-words">
-        Todos os usuários
+      <TableCell className="font-medium break-words max-w-32">
+        {notification.is_all_users_checked && 'Todos os usuários'}
+        {!notification.is_all_users_checked && notification.device_options && notification.device_options?.length > 0 && `Portadores de dispositivos: ${notification.device_options?.join(', ')}`}
+      
       </TableCell>
       <TableCell className={cn('font-medium break-words')}>
         {formatDateTime(notification.$createdAt!)}

@@ -9,24 +9,27 @@ export async function POST(req: NextRequest, res: NextResponse) {
   
     const body = await req.json();
   
-    const { pushToken, title, message, statusOptions, locationOptions, allUsers, targets } = body;
+    const { pushToken, title, message, statusOptions, selectedTargets, locationOptions, isAllUsersChecked, targets } = body;
   
-    if (allUsers) {
+    if (isAllUsersChecked) {
       const users = await listAllUsers();
   
       let messages = [];
+      await createNotification({
+        sender_id: undefined,
+        receiver_id: users[0].user_id,
+        message: message,
+        is_read: false,
+        type: 'push',
+        event_id: undefined,
+        id_device: undefined,
+        title: title,
+        device_options: statusOptions,
+        location_options: locationOptions,
+        is_all_users_checked: isAllUsersChecked
+      })
   
       for (let user of users) {
-        await createNotification({
-          sender_id: undefined,
-          receiver_id: user.user_id,
-          message: message,
-          is_read: false,
-          type: 'push',
-          event_id: undefined,
-          id_device: undefined,
-          title: title
-        })
   
         if (user.push_token) {
           messages.push(
@@ -63,18 +66,23 @@ export async function POST(req: NextRequest, res: NextResponse) {
     }
   
     let messages = [];
-  
+    
+    await createNotification({
+      sender_id: undefined,
+      receiver_id: targets[0].id,
+      message: message,
+      is_read: false,
+      type: 'push',
+      event_id: undefined,
+      id_device: undefined,
+      title: title,
+      device_options: statusOptions,
+      location_options: locationOptions,
+      selected_targets: selectedTargets,
+      is_all_users_checked: isAllUsersChecked
+    })
+
     for (let target of targets) {
-      await createNotification({
-        sender_id: undefined,
-        receiver_id: target.id,
-        message: message,
-        is_read: false,
-        type: 'push',
-        event_id: undefined,
-        id_device: undefined,
-        title: title
-      })
   
       if (!Expo.isExpoPushToken(target.push_token)) {
         console.error(`Push token ${target} is not a valid Expo push token`);
