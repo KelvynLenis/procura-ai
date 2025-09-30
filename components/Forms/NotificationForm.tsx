@@ -21,6 +21,8 @@ import { User } from '@/types'
 import AddUserToPushNotificationList from '../AddUserToPushNotificationList'
 import { getDevices } from '@/functions/devices/list-devices'
 import { getUser } from '@/functions/user/get-user'
+import { toast } from 'react-toastify'
+import { getUserById } from '@/functions/user/get-user-by-id'
 
 function NotificationForm() {
   const [allUsers, setAllUsers] = useState(true)
@@ -39,6 +41,7 @@ function NotificationForm() {
     'Bayeux': false,
     'SantaRita': false
   })  
+  const [refresh, setRefresh] = useState(false)
 
   const formSchema = z
   .object({
@@ -60,8 +63,41 @@ function NotificationForm() {
     },
   })
 
+  async function restoreFilterFromHistory({ 
+    is_all_users_checked, 
+    selected_targets, 
+    device_options, 
+    location_options }: { 
+      is_all_users_checked: boolean, 
+      selected_targets: string[], 
+      device_options: string[], 
+      location_options: string[] 
+    }) {
+    setAllUsers(is_all_users_checked)
+    statusOptions && setStatusOptions(device_options.reduce((acc, option) => {
+      acc[option] = true
+      return acc
+    }, {}))
+    locationOptions && setLocationOptions(location_options.reduce((acc, option) => {
+      acc[option] = true
+      return acc
+    }, {}))
+
+    let users: User[] = []
+
+    for (let target of selected_targets) {
+      const user = await getUserById(target)
+      users.push(user)
+    }
+
+    setSelectedUsers(users)
+  }
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const statusTarget = Object.keys(statusOptions).filter(key => statusOptions[key] === true)
+    const locationTarget = Object.keys(locationOptions).filter(key => locationOptions[key] === true)
+    
+    // console.log("statusTarget", statusTarget)
 
     const queryFiltersDevices = statusTarget.length > 0
       ? [{
@@ -71,9 +107,11 @@ function NotificationForm() {
         }]
       : []
 
-    const allStatusDeviceSource = await getDevices({ filters: queryFiltersDevices })
+    const allStatusDeviceSource = queryFiltersDevices.length > 0 ? await getDevices({ filters: queryFiltersDevices }) : []
 
     const deviceUserTargets = allStatusDeviceSource.map(device => device.auth_id)
+
+    // console.log("deviceUserTargets", deviceUserTargets)
 
     const queryFiltersUsers = deviceUserTargets.length > 0
       ? [{
@@ -83,9 +121,9 @@ function NotificationForm() {
         }]
       : []
     
-    const targetUsersFromStatusOptions = await getUser({ filters: queryFiltersUsers })
+    const targetUsersFromStatusOptions = queryFiltersUsers.length > 0 ? await getUser({ filters: queryFiltersUsers }) : []
 
-    // console.log(targetUsersFromStatusOptions)
+    // console.log("targetUsersFromStatusOptions", targetUsersFromStatusOptions)
 
     const mergeTargets = [...selectedUsers, ...targetUsersFromStatusOptions]
 
@@ -98,26 +136,40 @@ function NotificationForm() {
 
     const removeAdmin = removeDuplicated.filter(user => user.type !== 'Administrador')
 
-    const targets = removeAdmin.map(user => user.push_token)
+    const targets = removeAdmin.map(user => { return { id: user.user_id, push_token: user.push_token } })
 
-    // console.log(targets)
+    // console.log("targets", targets)
 
+    console.log(statusTarget)
+
+    const selectedTargetsId = selectedUsers.map(user => user.user_id)
+
+    // const response = await sendPushNotification(values, targets)
     const response = await fetch("/api/send-push-notification", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         pushToken: "ExponentPushToken[_VFcvcCCGvdKT4jQ3L3K45]",
-        statusOptions: statusOptions,
-        locationOptions: locationOptions,
-        allUsers: allUsers,
+        statusOptions: statusTarget,
+        locationOptions: locationTarget,
+        isAllUsersChecked: allUsers,
+        selectedTargets: selectedTargetsId,
         targets: targets,
         title: values.title,
         message: values.description,
       }),
     });
 
-    const data = await response.json();
-    console.log(data);
+    // console.log("response", response)
+
+    response.ok
+      ? toast.success("Notificação enviada com sucesso!")
+      : toast.error("Erro ao enviar notificação")
+
+      setRefresh(!refresh)
+
+    // const data = await response.json();
+    // console.log(data);
   }
 
   function toggleAllStatusOptions() {
@@ -171,6 +223,12 @@ function NotificationForm() {
       setAllUsers(true)
     }
   }, [selectedUsers])
+
+  useEffect(() => {
+    if (allUsers) {
+      setSelectedUsers([])
+    }
+  }, [allUsers])
 
   return (
     <>
@@ -355,7 +413,7 @@ function NotificationForm() {
           Historico de notificações
         </div>
         
-        <NotificationTable />
+        <NotificationTable form={form} refresh={refresh} restoreNotification={restoreFilterFromHistory} />
       </div>
     </>
   )

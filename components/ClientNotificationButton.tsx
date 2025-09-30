@@ -13,7 +13,7 @@ import Image from "next/image"
 import { useEffect, useState } from 'react'
 import DeviceCheck from '../assets/icons/device-check.svg'
 import { Device, Notification, NotificationProps } from "@/types"
-import { formatDateTime } from "@/lib/utils"
+import { cn, formatDateTime } from "@/lib/utils"
 import { getDeviceById } from "@/functions/device/get-device-by-id"
 import Link from "next/link"
 import { getNotificationsUnread } from "@/functions/notification/get-notifications-unread"
@@ -29,6 +29,7 @@ function RenderNotification({ notification } : { notification: NotificationProps
   useEffect(() => {
     const fetchDevice = async () => {
     try {
+      if (notification.type === 'push') return
       const device = await getDeviceById(notification.id_device!)
       setDevice(device)
     } catch (err) {
@@ -89,12 +90,21 @@ function PreviousNotification({ notification } : {notification: Notification}) {
   async function markAsReadAndRedirect() {
     await markNotificationsAsRead(notification.$id!)
 
+    if (notification.type === 'push') { 
+      window.location.href = `/notificacoes`
+      return
+    }
+
     window.location.href = `/meus-dispositivos?id=${device?.$id}`
   }
 
   useEffect(() => {
     const fetchDevice = async () => {
     try {
+      if (notification.type === 'push') {
+        setIsLoading(false)
+        return
+      }
       const device = await getDeviceById(notification.id_device!)
       setDevice(device)
     } catch (err) {
@@ -120,15 +130,25 @@ function PreviousNotification({ notification } : {notification: Notification}) {
           >
             <div className='w-full flex h-full px-5 py-3 rounded-lg bg-blue-100/40 gap-4'>
                 <Image src={DeviceCheck} alt="device-check" className="w-6 h-6 self-center" />
-                <div className='flex flex-col gap-4'>
+                <div className='flex flex-col gap-4 w-full'>
                   <div className='flex justify-between items-center'>
                     <h1 className='font-bold text-sm text-primary'>Seu dispositivo foi recuperado</h1>
                     
-                    <span className='w-2 h-2 rounded-full bg-[#004EC1]'></span>
+                    <span className={cn('w-2 h-2 rounded-full', notification.is_read ? 'bg-zinc-400' : 'bg-[#004EC1]')}></span>
                   </div>
                   <p className='text-sm'>
-                    Informamos que o seu dispositivo {device?.phone_model}, <strong className="font-semibold">foi localizado e recuperado pela polícia.</strong> 
-                    Acompanhe todas as atualizações desta ocorrência na página de recuperação.
+                    {
+                      notification.type === 'push'
+                      ? notification.message
+                      : 
+                        (
+                          <>
+                            Informamos que o seu dispositivo {device?.phone_model}, <strong className="font-semibold">foi localizado e recuperado pela polícia.</strong> 
+                            Acompanhe todas as atualizações desta ocorrência na página de recuperação.
+                          </>
+                        )
+                    }
+                    
                   </p>
                   <span className='text-xs'>
                     {formatDateTime(notification.$createdAt!)}

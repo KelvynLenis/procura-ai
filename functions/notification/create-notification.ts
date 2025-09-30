@@ -20,7 +20,12 @@ export async function createNotification(values: Notification) {
           is_read: false,
           type: values.type,
           event_id: values.event_id,
-          id_device: values.id_device
+          id_device: values.id_device,
+          title: values.title,
+          device_options: values.device_options,
+          location_options: values.location_options,
+          selected_targets: values.selected_targets,
+          is_all_users_checked: values.is_all_users_checked
         },
       }),
     }

@@ -70,12 +70,13 @@ export function NotificationProvider({ children, isAdmin }: { children: ReactNod
     
     const handleNewNotification = async (response: any) => {
       const { payload } = response
-      const relevantTypes = !isAdmin ? ['Recuperado'] : [
+      console.log('Contexto: Nova notificação recebida', payload)
+      const relevantTypes = !isAdmin ? ['Recuperado', 'push'] : [
         'Furto simples',
         'Extravio ou Perda', 
         'Roubo',
         'Recuperado',
-        'Regular'
+        'Regular',
       ]
 
       // console.log('Contexto: Nova notificação recebida para admin', { 
@@ -87,6 +88,7 @@ export function NotificationProvider({ children, isAdmin }: { children: ReactNod
       if (relevantTypes.includes(payload.type)) {
 
         if (!isAdmin) {
+          if (payload.type === 'push') return
           const idDevice = payload.id_device
 
           const userAuth = await account.get()
@@ -112,7 +114,8 @@ export function NotificationProvider({ children, isAdmin }: { children: ReactNod
     }
 
     const unsubscribe = client.subscribe(
-      `databases.${process.env.NEXT_PUBLIC_DATABASE_ID}.collections.${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}.documents`,
+      [`databases.${process.env.NEXT_PUBLIC_DATABASE_ID}.collections.${process.env.NEXT_PUBLIC_COLLECTION_EVENTS}.documents`,
+      `databases.${process.env.NEXT_PUBLIC_DATABASE_ID}.collections.${process.env.NEXT_PUBLIC_COLLECTION_NOTIFICATION}.documents`],
       handleNewNotification
     )
 

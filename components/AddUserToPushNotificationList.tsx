@@ -85,8 +85,8 @@ function AddUserToPushNotificationList({ targets, setTargets }: AddUserToPushNot
 
       const filterAdmin = usersResponse.filter(user => user.type !== 'Administrador')
     
-      setUsers(filterAdmin)
-      setPredictions(usersResponse)
+      setUsers(usersResponse)
+      setPredictions(filterAdmin)
     };
 
     fetchUsers();

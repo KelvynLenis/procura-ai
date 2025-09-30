@@ -8,19 +8,24 @@ import { account } from '@/lib/appwrite'
 import { cn } from '@/lib/utils'
 import { Device, Notification } from '@/types'
 import { ChevronRight } from 'lucide-react'
-import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
 interface NotitificationItemProps {
   isRead?: boolean
   notification: Notification
+  refresh: () => void
 }
 
-function NotificationItem({ isRead, notification }: NotitificationItemProps) {
+function NotificationItem({ isRead, notification, refresh }: NotitificationItemProps) {
   const [device, setDevice] = useState<Device>()
 
   async function markAsReadAndRedirect() {
     await markNotificationsAsRead(notification.$id!)
+
+    if (notification.type === 'push') {
+      refresh()
+      return
+    }
 
     window.location.href = `/meus-dispositivos?id=${device?.$id}`
   }
@@ -28,9 +33,12 @@ function NotificationItem({ isRead, notification }: NotitificationItemProps) {
   
   useEffect(() => {
     const fetchDevice = async () => {
-      const event = await getEventById(notification.event_id)
-      const device = await getDeviceById(event.id_device!)
-      setDevice(device)
+      if (notification.type !== 'push') {
+        const event = await getEventById(notification.event_id!)
+        const device = await getDeviceById(event.id_device!)
+        
+        setDevice(device)
+      }
     }
 
     fetchDevice()
@@ -42,8 +50,14 @@ function NotificationItem({ isRead, notification }: NotitificationItemProps) {
       <div className='flex flex-col gap-2'>
         <h1 className='font-medium text-lg'>Seu dispositivo foi recuperado</h1>
         <p className='text-sm'>
-          Informamos que o seu dispositivo  {device?.phone_model}, foi localizado e recuperado pela polícia. 
-          Acompanhe todas as atualizações desta ocorrência na página de recuperação.
+
+          {
+            notification.type === 'push' ? (
+              notification.message
+            ) : (
+              `Informamos que o seu dispositivo ${device?.phone_model}, foi localizado e recuperado pela polícia. Acompanhe todas as atualizações desta ocorrência na página de recuperação.`
+            )
+          }
         </p>
         <button onClick={markAsReadAndRedirect} type='button' className='text-secondary underline text-sm mt-2 flex self-end'>
           ir para página de recuperação
@@ -58,6 +72,11 @@ export function NotificationsList() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [NewNotifications, setNewNotifications] = useState<Notification[]>([])
   const [oldNotifications, setOldNotifications] = useState<Notification[]>([])
+  const [refetch, setRefetch] = useState(false)
+
+  async function refresh() {
+    setRefetch(!refetch)
+  }
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -83,16 +102,17 @@ export function NotificationsList() {
 
       setNotifications(notifications)
     }
+
     fetchNotifications()
-  }, [])
+  }, [refetch])
 
   return (
-    <div className='w-full h-screen flex flex-col rounded-lg bg-white px-4 py-6 gap-4'>
+    <div className='w-full min-h-screen flex flex-col rounded-lg bg-white px-4 py-6 gap-4'>
       <h1 className='font-semibold text-lg'>Notificação em destaque</h1>
       {
         NewNotifications.length > 0 ? (
           NewNotifications.map(notification => (
-            <NotificationItem key={notification.$id} notification={notification} />
+            <NotificationItem key={notification.$id} notification={notification} isRead={notification.is_read} refresh={refresh} />
           ))
 
         ) : (
@@ -103,7 +123,7 @@ export function NotificationsList() {
       {
         oldNotifications.length > 0 ? (
           oldNotifications.map(notification => (
-            <NotificationItem key={notification.$id} notification={notification} isRead={notification.is_read} />
+            <NotificationItem key={notification.$id} notification={notification} isRead={notification.is_read} refresh={refresh} />
           ))
 
         ) : (
