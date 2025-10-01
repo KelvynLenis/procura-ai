@@ -23,6 +23,7 @@ import { getDevices } from '@/functions/devices/list-devices'
 import { getUser } from '@/functions/user/get-user'
 import { toast } from 'react-toastify'
 import { getUserById } from '@/functions/user/get-user-by-id'
+import { ConfirmationDialog } from '../ConfirmationDialog'
 
 function NotificationForm() {
   const [allUsers, setAllUsers] = useState(true)
@@ -396,13 +397,15 @@ function NotificationForm() {
               >
                 Cancelar
               </Button>
-              <Button
-                variant="blue"
-                type="submit"
-                className="xl:text-base"
-              >
-                Enviar notificação
-              </Button>
+              <ConfirmationDialog onConfirm={() => form.handleSubmit(onSubmit)} title="Enviar notificação?" description="Tem certeza que deseja enviar a notificação?">
+                <Button
+                  variant="blue"
+                  type="submit"
+                  className="xl:text-base"
+                >
+                  Enviar notificação
+                </Button>
+              </ConfirmationDialog>
             </div>
           </div>
         </form>
