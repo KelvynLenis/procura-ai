@@ -169,6 +169,24 @@ function NotificationForm() {
 
       setRefresh(!refresh)
 
+      form.reset()
+      setStatusOptions({
+        'Regular': false,
+        'Roubado': false,
+        'Furtado': false,
+        'Perdido': false,
+        'Recuperado': false
+      })
+      setLocationOptions({
+        'JoaoPessoa': false,
+        'Cabedelo': false,
+        'CampinaGrande': false,
+        'Bayeux': false,
+        'SantaRita': false
+      })
+
+      setSelectedUsers([])
+
     // const data = await response.json();
     // console.log(data);
   }
