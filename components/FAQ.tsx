@@ -56,9 +56,9 @@ export function FAQ({ light, homepage }: { bottom?: string, light?: boolean, hom
   return (
     <section
       className={cn(
-        'w-full min-h-screen bg-slate-800 flex flex-col justify-start z-[1] py-12',
-        homepage ? 'lg:pt-20' : 'lg:pt-32 relative lg:-top-16 3xl:-top-24',
-        !homepage ? 'hidden md:flex' : 'flex'
+        'w-full h-fit bg-faq bg-cover lg:bg-faq flex flex-col justify-between z-[1] pt-24',
+        light ? 'lg:pt-10' : ' lg:pt-28 lg:pb-0 sm:pb-0 relative lg:-top-16 3xl:-top-24',
+        !homepage && '-mt-14'
       )}
     >
       <div className="flex flex-col items-center gap-6 mb-16 px-4">
@@ -98,26 +98,33 @@ export function FAQ({ light, homepage }: { bottom?: string, light?: boolean, hom
 
       <div className="mt-16 lg:mt-24"></div>
         
-      <div className='w-full flex-col flex items-center justify-center h-fit py-4 bg-primary md:hidden'>
+      {/* <div className='w-full flex-col flex items-center justify-center h-fit py-4 bg-primary md:hidden'>
         <Image src={logo} alt="logo" className='h-full' />
         <Image src={govFullLight} alt="gov" className='h-full' />
-      </div>
+      </div> */}
       
+      {/* <footer className={cn("w-full relative h-20 md:mt-0 lg:mt-4 flex items-center justify-start z-[20] bg-white")}>
+          <Image src={govFull} alt="logo" className='w-64 h-12 md:w-96 z-10' />
+          <Image src={line} alt="logo" className='h-full absolute right-0 self-end hidden sm:block md:w-[50%] lg:w-[80%] xl:w-[90%] z-0' />
+      </footer> */}
       {
-        homepage ? (
-          <footer className={cn("w-full relative h-20 md:mt-0 lg:mt-4 items-center justify-start z-[20] bg-white hidden md:flex")}>
+        light ? (
+          <footer className={cn("w-full relative h-20 md:mt-0 lg:mt-4 flex items-center justify-start z-[20] bg-white")}>
               <Image src={govFull} alt="logo" className='w-64 h-12 md:w-96 z-10' />
               <Image src={line} alt="logo" className='h-full absolute right-0 self-end hidden sm:block md:w-[50%] lg:w-[80%] xl:w-[90%] z-0' />
+            {/* <div className={cn('w-full h-20 flex items-center -mb-4 justify-start pl-9 overflow-hidden')}>
+            </div> */}
           </footer>
         ) : (
-          <footer className={cn("w-full relative -bottom-20 md:mt-0 lg:mt-4 items-center justify-start z-[20] bg-primary py-4 hidden md:flex")}>
-            <div className={cn('w-full items-center pl-9 justify-center flex md:justify-start py-0 px-8 h-14 md:h-fit')}>
+          <footer className={cn("w-full relative -bottom-20 md:mt-0 lg:mt-4 flex items-center justify-start z-[20] bg-primary py-4")}>
+            <div className={cn('w-full items-center pl-9 justify-center hidden lg:flex md:justify-start py-0 px-8 h-14 md:h-fit')}>
               <Image src={secties} alt="logo" className='w-28 md:w-auto md:h-12' />
               <Image src={gov} alt="logo" className='w-28 md:w-auto md:h-12' />            
             </div>
           </footer>
         )
       }
+
 
 
     </section>
