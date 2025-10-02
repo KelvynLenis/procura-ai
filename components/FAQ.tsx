@@ -56,9 +56,9 @@ export function FAQ({ light, homepage }: { bottom?: string, light?: boolean, hom
   return (
     <section
       className={cn(
-        'w-full h-fit bg-none lg:bg-faq bg-cover flex flex-col justify-between z-[1]',
-        light ? 'lg:pt-10' : 'lg:pt-28 lg:pb-0 sm:pb-0 relative lg:-top-16 3xl:-top-24',
-        !light ? 'hidden md:flex' : 'flex'
+        'w-full h-fit bg-faq bg-cover lg:bg-faq flex flex-col justify-between z-[1] pt-24',
+        light ? 'lg:pt-10' : ' lg:pt-28 lg:pb-0 sm:pb-0 relative lg:-top-16 3xl:-top-24',
+        !homepage && '-mt-14'
       )}
     >
       <div className="flex flex-col items-center gap-6 mb-16 px-4">
