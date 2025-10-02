@@ -23,6 +23,7 @@ import { getDevices } from '@/functions/devices/list-devices'
 import { getUser } from '@/functions/user/get-user'
 import { toast } from 'react-toastify'
 import { getUserById } from '@/functions/user/get-user-by-id'
+import { ConfirmationDialog } from '../ConfirmationDialog'
 
 function NotificationForm() {
   const [allUsers, setAllUsers] = useState(true)
@@ -167,6 +168,24 @@ function NotificationForm() {
       : toast.error("Erro ao enviar notificação")
 
       setRefresh(!refresh)
+
+      form.reset()
+      setStatusOptions({
+        'Regular': false,
+        'Roubado': false,
+        'Furtado': false,
+        'Perdido': false,
+        'Recuperado': false
+      })
+      setLocationOptions({
+        'JoaoPessoa': false,
+        'Cabedelo': false,
+        'CampinaGrande': false,
+        'Bayeux': false,
+        'SantaRita': false
+      })
+
+      setSelectedUsers([])
 
     // const data = await response.json();
     // console.log(data);
@@ -396,13 +415,15 @@ function NotificationForm() {
               >
                 Cancelar
               </Button>
-              <Button
-                variant="blue"
-                type="submit"
-                className="xl:text-base"
-              >
-                Enviar notificação
-              </Button>
+              <ConfirmationDialog onConfirm={() => form.handleSubmit(onSubmit)} title="Enviar notificação?" description="Tem certeza que deseja enviar a notificação?">
+                <Button
+                  variant="blue"
+                  type="submit"
+                  className="xl:text-base"
+                >
+                  Enviar notificação
+                </Button>
+              </ConfirmationDialog>
             </div>
           </div>
         </form>

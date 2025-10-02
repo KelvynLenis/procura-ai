@@ -11,10 +11,11 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { cn, formatDateTime } from '@/lib/utils'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Notification } from '@/types'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
+import { getUserById } from '@/functions/user/get-user-by-id'
 
 const formSchema = z
   .object({
@@ -45,6 +46,7 @@ interface NotificationRowProps {
 
 function NotificationRow({ notification, form, restoreNotification }: NotificationRowProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [targetsName, setTargetsName] = useState<string>('')
 
   function handleFillForm() {
     form.setValue('title', notification.title!)
@@ -59,21 +61,49 @@ function NotificationRow({ notification, form, restoreNotification }: Notificati
 
     window.scrollTo(0, 0)
   }
+
+  async function getUserName(id: string) {
+    const response = await getUserById(id)
+
+    return response.name
+  }
+
+  async function getTargetsName() {
+    if (notification.selected_targets && notification.selected_targets.length > 0) {
+      const names = await Promise.all(
+        notification.selected_targets.map((id) => getUserName(id))
+      )
+
+      names.length > 2 && names.slice(0, 2)
+
+      const joinedNames = names.length > 2 ? `${names[0]}, ${names[1]} e ${names.length - 2} outros` : names.join(', ')
+
+      setTargetsName(joinedNames)
+      return joinedNames
+    } else {
+      setTargetsName('Nenhum usuário selecionado')
+      return 'Nenhum usuário selecionado'
+    }
+  }
+
+  useEffect(() => {
+    getTargetsName()
+  }, [])
   
   return (
     <TableRow>
-      <TableCell className="text-center py-8 font-bold">
+      <TableCell className="text-center py-8 font-bold max-w-36">
         {notification.title}
       </TableCell>
-      <TableCell className="break-words">
+      <TableCell className="break-words max-w-72">
         <div className="flex items-center font-medium">
           {notification.message}
         </div>
       </TableCell>
-      <TableCell className="font-medium break-words max-w-32">
-        {notification.is_all_users_checked && 'Todos os usuários'}
+      <TableCell className="font-medium break-words max-w-44">
+        {notification.is_all_users_checked ? 'Todos os usuários' : `Usuários: ${targetsName}. `}
         {!notification.is_all_users_checked && notification.device_options && notification.device_options?.length > 0 && `Portadores de dispositivos: ${notification.device_options?.join(', ')}`}
-      
+
       </TableCell>
       <TableCell className={cn('font-medium break-words')}>
         {formatDateTime(notification.$createdAt!)}
@@ -84,10 +114,11 @@ function NotificationRow({ notification, form, restoreNotification }: Notificati
             <DialogTrigger asChild>
               <button
                 type="button"
-                className="rounded-lg w-10 h-10 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
+                disabled
+                className="rounded-lg w-10 h-10 group flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90 disabled:opacity-50 disabled:hover:ring-zinc-300 disabled:hover:bg-zinc-100"
               >
                 <Pencil size={26} />
-                <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                <span className="hidden group-disabled:group-hover:hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
                   Editar contato
                 </span>
               </button>
