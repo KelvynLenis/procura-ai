@@ -132,7 +132,14 @@ function PreviousNotification({ notification } : {notification: Notification}) {
                 <Image src={DeviceCheck} alt="device-check" className="w-6 h-6 self-center" />
                 <div className='flex flex-col gap-4 w-full'>
                   <div className='flex justify-between items-center'>
-                    <h1 className='font-bold text-sm text-primary'>Seu dispositivo foi recuperado</h1>
+                    <h1 className='font-bold text-sm text-primary'>
+                      {
+                        notification.type === 'push'
+                        ? notification.title
+                        : 
+                          'Seu dispositivo foi recuperado'
+                      }
+                    </h1>
                     
                     <span className={cn('w-2 h-2 rounded-full', notification.is_read ? 'bg-zinc-400' : 'bg-[#004EC1]')}></span>
                   </div>
