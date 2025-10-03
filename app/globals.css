@@ -48,7 +48,7 @@
 
 /* Estilo para navegadores baseados em WebKit (Chrome, Edge, Safari) */
 .custom-scroll::-webkit-scrollbar {
-  width: 8px; /* Largura da barra */
+  width: 5px; /* Largura da barra */
   height: 8px; /* Altura da barra horizontal */
 }
 

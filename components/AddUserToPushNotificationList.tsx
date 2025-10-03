@@ -9,8 +9,12 @@ import {
 import { getUser } from "@/functions/user/get-user";
 import { listAllUsers } from "@/functions/user/list-all-users";
 import { User } from "@/types";
-import { Search } from "lucide-react"
+import { DialogClose } from "@radix-ui/react-dialog";
+import { ChevronRightCircle, Search, X } from "lucide-react"
 import { useEffect, useState } from "react";
+import { LiaSearchSolid } from "react-icons/lia";
+import { PiArrowCircleRight } from "react-icons/pi";
+import Button from "./Button";
 
 interface AddUserToPushNotificationListProps {
   targets: User[];
@@ -97,51 +101,94 @@ function AddUserToPushNotificationList({ targets, setTargets }: AddUserToPushNot
       <DialogTrigger className="bg-white px-4 py-2 ring-1 ring-zinc-300 rounded-md hover:ring-secondary shadow-lg hover:text-white hover:bg-secondary transition-all duration-200">
         Adicionar usuários
       </DialogTrigger>
-      <DialogContent className="flex flex-col gap-2 h-[26rem]">
-        <DialogHeader>
-          <DialogTitle>Selecione os usuários</DialogTitle>
-          <DialogDescription>
-            Selecione os usuários que deseja adicionar na lista de notificação
-          </DialogDescription>
+      <DialogContent className="flex flex-col gap-2 h-fit p-0">
+        <DialogHeader className='bg-[#F2F8FD] px-4 py-5'>
+          <DialogTitle className="text-primary">Usuários</DialogTitle>
         </DialogHeader>
 
-        <div className="flex gap-2 h-full max-h-[20rem]">
-          <div className='flex flex-col h-full'>
-            <div className='ring-1 ring-zinc-300 flex items-center gap-2 bg-white px-4 py-2 w-fit'>
-              <Search className='w-6 h-6' />
-              <input value={search} onChange={e => handleSearchChange(e.target.value)} type="text" name="search" id="search" onInput={e => setSearch} placeholder='Pesquise por nome ou CPF' className='px-4 py-1 w-56 focus:outline-none' />
+        <div className="px-3 gap-2 flex flex-col pb-2">
+          <DialogDescription className="text-primary mb-1">Selecione os usuários que deseja enviar o push notification.</DialogDescription>
+         
+          <div className="flex gap-2 h-full max-h-[20rem] ring-1 ring-zinc-300 rounded-md p-2">
+            <div className='flex flex-col h-full gap-1'>
+              <div className='ring-1 ring-zinc-300 flex items-center gap-1 bg-white px-4 py-2 w-fit rounded-md'>
+                <LiaSearchSolid className="w-6 h-6" />
+                <input 
+                  value={search} 
+                  onChange={e => handleSearchChange(e.target.value)} 
+                  type="text" 
+                  name="search" 
+                  id="search" 
+                  onInput={e => setSearch} 
+                  placeholder='Pesquise por nome ou CPF' 
+                  className='px-2 py-0 w-56 focus:outline-none' 
+                />
+              </div>
+              {predictions.length > 0 && (
+                <ul className="w-full h-full overflow-y-scroll custom-scroll flex flex-col pr-1">
+                  {predictions && predictions.map((user: User) => (
+                    <>
+                        <li
+                        key={user.$id}
+                        className="px-1 py-2 cursor-pointer hover:bg-zinc-100 italic flex"
+                        onClick={() => handlePredictionSelect(user)}
+                      >
+                        {user.name}
+                        <PiArrowCircleRight className="w-6 h-6 ml-auto" />
+                      </li>
+                      <span className="h-[1px] w-[100%] self-center bg-zinc-300" />
+                    </>
+                  ))}
+                </ul>
+              )}
             </div>
-            {predictions.length > 0 && (
-              <ul className="w-full h-full overflow-auto flex flex-col ring-1 ring-zinc-300">
-                {predictions && predictions.map((user: User) => (
-                  <li
-                    key={user.$id}
-                    className="px-4 py-2 cursor-pointer hover:bg-zinc-100 italic"
-                    onClick={() => handlePredictionSelect(user)}
-                  >
-                    {user.name}
-                  </li>
+
+            <div className="w-80 flex flex-col h-full">
+              <div className="flex items-center gap-1 bg-zinc-100 px-4 py-2 w-full rounded-t-md">
+                <h2>Usuários selecionados</h2>
+              </div>
+
+              <ul className="w-full min-h-[13rem] max-h-[13rem] flex flex-col border overflow-auto px-2 py-1">
+                {targets && targets.map((target) => (
+                  <>
+                    <li
+                      key={target.$id}
+                      className="py-2 cursor-pointer hover:bg-white italic flex justify-between"
+                    >
+                      {target.name}
+                      <button
+                        onClick={() => handleRemoveTarget(target)}
+                      >
+                        <X className="w-6 h-6 ml-auto" />
+                      </button>
+                    </li>
+                    <span className="h-[1px] w-[100%] self-center bg-zinc-300" />
+                  </>
                 ))}
+                {
+                  targets.length > 0 && (
+                    <li className="w-full flex justify-end">
+                      <button className="underline" onClick={() => setTargets([])}>
+                        Remover todos
+                      </button>
+                    </li>
+                  )
+                }
               </ul>
-            )}
+            </div>
           </div>
 
-          <span className="h-[20rem] w-1 bg-zinc-500 rounded-md" />
-
-          <div className="w-80 flex flex-col h-full">
-            <h2>Selecionados</h2>
-
-            <ul className="w-full h-full flex flex-col bg-zinc-100 ring-1 ring-zinc-300 overflow-auto">
-              {targets && targets.map((target) => (
-                <li
-                  key={target.$id}
-                  className="px-4 py-2 cursor-pointer hover:bg-white italic"
-                  onClick={() => handleRemoveTarget(target)}
-                >
-                  {target.name}
-                </li>
-              ))}
-            </ul>
+          <div className="flex justify-between mt-2">
+            <Button className="py-1 lg:text-base" variant="white">
+              <DialogClose>
+                Cancelar
+              </DialogClose>
+            </Button>
+            <Button className="py-1 lg:text-base" variant="blue">
+              <DialogClose>
+                Selecionar usuários
+              </DialogClose>
+            </Button>
           </div>
         </div>
       </DialogContent>
