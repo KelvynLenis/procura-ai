@@ -48,7 +48,15 @@ function NotificationItem({ isRead, notification, refresh }: NotitificationItemP
     <div className='w-full rounded-lg ring-1 ring-zinc-200 flex px-4 py-6 gap-6'>
       <span className={cn('w-2 h-full rounded-lg', isRead ? 'bg-zinc-400' : 'bg-secondary')} />
       <div className='flex flex-col gap-2'>
-        <h1 className='font-medium text-lg'>Seu dispositivo foi recuperado</h1>
+        <h1 className='font-medium text-lg'>
+          {
+            notification.type === 'push' ? (
+              notification.title
+            ) : (
+              'Seu dispositivo foi recuperado'
+            )
+          }
+        </h1>
         <p className='text-sm'>
 
           {
