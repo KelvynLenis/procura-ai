@@ -125,7 +125,7 @@ function AddUserToPushNotificationList({ targets, setTargets }: AddUserToPushNot
                 />
               </div>
               {predictions.length > 0 && (
-                <ul className="w-full h-full overflow-y-scroll custom-scroll flex flex-col pr-1">
+                <ul className="w-full h-[12.5rem] overflow-y-scroll custom-scroll flex flex-col pr-1">
                   {predictions && predictions.map((user: User) => (
                     <>
                         <li
