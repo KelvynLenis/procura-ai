@@ -24,6 +24,12 @@ import { getUser } from '@/functions/user/get-user'
 import { toast } from 'react-toastify'
 import { getUserById } from '@/functions/user/get-user-by-id'
 import { ConfirmationDialog } from '../ConfirmationDialog'
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction } from '@radix-ui/react-alert-dialog'
+import { title } from 'process'
+import { AlertDialogHeader, AlertDialogFooter } from '../ui/alert-dialog'
+import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '@radix-ui/react-dialog'
+import { DialogHeader } from '../ui/dialog'
+import { TesteDialog } from '../testeDialog'
 
 function NotificationForm() {
   const [allUsers, setAllUsers] = useState(true)
@@ -321,27 +327,7 @@ function NotificationForm() {
                 </div>
                 <span>Ou selecione  usuários específicos</span>
 
-
                 <AddUserToPushNotificationList targets={selectedUsers} setTargets={setSelectedUsers} />
-                {/* <div className='flex flex-col'>
-                  <div className='ring-1 ring-zinc-300 flex items-center gap-2 bg-white px-4 py-2 w-fit'>
-                    <Search className='w-6 h-6' />
-                    <input value={search} onChange={(e) => handleSearchChange(e.target.value)} placeholder='Pesquise por nome ou CPF' className='px-4 py-1 w-56 focus:outline-none' />
-                  </div>
-                  {predictions.length > 0 && (
-                    <ul className="w-full h-20 flex flex-col bg-zinc-100 ring-1 ring-zinc-300 max-h-32 overflow-auto">
-                      {predictions && predictions.map((user: User) => (
-                        <li
-                          key={user.$id}
-                          className="px-4 py-2 cursor-pointer hover:bg-white ring-1 ring-zinc-300 italic"
-                          onClick={() => handlePredictionSelect(user.push_token)}
-                        >
-                          {user.name}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div> */}
               </div>
 
               <div className='flex flex-col gap-2'>
@@ -415,15 +401,74 @@ function NotificationForm() {
               >
                 Cancelar
               </Button>
-              <ConfirmationDialog onConfirm={() => form.handleSubmit(onSubmit)} title="Enviar notificação?" description="Tem certeza que deseja enviar a notificação?">
+
+              <ConfirmationDialog onConfirm={() => onSubmit(form.getValues())} title="Enviar notificação?" description="Tem certeza que deseja enviar a notificação?">
                 <Button
                   variant="blue"
-                  type="submit"
+                  type="button"
                   className="xl:text-base"
                 >
                   Enviar notificação
                 </Button>
               </ConfirmationDialog>
+
+
+              {/* <Dialog>
+                <DialogTrigger>
+                  <Button
+                    variant="blue"
+                    type="button"
+                    className="xl:text-base"
+                  >
+                    Enviar notificação
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogDescription>
+                      This action cannot be undone. This will permanently delete your account
+                      and remove your data from our servers.
+                    </DialogDescription>
+
+                     <Button
+                      variant="blue"
+                      type="button"
+                      className="xl:text-base"
+                      onClick={() => form.handleSubmit(onSubmit)}
+                    >
+                      Enviar notificação
+                    </Button>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog> */}
+
+              {/* <AlertDialog>
+                <AlertDialogTrigger>teste</AlertDialogTrigger>
+                <AlertDialogContent className="w-[90%] mr-10">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>teste</AlertDialogTitle>
+                    <AlertDialogDescription>ts</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter className="flex flex-row items-center justify-between w-full gap-4">
+                    <AlertDialogCancel className="rounded-full text-center items-center justify-center flex flex-1 w-full px-2 py-2 transition-all duration-300 bg-white border-[0.5px] border-red-500 text-red-500 hover:bg-red-500 hover:text-white">
+                      Cancelar
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      // className="rounded-full text-center items-center self-end justify-center flex flex-1 w-full px-2 py-2 transition-all duration-300 bg-secondary border-[0.5px] border-secondary text-white hover:bg-white hover:text-secondary"
+                      asChild
+                    >
+                      <Button
+                        variant="blue"
+                        type="submit"
+                        className="xl:text-base"
+                      >
+                        Enviar notificação
+                      </Button>
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog> */}
             </div>
           </div>
         </form>
