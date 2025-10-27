@@ -28,28 +28,32 @@ import { updateDeviceStatus } from '@/functions/device/update-device-status'
 import { createEvent } from '@/functions/event/create-event'
 
 interface DeviceRowProps {
+  // key: string
   id: string // ID do dispositivo
-  phone_number: string // Número de telefone
-  phone_model: string // Modelo do telefone
-  brand: string // Fabricante do telefone
-  imei: string // IMEI do telefone
-  isStolen: boolean // Status de "roubado" (true/false)
-  operator_id: string | undefined // ID do operador
+  device: DeviceProps
+  // phone_number: string // Número de telefone
+  // phone_model: string // Modelo do telefone
+  // brand: string // Fabricante do telefone
+  // imei: string // IMEI do telefone
+  // isStolen: boolean // Status de "roubado" (true/false)
+  // operator_id: string | undefined // ID do operador
+  // status: string
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
   index: number
-  status: string
   deviceNotificationId?: string
 }
 
 export function DeviceRow({
+  // key,
   id,
-  phone_number,
-  phone_model,
-  brand,
-  imei,
-  isStolen,
-  status,
-  operator_id,
+  device,
+  // phone_number,
+  // phone_model,
+  // brand,
+  // imei,
+  // isStolen,
+  // status,
+  // operator_id,
   setDevices,
   index,
   deviceNotificationId
@@ -112,7 +116,7 @@ export function DeviceRow({
 
   async function fetchOperator() {
     try {
-      const operator = await getOperator(operator_id)
+      const operator = await getOperator(device.operator_id)
 
       setOperator(operator)
 
@@ -163,31 +167,31 @@ export function DeviceRow({
 
   return (
     <>
-      <TableRow className="text-base">
+      <TableRow className="text-base" key={device.$id}>
         <TableCell className="font-medium text-zinc-800 pl-5 hidden lg:table-cell">
           {index + 1}
         </TableCell>
         <TableCell className="font-medium text-zinc-800 lg:flex">
-          {phone_model}
+          {device.phone_model}
         </TableCell>
         <TableCell className="font-medium capitalize hidden md:table-cell">
-          {brand}
+          {device.brand}
         </TableCell>
         <TableCell className="font-medium hidden md:table-cell">
-          {`${imei.slice(0, 1)} ${imei.slice(1, 8)} ****** **`}
+          {`${device.imei.slice(0, 1)} ${device.imei.slice(1, 8)} ****** **`}
         </TableCell>
         <TableCell className="w-24">
           <span
             className={cn(
               'rounded-md w-24 flex items-center justify-center capitalize font-medium',
-              status === 'Roubado' && 'bg-robbery-bg text-robbery-text p-1',
-              status === 'Recuperado' && 'bg-recovered-bg text-recovered-text p-1',
-              status === 'Regular' && 'bg-regular-bg text-regular-text p-1',
-              status === 'Furtado' && 'bg-theft-bg text-theft-text p-1',
-              status === 'Perdido' && 'bg-lost-bg text-lost-text p-1'
+              device.status === 'Roubado' && 'bg-robbery-bg text-robbery-text p-1',
+              device.status === 'Recuperado' && 'bg-recovered-bg text-recovered-text p-1',
+              device.status === 'Regular' && 'bg-regular-bg text-regular-text p-1',
+              device.status === 'Furtado' && 'bg-theft-bg text-theft-text p-1',
+              device.status === 'Perdido' && 'bg-lost-bg text-lost-text p-1'
             )}
           >
-            {status}
+            {device.status}
           </span>
         </TableCell>
         <TableCell className="flex gap-2 items-center h-20 py-28 md:py-10 mdflex-wrap md:my-3">
@@ -220,7 +224,7 @@ export function DeviceRow({
                     <div className="flex flex-col gap-2 border border-zinc-200 p-4 rounded-b-lg drop-shadow-sm">
                       <div className="flex">
                         <span className="w-56 font-medium">Número</span>
-                        <span className="w-full">{`(${phone_number.slice(0, 2)}) ${phone_number.slice(2, 7)}-${phone_number.slice(7, 11)}`}</span>
+                        <span className="w-full">{`(${device.phone_number.slice(0, 2)}) ${device.phone_number.slice(2, 7)}-${device.phone_number.slice(7, 11)}`}</span>
                       </div>
                       <div className="flex">
                         <span className="w-56 font-medium">Operadora</span>
@@ -230,15 +234,15 @@ export function DeviceRow({
                       </div>
                       <div className="flex">
                         <span className="w-56 font-medium">Modelo</span>
-                        <span className="w-full">{phone_model}</span>
+                        <span className="w-full">{device.phone_model}</span>
                       </div>
                       <div className="flex">
                         <span className="w-56 font-medium">Fabricante</span>
-                        <span className="w-full">{brand}</span>
+                        <span className="w-full">{device.brand}</span>
                       </div>
                       <div className="flex">
                         <span className="w-56 font-medium">IMEI</span>
-                        <span className="w-full">{imei}</span>
+                        <span className="w-full">{device.imei}</span>
                       </div>
                       <div className="flex">
                         <span className="w-56 font-medium">Status</span>
@@ -246,19 +250,19 @@ export function DeviceRow({
                           <span
                             className={cn(
                               'w-fit rounded-md flex items-center justify-center hover:bg-white px-2',
-                              status === 'Roubado' &&
+                              device.status === 'Roubado' &&
                                 'bg-robbery-bg text-red-600 px-3 py-1 ring-red-500',
-                              status === 'Furtado' &&
+                              device.status === 'Furtado' &&
                                 'bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500',
-                              status === 'Perdido' &&
+                              device.status === 'Perdido' &&
                                 'bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500',
-                              status === 'Recuperado' &&
+                              device.status === 'Recuperado' &&
                                 'bg-recovered-bg text-recovered-textx-3 py-1 ring-lime-500',
-                              status === 'Regular' &&
+                              device.status === 'Regular' &&
                                 'bg-lime-500/30 text-regular-text px-3 py-1 ring-lime-500'
                             )}
                           >
-                            {status}
+                            {device.status}
                           </span>
                         </div>
                       </div>
@@ -301,11 +305,11 @@ export function DeviceRow({
               </div>
             </ConfirmationDialog>
 
-            {status !== 'Regular' ? (
+            {device.status !== 'Regular' ? (
               <>
                 <ViewMyAlerts
                   id={id}
-                  status={status}
+                  status={device.status!}
                   handleDeviceRecovery={handleDeviceRecovery}
                   isDialogOpen={isDialogOpen}
                   setIsDialogOpen={setIsDialogOpen}
@@ -333,7 +337,7 @@ export function DeviceRow({
                   </DialogHeader>
                   <AlertForm
                     id={id}
-                    isStolen={isStolen}
+                    isStolen={device.is_stolen!}
                     setDevices={setDevices}
                     setIsDialogOpen={setIsDialogOpen}
                     isPopup

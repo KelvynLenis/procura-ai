@@ -38,6 +38,10 @@ import {
 import { DialogClose } from '@radix-ui/react-dialog'
 import { OccurrenceTypeDescription } from '../OccurrenceTypeDescription'
 import GoogleMap from '../Maps/GoogleMap'
+import { MarkAsStolenMapWithGeocoding } from '../Maps/MarkAsStolenMapWithGeocoding'
+import { MarkAsStolenMapWithGeocoding2 } from '../Maps/MarkAsStolenMapWithGeocoding2'
+import { MarkAsStolenMapGoogle } from '../Maps/MarkAsStolenMapGoogle'
+import { MarkAsStolenMap } from '../Maps/MarkAsStolenMap'
 
 interface MarkAsStolenFormProps {
   id: string
@@ -347,13 +351,12 @@ export function AlertForm({
                   </FormLabel>
                   <FormControl>
                     {/* <MarkAsStolenMap setPosition={handleSetPosition} setNeighborhoodId={handleSetNeighborhood} /> */}
-                    {/* <MarkAsStolenMapWithGeocoding
+                    {/* <MarkAsStolenMapWithGeocoding2
                       setPosition={handleSetPosition}
                       setNeighborhoodId={handleSetNeighborhood}
                     /> */}
                     {/* <MarkAsStolenMapGoogle /> */}
                     <GoogleMap setPosition={handleSetPosition} setNeighborhoodId={handleSetNeighborhood} />
-                    {/* <Map /> */}
                   </FormControl>
                   <FormMessage />
                 </FormItem>

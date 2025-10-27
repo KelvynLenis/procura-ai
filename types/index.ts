@@ -44,6 +44,20 @@ export interface NotificationProps {
   is_alert_on: boolean
 }
 
+export interface QuestionStep {
+  number: string;
+  text: string;
+  items?: string[];
+  isOptional?: boolean;
+}
+
+export interface Question {
+  question: string;
+  answer: {
+    steps: QuestionStep[];
+  };
+}
+
 export type Device = z.infer<typeof DeviceSchema>
 export type Event = z.infer<typeof EventSchema>
 export type District = z.infer<typeof districtSchema>
