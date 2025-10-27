@@ -567,6 +567,63 @@ function NotificationForm() {
                   Enviar notificação
                 </Button>
               </ConfirmationDialog>
+
+              {/* <Dialog>
+                <DialogTrigger>
+                  <Button
+                    variant="blue"
+                    type="button"
+                    className="xl:text-base"
+                  >
+                    Enviar notificação
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogDescription>
+                      This action cannot be undone. This will permanently delete your account
+                      and remove your data from our servers.
+                    </DialogDescription>
+
+                     <Button
+                      variant="blue"
+                      type="button"
+                      className="xl:text-base"
+                      onClick={() => form.handleSubmit(onSubmit)}
+                    >
+                      Enviar notificação
+                    </Button>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog> */}
+
+              {/* <AlertDialog>
+                <AlertDialogTrigger>teste</AlertDialogTrigger>
+                <AlertDialogContent className="w-[90%] mr-10">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>teste</AlertDialogTitle>
+                    <AlertDialogDescription>ts</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter className="flex flex-row items-center justify-between w-full gap-4">
+                    <AlertDialogCancel className="rounded-full text-center items-center justify-center flex flex-1 w-full px-2 py-2 transition-all duration-300 bg-white border-[0.5px] border-red-500 text-red-500 hover:bg-red-500 hover:text-white">
+                      Cancelar
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      // className="rounded-full text-center items-center self-end justify-center flex flex-1 w-full px-2 py-2 transition-all duration-300 bg-secondary border-[0.5px] border-secondary text-white hover:bg-white hover:text-secondary"
+                      asChild
+                    >
+                      <Button
+                        variant="blue"
+                        type="submit"
+                        className="xl:text-base"
+                      >
+                        Enviar notificação
+                      </Button>
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog> */}
             </div>
           </div>
         </form>
