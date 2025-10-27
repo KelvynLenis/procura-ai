@@ -1,19 +1,19 @@
-'use client'
+"use client";
 
-import type { DeviceProps } from '@/types'
-import { DeviceItem } from './DeviceItem'
-import { Skeleton } from '../../ui/skeleton'
-import Link from 'next/link'
-import Button from '../../Button'
+import type { DeviceProps } from "@/types";
+import { DeviceItem } from "./DeviceItem";
+import { Skeleton } from "../../ui/skeleton";
+import Link from "next/link";
+import Button from "../../Button";
 
 interface DevicesListProps {
-  devices: DeviceProps[]
-  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
-  page: number
-  limit: number
-  isLoading: boolean
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
-  deviceNotificationId?: string
+  devices: DeviceProps[];
+  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>;
+  page: number;
+  limit: number;
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  deviceNotificationId?: string;
 }
 
 export function DevicesList({
@@ -23,10 +23,10 @@ export function DevicesList({
   limit,
   isLoading,
   setIsLoading,
-  deviceNotificationId
+  deviceNotificationId,
 }: DevicesListProps) {
   function showLoadingToast() {
-    setIsLoading(true)
+    setIsLoading(true);
   }
 
   return (
@@ -34,7 +34,7 @@ export function DevicesList({
       <div className="flex flex-col w-full self-center gap-2 bg-[#F9F9F9] ring-1 ring-zinc-300 rounded-xl">
         <div className="flex w-full gap-2 px-2.5 bg-zinc-200/50 rounded-t-xl py-3 drop-shadow-sm justify-between">
           <span>Modelo</span>
-          <div className='flex -ml-10'>
+          <div className="flex -ml-10">
             <span className="text-left mobile-sm:w-20 mobile:w-24">Status</span>
             <span className="text-left mobile-sm:w-20 mobile:w-20">Ações</span>
           </div>
@@ -69,7 +69,7 @@ export function DevicesList({
               />
             ))
           )}
-          <Link href={'/cadastrar-dispositivo'} className="self-end">
+          <Link href={"/cadastrar-dispositivo"} className="self-end">
             <Button
               onClick={showLoadingToast}
               variant="blue"
@@ -81,5 +81,5 @@ export function DevicesList({
         </div>
       </div>
     </>
-  )
+  );
 }

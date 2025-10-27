@@ -1,8 +1,8 @@
-import { z } from 'zod'
+import { z } from "zod";
 
 const PermissionsSchema = z.array(
-  z.string().regex(/^(read|update|delete)\("user:.+"\)$/)
-)
+  z.string().regex(/^(read|update|delete)\("user:.+"\)$/),
+);
 
 export const UserSchema = z.object({
   $collectionId: z.string(),
@@ -20,4 +20,4 @@ export const UserSchema = z.object({
   status: z.string(),
   img_url: z.string().url(),
   push_token: z.string().optional(),
-})
+});

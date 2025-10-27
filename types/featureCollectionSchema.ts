@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 const FeatureSchema = z.object({
   type: z.string(),
@@ -14,7 +14,7 @@ const MetadataSchema = z.object({
 });
 
 const FeatureCollectionSchema = z.object({
-  type: z.literal('FeatureCollection'),
+  type: z.literal("FeatureCollection"),
   features: z.array(FeatureSchema),
   metadata: MetadataSchema,
 });

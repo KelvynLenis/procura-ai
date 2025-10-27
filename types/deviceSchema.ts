@@ -1,8 +1,8 @@
-import { z } from 'zod'
+import { z } from "zod";
 
 const PermissionsSchema = z.array(
-  z.string().regex(/^(read|update|delete)\("user:.+"\)$/)
-)
+  z.string().regex(/^(read|update|delete)\("user:.+"\)$/),
+);
 
 const DeviceSchema = z.object({
   $collectionId: z.string(),
@@ -19,6 +19,6 @@ const DeviceSchema = z.object({
   phone_number: z.string(),
   status: z.string(),
   operator_id: z.string(),
-})
+});
 
-export default DeviceSchema
+export default DeviceSchema;

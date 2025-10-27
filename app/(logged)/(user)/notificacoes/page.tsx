@@ -1,5 +1,5 @@
-import { NotificationsList } from '@/components/NotificationsList'
-import ProtectedRoute from '@/components/ProtectedRoute'
+import { NotificationsList } from "@/components/NotificationsList";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default async function MyDevicesPage() {
   return (
@@ -8,5 +8,5 @@ export default async function MyDevicesPage() {
         <NotificationsList />
       </div>
     </ProtectedRoute>
-  )
+  );
 }

@@ -1,27 +1,27 @@
-'use client'
+"use client";
 
-import recoveryIcon from '../../assets/icons/recover.png'
-import { cn } from '@/lib/utils'
-import { useForm } from 'react-hook-form'
+import recoveryIcon from "../../assets/icons/recover.png";
+import { cn } from "@/lib/utils";
+import { useForm } from "react-hook-form";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import Image from 'next/image'
+} from "@/components/ui/dialog";
+import Image from "next/image";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '../ui/textarea'
-import { Checkbox } from '../ui/checkbox'
-import Button from '../Button'
-import { z } from 'zod'
+} from "@/components/ui/select";
+import { Textarea } from "../ui/textarea";
+import { Checkbox } from "../ui/checkbox";
+import Button from "../Button";
+import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -29,22 +29,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
-import type { OccurrencesProps } from '@/types'
-import { createEvent } from '@/functions/event/create-event'
-import { updateDeviceStatus } from '@/functions/device/update-device-status'
-import { toast } from 'react-toastify'
-import { emailClient } from '@/services/email-client'
-import { getUser } from '@/functions/user/get-user'
-import { account, ID } from '@/lib/appwrite'
-import { getUserInfo } from '@/functions/user/get-user-info'
-import { createNotification } from '@/functions/notification/create-notification'
+} from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import type { OccurrencesProps } from "@/types";
+import { createEvent } from "@/functions/event/create-event";
+import { updateDeviceStatus } from "@/functions/device/update-device-status";
+import { toast } from "react-toastify";
+import { emailClient } from "@/services/email-client";
+import { getUser } from "@/functions/user/get-user";
+import { account, ID } from "@/lib/appwrite";
+import { getUserInfo } from "@/functions/user/get-user-info";
+import { createNotification } from "@/functions/notification/create-notification";
 
 interface RecoverDeviceFormProps {
-  occurrence: OccurrencesProps
-  setOccurrences: React.Dispatch<React.SetStateAction<OccurrencesProps[]>>
+  occurrence: OccurrencesProps;
+  setOccurrences: React.Dispatch<React.SetStateAction<OccurrencesProps[]>>;
 }
 
 export function RecoverDeviceForm({
@@ -52,53 +52,53 @@ export function RecoverDeviceForm({
   setOccurrences,
 }: RecoverDeviceFormProps) {
   const [isRecoverDeviceDialogOpen, setIsRecoverDeviceDialogOpen] =
-    useState(false)
+    useState(false);
 
   const formSchema = z.object({
     description: z.string(),
-    location: z.string().min(1, 'Selecione uma opção'),
+    location: z.string().min(1, "Selecione uma opção"),
     shouldNotify: z.boolean().default(false),
-  })
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      description: '',
-      location: '',
+      description: "",
+      location: "",
       shouldNotify: false,
     },
-  })
+  });
 
   const options = [
     {
-      label: 'Central da Policia Civil',
+      label: "Central da Policia Civil",
       value: [-7.171597790141487, -34.87325528291976],
       address:
-        'R. Manoel Rufino da Silva, 500 - Ernesto Geisel, João Pessoa - PB, 58076-005',
+        "R. Manoel Rufino da Silva, 500 - Ernesto Geisel, João Pessoa - PB, 58076-005",
     },
     {
-      label: 'DRF de Campina Grande',
+      label: "DRF de Campina Grande",
       value: [-7.21587149685039, -35.8800659651219],
       address:
-        'R. Janúncio Ferreira, 680 - Santo Antônio, Campina Grande - PB, 58102-555',
+        "R. Janúncio Ferreira, 680 - Santo Antônio, Campina Grande - PB, 58102-555",
     },
     {
-      label: 'DRF de Patos',
+      label: "DRF de Patos",
       value: [-7.028485393244931, -37.288017090181285],
-      address: 'Adélia Urquiza,179, bairro Liberdade, Patos/PB',
+      address: "Adélia Urquiza,179, bairro Liberdade, Patos/PB",
     },
     {
-      label: 'Central de Policia de Guarabira',
+      label: "Central de Policia de Guarabira",
       value: [-6.849307249237192, -35.5038465361273],
       address:
-        'Tv. Lodônio de Bulhões, 36-112 - Alto Boa Vista, Guarabira - PB, 58200-000',
+        "Tv. Lodônio de Bulhões, 36-112 - Alto Boa Vista, Guarabira - PB, 58200-000",
     },
-  ]
+  ];
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const callFunction = async () => {
-        const user = await account.get()
+        const user = await account.get();
         // fetch('api/create-notification', { method: 'POST', body: JSON.stringify({
         //   documentId: ID.unique(),
         //   data: {
@@ -111,43 +111,41 @@ export function RecoverDeviceForm({
         //   }
         // }) });
 
-        
-        
         const location = options.find(
-          option => option.label === values.location
-        )
+          (option) => option.label === values.location,
+        );
         try {
-          const authUser = await account.get()
+          const authUser = await account.get();
 
-          const user = await getUserInfo(authUser.$id)
+          const user = await getUserInfo(authUser.$id);
 
           const eventRequest = await createEvent({
             id_device: occurrence?.device.$id!,
             time_event: new Date().toISOString(),
             last_location: location?.value as [number, number],
             retrieval_location: `Retirar o dispositivo no(a) ${values.location}`,
-            description: `${values.description.length > 0 ? values.description : 'Dispositivo recuperado pela polícia'}`,
+            description: `${values.description.length > 0 ? values.description : "Dispositivo recuperado pela polícia"}`,
             address: `${location?.address}`,
             admin_id: `${user[0].user_id}`,
-            type: 'Recuperado',
+            type: "Recuperado",
             is_alert_on: false,
-            id_district: '',
-          })
+            id_district: "",
+          });
 
           await createNotification({
             sender_id: authUser.$id,
             receiver_id: occurrence?.device.auth_id,
             message: `O dispositivo ${occurrence?.device.phone_model} foi recuperado!`,
             is_read: false,
-            type: 'Recuperado',
+            type: "Recuperado",
             event_id: eventRequest.$id,
-            id_device: occurrence.device.$id
-          })
-          
+            id_device: occurrence.device.$id,
+          });
+
           await updateDeviceStatus(occurrence?.device.$id!, {
             is_stolen: false,
-            status: 'Recuperado',
-          })
+            status: "Recuperado",
+          });
 
           if (values.shouldNotify && occurrence.user.email) {
             try {
@@ -158,50 +156,54 @@ export function RecoverDeviceForm({
                 deviceBrand: occurrence.device.brand,
                 location: values.location,
                 description: values.description,
-                emergencyContacts: occurrence.user.emergency_contacts?.map(contact => ({
-                  name: contact.name,
-                  email: contact.email
-                }))
+                emergencyContacts: occurrence.user.emergency_contacts?.map(
+                  (contact) => ({
+                    name: contact.name,
+                    email: contact.email,
+                  }),
+                ),
               });
-              
-              toast.success('Email de notificação enviado com sucesso!');
+
+              toast.success("Email de notificação enviado com sucesso!");
             } catch (error) {
-              console.error('Erro ao enviar email:', error);
-              toast.error('Não foi possível enviar o email de notificação. Tente novamente.');
+              console.error("Erro ao enviar email:", error);
+              toast.error(
+                "Não foi possível enviar o email de notificação. Tente novamente.",
+              );
             }
           }
 
-          setOccurrences(prevOccurrences =>
-            prevOccurrences.map(prevOccurrence =>
+          setOccurrences((prevOccurrences) =>
+            prevOccurrences.map((prevOccurrence) =>
               prevOccurrence.device.$id === occurrence.device.$id
                 ? {
                     ...prevOccurrence,
                     device: {
                       ...prevOccurrence.device,
                       is_stolen: false,
-                      status: 'Recuperado',
+                      status: "Recuperado",
                     },
                   }
-                : prevOccurrence
-            )
-          )
+                : prevOccurrence,
+            ),
+          );
 
-          setIsRecoverDeviceDialogOpen(false)
+          setIsRecoverDeviceDialogOpen(false);
 
-          return true
+          return true;
         } catch (error) {
-          console.error('Ocorreu um erro em uma das operações:', error)
-          return false
+          console.error("Ocorreu um erro em uma das operações:", error);
+          return false;
         }
-      }
+      };
 
       const success = await toast.promise(callFunction, {
-        pending: 'Recuperando Dispositivo...',
-        success: 'Recuperado',
-        error: 'Erro ao recuperar',
-      })
+        pending: "Recuperando Dispositivo...",
+        success: "Recuperado",
+        error: "Erro ao recuperar",
+      });
     } catch (error) {
-      console.error('Erro ao recuperar dispositivo:', error)
+      console.error("Erro ao recuperar dispositivo:", error);
     }
   }
 
@@ -248,7 +250,7 @@ export function RecoverDeviceForm({
                     <span className="font-medium w-44">Dispositivo</span>
 
                     <span className="w-full">
-                      {occurrence?.device.phone_model} /{' '}
+                      {occurrence?.device.phone_model} /{" "}
                       {occurrence?.device.brand}
                     </span>
                   </div>
@@ -261,7 +263,7 @@ export function RecoverDeviceForm({
                     <span className="font-medium w-44">Descrição</span>
 
                     <span className="w-full">
-                      {occurrence?.event.description || 'Sem descrição'}
+                      {occurrence?.event.description || "Sem descrição"}
                     </span>
                   </div>
                   <div className="flex">
@@ -270,17 +272,17 @@ export function RecoverDeviceForm({
                     <div className="w-full">
                       <span
                         className={cn(
-                          'w-fit rounded-sm flex items-center justify-center hover:bg-white',
-                          occurrence?.device.status === 'Roubado' &&
-                            'bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500',
-                          occurrence?.device.status === 'Furtado' &&
-                            'bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500',
-                          occurrence?.device.status === 'Perdido' &&
-                            'bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500',
-                          occurrence?.device.status === 'Recuperado' &&
-                            'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500',
-                          occurrence?.device.status === 'Regular' &&
-                            'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500'
+                          "w-fit rounded-sm flex items-center justify-center hover:bg-white",
+                          occurrence?.device.status === "Roubado" &&
+                            "bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500",
+                          occurrence?.device.status === "Furtado" &&
+                            "bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500",
+                          occurrence?.device.status === "Perdido" &&
+                            "bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500",
+                          occurrence?.device.status === "Recuperado" &&
+                            "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
+                          occurrence?.device.status === "Regular" &&
+                            "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
                         )}
                       >
                         {occurrence?.device.status}
@@ -385,5 +387,5 @@ export function RecoverDeviceForm({
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

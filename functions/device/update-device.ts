@@ -1,13 +1,13 @@
-import { Device } from '@/types'
+import { Device } from "@/types";
 
 export async function updateDevice(id: string, values: Device, userId: string) {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents/${id}`,
     {
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
-        'Content-Type': 'application/json',
-        'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+        "Content-Type": "application/json",
+        "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
       },
       body: JSON.stringify({
         data: {
@@ -17,15 +17,15 @@ export async function updateDevice(id: string, values: Device, userId: string) {
           brand: values.brand,
           imei: values.imei,
           is_stolen: false,
-          operator_id: values.operator_id
+          operator_id: values.operator_id,
         },
       }),
-    }
-  )
+    },
+  );
 
   if (!response.ok) {
-    throw new Error(await response.text())
+    throw new Error(await response.text());
   }
 
-  return response.json()
-} 
+  return response.json();
+}

@@ -1,41 +1,41 @@
-'use client'
+"use client";
 
-import { cn } from '@/lib/utils'
-import { IoIosWarning } from 'react-icons/io'
-import { AlertForm } from '../../Forms/AlertForm'
-import type { DeviceProps, Operator } from '@/types'
-import { Trash2 } from 'lucide-react'
-import { ViewMyAlert } from '../../ViewMyAlert'
-import { toast } from 'react-toastify'
-import { v4 as uuidv4 } from 'uuid'
-import { ImPencil } from 'react-icons/im'
-import { useEffect, useState } from 'react'
-import Button from '../../Button'
-import { DeviceForm } from '../../Forms/DeviceForm'
-import { deleteDevice } from '@/functions/device/delete-device'
-import { createEvent } from '@/functions/event/create-event'
-import { updateDeviceStatus } from '@/functions/device/update-device-status'
+import { cn } from "@/lib/utils";
+import { IoIosWarning } from "react-icons/io";
+import { AlertForm } from "../../Forms/AlertForm";
+import type { DeviceProps, Operator } from "@/types";
+import { Trash2 } from "lucide-react";
+import { ViewMyAlert } from "../../ViewMyAlert";
+import { toast } from "react-toastify";
+import { v4 as uuidv4 } from "uuid";
+import { ImPencil } from "react-icons/im";
+import { useEffect, useState } from "react";
+import Button from "../../Button";
+import { DeviceForm } from "../../Forms/DeviceForm";
+import { deleteDevice } from "@/functions/device/delete-device";
+import { createEvent } from "@/functions/event/create-event";
+import { updateDeviceStatus } from "@/functions/device/update-device-status";
 import {
   Dialog,
   DialogClose,
   DialogContent,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { getOperator } from '@/functions/operators/get-operator'
-import { ConfirmationDialog } from '@/components/ConfirmationDialog'
+} from "@/components/ui/dialog";
+import { getOperator } from "@/functions/operators/get-operator";
+import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 
 interface DeviceDetailsCardProps {
-  id: string // ID do dispositivo
-  phone_number: string // Número de telefone
-  phone_model: string // Modelo do telefone
-  brand: string // Fabricante  do telefone
-  imei: string // IMEI do telefone
-  isStolen: boolean // Status de "roubado" (true/false)
-  operator_id: string | undefined // ID do operador
-  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
-  index: number
-  status: string
+  id: string; // ID do dispositivo
+  phone_number: string; // Número de telefone
+  phone_model: string; // Modelo do telefone
+  brand: string; // Fabricante  do telefone
+  imei: string; // IMEI do telefone
+  isStolen: boolean; // Status de "roubado" (true/false)
+  operator_id: string | undefined; // ID do operador
+  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>;
+  index: number;
+  status: string;
 }
 
 export function DeviceDetailsCard({
@@ -50,10 +50,10 @@ export function DeviceDetailsCard({
   setDevices,
   index,
 }: DeviceDetailsCardProps) {
-  const [isLoading, setIsLoading] = useState(false)
-  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [operator, setOperator] = useState<Operator>()
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [operator, setOperator] = useState<Operator>();
 
   const device = {
     id,
@@ -64,9 +64,9 @@ export function DeviceDetailsCard({
     imei,
     isStolen,
     status,
-  }
+  };
 
-  const isRegular = status === 'Regular' || status === 'Recuperado'
+  const isRegular = status === "Regular" || status === "Recuperado";
 
   async function handleDeviceRecovery(id: string) {
     try {
@@ -76,88 +76,88 @@ export function DeviceDetailsCard({
             id_device: id,
             time_event: new Date().toISOString(),
             last_location: [0, 0],
-            description: 'Recuperado',
-            type: 'Recuperado',
+            description: "Recuperado",
+            type: "Recuperado",
             is_alert_on: false,
-            id_district: '',
-          })
+            id_district: "",
+          });
 
           await updateDeviceStatus(id, {
             is_stolen: false,
-            status: 'Recuperado',
-          })
+            status: "Recuperado",
+          });
 
-          return true
+          return true;
         } catch (error) {
-          console.error('Ocorreu um erro em uma das operações:', error)
-          return false
+          console.error("Ocorreu um erro em uma das operações:", error);
+          return false;
         }
-      }
+      };
 
       const success = await toast.promise(callFunction, {
-        pending: 'Recuperando Dispositivo...',
-        success: 'Recuperado',
-        error: 'Erro ao recuperar',
-      })
+        pending: "Recuperando Dispositivo...",
+        success: "Recuperado",
+        error: "Erro ao recuperar",
+      });
 
       if (success) {
-        setDevices(prevDevices =>
-          prevDevices.map(device =>
+        setDevices((prevDevices) =>
+          prevDevices.map((device) =>
             device.$id === id
-              ? { ...device, is_stolen: false, status: 'Recuperado' }
-              : device
-          )
-        )
+              ? { ...device, is_stolen: false, status: "Recuperado" }
+              : device,
+          ),
+        );
       }
     } catch (error) {
-      console.error('Erro ao recuperar dispositivo:', error)
+      console.error("Erro ao recuperar dispositivo:", error);
     }
   }
 
   function showLoadingToast() {
-    setIsLoading(true)
+    setIsLoading(true);
   }
 
   async function handleDeleteDevice(id: string) {
     try {
       const callFunction = async () => {
         try {
-          await deleteDevice(id)
-          setDevices(prevDevices =>
-            prevDevices.filter(device => device.$id !== id)
-          )
-          return true
+          await deleteDevice(id);
+          setDevices((prevDevices) =>
+            prevDevices.filter((device) => device.$id !== id),
+          );
+          return true;
         } catch (error) {
-          console.error('Erro ao deletar dispositivo:', error)
-          return false
+          console.error("Erro ao deletar dispositivo:", error);
+          return false;
         }
-      }
+      };
 
       toast.promise(callFunction(), {
-        pending: 'Deletando dispositivo...',
-        success: 'Dispositivo deletado com sucesso',
-        error: 'Erro ao deletar dispositivo',
-      })
+        pending: "Deletando dispositivo...",
+        success: "Dispositivo deletado com sucesso",
+        error: "Erro ao deletar dispositivo",
+      });
     } catch (error) {
-      console.error('Erro ao deletar dispositivo:', error)
+      console.error("Erro ao deletar dispositivo:", error);
     }
   }
 
   async function fetchOperator() {
     try {
-      const operator = await getOperator(operator_id)
+      const operator = await getOperator(operator_id);
 
-      setOperator(operator)
+      setOperator(operator);
 
-      return operator
+      return operator;
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
   useEffect(() => {
-    fetchOperator()
-  }, [])
+    fetchOperator();
+  }, []);
 
   return (
     <>
@@ -168,10 +168,10 @@ export function DeviceDetailsCard({
               <button
                 type="button"
                 className={cn(
-                  'rounded-lg group relative w-10 h-10 ring-1 flex flex-col md:flex-row items-center justify-center',
+                  "rounded-lg group relative w-10 h-10 ring-1 flex flex-col md:flex-row items-center justify-center",
                   isRegular
-                    ? 'ring-zinc-300 bg-white text-red-600 hover:bg-red-300 hover:ring-red-500'
-                    : 'ring-red-700 text-white bg-red-600 hover:bg-red-100 hover:text-red-600'
+                    ? "ring-zinc-300 bg-white text-red-600 hover:bg-red-300 hover:ring-red-500"
+                    : "ring-red-700 text-white bg-red-600 hover:bg-red-100 hover:text-red-600",
                 )}
               >
                 <IoIosWarning size={28} />
@@ -295,28 +295,28 @@ export function DeviceDetailsCard({
 
             <span
               className={cn(
-                'rounded-md w-20 flex items-center justify-center capitalize',
-                status === 'Roubado' && 'bg-robbery-bg text-robbery-text p-1',
-                status === 'Recuperado' &&
-                  'bg-recovered-bg text-recovered-text p-1',
-                status === 'Regular' && 'bg-regular-bg text-regular-text p-1',
-                status === 'Furtado' && 'bg-theft-bg text-theft-text p-1',
-                status === 'Perdido' && 'bg-lost-bg text-lost-text p-1'
+                "rounded-md w-20 flex items-center justify-center capitalize",
+                status === "Roubado" && "bg-robbery-bg text-robbery-text p-1",
+                status === "Recuperado" &&
+                  "bg-recovered-bg text-recovered-text p-1",
+                status === "Regular" && "bg-regular-bg text-regular-text p-1",
+                status === "Furtado" && "bg-theft-bg text-theft-text p-1",
+                status === "Perdido" && "bg-lost-bg text-lost-text p-1",
               )}
             >
-              {status === 'Recuperado' ? 'Regular' : status.replace(' ', '')}
+              {status === "Recuperado" ? "Regular" : status.replace(" ", "")}
             </span>
           </div>
         </div>
       </div>
     </>
-  )
+  );
 }
 
 interface DeleteDeviceModalProps {
-  id: string
-  handleDeleteDevice: (id: string) => void
-  setModalOpen?: (value: boolean) => void
+  id: string;
+  handleDeleteDevice: (id: string) => void;
+  setModalOpen?: (value: boolean) => void;
 }
 
 function DeleteDeviceModal({
@@ -355,5 +355,5 @@ function DeleteDeviceModal({
         </div>
       </div>
     </>
-  )
+  );
 }

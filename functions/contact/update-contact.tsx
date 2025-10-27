@@ -1,10 +1,10 @@
 interface UpdateContactProps {
   values: {
-    contact_name: string
-    contact_email?: string
-    contact_number: string
-  }
-  id: string
+    contact_name: string;
+    contact_email?: string;
+    contact_number: string;
+  };
+  id: string;
 }
 
 export async function updateContact({ values, id }: UpdateContactProps) {
@@ -12,10 +12,10 @@ export async function updateContact({ values, id }: UpdateContactProps) {
     const contactResponse = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_CONTACTS}/documents/${id}`,
       {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
-          'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+          "Content-Type": "application/json",
+          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
         },
         body: JSON.stringify({
           data: {
@@ -25,19 +25,19 @@ export async function updateContact({ values, id }: UpdateContactProps) {
           },
         }),
         next: {
-          tags: ['contacts'],
+          tags: ["contacts"],
         },
-      }
-    )
+      },
+    );
 
     if (!contactResponse.ok) {
-      throw new Error('Failed to create contact')
+      throw new Error("Failed to create contact");
     }
 
-    const contactData = await contactResponse.json()
+    const contactData = await contactResponse.json();
 
-    return contactData
+    return contactData;
   } catch (error) {
-    console.error('Error in createContact:', error)
+    console.error("Error in createContact:", error);
   }
 }

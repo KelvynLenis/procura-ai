@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
-import type { Contact } from '@/types'
-import { ContacItem } from './ContactItem'
+import type { Contact } from "@/types";
+import { ContacItem } from "./ContactItem";
 
 interface ContactsListProps {
-  contacts: Contact[]
-  setContacts: React.Dispatch<React.SetStateAction<Contact[]>>
+  contacts: Contact[];
+  setContacts: React.Dispatch<React.SetStateAction<Contact[]>>;
 }
 
 export function ContactsList({ contacts, setContacts }: ContactsListProps) {
@@ -17,5 +17,5 @@ export function ContactsList({ contacts, setContacts }: ContactsListProps) {
         ))}
       </div>
     </>
-  )
+  );
 }

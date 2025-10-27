@@ -1,10 +1,10 @@
-import { CustomSidebarTrigger } from '@/components/CustomSidebarTrigger'
-import { Footer } from '@/components/Footer'
-import { Header } from '@/components/Header'
-import ProtectedRoute from '@/components/ProtectedRoute'
-import { AppSidebar } from '@/components/Sidebar'
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
-import { NotificationProvider } from '@/contexts/NotificationContext'
+import { CustomSidebarTrigger } from "@/components/CustomSidebarTrigger";
+import { Footer } from "@/components/Footer";
+import { Header } from "@/components/Header";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { AppSidebar } from "@/components/Sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -26,5 +26,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Footer />
       </NotificationProvider>
     </ProtectedRoute>
-  )
+  );
 }

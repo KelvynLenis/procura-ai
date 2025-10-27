@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from "zod";
 
 const NotificationSchema = z.object({
   $collectionId: z.string().optional(),
@@ -13,12 +13,12 @@ const NotificationSchema = z.object({
   is_read: z.boolean().optional(),
   type: z.string(),
   event_id: z.string().optional(),
-  id_device: z.string().optional(), 
+  id_device: z.string().optional(),
   title: z.string().optional(),
   device_options: z.string().array().optional(),
   location_options: z.string().array().optional(),
   selected_targets: z.string().array().optional(),
-  is_all_users_checked: z.boolean().optional()
-})
+  is_all_users_checked: z.boolean().optional(),
+});
 
-export default NotificationSchema
+export default NotificationSchema;

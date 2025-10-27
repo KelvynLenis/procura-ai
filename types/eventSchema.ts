@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from "zod";
 
 const EventSchema = z.object({
   $collectionId: z.string(),
@@ -16,6 +16,6 @@ const EventSchema = z.object({
   time_event: z.string().datetime(),
   type: z.string(),
   id_district: z.string().optional(),
-})
+});
 
-export default EventSchema
+export default EventSchema;

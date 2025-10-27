@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Sidebar,
@@ -10,8 +10,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar'
-import { account } from '@/lib/appwrite'
+} from "@/components/ui/sidebar";
+import { account } from "@/lib/appwrite";
 import {
   Bell,
   ChartColumnBig,
@@ -21,28 +21,28 @@ import {
   Pencil,
   Siren,
   Smartphone,
-} from 'lucide-react'
-import { useRouter, usePathname } from 'next/navigation'
-import { CustomSidebarTrigger } from './CustomSidebarTrigger'
-import { IoMdAddCircle } from 'react-icons/io'
-import { PiUsersThreeFill } from 'react-icons/pi'
-import { useState } from 'react'
-import { LoadingToast } from './LoadingToast'
-import { toast } from 'react-toastify'
-import logo from '../assets/icons/logo-text-2.svg'
+} from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
+import { CustomSidebarTrigger } from "./CustomSidebarTrigger";
+import { IoMdAddCircle } from "react-icons/io";
+import { PiUsersThreeFill } from "react-icons/pi";
+import { useState } from "react";
+import { LoadingToast } from "./LoadingToast";
+import { toast } from "react-toastify";
+import logo from "../assets/icons/logo-text-2.svg";
 // import logo from '../assets/icons/logo-text.svg'
-import Image from 'next/image'
-import { RiAlarmWarningFill } from 'react-icons/ri'
+import Image from "next/image";
+import { RiAlarmWarningFill } from "react-icons/ri";
 
 const devicesGroup = [
   {
-    title: 'Meus dispositivos',
-    url: 'meus-dispositivos',
+    title: "Meus dispositivos",
+    url: "meus-dispositivos",
     icon: <Smartphone />,
   },
   {
-    title: 'Cadastrar novo dispositivo',
-    url: 'cadastrar-dispositivo',
+    title: "Cadastrar novo dispositivo",
+    url: "cadastrar-dispositivo",
     icon: (
       <div className="relative">
         <Smartphone className="size-4" />
@@ -50,12 +50,12 @@ const devicesGroup = [
       </div>
     ),
   },
-]
+];
 
 const securityGroup = [
   {
-    title: 'Contatos de confiança',
-    url: 'contatos-de-confianca',
+    title: "Contatos de confiança",
+    url: "contatos-de-confianca",
     icon: <PiUsersThreeFill />,
   },
   // {
@@ -63,74 +63,74 @@ const securityGroup = [
   //   url: 'perfil',
   //   icon: <Pencil />,
   // },
-]
+];
 
 const itemsForAdmins = [
   {
-    title: 'Dashboard',
-    url: 'dashboard',
+    title: "Dashboard",
+    url: "dashboard",
     icon: <ChartColumnBig />,
   },
   {
-    title: 'Usuários cadastrados',
-    url: 'usuarios',
+    title: "Usuários cadastrados",
+    url: "usuarios",
     icon: <PiUsersThreeFill />,
   },
   {
-    title: 'Dispositivos notificados',
-    url: 'dispositivos-notificados',
+    title: "Dispositivos notificados",
+    url: "dispositivos-notificados",
     icon: <RiAlarmWarningFill />,
   },
   {
-    title: 'Gerenciar notificações',
-    url: 'gerenciar-notificacoes',
+    title: "Gerenciar notificações",
+    url: "gerenciar-notificacoes",
     icon: <Bell />,
   },
-]
+];
 
 const perfilGroup = [
   {
-    title: 'Editar perfil',
-    url: 'perfil-admin',
+    title: "Editar perfil",
+    url: "perfil-admin",
     icon: <Pencil />,
   },
-]
+];
 
 interface SidebarProps {
-  admin?: boolean
+  admin?: boolean;
 }
 
 export function AppSidebar({ admin }: SidebarProps) {
-  const [isLoading, setIsLoading] = useState(true)
-  const { isMobile, toggleSidebar } = useSidebar()
-  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true);
+  const { isMobile, toggleSidebar } = useSidebar();
+  const router = useRouter();
 
-  const pathname = usePathname().slice(1)
+  const pathname = usePathname().slice(1);
 
   async function logout() {
-    await account.deleteSession('current')
+    await account.deleteSession("current");
 
-    setIsLoading(true)
+    setIsLoading(true);
     toast(<LoadingToast isReactToastifyComponent />, {
       autoClose: 1000,
       hideProgressBar: true,
-      position: 'top-center',
+      position: "top-center",
       closeOnClick: true,
-    })
+    });
 
-    router.push('/')
+    router.push("/");
   }
 
   function showLoadingToast(url: string) {
-    setIsLoading(true)
-    isMobile && toggleSidebar()
+    setIsLoading(true);
+    isMobile && toggleSidebar();
     toast(<LoadingToast isReactToastifyComponent />, {
       autoClose: 1000,
       hideProgressBar: true,
-      position: 'top-center',
+      position: "top-center",
       closeOnClick: true,
-    })
-    router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/${url}`)
+    });
+    router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/${url}`);
   }
 
   return (
@@ -165,12 +165,12 @@ export function AppSidebar({ admin }: SidebarProps) {
 
           <SidebarGroup className="flex flex-col gap-2 px-2">
             <SidebarGroupLabel className="uppercase">
-              {admin ? 'Gerenciamento' : 'Dispositivos'}
+              {admin ? "Gerenciamento" : "Dispositivos"}
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="flex flex-col gap-1 font-bold">
                 {admin
-                  ? itemsForAdmins.map(item => (
+                  ? itemsForAdmins.map((item) => (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
                           asChild
@@ -189,7 +189,7 @@ export function AppSidebar({ admin }: SidebarProps) {
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))
-                  : devicesGroup.map(item => (
+                  : devicesGroup.map((item) => (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
                           asChild
@@ -214,12 +214,12 @@ export function AppSidebar({ admin }: SidebarProps) {
 
           <SidebarGroup className="flex flex-col gap-2">
             <SidebarGroupLabel className="uppercase">
-              {admin ? 'Perfil' : 'Segurança'}
+              {admin ? "Perfil" : "Segurança"}
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="flex flex-col gap-1 font-bold">
                 {admin
-                  ? perfilGroup.map(item => (
+                  ? perfilGroup.map((item) => (
                       <SidebarMenuItem key={item.title} title="Em breve">
                         <SidebarMenuButton
                           asChild
@@ -235,7 +235,7 @@ export function AppSidebar({ admin }: SidebarProps) {
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))
-                  : securityGroup.map(item => (
+                  : securityGroup.map((item) => (
                       <SidebarMenuItem key={item.title} title="Em breve">
                         <SidebarMenuButton
                           asChild
@@ -270,5 +270,5 @@ export function AppSidebar({ admin }: SidebarProps) {
         </SidebarContent>
       </Sidebar>
     </>
-  )
+  );
 }

@@ -1,18 +1,18 @@
-'use client'
+"use client";
 
-import { TableCell, TableRow } from '../ui/table'
-import type { OccurrencesProps } from '@/types'
-import { cn } from '@/lib/utils'
-import { RecoverDeviceForm } from '../Forms/RecoverDeviceForm'
-import recoveryIcon from '../../assets/icons/recover.png'
-import { OccurrenceDetails } from '../OccurrenceDetails'
-import Image from 'next/image'
-import { useState } from 'react'
+import { TableCell, TableRow } from "../ui/table";
+import type { OccurrencesProps } from "@/types";
+import { cn } from "@/lib/utils";
+import { RecoverDeviceForm } from "../Forms/RecoverDeviceForm";
+import recoveryIcon from "../../assets/icons/recover.png";
+import { OccurrenceDetails } from "../OccurrenceDetails";
+import Image from "next/image";
+import { useState } from "react";
 
 interface AlertRowProps {
-  index: number
-  occurrence?: OccurrencesProps
-  setOccurrences: React.Dispatch<React.SetStateAction<OccurrencesProps[]>>
+  index: number;
+  occurrence?: OccurrencesProps;
+  setOccurrences: React.Dispatch<React.SetStateAction<OccurrencesProps[]>>;
 }
 
 export function AlertRow({ index, occurrence, setOccurrences }: AlertRowProps) {
@@ -36,20 +36,20 @@ export function AlertRow({ index, occurrence, setOccurrences }: AlertRowProps) {
         <TableCell className="w-24">
           <span
             className={cn(
-              'rounded-md w-24 flex items-center justify-center capitalize',
-              occurrence?.device.status === 'Roubado' &&
-                'bg-robbery-bg text-robbery-text p-1',
-              occurrence?.device.status === 'Recuperado' &&
-                'bg-recovered-bg text-recovered-text p-1',
-              occurrence?.device.status === 'Regular' &&
-                'bg-regular-bg text-regular-text p-1',
-              occurrence?.device.status === 'Furtado' &&
-                'bg-theft-bg text-theft-text p-1',
-              occurrence?.device.status === 'Perdido' &&
-                'bg-lost-bg text-lost-text p-1'
+              "rounded-md w-24 flex items-center justify-center capitalize",
+              occurrence?.device.status === "Roubado" &&
+                "bg-robbery-bg text-robbery-text p-1",
+              occurrence?.device.status === "Recuperado" &&
+                "bg-recovered-bg text-recovered-text p-1",
+              occurrence?.device.status === "Regular" &&
+                "bg-regular-bg text-regular-text p-1",
+              occurrence?.device.status === "Furtado" &&
+                "bg-theft-bg text-theft-text p-1",
+              occurrence?.device.status === "Perdido" &&
+                "bg-lost-bg text-lost-text p-1",
             )}
           >
-            {occurrence?.device.status.replace(' ', '')}
+            {occurrence?.device.status.replace(" ", "")}
           </span>
         </TableCell>
         <TableCell className="flex gap-2 items-center h-20 py-28 md:py-10 pr-7">
@@ -77,5 +77,5 @@ export function AlertRow({ index, occurrence, setOccurrences }: AlertRowProps) {
         </TableCell>
       </TableRow>
     </>
-  )
+  );
 }

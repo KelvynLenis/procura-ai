@@ -1,36 +1,36 @@
-'use client'
+"use client";
 
-import { TableCell, TableRow } from '../../ui/table'
-import { IoIosWarning } from 'react-icons/io'
-import { ImPencil } from 'react-icons/im'
-import Link from 'next/link'
-import type { DeviceProps, Operator } from '@/types'
-import { cn } from '@/lib/utils'
-import { Eye, Trash2 } from 'lucide-react'
+import { TableCell, TableRow } from "../../ui/table";
+import { IoIosWarning } from "react-icons/io";
+import { ImPencil } from "react-icons/im";
+import Link from "next/link";
+import type { DeviceProps, Operator } from "@/types";
+import { cn } from "@/lib/utils";
+import { Eye, Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { AlertForm } from '../../Forms/AlertForm'
-import { toast } from 'react-toastify'
-import { useEffect, useState } from 'react'
-import { ViewMyAlerts } from '../../ViewMyAlerts'
-import { ConfirmationDialog } from '../../ConfirmationDialog'
-import { deleteDevice } from '@/functions/device/delete-device'
-import { recoverDevice } from '@/functions/device/recover-device'
-import { getOperator } from '@/functions/operators/get-operator'
-import deviceInfo from '../../../assets/icons/device-info.png'
-import Image from 'next/image'
-import { updateDeviceStatus } from '@/functions/device/update-device-status'
-import { createEvent } from '@/functions/event/create-event'
+} from "@/components/ui/dialog";
+import { AlertForm } from "../../Forms/AlertForm";
+import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { ViewMyAlerts } from "../../ViewMyAlerts";
+import { ConfirmationDialog } from "../../ConfirmationDialog";
+import { deleteDevice } from "@/functions/device/delete-device";
+import { recoverDevice } from "@/functions/device/recover-device";
+import { getOperator } from "@/functions/operators/get-operator";
+import deviceInfo from "../../../assets/icons/device-info.png";
+import Image from "next/image";
+import { updateDeviceStatus } from "@/functions/device/update-device-status";
+import { createEvent } from "@/functions/event/create-event";
 
 interface DeviceRowProps {
   // key: string
-  id: string // ID do dispositivo
-  device: DeviceProps
+  id: string; // ID do dispositivo
+  device: DeviceProps;
   // phone_number: string // Número de telefone
   // phone_model: string // Modelo do telefone
   // brand: string // Fabricante do telefone
@@ -38,9 +38,9 @@ interface DeviceRowProps {
   // isStolen: boolean // Status de "roubado" (true/false)
   // operator_id: string | undefined // ID do operador
   // status: string
-  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
-  index: number
-  deviceNotificationId?: string
+  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>;
+  index: number;
+  deviceNotificationId?: string;
 }
 
 export function DeviceRow({
@@ -56,31 +56,33 @@ export function DeviceRow({
   // operator_id,
   setDevices,
   index,
-  deviceNotificationId
+  deviceNotificationId,
 }: DeviceRowProps) {
-  const [isLoading, setIsLoading] = useState(false)
-  const [isDialogOpen, setIsDialogOpen] = useState(deviceNotificationId === id ? true : false)
-  const [isViewAlertModalOpen, setIsViewAlertModalOpen] = useState(false)
-  const [operator, setOperator] = useState<Operator>()
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(
+    deviceNotificationId === id ? true : false,
+  );
+  const [isViewAlertModalOpen, setIsViewAlertModalOpen] = useState(false);
+  const [operator, setOperator] = useState<Operator>();
 
   async function handleDeleteDevice(id: string) {
     try {
       const callFunction = async () => {
-        const response = await deleteDevice(id)
+        const response = await deleteDevice(id);
         if (response) {
-          setDevices(prevDevices =>
-            prevDevices.filter(device => device.$id !== id)
-          )
+          setDevices((prevDevices) =>
+            prevDevices.filter((device) => device.$id !== id),
+          );
         }
-      }
+      };
 
       toast.promise(callFunction(), {
-        pending: 'Deletando dispositivo...',
-        success: 'Dispositivo deletado com sucesso',
-        error: 'Erro ao deletar dispositivo',
-      })
+        pending: "Deletando dispositivo...",
+        success: "Dispositivo deletado com sucesso",
+        error: "Erro ao deletar dispositivo",
+      });
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
@@ -90,48 +92,48 @@ export function DeviceRow({
         id_device: id,
         time_event: new Date().toISOString(),
         last_location: [0, 0],
-        description: 'Evento Cancelado pelo usuário',
-        type: 'Regular',
+        description: "Evento Cancelado pelo usuário",
+        type: "Regular",
         is_alert_on: false,
-        id_district: '',
-      })
+        id_district: "",
+      });
       const success = await updateDeviceStatus(id, {
         is_stolen: false,
-        status: 'Regular',
-      })
+        status: "Regular",
+      });
 
       if (success) {
-        setDevices(prevDevices =>
-          prevDevices.map(device =>
+        setDevices((prevDevices) =>
+          prevDevices.map((device) =>
             device.$id === id
-              ? { ...device, is_stolen: false, status: 'Regular' }
-              : device
-          )
-        )
+              ? { ...device, is_stolen: false, status: "Regular" }
+              : device,
+          ),
+        );
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
   async function fetchOperator() {
     try {
-      const operator = await getOperator(device.operator_id)
+      const operator = await getOperator(device.operator_id);
 
-      setOperator(operator)
+      setOperator(operator);
 
-      return operator
+      return operator;
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
   function showLoadingToast() {
-    setIsLoading(true)
+    setIsLoading(true);
   }
 
   useEffect(() => {
-    fetchOperator()
+    fetchOperator();
 
     if (typeof window === "undefined") return;
 
@@ -141,7 +143,8 @@ export function DeviceRow({
     const navEntries = performance.getEntriesByType("navigation");
     if (navEntries && navEntries.length > 0) {
       // Moderno
-      isReload = (navEntries[0] as PerformanceNavigationTiming).type === "reload";
+      isReload =
+        (navEntries[0] as PerformanceNavigationTiming).type === "reload";
     } else if ("navigation" in performance) {
       // Fallback (API antiga / Safari)
       // @ts-ignore
@@ -151,19 +154,16 @@ export function DeviceRow({
     if (isReload) {
       const cleanUrl = window.location.origin + window.location.pathname;
       window.history.replaceState(null, "", cleanUrl);
-      setIsDialogOpen(false)
-      return
+      setIsDialogOpen(false);
+      return;
     }
-    
+
     if (deviceNotificationId && deviceNotificationId === id) {
-      setIsDialogOpen(true)
+      setIsDialogOpen(true);
     }
-
-  }, [])
-
-  useEffect(() => {
-    
   }, []);
+
+  useEffect(() => {}, []);
 
   return (
     <>
@@ -183,12 +183,15 @@ export function DeviceRow({
         <TableCell className="w-24">
           <span
             className={cn(
-              'rounded-md w-24 flex items-center justify-center capitalize font-medium',
-              device.status === 'Roubado' && 'bg-robbery-bg text-robbery-text p-1',
-              device.status === 'Recuperado' && 'bg-recovered-bg text-recovered-text p-1',
-              device.status === 'Regular' && 'bg-regular-bg text-regular-text p-1',
-              device.status === 'Furtado' && 'bg-theft-bg text-theft-text p-1',
-              device.status === 'Perdido' && 'bg-lost-bg text-lost-text p-1'
+              "rounded-md w-24 flex items-center justify-center capitalize font-medium",
+              device.status === "Roubado" &&
+                "bg-robbery-bg text-robbery-text p-1",
+              device.status === "Recuperado" &&
+                "bg-recovered-bg text-recovered-text p-1",
+              device.status === "Regular" &&
+                "bg-regular-bg text-regular-text p-1",
+              device.status === "Furtado" && "bg-theft-bg text-theft-text p-1",
+              device.status === "Perdido" && "bg-lost-bg text-lost-text p-1",
             )}
           >
             {device.status}
@@ -229,7 +232,7 @@ export function DeviceRow({
                       <div className="flex">
                         <span className="w-56 font-medium">Operadora</span>
                         <span className="w-full">
-                          {operator?.name_operator ?? 'Não informado'}
+                          {operator?.name_operator ?? "Não informado"}
                         </span>
                       </div>
                       <div className="flex">
@@ -249,17 +252,17 @@ export function DeviceRow({
                         <div className="w-full">
                           <span
                             className={cn(
-                              'w-fit rounded-md flex items-center justify-center hover:bg-white px-2',
-                              device.status === 'Roubado' &&
-                                'bg-robbery-bg text-red-600 px-3 py-1 ring-red-500',
-                              device.status === 'Furtado' &&
-                                'bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500',
-                              device.status === 'Perdido' &&
-                                'bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500',
-                              device.status === 'Recuperado' &&
-                                'bg-recovered-bg text-recovered-textx-3 py-1 ring-lime-500',
-                              device.status === 'Regular' &&
-                                'bg-lime-500/30 text-regular-text px-3 py-1 ring-lime-500'
+                              "w-fit rounded-md flex items-center justify-center hover:bg-white px-2",
+                              device.status === "Roubado" &&
+                                "bg-robbery-bg text-red-600 px-3 py-1 ring-red-500",
+                              device.status === "Furtado" &&
+                                "bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500",
+                              device.status === "Perdido" &&
+                                "bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500",
+                              device.status === "Recuperado" &&
+                                "bg-recovered-bg text-recovered-textx-3 py-1 ring-lime-500",
+                              device.status === "Regular" &&
+                                "bg-lime-500/30 text-regular-text px-3 py-1 ring-lime-500",
                             )}
                           >
                             {device.status}
@@ -291,7 +294,7 @@ export function DeviceRow({
                     permanentemente o dispositivo e removerá seus dados de
                     nossos servidores."
               onConfirm={() => {
-                handleDeleteDevice(id)
+                handleDeleteDevice(id);
               }}
             >
               <div
@@ -305,7 +308,7 @@ export function DeviceRow({
               </div>
             </ConfirmationDialog>
 
-            {device.status !== 'Regular' ? (
+            {device.status !== "Regular" ? (
               <>
                 <ViewMyAlerts
                   id={id}
@@ -322,7 +325,7 @@ export function DeviceRow({
                   <div
                     // type="button"
                     className={cn(
-                      'rounded-lg group relative w-10 h-10 ring-1 ring-zinc-300 flex flex-col md:flex-row items-center justify-center text-red-600 hover:bg-red-300 hover:ring-red-500'
+                      "rounded-lg group relative w-10 h-10 ring-1 ring-zinc-300 flex flex-col md:flex-row items-center justify-center text-red-600 hover:bg-red-300 hover:ring-red-500",
                     )}
                   >
                     <IoIosWarning size={28} />
@@ -332,7 +335,7 @@ export function DeviceRow({
                   </div>
                 </DialogTrigger>
                 <DialogContent className="flex flex-col h-4/5 md:h-fit w-fit p-0 rounded-xl">
-                  <DialogHeader className='w-full bg-[#E7F2FE] px-4 py-5'>
+                  <DialogHeader className="w-full bg-[#E7F2FE] px-4 py-5">
                     <DialogTitle>Criar ocorrência</DialogTitle>
                   </DialogHeader>
                   <AlertForm
@@ -349,5 +352,5 @@ export function DeviceRow({
         </TableCell>
       </TableRow>
     </>
-  )
+  );
 }

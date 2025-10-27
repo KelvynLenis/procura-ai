@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Table,
@@ -7,20 +7,20 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Skeleton } from '@/components/ui/skeleton'
-import type { DeviceProps } from '@/types'
-import { DeviceRow } from './DeviceRow'
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { DeviceProps } from "@/types";
+import { DeviceRow } from "./DeviceRow";
 
 interface DevicesTableProps {
-  devices: DeviceProps[]
-  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
-  totalDevices: number
-  page: number
-  pages: number
-  limit: number
-  isLoading: boolean
-  deviceNotificationId?: string
+  devices: DeviceProps[];
+  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>;
+  totalDevices: number;
+  page: number;
+  pages: number;
+  limit: number;
+  isLoading: boolean;
+  deviceNotificationId?: string;
 }
 
 export function DevicesTable({
@@ -31,9 +31,8 @@ export function DevicesTable({
   pages,
   limit,
   isLoading,
-  deviceNotificationId
+  deviceNotificationId,
 }: DevicesTableProps) {
-
   return (
     <>
       <Table className="bg-white shadow-lg rounded-xl self-center">
@@ -109,5 +108,5 @@ export function DevicesTable({
         </TableBody>
       </Table>
     </>
-  )
+  );
 }

@@ -1,34 +1,34 @@
-import type { Operator } from '@/types'
+import type { Operator } from "@/types";
 
 export async function getOperator(
-  operatorId: string | undefined
+  operatorId: string | undefined,
 ): Promise<Operator | undefined> {
   if (!operatorId) {
-    return undefined
+    return undefined;
   }
 
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_OPERATORS}/documents/${operatorId}`,
       {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+          "Content-Type": "application/json",
+          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
         },
-        cache: 'no-store',
-      }
-    )
+        cache: "no-store",
+      },
+    );
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch districts: ${await response.text()}`)
+      throw new Error(`Failed to fetch districts: ${await response.text()}`);
     }
 
-    const result = await response.json()
+    const result = await response.json();
 
-    return result
+    return result;
   } catch (error) {
-    console.error(error)
-    return undefined
+    console.error(error);
+    return undefined;
   }
 }

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Form,
@@ -7,37 +7,37 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { useForm } from 'react-hook-form'
-import { Input } from '../Input'
-import Link from 'next/link'
-import { account } from '@/lib/appwrite'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'react-toastify'
-import { LoadingToast } from '../LoadingToast'
-import Button from '../Button'
-import { login } from '@/functions/auth/login'
-import { updateLastAccess } from '@/functions/auth/update-last-access'
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { Input } from "../Input";
+import Link from "next/link";
+import { account } from "@/lib/appwrite";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-toastify";
+import { LoadingToast } from "../LoadingToast";
+import Button from "../Button";
+import { login } from "@/functions/auth/login";
+import { updateLastAccess } from "@/functions/auth/update-last-access";
 
 const formSchema = z.object({
-  email: z.string().email('Email inválido'),
-  password: z.string().min(1, 'A senha é obrigatória'),
-})
+  email: z.string().email("Email inválido"),
+  password: z.string().min(1, "A senha é obrigatória"),
+});
 
 export function LoginForm() {
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
-  })
+  });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -45,62 +45,62 @@ export function LoginForm() {
         try {
           const { isAdmin, userId, userStatus } = await login(
             values.email,
-            values.password
-          )
+            values.password,
+          );
 
-          if (userStatus === 'Inativo') {
-            toast.error('Esse usuário foi desativado.')
-            await account.deleteSession('current')
-            return
+          if (userStatus === "Inativo") {
+            toast.error("Esse usuário foi desativado.");
+            await account.deleteSession("current");
+            return;
           }
 
-          await updateLastAccess(userId)
+          await updateLastAccess(userId);
 
-          setIsLoading(true)
-          router.push(isAdmin ? '/dashboard' : '/meus-dispositivos')
-          toast.success('Logado com sucesso')
+          setIsLoading(true);
+          router.push(isAdmin ? "/dashboard" : "/meus-dispositivos");
+          toast.success("Logado com sucesso");
         } catch (error: any) {
           if (error.message?.match(/password/)) {
-            form.setError('email', { message: 'Email ou senha incorretos' })
-            form.setError('password', { message: 'Email ou senha incorretos' })
-            toast.error('Email ou senha incorretos')
-            return
+            form.setError("email", { message: "Email ou senha incorretos" });
+            form.setError("password", { message: "Email ou senha incorretos" });
+            toast.error("Email ou senha incorretos");
+            return;
           }
 
-          toast.error('Erro ao fazer login')
-          console.error('Erro ao fazer login:', error.message)
+          toast.error("Erro ao fazer login");
+          console.error("Erro ao fazer login:", error.message);
         }
-      }
+      };
 
       toast.promise(callFunction(), {
-        pending: 'Logando...',
-      })
+        pending: "Logando...",
+      });
     } catch (error: any) {
-      form.setError('email', { message: 'Email ou senha incorretos' })
-      form.setError('password', { message: 'Email ou senha incorretos' })
-      toast.error(`Error: ${error.message}`)
-      console.error('Erro ao fazer login:', error)
+      form.setError("email", { message: "Email ou senha incorretos" });
+      form.setError("password", { message: "Email ou senha incorretos" });
+      toast.error(`Error: ${error.message}`);
+      console.error("Erro ao fazer login:", error);
     }
   }
 
   function showLoadingToast() {
-    setIsLoading(true)
+    setIsLoading(true);
   }
 
   useEffect(() => {
     const getSession = async () => {
       try {
-        const sessions = await account.get()
+        const sessions = await account.get();
         if (sessions.status) {
-          await account.deleteSession('current')
+          await account.deleteSession("current");
         }
       } catch (error: any) {
-        console.error('Erro:', error.message)
+        console.error("Erro:", error.message);
       }
-    }
+    };
 
-    getSession()
-  }, [])
+    getSession();
+  }, []);
 
   return (
     <>
@@ -187,7 +187,7 @@ export function LoginForm() {
             <div className="w-full flex flex-col gap-3">
               <span className="font-bold self-center">Não possui conta?</span>
               <Link
-                href={'/cadastro'}
+                href={"/cadastro"}
                 className="flex items-center justify-center"
               >
                 <Button
@@ -206,5 +206,5 @@ export function LoginForm() {
 
       {isLoading && <LoadingToast />}
     </>
-  )
+  );
 }

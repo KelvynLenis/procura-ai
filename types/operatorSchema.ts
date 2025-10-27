@@ -1,5 +1,4 @@
-import { z } from 'zod'
-
+import { z } from "zod";
 
 const OperatorSchema = z.object({
   $collectionId: z.string(),
@@ -12,7 +11,7 @@ const OperatorSchema = z.object({
   cnpj_operator: z.string().optional(),
   reason_operator: z.string(),
   head_operator: z.string().optional(),
-  cod_operator: z.string().optional()
-})
+  cod_operator: z.string().optional(),
+});
 
-export default OperatorSchema
+export default OperatorSchema;

@@ -1,5 +1,4 @@
-import {  User } from '@/types';
-
+import { User } from "@/types";
 
 export async function listAllUsers(): Promise<User[]> {
   const allUsers: User[] = [];
@@ -9,12 +8,12 @@ export async function listAllUsers(): Promise<User[]> {
 
   while (offset < total) {
     const params = new URLSearchParams({
-      'queries[0]': JSON.stringify({
-        method: 'limit',
+      "queries[0]": JSON.stringify({
+        method: "limit",
         values: [limit],
       }),
-      'queries[1]': JSON.stringify({
-        method: 'offset',
+      "queries[1]": JSON.stringify({
+        method: "offset",
         values: [offset],
       }),
     });
@@ -23,13 +22,14 @@ export async function listAllUsers(): Promise<User[]> {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
         {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project': process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || '',
+            "Content-Type": "application/json",
+            "X-Appwrite-Project":
+              process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || "",
           },
-          cache: 'no-store',
-        }
+          cache: "no-store",
+        },
       );
 
       if (!response.ok) {
@@ -42,10 +42,10 @@ export async function listAllUsers(): Promise<User[]> {
       total = fetchedTotal;
       offset += limit;
     } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
+      console.error("Erro ao buscar usuários:", error);
       break;
     }
   }
 
   return allUsers;
-} 
+}

@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import type { Contact } from '@/types'
-import { Mail, Pencil, Phone, Trash2 } from 'lucide-react'
-import { toast } from 'react-toastify'
-import { useState } from 'react'
+import type { Contact } from "@/types";
+import { Mail, Pencil, Phone, Trash2 } from "lucide-react";
+import { toast } from "react-toastify";
+import { useState } from "react";
 
 import {
   Dialog,
@@ -12,27 +12,29 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { ConfirmationDialog } from './ConfirmationDialog'
-import { ConctactForm } from './Forms/ConctactForm'
-import { deleteContact } from '@/functions/contact/delete-contact'
+} from "@/components/ui/dialog";
+import { ConfirmationDialog } from "./ConfirmationDialog";
+import { ConctactForm } from "./Forms/ConctactForm";
+import { deleteContact } from "@/functions/contact/delete-contact";
 
 interface ContactItemProps {
-  contact: Contact
-  setContacts: React.Dispatch<React.SetStateAction<Contact[]>>
+  contact: Contact;
+  setContacts: React.Dispatch<React.SetStateAction<Contact[]>>;
 }
 
 export function ContacItem({ contact, setContacts }: ContactItemProps) {
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   async function handleDelete() {
     toast.promise(deleteContact(contact.$id), {
-      pending: 'Excluindo contato...',
-      success: 'Contato excluido com sucesso!',
-      error: 'Erro ao excluir contato',
-    })
+      pending: "Excluindo contato...",
+      success: "Contato excluido com sucesso!",
+      error: "Erro ao excluir contato",
+    });
 
-    setContacts(prevContacts => prevContacts.filter(c => c.$id !== contact.$id))
+    setContacts((prevContacts) =>
+      prevContacts.filter((c) => c.$id !== contact.$id),
+    );
   }
 
   return (
@@ -86,9 +88,13 @@ export function ContacItem({ contact, setContacts }: ContactItemProps) {
           <div className="flex flex-col items-start justify-center gap-2 px-4 pt-4 pb-4 h-full">
             <span className="">Nome</span>
 
-            <span className=""><Mail /> E-mail</span>
+            <span className="">
+              <Mail /> E-mail
+            </span>
 
-            <span className=""><Phone /> Contato</span>
+            <span className="">
+              <Phone /> Contato
+            </span>
           </div>
 
           <div className="flex flex-col items-start justify-center gap-2 px-4 pt-4 w-full h-full">
@@ -101,5 +107,5 @@ export function ContacItem({ contact, setContacts }: ContactItemProps) {
         </div>
       </div>
     </>
-  )
+  );
 }
