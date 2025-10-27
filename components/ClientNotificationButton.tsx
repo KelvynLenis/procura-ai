@@ -48,27 +48,27 @@ function RenderNotification({
     <div key={notification.$id} className="w-full">
       <DropdownMenuSeparator />
       {isLoading ? (
-        <Skeleton className="h-16 w-full" />
+        <Skeleton className="w-full h-16" />
       ) : (
         <DropdownMenuItem
-          className={`relative flex w-full flex-col items-start gap-2 py-3 ${
-            isRecovered ? "" : "cursor-pointer hover:bg-zinc-50"
+          className={`py-3 w-full flex items-start flex-col gap-2 relative ${
+            isRecovered ? "" : "hover:bg-zinc-50 cursor-pointer"
           }`}
           // onClick={() => !isRecovered && handleNotificationClick(notification)}
         >
-          <div className="flex h-full w-full gap-4 rounded-lg bg-blue-100/40 px-5 py-3">
+          <div className="w-full flex h-full px-5 py-3 rounded-lg bg-blue-100/40 gap-4">
             <Image
               src={DeviceCheck}
               alt="device-check"
-              className="h-6 w-6 self-center"
+              className="w-6 h-6 self-center"
             />
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <h1 className="text-sm font-bold text-primary">
+              <div className="flex justify-between items-center">
+                <h1 className="font-bold text-sm text-primary">
                   Seu dispositivo foi recuperado
                 </h1>
 
-                <span className="h-2 w-2 rounded-full bg-[#004EC1]"></span>
+                <span className="w-2 h-2 rounded-full bg-[#004EC1]"></span>
               </div>
               <p className="text-sm">
                 Informamos que o seu dispositivo {device?.phone_model},{" "}
@@ -82,7 +82,7 @@ function RenderNotification({
                 {formatDateTime(notification.time_event)}
               </span>
 
-              <span className="flex self-end text-sm text-primary underline">
+              <span className="text-primary flex self-end text-sm underline">
                 Acompanhar atualizações
                 <ChevronRight size={16} />
               </span>
@@ -135,23 +135,23 @@ function PreviousNotification({
     <div key={notification.$id} className="w-full">
       <DropdownMenuSeparator />
       {isLoading ? (
-        <Skeleton className="h-56 w-full" />
+        <Skeleton className="w-full h-56" />
       ) : (
         <DropdownMenuItem
-          className={`relative flex w-full flex-col items-start gap-2 py-3 ${
-            isRecovered ? "" : "cursor-pointer hover:bg-zinc-50"
+          className={`py-3 w-full flex items-start flex-col gap-2 relative ${
+            isRecovered ? "" : "hover:bg-zinc-50 cursor-pointer"
           }`}
           // onClick={() => !isRecovered && handleNotificationClick(notification)}
         >
-          <div className="flex h-full w-full gap-4 rounded-lg bg-blue-100/40 px-5 py-3">
+          <div className="w-full flex h-full px-5 py-3 rounded-lg bg-blue-100/40 gap-4">
             <Image
               src={DeviceCheck}
               alt="device-check"
-              className="h-6 w-6 self-center"
+              className="w-6 h-6 self-center"
             />
-            <div className="flex w-full flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <h1 className="text-sm font-bold text-primary">
+            <div className="flex flex-col gap-4 w-full">
+              <div className="flex justify-between items-center">
+                <h1 className="font-bold text-sm text-primary">
                   {notification.type === "push"
                     ? notification.title
                     : "Seu dispositivo foi recuperado"}
@@ -159,7 +159,7 @@ function PreviousNotification({
 
                 <span
                   className={cn(
-                    "h-2 w-2 rounded-full",
+                    "w-2 h-2 rounded-full",
                     notification.is_read ? "bg-zinc-400" : "bg-[#004EC1]",
                   )}
                 ></span>
@@ -185,7 +185,7 @@ function PreviousNotification({
               <button
                 onClick={markAsReadAndRedirect}
                 type="button"
-                className="flex self-end text-sm text-secondary underline hover:opacity-70"
+                className="text-secondary flex self-end text-sm underline hover:opacity-70"
               >
                 Acompanhar atualizações
                 <ChevronRight size={16} />
@@ -249,22 +249,22 @@ function ClientNotificationButton({
 
   return (
     <DropdownMenu open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DropdownMenuTrigger className="relative rounded-full bg-procura-ai-white p-2 transition-all duration-500 hover:bg-procura-ai-blue hover:text-white hover:ring-1 hover:ring-procura-ai-white">
+      <DropdownMenuTrigger className="relative bg-procura-ai-white p-2 rounded-full hover:bg-procura-ai-blue hover:ring-1 hover:ring-procura-ai-white hover:text-white transition-all duration-500">
         <Bell className="size-7" />
         {notificationsCount > 0 && (
-          <span className="absolute -top-1 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-secondary font-bold text-white">
+          <span className="bg-secondary text-white rounded-full w-6 h-6 font-bold flex items-center justify-center absolute -top-1 right-3">
             {notificationsCount}
           </span>
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-96 rounded-md border bg-white shadow-lg">
-        <div className="flex w-full items-center justify-between border-b p-2 font-semibold text-gray-700">
+      <DropdownMenuContent className="bg-white shadow-lg rounded-md w-96 border">
+        <div className="p-2 text-gray-700 font-semibold border-b w-full flex justify-between items-center">
           Notificações
           <button type="button" onClick={() => setIsDialogOpen(false)}>
             <X className="ml-2" size={24} />
           </button>
         </div>
-        <div className="flex max-h-96 flex-col overflow-y-auto px-2 py-2">
+        <div className="max-h-96 overflow-y-auto flex flex-col py-2 px-2">
           {/* { sortedNotifications.length > 0 && previousNotifications.length > 0 && 
                 <p className="p-3 text-gray-500 text-sm">Notificação mais recente</p>
               } */}
@@ -277,7 +277,7 @@ function ClientNotificationButton({
               <PreviousNotification notification={notification} />
             ))
           ) : (
-            <p className="p-3 text-sm text-gray-500">
+            <p className="p-3 text-gray-500 text-sm">
               Nenhuma notificação encontrada
             </p>
           )}
@@ -285,7 +285,7 @@ function ClientNotificationButton({
           <DropdownMenuItem className="w-full p-0">
             <Link
               href="/notificacoes"
-              className="w-full p-2 text-center hover:bg-zinc-100"
+              className="w-full text-center hover:bg-zinc-100 p-2"
             >
               Ver tudo
             </Link>
