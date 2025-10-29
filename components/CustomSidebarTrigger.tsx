@@ -17,7 +17,7 @@ export function CustomSidebarTrigger({ ...props }: CustomSidebarTriggerProps) {
   return isMobile ? (
     openMobile ? (
       <button
-        className="absolute top-4 right-4"
+        className="absolute right-4 top-4"
         onClick={handleClick}
         {...props}
       >
@@ -25,7 +25,7 @@ export function CustomSidebarTrigger({ ...props }: CustomSidebarTriggerProps) {
       </button>
     ) : (
       <button
-        className="absolute top-4 right-3"
+        className="absolute right-3 top-4"
         onClick={handleClick}
         {...props}
       >
@@ -33,11 +33,11 @@ export function CustomSidebarTrigger({ ...props }: CustomSidebarTriggerProps) {
       </button>
     )
   ) : open ? (
-    <button className="absolute top-4 right-4" onClick={handleClick} {...props}>
+    <button className="absolute right-4 top-4" onClick={handleClick} {...props}>
       <X />
     </button>
   ) : (
-    <button className="absolute top-4 right-3" onClick={handleClick} {...props}>
+    <button className="absolute right-3 top-4" onClick={handleClick} {...props}>
       <Menu />
     </button>
   );

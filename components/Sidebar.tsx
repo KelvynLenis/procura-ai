@@ -46,7 +46,7 @@ const devicesGroup = [
     icon: (
       <div className="relative">
         <Smartphone className="size-4" />
-        <IoMdAddCircle className="absolute top-0.5 -right-0.5 bg-white rounded-full size-3" />
+        <IoMdAddCircle className="absolute -right-0.5 top-0.5 size-3 rounded-full bg-white" />
       </div>
     ),
   },
@@ -137,13 +137,13 @@ export function AppSidebar({ admin }: SidebarProps) {
     <>
       <Sidebar
         collapsible="icon"
-        className="text-zinc-900 z-[1] shadow-md h-full hidden lg:block"
+        className="z-[1] hidden h-full text-zinc-900 shadow-md lg:block"
       >
         <CustomSidebarTrigger />
-        <SidebarContent className="bg-white flex flex-col">
-          <div className="h-40 w-full flex flex-col items-center justify-center gap-1">
+        <SidebarContent className="flex flex-col bg-white">
+          <div className="flex h-40 w-full flex-col items-center justify-center gap-1">
             <Image src={logo} alt="logo" className="" />
-            <span className="w-[90%] rounded-lg h-0.5 bg-zinc-300" />
+            <span className="h-0.5 w-[90%] rounded-lg bg-zinc-300" />
           </div>
 
           {/* {
@@ -181,7 +181,7 @@ export function AppSidebar({ admin }: SidebarProps) {
                             onClick={() => showLoadingToast(item.url)}
                           >
                             {pathname === item.url && (
-                              <span className="w-0.5 h-full absolute left-0 rounded-xl bg-secondary" />
+                              <span className="absolute left-0 h-full w-0.5 rounded-xl bg-secondary" />
                             )}
                             {item.icon}
                             <span>{item.title}</span>
@@ -200,7 +200,7 @@ export function AppSidebar({ admin }: SidebarProps) {
                             onClick={() => showLoadingToast(item.url)}
                           >
                             {pathname === item.url && (
-                              <span className="w-0.5 h-full absolute left-0 rounded-xl bg-secondary" />
+                              <span className="absolute left-0 h-full w-0.5 rounded-xl bg-secondary" />
                             )}
                             {item.icon}
                             <span>{item.title}</span>
@@ -257,7 +257,7 @@ export function AppSidebar({ admin }: SidebarProps) {
                     <button
                       type="button"
                       onClick={logout}
-                      className="text-red-500 flex gap-1 self-start"
+                      className="flex gap-1 self-start text-red-500"
                     >
                       <LogOut />
                       Sair

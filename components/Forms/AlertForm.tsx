@@ -251,19 +251,19 @@ export function AlertForm({
           }
         }}
         className={cn(
-          "flex w-full flex-col gap-7 h-fit text-zinc-900 self-center items-center justify-between rounded-xl px-0 pb-4 lg:px-5",
+          "flex h-fit w-full flex-col items-center justify-between gap-7 self-center rounded-xl px-0 pb-4 text-zinc-900 lg:px-5",
           isIOS && "pb-24",
         )}
       >
-        <div className="w-full flex flex-col md:flex-row justify-between gap-4">
-          <div className="flex flex-col gap-5 w-full md:w-48 lg:w-56">
+        <div className="flex w-full flex-col justify-between gap-4 md:flex-row">
+          <div className="flex w-full flex-col gap-5 md:w-48 lg:w-56">
             <FormField
               control={form.control}
               name="datetime"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <FormLabel className="w-fit text-center items-center flex">
-                    <span className="text-red-500 h-6 flex align-text-bottom">
+                <FormItem className="flex w-full flex-col">
+                  <FormLabel className="flex w-fit items-center text-center">
+                    <span className="flex h-6 align-text-bottom text-red-500">
                       *
                     </span>
                     Data e hora da ocorrência
@@ -285,13 +285,13 @@ export function AlertForm({
               control={form.control}
               name="description"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
+                <FormItem className="flex w-full flex-col">
                   <FormLabel className="">Descrição</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Uma descrição breve"
                       {...field}
-                      className="resize-none text-start h-36 ring-1 ring-zinc-300"
+                      className="h-36 resize-none text-start ring-1 ring-zinc-300"
                       tabIndex={-1}
                     />
                   </FormControl>
@@ -304,12 +304,12 @@ export function AlertForm({
               control={form.control}
               name="type"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <FormLabel className="w-full text-center items-center flex flex-col">
+                <FormItem className="flex w-full flex-col">
+                  <FormLabel className="flex w-full flex-col items-center text-center">
                     <OccurrenceTypeDescription />
                   </FormLabel>
                   <DropdownMenu>
-                    <DropdownMenuTrigger className="w-full flex items-center rounded-lg text-xs gap-0 p-2 md:text-base lg:gap-2 justify-between bg-zinc-100">
+                    <DropdownMenuTrigger className="flex w-full items-center justify-between gap-0 rounded-lg bg-zinc-100 p-2 text-xs md:text-base lg:gap-2">
                       <span className="w-full text-sm">
                         {form.getValues("type") === ""
                           ? "Selecione o tipo de ocorrência"
@@ -340,14 +340,14 @@ export function AlertForm({
               )}
             />
           </div>
-          <div className="flex flex-col gap-2 w-full items-center justify-center">
+          <div className="flex w-full flex-col items-center justify-center gap-2">
             <FormField
               control={form.control}
               name="coordinates"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full overflow-x-hidden">
-                  <FormLabel className="w-fit text-center items-center flex">
-                    <span className="text-red-500 h-6 flex align-text-bottom">
+                <FormItem className="flex w-full flex-col overflow-x-hidden">
+                  <FormLabel className="flex w-fit items-center text-center">
+                    <span className="flex h-6 align-text-bottom text-red-500">
                       *
                     </span>
                     Clique no mapa o local da ocorrência
@@ -374,7 +374,7 @@ export function AlertForm({
         <div className="flex w-full gap-4">
           {isPopup && (
             <DialogClose asChild>
-              <Button type="button" variant="white" className="text-sm flex-1">
+              <Button type="button" variant="white" className="flex-1 text-sm">
                 Cancelar
               </Button>
             </DialogClose>
@@ -382,7 +382,7 @@ export function AlertForm({
           <Button
             variant="blue"
             type="submit"
-            className="text-sm flex-1 text-white self-center"
+            className="flex-1 self-center text-sm text-white"
           >
             Salvar
           </Button>

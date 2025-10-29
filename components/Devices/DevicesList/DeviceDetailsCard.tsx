@@ -161,30 +161,30 @@ export function DeviceDetailsCard({
 
   return (
     <>
-      <div className="flex flex-col w-[88%] h-fit bg-white rounded-xl shadow-md">
-        <div className="flex items-center justify-end w-full h-16 bg-primary rounded-t-xl px-4 gap-3">
+      <div className="flex h-fit w-[88%] flex-col rounded-xl bg-white shadow-md">
+        <div className="flex h-16 w-full items-center justify-end gap-3 rounded-t-xl bg-primary px-4">
           <Dialog open={isAlertModalOpen} onOpenChange={setIsAlertModalOpen}>
             <DialogTrigger asChild>
               <button
                 type="button"
                 className={cn(
-                  "rounded-lg group relative w-10 h-10 ring-1 flex flex-col md:flex-row items-center justify-center",
+                  "group relative flex h-10 w-10 flex-col items-center justify-center rounded-lg ring-1 md:flex-row",
                   isRegular
-                    ? "ring-zinc-300 bg-white text-red-600 hover:bg-red-300 hover:ring-red-500"
-                    : "ring-red-700 text-white bg-red-600 hover:bg-red-100 hover:text-red-600",
+                    ? "bg-white text-red-600 ring-zinc-300 hover:bg-red-300 hover:ring-red-500"
+                    : "bg-red-600 text-white ring-red-700 hover:bg-red-100 hover:text-red-600",
                 )}
               >
                 <IoIosWarning size={28} />
               </button>
             </DialogTrigger>
-            <DialogContent className="h-[95%] overflow-scroll flex flex-col w-[93%]">
+            <DialogContent className="flex h-[95%] w-[93%] flex-col overflow-scroll">
               <DialogTitle className="hidden">
                 Marcar como roubado ou visualisar alerta
               </DialogTitle>
 
               {isStolen ? (
                 <>
-                  <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-32 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
+                  <span className="transition- absolute -top-8 right-5 hidden w-32 rounded-sm bg-black/60 px-2 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
                     Visualizar alerta
                   </span>
                   <ViewMyAlert
@@ -212,12 +212,12 @@ export function DeviceDetailsCard({
             <DialogTrigger>
               <button
                 type="button"
-                className="flex rounded-lg w-10 h-10 bg-white ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
+                className="group relative flex h-10 w-10 items-center justify-center rounded-lg bg-white ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700"
               >
                 <ImPencil size={20} />
               </button>
             </DialogTrigger>
-            <DialogContent className="h-[95%] w-[90%] overflow-scroll flex flex-col">
+            <DialogContent className="flex h-[95%] w-[90%] flex-col overflow-scroll">
               <DialogTitle className="hidden">Editar dispositivo</DialogTitle>
               <DeviceForm
                 device={device}
@@ -235,7 +235,7 @@ export function DeviceDetailsCard({
           >
             <button
               type="button"
-              className="flex rounded-lg w-10 h-10 bg-white group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90"
+              className="group relative flex h-10 w-10 items-center justify-center gap-2 rounded-lg bg-white text-red-600 ring-1 ring-zinc-300 hover:bg-red-200 hover:opacity-90 hover:ring-red-600"
             >
               <Trash2 size={20} />
             </button>
@@ -259,49 +259,49 @@ export function DeviceDetailsCard({
           </Dialog> */}
         </div>
 
-        <div className="flex w-full h-full">
-          <div className="flex flex-col items-start justify-center gap-2 bg-procura-ai-zinc/10 px-4 pt-4 pb-6">
+        <div className="flex h-full w-full">
+          <div className="flex flex-col items-start justify-center gap-2 bg-procura-ai-zinc/10 px-4 pb-6 pt-4">
             <span className="">Modelo</span>
-            <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+            <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" />
 
             <span className="">Fabricante</span>
-            <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+            <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" />
 
             <span className="">IMEI</span>
-            <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+            <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" />
 
             <span className="">Número</span>
-            <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+            <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" />
 
             <span className="">Status</span>
           </div>
 
-          <div className="flex flex-col items-start justify-center gap-2 px-4 pt-4 pb-4 w-full h-full">
+          <div className="flex h-full w-full flex-col items-start justify-center gap-2 px-4 pb-4 pt-4">
             <span className="font-semibold">{phone_model}</span>
-            <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+            <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" />
 
             <span className="font-semibold">{brand}</span>
-            <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+            <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" />
 
             <span className="font-semibold">
               {`${imei.slice(0, 1)} ${imei.slice(1, 8)} ${imei.slice(9, 15)}`}
             </span>
-            <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+            <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" />
 
             <span className="font-semibold">
               {`(${phone_number.slice(0, 2)}) ${phone_number.slice(2, 7)}-${phone_number.slice(7, 11)}`}
             </span>
-            <span className="w-full h-[0.5px] bg-procura-ai-zinc/70 rounded-full" />
+            <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" />
 
             <span
               className={cn(
-                "rounded-md w-20 flex items-center justify-center capitalize",
-                status === "Roubado" && "bg-robbery-bg text-robbery-text p-1",
+                "flex w-20 items-center justify-center rounded-md capitalize",
+                status === "Roubado" && "bg-robbery-bg p-1 text-robbery-text",
                 status === "Recuperado" &&
-                  "bg-recovered-bg text-recovered-text p-1",
-                status === "Regular" && "bg-regular-bg text-regular-text p-1",
-                status === "Furtado" && "bg-theft-bg text-theft-text p-1",
-                status === "Perdido" && "bg-lost-bg text-lost-text p-1",
+                  "bg-recovered-bg p-1 text-recovered-text",
+                status === "Regular" && "bg-regular-bg p-1 text-regular-text",
+                status === "Furtado" && "bg-theft-bg p-1 text-theft-text",
+                status === "Perdido" && "bg-lost-bg p-1 text-lost-text",
               )}
             >
               {status === "Recuperado" ? "Regular" : status.replace(" ", "")}
@@ -326,17 +326,17 @@ function DeleteDeviceModal({
 }: DeleteDeviceModalProps) {
   return (
     <>
-      <div className="fixed inset-0 m-auto bg-black/50 p-6 z-50 flex flex-col items-center justify-center">
-        <div className="flex flex-col gap-3 bg-white rounded-xl p-4">
+      <div className="fixed inset-0 z-50 m-auto flex flex-col items-center justify-center bg-black/50 p-6">
+        <div className="flex flex-col gap-3 rounded-xl bg-white p-4">
           <h2 className="font-bold">
             Tem certeza que deseja excluir esse dispositivo?
           </h2>
-          <p className="text-zinc-600 ">
+          <p className="text-zinc-600">
             Essa ação não pode ser desfeita. Isso excluirá permanentemente o
             dispositivo e removerá seus dados de nossos servidores.
           </p>
 
-          <div className="flex gap-4 items-center justify-center">
+          <div className="flex items-center justify-center gap-4">
             <DialogClose asChild>
               <Button
                 variant="white"

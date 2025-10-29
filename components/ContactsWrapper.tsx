@@ -47,14 +47,14 @@ export function ContactsComponent() {
           <div className="flex md:hidden">
             <ContactsList contacts={contacts} setContacts={setContacts} />
           </div>
-          <div className="w-full flex flex-col md:flex-row justify-between">
+          <div className="flex w-full flex-col justify-between md:flex-row">
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger className="w-fit">
                 <Button
                   type="button"
                   variant="blue"
                   disabled={contacts.length >= 3}
-                  className={cn("self-start mt-4")}
+                  className={cn("mt-4 self-start")}
                 >
                   Adicionar contato
                 </Button>
@@ -75,7 +75,7 @@ export function ContactsComponent() {
             </Dialog>
             <span
               className={cn(
-                "flex self-end font-medium mt-3",
+                "mt-3 flex self-end font-medium",
                 contacts.length >= 3 && "text-red-500",
               )}
             >

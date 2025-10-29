@@ -71,7 +71,7 @@ export function Combobox({
         onOpenChange={setIsPopoverOpen}
       >
         <PopoverTrigger asChild disabled={disabled}>
-          <div className="self-start w-full md:w-fit">
+          <div className="w-full self-start md:w-fit">
             <ButtonShadcn
               variant="outline"
               // biome-ignore lint/a11y/useSemanticElements: <explanation>
@@ -79,16 +79,16 @@ export function Combobox({
               type="button"
               disabled={disabled}
               className={cn(
-                "w-56 h-20 p-2 text-base gap-2 justify-between bg-white ring-1 ring-[#232323]/20 shadow-none flex flex-wrap overflow-y-scroll custom-scroll",
+                "custom-scroll flex h-20 w-56 flex-wrap justify-between gap-2 overflow-y-scroll bg-white p-2 text-base shadow-none ring-1 ring-[#232323]/20",
                 className,
               )}
             >
               {values?.length > 0 ? (
-                <div className="flex flex-wrap gap-1 items-center">
+                <div className="flex flex-wrap items-center gap-1">
                   {values?.map((value) => (
                     <Badge
                       key={value}
-                      className="px-2 py-1 flex items-center gap-1 bg-procura-ai-blue hover:opacity-70 shadow-none hover:bg-procura-ai-blue"
+                      className="flex items-center gap-1 bg-procura-ai-blue px-2 py-1 shadow-none hover:bg-procura-ai-blue hover:opacity-70"
                     >
                       {value}
                       {/* <X

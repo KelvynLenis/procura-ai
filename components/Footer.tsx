@@ -23,16 +23,16 @@ export function Footer({
     pathname !== "map/ocorrencias" && (
       <footer
         className={cn(
-          "w-full relative bottom-0 md:mt-0 flex items-center justify-start z-[20]",
+          "relative bottom-0 z-[20] flex w-full items-center justify-start md:mt-0",
           light ? "bg-white" : "bg-primary py-4",
         )}
       >
         <div
           className={cn(
-            "w-full h-20 flex items-center justify-start pl-9",
+            "flex h-20 w-full items-center justify-start pl-9",
             light
-              ? " overflow-hidden"
-              : "justify-center hidden lg:flex md:justify-start py-0 px-8 h-14 md:h-fit",
+              ? "overflow-hidden"
+              : "hidden h-14 justify-center px-8 py-0 md:h-fit md:justify-start lg:flex",
           )}
         >
           {light ? (
@@ -41,12 +41,12 @@ export function Footer({
               <Image
                 src={govFull}
                 alt="logo"
-                className="w-64 h-12 md:w-96 z-10"
+                className="z-10 h-12 w-64 md:w-96"
               />
               <Image
                 src={line}
                 alt="logo"
-                className="h-full absolute right-0 self-end hidden sm:block md:w-[50%] lg:w-[80%] xl:w-[90%] z-0"
+                className="absolute right-0 z-0 hidden h-full self-end sm:block md:w-[50%] lg:w-[80%] xl:w-[90%]"
               />
             </>
           ) : (
@@ -54,9 +54,9 @@ export function Footer({
               <Image
                 src={secties}
                 alt="logo"
-                className="w-28 md:w-auto md:h-12"
+                className="w-28 md:h-12 md:w-auto"
               />
-              <Image src={gov} alt="logo" className="w-28 md:w-auto md:h-12" />
+              <Image src={gov} alt="logo" className="w-28 md:h-12 md:w-auto" />
             </>
           )}
         </div>

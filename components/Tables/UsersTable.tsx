@@ -110,8 +110,8 @@ export function UsersTable() {
   return (
     <>
       {isExporting && <LoadingToast isReactToastifyComponent={false} />}
-      <div className="flex flex-col w-full">
-        <div className="flex justify-between items-center mb-6">
+      <div className="flex w-full flex-col">
+        <div className="mb-6 flex items-center justify-between">
           <Button
             variant="blue"
             className="w-44"
@@ -133,7 +133,7 @@ export function UsersTable() {
                   type="checkbox"
                   checked={exportOptions.users}
                   onChange={() => handleExportOptionChange("users")}
-                  className="w-4 h-4"
+                  className="h-4 w-4"
                 />
                 Emitir Usuarios.csv
               </label>
@@ -142,7 +142,7 @@ export function UsersTable() {
                   type="checkbox"
                   checked={exportOptions.alerts}
                   onChange={() => handleExportOptionChange("alerts")}
-                  className="w-4 h-4"
+                  className="h-4 w-4"
                 />
                 Emitir Alertas.csv
               </label>
@@ -165,29 +165,29 @@ export function UsersTable() {
           </DialogContent>
         </Dialog>
 
-        <Table className="bg-white shadow-lg rounded-lg w-full">
+        <Table className="w-full rounded-lg bg-white shadow-lg">
           <TableHeader className="bg-[#E6F1FD]">
             <TableRow>
-              <TableHead className="text-black/80 text-lg font-medium text-center">
+              <TableHead className="text-center text-lg font-medium text-black/80">
                 ID
               </TableHead>
-              <TableHead className="text-black/80 text-lg font-medium ">
+              <TableHead className="text-lg font-medium text-black/80">
                 Nome
               </TableHead>
-              <TableHead className="text-black/80 text-lg font-medium ">
+              <TableHead className="text-lg font-medium text-black/80">
                 Email
               </TableHead>
-              <TableHead className="text-black/80 text-lg font-medium ">
+              <TableHead className="text-lg font-medium text-black/80">
                 Perfil
               </TableHead>
-              <TableHead className="text-black/80 text-lg font-medium ">
+              <TableHead className="text-lg font-medium text-black/80">
                 Ações
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow className="w-full  gap-5 px-7 pt-7">
+              <TableRow className="w-full gap-5 px-7 pt-7">
                 <TableCell className="w-1/4">
                   <Skeleton className="h-8 w-full" />
                 </TableCell>
@@ -227,13 +227,13 @@ export function UsersTable() {
 
             <TableRow>
               <TableCell colSpan={6} className="text-center">
-                <Pagination className="flex items-center justify-center w-full">
+                <Pagination className="flex w-full items-center justify-center">
                   <PaginationContent className="py-1">
                     <PaginationItem>
                       <button
                         type="button"
                         disabled={page === 1}
-                        className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent"
+                        className="flex items-center gap-1 rounded-md p-2 hover:bg-zinc-200 disabled:text-zinc-500 disabled:hover:bg-transparent"
                         onClick={handleGoToPreviousPage}
                       >
                         <ChevronLeft className="h-4 w-4" />
@@ -260,7 +260,7 @@ export function UsersTable() {
                       <button
                         type="button"
                         disabled={page * limit >= totalUsers}
-                        className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent"
+                        className="flex items-center gap-1 rounded-md p-2 hover:bg-zinc-200 disabled:text-zinc-500 disabled:hover:bg-transparent"
                         onClick={handleGoToNextPage}
                       >
                         Próximo

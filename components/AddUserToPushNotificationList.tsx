@@ -105,23 +105,23 @@ function AddUserToPushNotificationList({
 
   return (
     <Dialog>
-      <DialogTrigger className="bg-white px-4 py-2 ring-1 ring-zinc-300 rounded-md hover:ring-secondary shadow-lg hover:text-white hover:bg-secondary transition-all duration-200">
+      <DialogTrigger className="rounded-md bg-white px-4 py-2 shadow-lg ring-1 ring-zinc-300 transition-all duration-200 hover:bg-secondary hover:text-white hover:ring-secondary">
         Adicionar usuários
       </DialogTrigger>
-      <DialogContent className="flex flex-col gap-2 h-fit p-0">
+      <DialogContent className="flex h-fit flex-col gap-2 p-0">
         <DialogHeader className="bg-[#F2F8FD] px-4 py-5">
           <DialogTitle className="text-primary">Usuários</DialogTitle>
         </DialogHeader>
 
-        <div className="px-3 gap-2 flex flex-col pb-2">
-          <DialogDescription className="text-primary mb-1">
+        <div className="flex flex-col gap-2 px-3 pb-2">
+          <DialogDescription className="mb-1 text-primary">
             Selecione os usuários que deseja enviar o push notification.
           </DialogDescription>
 
-          <div className="flex gap-2 h-full max-h-[20rem] ring-1 ring-zinc-300 rounded-md p-2">
-            <div className="flex flex-col h-full gap-1">
-              <div className="ring-1 ring-zinc-300 flex items-center gap-1 bg-white px-4 py-2 w-fit rounded-md">
-                <LiaSearchSolid className="w-6 h-6" />
+          <div className="flex h-full max-h-[20rem] gap-2 rounded-md p-2 ring-1 ring-zinc-300">
+            <div className="flex h-full flex-col gap-1">
+              <div className="flex w-fit items-center gap-1 rounded-md bg-white px-4 py-2 ring-1 ring-zinc-300">
+                <LiaSearchSolid className="h-6 w-6" />
                 <input
                   value={search}
                   onChange={(e) => handleSearchChange(e.target.value)}
@@ -130,21 +130,21 @@ function AddUserToPushNotificationList({
                   id="search"
                   onInput={(e) => setSearch}
                   placeholder="Pesquise por nome ou CPF"
-                  className="px-2 py-0 w-56 focus:outline-none"
+                  className="w-56 px-2 py-0 focus:outline-none"
                 />
               </div>
               {predictions.length > 0 && (
-                <ul className="w-full h-[12.5rem] overflow-y-scroll custom-scroll flex flex-col pr-1">
+                <ul className="custom-scroll flex h-[12.5rem] w-full flex-col overflow-y-scroll pr-1">
                   {predictions &&
                     predictions.map((user: User) => (
                       <>
                         <li
                           key={user.$id}
-                          className="px-1 py-2 cursor-pointer hover:bg-zinc-100 italic flex"
+                          className="flex cursor-pointer px-1 py-2 italic hover:bg-zinc-100"
                           onClick={() => handlePredictionSelect(user)}
                         >
                           {user.name}
-                          <PiArrowCircleRight className="w-6 h-6 ml-auto" />
+                          <PiArrowCircleRight className="ml-auto h-6 w-6" />
                         </li>
                         <span className="h-[1px] w-[100%] self-center bg-zinc-300" />
                       </>
@@ -153,29 +153,29 @@ function AddUserToPushNotificationList({
               )}
             </div>
 
-            <div className="w-80 flex flex-col h-full">
-              <div className="flex items-center gap-1 bg-zinc-100 px-4 py-2 w-full rounded-t-md">
+            <div className="flex h-full w-80 flex-col">
+              <div className="flex w-full items-center gap-1 rounded-t-md bg-zinc-100 px-4 py-2">
                 <h2>Usuários selecionados</h2>
               </div>
 
-              <ul className="w-full min-h-[13rem] max-h-[13rem] flex flex-col border overflow-auto px-2 py-1">
+              <ul className="flex max-h-[13rem] min-h-[13rem] w-full flex-col overflow-auto border px-2 py-1">
                 {targets &&
                   targets.map((target) => (
                     <>
                       <li
                         key={target.$id}
-                        className="py-2 cursor-pointer hover:bg-white italic flex justify-between"
+                        className="flex cursor-pointer justify-between py-2 italic hover:bg-white"
                       >
                         {target.name}
                         <button onClick={() => handleRemoveTarget(target)}>
-                          <X className="w-6 h-6 ml-auto" />
+                          <X className="ml-auto h-6 w-6" />
                         </button>
                       </li>
                       <span className="h-[1px] w-[100%] self-center bg-zinc-300" />
                     </>
                   ))}
                 {targets.length > 0 && (
-                  <li className="w-full flex justify-end">
+                  <li className="flex w-full justify-end">
                     <button
                       className="underline"
                       onClick={() => setTargets([])}
@@ -188,7 +188,7 @@ function AddUserToPushNotificationList({
             </div>
           </div>
 
-          <div className="flex justify-between mt-2">
+          <div className="mt-2 flex justify-between">
             <Button className="py-1 lg:text-base" variant="white">
               <DialogClose>Cancelar</DialogClose>
             </Button>

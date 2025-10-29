@@ -167,14 +167,14 @@ export function Header({ isAdmin }: HeaderProps) {
   return (
     !isFullScreen && (
       <>
-        <div className="absolute w-full bg-primary inset-0 z-0 h-16" />
-        <header className="flex items-center drop-shadow-md justify-between lg:pr-16 w-full h-16">
+        <div className="absolute inset-0 z-0 h-16 w-full bg-primary" />
+        <header className="flex h-16 w-full items-center justify-between drop-shadow-md lg:pr-16">
           {/* <div className="w-1/5 md:w-[35%] lg:w-[26%] xl:w-1/5 h-1" /> */}
-          <Image src={logo} alt="logo" className="w-16 md:w-20 md:hidden" />
-          <span className="text-xl text-white -ml-2 lg:-ml-4">
+          <Image src={logo} alt="logo" className="w-16 md:hidden md:w-20" />
+          <span className="-ml-2 text-xl text-white lg:-ml-4">
             {matchedRoute}
           </span>
-          <div className="flex items-center gap-4 justify-between">
+          <div className="flex items-center justify-between gap-4">
             {isAdmin ? (
               <AdminNotificationButton
                 notifications={notifications}
@@ -191,13 +191,13 @@ export function Header({ isAdmin }: HeaderProps) {
               </>
             )}
             <DropdownMenu>
-              <DropdownMenuTrigger className="flex-row text-white items-center justify-center gap-2 hidden mr-2 md:flex">
+              <DropdownMenuTrigger className="mr-2 hidden flex-row items-center justify-center gap-2 text-white md:flex">
                 {isLoading ? (
-                  <Skeleton className="size-10 bg-secondary rounded-full flex items-center justify-center" />
+                  <Skeleton className="flex size-10 items-center justify-center rounded-full bg-secondary" />
                 ) : imgPreview ? (
                   <Avatar>
                     <AvatarImage src={imgPreview} />
-                    <AvatarFallback className="text-primary text-2xl uppercase">
+                    <AvatarFallback className="text-2xl uppercase text-primary">
                       {user.name.split(" ").length > 1
                         ? user.name.split(" ")[0][0] +
                           user.name.split(" ")[1][0]
@@ -205,7 +205,7 @@ export function Header({ isAdmin }: HeaderProps) {
                     </AvatarFallback>
                   </Avatar>
                 ) : (
-                  <span className="size-10 bg-secondary rounded-full flex items-center justify-center uppercase">
+                  <span className="flex size-10 items-center justify-center rounded-full bg-secondary uppercase">
                     {user.name.split(" ").length > 1
                       ? user.name.split(" ")[0][0] + user.name.split(" ")[1][0]
                       : user.name.split(" ")[0][0]}

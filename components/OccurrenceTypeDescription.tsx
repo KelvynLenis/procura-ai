@@ -11,12 +11,12 @@ export function OccurrenceTypeDescription() {
     <>
       {/* versão mobile */}
 
-      <div className="flex gap-2 w-full relative md:hidden">
+      <div className="relative flex w-full gap-2 md:hidden">
         <div className="flex items-center">
-          <span className="text-red-500 h-6 flex align-text-bottom">*</span>
+          <span className="flex h-6 align-text-bottom text-red-500">*</span>
           Tipo de ocorrência
         </div>
-        <button type="button" className="text-xs group md:hidden">
+        <button type="button" className="group text-xs md:hidden">
           <CircleHelp
             size={22}
             className="fill-secondary text-white"
@@ -26,8 +26,8 @@ export function OccurrenceTypeDescription() {
       </div>
 
       {isHintOpen && (
-        <div className="flex w-full flex-col z-[100]  gap-2 bg-[#C4F3F2] font-normal p-2 rounded-md text-justify leading-5">
-          <Triangle className="hidden md:flex md:absolute md:top-[16.5rem] md:-left-[1rem] z-[100] top-[45%] -rotate-90 -left-4 fill-[#F3E5B7] text-[#F3E5B7]" />
+        <div className="z-[100] flex w-full flex-col gap-2 rounded-md bg-[#C4F3F2] p-2 text-justify font-normal leading-5">
+          <Triangle className="-left-4 top-[45%] z-[100] hidden -rotate-90 fill-[#F3E5B7] text-[#F3E5B7] md:absolute md:-left-[1rem] md:top-[16.5rem] md:flex" />
           <p>
             Entenda a diferença entre{" "}
             <span className="font-semibold">os tipos de ocorrência</span>
@@ -68,18 +68,18 @@ export function OccurrenceTypeDescription() {
 
       {/* versão desktop */}
 
-      <div className="w-full relative hidden md:flex">
+      <div className="relative hidden w-full md:flex">
         <div className="flex items-center">
-          <span className="text-red-500 h-6 flex align-text-bottom">*</span>
+          <span className="flex h-6 align-text-bottom text-red-500">*</span>
           Tipo de ocorrência
         </div>
         <Popover>
           <PopoverTrigger className="hidden md:block">
             <CircleHelp size={22} className="fill-secondary text-white" />
           </PopoverTrigger>
-          <PopoverContent className="relative bg-transparent shadow-none border-none">
-            <div className="flex w-full flex-col absolute z-[100] left-[10.5rem] md:-top-[24rem] bg-[#C4F3F2] gap-2 font-normal p-2 rounded-md text-justify leading-5">
-              <Triangle className="hidden md:flex md:absolute md:top-[22.2rem] md:-left-[1rem] z-[100] top-[45%] -rotate-90 -left-4 fill-[#F3E5B7] text-[#F3E5B7]" />
+          <PopoverContent className="relative border-none bg-transparent shadow-none">
+            <div className="absolute left-[10.5rem] z-[100] flex w-full flex-col gap-2 rounded-md bg-[#C4F3F2] p-2 text-justify font-normal leading-5 md:-top-[24rem]">
+              <Triangle className="-left-4 top-[45%] z-[100] hidden -rotate-90 fill-[#F3E5B7] text-[#F3E5B7] md:absolute md:-left-[1rem] md:top-[22.2rem] md:flex" />
               <p>
                 Entenda a diferença entre{" "}
                 <span className="font-semibold">os tipos de ocorrência</span>

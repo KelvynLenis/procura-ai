@@ -99,20 +99,20 @@ export function DeviceItem({
 
   return (
     <>
-      <div className="text-sm flex w-full gap-4 h-[60px] bg-white px-2 py-2 rounded-xl border border-zinc-300 items-center justify-between">
+      <div className="flex h-[60px] w-full items-center justify-between gap-4 rounded-xl border border-zinc-300 bg-white px-2 py-2 text-sm">
         <span className="w-28">{phone_model}</span>
         {/* <div className="self-center flex justify-end">
         </div> */}
         <div className="flex justify-center gap-2">
           <span
             className={cn(
-              "rounded-md mobile:w-24 mobile:text-sm mobile-sm:w-20 mobile-sm:text-xs mobile: flex self-center items-center justify-center capitalize font-medium",
-              status === "Roubado" && "bg-robbery-bg text-robbery-text p-2",
+              "mobile: flex items-center justify-center self-center rounded-md font-medium capitalize mobile-sm:w-20 mobile-sm:text-xs mobile:w-24 mobile:text-sm",
+              status === "Roubado" && "bg-robbery-bg p-2 text-robbery-text",
               status === "Recuperado" &&
-                "bg-recovered-bg text-recovered-text p-2",
-              status === "Regular" && "bg-regular-bg text-regular-text p-2",
-              status === "Furtado" && "bg-theft-bg text-theft-text p-2",
-              status === "Perdido" && "bg-lost-bg text-lost-text p-2",
+                "bg-recovered-bg p-2 text-recovered-text",
+              status === "Regular" && "bg-regular-bg p-2 text-regular-text",
+              status === "Furtado" && "bg-theft-bg p-2 text-theft-text",
+              status === "Perdido" && "bg-lost-bg p-2 text-lost-text",
             )}
           >
             {status.replace(" ", "")}
@@ -123,21 +123,21 @@ export function DeviceItem({
               <button
                 type="button"
                 className={cn(
-                  "rounded-lg group relative w-8 h-8 ring-1 flex flex-col md:flex-row items-center justify-center",
+                  "group relative flex h-8 w-8 flex-col items-center justify-center rounded-lg ring-1 md:flex-row",
                   status === "Recuperado"
                     ? "bg-recovered-bg text-recovered-text"
                     : status === "Regular"
-                      ? "ring-zinc-300 bg-white text-red-600 hover:bg-red-300 hover:ring-red-500"
-                      : "ring-red-700 text-white bg-red-600 hover:bg-red-100 hover:text-red-600",
+                      ? "bg-white text-red-600 ring-zinc-300 hover:bg-red-300 hover:ring-red-500"
+                      : "bg-red-600 text-white ring-red-700 hover:bg-red-100 hover:text-red-600",
                 )}
               >
                 <IoIosWarning size={28} />
               </button>
             </DialogTrigger>
-            <DialogContent className="h-[95%] overflow-scroll flex flex-col w-[93%] px-0 pt-0">
+            <DialogContent className="flex h-[95%] w-[93%] flex-col overflow-scroll px-0 pt-0">
               {status !== "Regular" ? (
                 <>
-                  <span className="w-full flex bg-secondary/10 py-4 items-center px-2">
+                  <span className="flex w-full items-center bg-secondary/10 px-2 py-4">
                     <h2 className="text-lg font-medium text-secondary">
                       Informações da ocorrência
                     </h2>
@@ -168,12 +168,12 @@ export function DeviceItem({
             <DialogTrigger asChild>
               <button
                 type="button"
-                className="rounded-lg w-8 h-8 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
+                className="group relative flex h-8 w-8 items-center justify-center rounded-lg ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700"
               >
                 <Eye size={28} />
               </button>
             </DialogTrigger>
-            <DialogContent className="bg-transparent ml-5 p-0 border-none ring-0 w-full">
+            <DialogContent className="ml-5 w-full border-none bg-transparent p-0 ring-0">
               <DeviceDetailsCard
                 id={id}
                 isStolen={isStolen}
@@ -226,15 +226,15 @@ function ViewDeviceInfoModal({
       <button
         type="button"
         onClick={() => setModalOpen(false)}
-        className="fixed px-3 z-50 bg-black/50 inset-0 flex items-center justify-center"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-3"
       >
         <X
           size={24}
-          className="text-white absolute top-4 right-4 cursor-pointer border border-white rounded-full p-0.5"
+          className="absolute right-4 top-4 cursor-pointer rounded-full border border-white p-0.5 text-white"
           onClick={() => setModalOpen(false)}
         />
       </button>
-      <div className="z-[100] w-full absolute flex items-center">
+      <div className="absolute z-[100] flex w-full items-center">
         <DeviceDetailsCard
           id={id}
           isStolen={isStolen}

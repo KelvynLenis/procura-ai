@@ -22,8 +22,8 @@ export function Modal({
 }: ModalProps) {
   return (
     <>
-      <div className="fixed inset-0 bg-white z-50 flex flex-col overflow-y-auto">
-        <div className="bg-primary w-full flex gap-4 items-center text-white py-3 h-12 px-2">
+      <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-white">
+        <div className="flex h-12 w-full items-center gap-4 bg-primary px-2 py-3 text-white">
           <button type="button" onClick={() => setModalOpen(false)}>
             <ArrowLeft size={24} className="cursor-pointer" />
           </button>

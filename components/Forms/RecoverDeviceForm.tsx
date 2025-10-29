@@ -216,15 +216,15 @@ export function RecoverDeviceForm({
         <DialogTrigger asChild>
           <button
             type="button"
-            className="hidden md:flex rounded-lg w-10 h-10 ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
+            className="group relative hidden h-10 w-10 items-center justify-center rounded-lg ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700 md:flex"
           >
             <Image alt="recuperar dispositivo" src={recoveryIcon} />
-            <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+            <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
               Recuperar dispositivo
             </span>
           </button>
         </DialogTrigger>
-        <DialogContent className="flex flex-col gap-0 p-0 w-[840px] h-[680px] overflow-y-scroll">
+        <DialogContent className="flex h-[680px] w-[840px] flex-col gap-0 overflow-y-scroll p-0">
           {/* <DialogClose asChild>
                   <button
                     type="button"
@@ -234,7 +234,7 @@ export function RecoverDeviceForm({
                   </button>
                 </DialogClose> */}
           <DialogHeader>
-            <DialogTitle className="text-xl text-procura-ai-blue bg-sky-100/40 rounded-md py-5 px-6">
+            <DialogTitle className="rounded-md bg-sky-100/40 px-6 py-5 text-xl text-procura-ai-blue">
               Dispositivo recuperado
             </DialogTitle>
           </DialogHeader>
@@ -243,11 +243,11 @@ export function RecoverDeviceForm({
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col gap-4 p-4"
             >
-              <div className="bg-zinc-200/60 rounded-lg flex flex-col gap-2 p-4">
-                <h2 className="font-medium text-lg">Resumo da ocorrência</h2>
+              <div className="flex flex-col gap-2 rounded-lg bg-zinc-200/60 p-4">
+                <h2 className="text-lg font-medium">Resumo da ocorrência</h2>
                 <div className="flex flex-col gap-5">
                   <div className="flex gap-2">
-                    <span className="font-medium w-44">Dispositivo</span>
+                    <span className="w-44 font-medium">Dispositivo</span>
 
                     <span className="w-full">
                       {occurrence?.device.phone_model} /{" "}
@@ -255,34 +255,34 @@ export function RecoverDeviceForm({
                     </span>
                   </div>
                   <div className="flex">
-                    <span className="font-medium w-44">Proprietário</span>
+                    <span className="w-44 font-medium">Proprietário</span>
 
                     <span className="w-full">{occurrence?.user.name}</span>
                   </div>
                   <div className="flex">
-                    <span className="font-medium w-44">Descrição</span>
+                    <span className="w-44 font-medium">Descrição</span>
 
                     <span className="w-full">
                       {occurrence?.event.description || "Sem descrição"}
                     </span>
                   </div>
                   <div className="flex">
-                    <span className="font-medium w-44">Status</span>
+                    <span className="w-44 font-medium">Status</span>
 
                     <div className="w-full">
                       <span
                         className={cn(
-                          "w-fit rounded-sm flex items-center justify-center hover:bg-white",
+                          "flex w-fit items-center justify-center rounded-sm hover:bg-white",
                           occurrence?.device.status === "Roubado" &&
-                            "bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500",
+                            "bg-robbery-bg p-1 text-red-600 ring-1 ring-red-500",
                           occurrence?.device.status === "Furtado" &&
-                            "bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500",
+                            "bg-theft-bg p-1 text-orange-600 ring-1 ring-orange-500",
                           occurrence?.device.status === "Perdido" &&
-                            "bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500",
+                            "bg-lost-bg p-1 text-yellow-600 ring-1 ring-yellow-500",
                           occurrence?.device.status === "Recuperado" &&
-                            "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
+                            "bg-lime-500/30 p-1 text-lime-600 ring-1 ring-lime-500",
                           occurrence?.device.status === "Regular" &&
-                            "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
+                            "bg-lime-500/30 p-1 text-lime-600 ring-1 ring-lime-500",
                         )}
                       >
                         {occurrence?.device.status}
@@ -297,7 +297,7 @@ export function RecoverDeviceForm({
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-medium text-base">
+                      <FormLabel className="text-base font-medium">
                         Informações gerais / Descrição da recuperação
                       </FormLabel>
 
@@ -310,13 +310,13 @@ export function RecoverDeviceForm({
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-x-20 gap-y-4 justify-between">
+              <div className="grid grid-cols-2 justify-between gap-x-20 gap-y-4">
                 <FormField
                   control={form.control}
                   name="location"
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-2">
-                      <FormLabel className="font-medium text-base">
+                      <FormLabel className="text-base font-medium">
                         Local para retirada do dispositivo
                       </FormLabel>
                       <Select
@@ -324,7 +324,7 @@ export function RecoverDeviceForm({
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger className="bg-zinc-100 w-full h-12 rounded-md ring-1 ring-zinc-300 px-2 font-medium">
+                          <SelectTrigger className="h-12 w-full rounded-md bg-zinc-100 px-2 font-medium ring-1 ring-zinc-300">
                             <SelectValue placeholder="Selecione uma opção" />
                           </SelectTrigger>
                         </FormControl>
@@ -351,10 +351,10 @@ export function RecoverDeviceForm({
                         <Checkbox
                           checked={field.value}
                           onCheckedChange={field.onChange}
-                          className="shadow-none rounded-sm border-[#232323]/90 font-medium"
+                          className="rounded-sm border-[#232323]/90 font-medium shadow-none"
                         />
                       </FormControl>
-                      <FormLabel className="font-medium !mt-0">
+                      <FormLabel className="!mt-0 font-medium">
                         Notificar proprietário através de e-mail e SMS
                       </FormLabel>
                     </FormItem>
@@ -373,7 +373,7 @@ export function RecoverDeviceForm({
                 </div>
               </div> */}
 
-              <div className="flex justify-between w-full">
+              <div className="flex w-full justify-between">
                 <Button variant="blue">Salvar Alterações</Button>
                 <Button
                   onClick={() => setIsRecoverDeviceDialogOpen(false)}

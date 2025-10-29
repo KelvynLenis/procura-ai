@@ -224,24 +224,24 @@ export default function GoogleMap({
   }, []);
 
   return (
-    <div className="flex flex-col items-center w-full">
-      <div className="relative w-full max-w-xl mb-4">
+    <div className="flex w-full flex-col items-center">
+      <div className="relative mb-4 w-full max-w-xl">
         <input
           type="text"
           placeholder="Buscar local..."
           value={search}
           onChange={(e) => handleSearchChange(e.target.value)}
-          className="w-full h-10 px-4 border rounded shadow-sm text-sm"
+          className="h-10 w-full rounded border px-4 text-sm shadow-sm"
         />
         {predictions.length > 0 && (
-          <ul className="relative z-50 w-full flex flex-col-reverse bg-white border rounded shadow max-h-32 overflow-auto">
+          <ul className="relative z-50 flex max-h-32 w-full flex-col-reverse overflow-auto rounded border bg-white shadow">
             {predictions.map((place) => (
               <li
                 key={place.place_id}
                 onClick={() =>
                   handlePredictionSelect(place.place_id, place.description)
                 }
-                className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                className="cursor-pointer px-4 py-2 hover:bg-gray-100"
               >
                 {place.description}
               </li>
@@ -251,7 +251,7 @@ export default function GoogleMap({
       </div>
       <div
         ref={mapRef}
-        className="lg:w-[500px] h-[278px] mobile-sm:w-[280px] mobile:w-[320px] mobile-lg:w-[400px] md:w-[470px]"
+        className="h-[278px] mobile-sm:w-[280px] mobile:w-[320px] mobile-lg:w-[400px] md:w-[470px] lg:w-[500px]"
       />
     </div>
   );

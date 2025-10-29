@@ -71,7 +71,7 @@ export function ViewMyAlert({
   return (
     <>
       {isLoading ? (
-        <div className="flex w-full h-full items-center justify-center">
+        <div className="flex h-full w-full items-center justify-center">
           <ClipLoader color="#002E72" loading={isLoading} size={50} />
         </div>
       ) : (
@@ -163,23 +163,23 @@ export function ViewMyAlert({
               </div>
             </div> */}
 
-          <div className="rounded-lg flex flex-col gap-2 py-4">
-            <h2 className="font-medium text-lg">Detalhes da ocorrência</h2>
+          <div className="flex flex-col gap-2 rounded-lg py-4">
+            <h2 className="text-lg font-medium">Detalhes da ocorrência</h2>
             <div className="flex flex-col gap-5">
               <div className="flex">
-                <span className="font-medium w-44">Dispositivo</span>
+                <span className="w-44 font-medium">Dispositivo</span>
                 <span className="w-full">
                   {device.phone_model} / {device.brand}
                 </span>
               </div>
 
               <div className="flex">
-                <span className="font-medium w-44">Proprietário</span>
+                <span className="w-44 font-medium">Proprietário</span>
                 <span className="w-full">{user.name}</span>
               </div>
 
               <div className="flex">
-                <span className="font-medium w-44">Data e hora</span>
+                <span className="w-44 font-medium">Data e hora</span>
                 <span className="w-full">
                   {status === "Recuperado"
                     ? formatDateTime(events[1].time_event)
@@ -188,28 +188,28 @@ export function ViewMyAlert({
               </div>
 
               <div className="flex">
-                <span className="font-medium w-44">Descrição</span>
+                <span className="w-44 font-medium">Descrição</span>
                 <span className="w-full">
                   {events[0].description || "Sem descrição"}
                 </span>
               </div>
 
               <div className="flex">
-                <span className="font-medium w-44">Status</span>
+                <span className="w-44 font-medium">Status</span>
                 <div className="w-full">
                   <span
                     className={cn(
-                      "w-fit rounded-sm flex items-center justify-center hover:bg-white",
+                      "flex w-fit items-center justify-center rounded-sm hover:bg-white",
                       device.status === "Roubado" &&
-                        "bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500",
+                        "bg-robbery-bg p-1 text-red-600 ring-1 ring-red-500",
                       device.status === "Furtado" &&
-                        "bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500",
+                        "bg-theft-bg p-1 text-orange-600 ring-1 ring-orange-500",
                       device.status === "Perdido" &&
-                        "bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500",
+                        "bg-lost-bg p-1 text-yellow-600 ring-1 ring-yellow-500",
                       device.status === "Recuperado" &&
-                        "bg-recovered-bg text-recovered-text p-1",
+                        "bg-recovered-bg p-1 text-recovered-text",
                       device.status === "Regular" &&
-                        "bg-regular-bg text-regular-text p-1",
+                        "bg-regular-bg p-1 text-regular-text",
                     )}
                   >
                     {device.status}
@@ -249,7 +249,7 @@ export function ViewMyAlert({
 
               <Button
                 variant={status === "Recuperado" ? "blue" : "red"}
-                className="mobile-sm:w-full lg:w-fit mx-auto mt-4 gap-2"
+                className="mx-auto mt-4 gap-2 mobile-sm:w-full lg:w-fit"
               >
                 <IoIosWarning size={28} />
                 <span className="">

@@ -85,13 +85,13 @@ export function EventDetails({
   function renderOccurrenceDetails(occ: OccurrencesProps) {
     return (
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between items-center mb-2">
+        <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button
               onClick={handleBackToList}
-              className="flex items-center gap-1 text-blue-500 hover:text-blue-700 text-sm"
+              className="flex items-center gap-1 text-sm text-blue-500 hover:text-blue-700"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="h-4 w-4" />
               Voltar
             </button>
             <span className="text-gray-400">|</span>
@@ -100,30 +100,30 @@ export function EventDetails({
             </h3>
           </div>
           <button type="button" onClick={closePopup}>
-            <X className="w-6 h-6 cursor-pointer" />
+            <X className="h-6 w-6 cursor-pointer" />
           </button>
         </div>
 
-        <span className="w-full h-0.5 bg-zinc-300" />
+        <span className="h-0.5 w-full bg-zinc-300" />
 
         <div className="flex flex-col gap-4">
           <div className="flex w-96">
             <span className="lg:w-24 xl:w-32">Tipo: </span>
-            <span className="font-semibold flex w-1/3 xl:w-1/2 1.5xl:w-3/5 2xl:flex-1">
+            <span className="flex w-1/3 font-semibold xl:w-1/2 1.5xl:w-3/5 2xl:flex-1">
               {formatType(occ.event.type)}
             </span>
           </div>
 
           <div className="flex w-96">
             <span className="lg:w-24 xl:w-32">Modelo:</span>
-            <span className="font-semibold w-1/3 flex">
+            <span className="flex w-1/3 font-semibold">
               {occ.device.phone_model}
             </span>
           </div>
 
           <div className="flex w-96">
             <span className="lg:w-24 xl:w-32">Fabricante:</span>
-            <span className="font-semibold flex w-1/3 xl:w-1/2 1.5xl:w-3/5 2xl:flex-1">
+            <span className="flex w-1/3 font-semibold xl:w-1/2 1.5xl:w-3/5 2xl:flex-1">
               {occ.device.brand}
             </span>
           </div>
@@ -134,7 +134,7 @@ export function EventDetails({
               className={cn(
                 occ.user.name === "Usuário excluído"
                   ? "italic text-zinc-500"
-                  : "font-semibold flex w-1/3 xl:w-1/2 1.5xl:w-3/5 2xl:flex-1",
+                  : "flex w-1/3 font-semibold xl:w-1/2 1.5xl:w-3/5 2xl:flex-1",
               )}
             >
               {occ.user.name === "Usuário excluído" ? "N/A" : occ.user.name}
@@ -143,7 +143,7 @@ export function EventDetails({
 
           <div className="flex w-96">
             <span className="lg:w-24 xl:w-32">Data e hora:</span>
-            <span className="font-semibold flex w-1/3 xl:w-1/2 1.5xl:w-3/5 2xl:flex-1">
+            <span className="flex w-1/3 font-semibold xl:w-1/2 1.5xl:w-3/5 2xl:flex-1">
               {formatDateTime(occ.event.time_event)}
             </span>
           </div>
@@ -153,7 +153,7 @@ export function EventDetails({
             <span
               className={cn(
                 occ.event.description
-                  ? "font-semibold flex w-1/3 xl:w-1/2 1.5xl:w-3/5 2xl:flex-1 text-justify"
+                  ? "flex w-1/3 text-justify font-semibold xl:w-1/2 1.5xl:w-3/5 2xl:flex-1"
                   : "italic text-zinc-500",
               )}
             >
@@ -162,12 +162,12 @@ export function EventDetails({
           </div>
 
           {fullScreenMap && (
-            <div className="flex w-full justify-center mt-4">
+            <div className="mt-4 flex w-full justify-center">
               <Link
                 href={`https://www.google.com/maps?q=${occ.event?.last_location[0]},${occ.event?.last_location[1]}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline text-blue-500"
+                className="text-blue-500 underline"
               >
                 Veja no google maps
               </Link>
@@ -182,16 +182,16 @@ export function EventDetails({
 
     return (
       <div className="flex flex-col gap-2">
-        <div className="flex justify-between items-center mb-2">
+        <div className="mb-2 flex items-center justify-between">
           <h3 className="font-semibold text-procura-ai-blue">
             Ocorrências ({sameLocationOccurrences.length})
           </h3>
           <button type="button" onClick={closePopup}>
-            <X className="w-6 h-6 cursor-pointer" />
+            <X className="h-6 w-6 cursor-pointer" />
           </button>
         </div>
 
-        <div className="grid grid-cols-4 gap-1 text-xs font-semibold text-gray-600 border-b pb-2">
+        <div className="grid grid-cols-4 gap-1 border-b pb-2 text-xs font-semibold text-gray-600">
           <span>Data</span>
           <span>Dispositivo</span>
           <span>Proprietário</span>
@@ -202,11 +202,11 @@ export function EventDetails({
           {currentPageItems.map((occ, index) => (
             <div
               key={occ.event.$id}
-              className="grid grid-cols-4 gap-1 py-2 px-1.5 text-xs border-b last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
+              className="grid cursor-pointer grid-cols-4 gap-1 border-b px-1.5 py-2 text-xs transition-colors last:border-b-0 hover:bg-gray-50"
               onClick={() => handleOccurrenceClick(occ)}
             >
               <div className="flex flex-col">
-                <span className="font-medium text-xs">
+                <span className="text-xs font-medium">
                   {formatDateTime(occ.event.time_event).split("-")[0]}
                 </span>
                 <span className="text-xs text-gray-500">
@@ -215,10 +215,10 @@ export function EventDetails({
               </div>
 
               <div className="flex flex-col">
-                <span className="font-medium text-xs truncate">
+                <span className="truncate text-xs font-medium">
                   {occ.device.phone_model}
                 </span>
-                <span className="text-xs text-gray-500 truncate">
+                <span className="truncate text-xs text-gray-500">
                   {occ.device.brand}
                 </span>
               </div>
@@ -226,7 +226,7 @@ export function EventDetails({
               <div className="flex flex-col">
                 <span
                   className={cn(
-                    "text-xs truncate",
+                    "truncate text-xs",
                     occ.user.name === "Usuário excluído"
                       ? "italic text-gray-400"
                       : "font-medium",
@@ -234,27 +234,27 @@ export function EventDetails({
                 >
                   {occ.user.name === "Usuário excluído" ? "N/A" : occ.user.name}
                 </span>
-                <span className="text-xs text-gray-500 truncate">
+                <span className="truncate text-xs text-gray-500">
                   {formatType(occ.event.type)}
                 </span>
               </div>
 
-              <div className="flex justify-center items-center">
-                <ChevronRight className="w-3 h-3 text-blue-500" />
+              <div className="flex items-center justify-center">
+                <ChevronRight className="h-3 w-3 text-blue-500" />
               </div>
             </div>
           ))}
         </div>
 
         {totalPages > 1 && (
-          <div className="flex justify-between items-center mt-2.5 pt-1.5 border-t">
+          <div className="mt-2.5 flex items-center justify-between border-t pt-1.5">
             <div className="flex items-center gap-1">
               <button
                 onClick={goToPreviousPage}
                 disabled={currentPage === 0}
-                className="flex items-center gap-1 px-1.5 py-0.5 text-xs bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                className="flex items-center gap-1 rounded bg-gray-100 px-1.5 py-0.5 text-xs hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <ChevronLeft className="w-3 h-3" />
+                <ChevronLeft className="h-3 w-3" />
                 Anterior
               </button>
             </div>
@@ -264,10 +264,10 @@ export function EventDetails({
                 <button
                   key={i}
                   className={cn(
-                    "w-5 h-5 rounded text-xs font-medium",
+                    "h-5 w-5 rounded text-xs font-medium",
                     i === currentPage
                       ? "bg-blue-500 text-white"
-                      : "bg-gray-100 hover:bg-gray-200 text-gray-700",
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200",
                   )}
                   onClick={() => goToPage(i)}
                 >
@@ -280,16 +280,16 @@ export function EventDetails({
               <button
                 onClick={goToNextPage}
                 disabled={currentPage === totalPages - 1}
-                className="flex items-center gap-1 px-1.5 py-0.5 text-xs bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                className="flex items-center gap-1 rounded bg-gray-100 px-1.5 py-0.5 text-xs hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Próxima
-                <ChevronRight className="w-3 h-3" />
+                <ChevronRight className="h-3 w-3" />
               </button>
             </div>
           </div>
         )}
 
-        <div className="text-xs text-gray-500 text-center mt-1">
+        <div className="mt-1 text-center text-xs text-gray-500">
           Mostrando {startIndex + 1} -{" "}
           {Math.min(endIndex, sameLocationOccurrences.length)} de{" "}
           {sameLocationOccurrences.length} ocorrências
@@ -301,17 +301,17 @@ export function EventDetails({
   return (
     <div
       className={cn(
-        "w-/5 flex ring-1 ring-zinc-200 rounded-md gap-2",
+        "w-/5 flex gap-2 rounded-md ring-1 ring-zinc-200",
         hasMultipleOccurrences ? "w-[420px] max-w-[85vw]" : "",
         styles,
       )}
     >
-      <span className="w-1 h-full bg-procura-ai-blue" />
+      <span className="h-full w-1 bg-procura-ai-blue" />
 
       <div
         className={cn(
-          "flex flex-col py-3 px-2.5 gap-2.5 h-fit w-full",
-          fullScreenMap && "gap-2 py-2.5 px-2",
+          "flex h-fit w-full flex-col gap-2.5 px-2.5 py-3",
+          fullScreenMap && "gap-2 px-2 py-2.5",
         )}
       >
         {hasMultipleOccurrences ? (
@@ -322,30 +322,30 @@ export function EventDetails({
           )
         ) : (
           <>
-            <div className="flex flex-col gap-2 items-end justify-end">
-              <div className="flex w-full justify-between items-center">
+            <div className="flex flex-col items-end justify-end gap-2">
+              <div className="flex w-full items-center justify-between">
                 {fullScreenMap ? (
                   <div className="flex w-full justify-center">
                     <Link
                       href={googleMapsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="underline text-blue-500"
+                      className="text-blue-500 underline"
                     >
                       Veja no google maps
                     </Link>
                   </div>
                 ) : (
-                  <span className="w-full h-full flex flex-col text-3xl text-procura-ai-blue font-semibold">
+                  <span className="flex h-full w-full flex-col text-3xl font-semibold text-procura-ai-blue">
                     #{occurence.event.$id.slice(0, 5)}
                   </span>
                 )}
 
                 <button type="button" onClick={closePopup}>
-                  <X className="w-6 h-6 cursor-pointer" />
+                  <X className="h-6 w-6 cursor-pointer" />
                 </button>
               </div>
-              <span className="w-full h-0.5 bg-zinc-300" />
+              <span className="h-0.5 w-full bg-zinc-300" />
             </div>
 
             <div
@@ -353,21 +353,21 @@ export function EventDetails({
             >
               <div className="flex w-96">
                 <span className="lg:w-24 xl:w-32">Tipo: </span>
-                <span className="font-semibold flex w-1/3 xl:w-1/2 1.5xl:w-3/5 2xl:flex-1">
+                <span className="flex w-1/3 font-semibold xl:w-1/2 1.5xl:w-3/5 2xl:flex-1">
                   {formatType(occurence.event.type)}
                 </span>
               </div>
 
               <div className="flex w-96">
                 <span className="lg:w-24 xl:w-32">Modelo:</span>
-                <span className="font-semibold w-1/3 flex">
+                <span className="flex w-1/3 font-semibold">
                   {occurence.device.phone_model}
                 </span>
               </div>
 
               <div className="flex w-96">
                 <span className="lg:w-24 xl:w-32">Fabricante:</span>
-                <span className="font-semibold flex w-1/3 xl:w-1/2 1.5xl:w-3/5 2xl:flex-1">
+                <span className="flex w-1/3 font-semibold xl:w-1/2 1.5xl:w-3/5 2xl:flex-1">
                   {occurence.device.brand}
                 </span>
               </div>
@@ -378,7 +378,7 @@ export function EventDetails({
                   className={cn(
                     occurence.user.name === "Usuário excluído"
                       ? "italic text-zinc-500"
-                      : "font-semibold flex w-1/3 xl:w-1/2 1.5xl:w-3/5 2xl:flex-1",
+                      : "flex w-1/3 font-semibold xl:w-1/2 1.5xl:w-3/5 2xl:flex-1",
                   )}
                 >
                   {occurence.user.name}
@@ -387,7 +387,7 @@ export function EventDetails({
 
               <div className="flex w-96">
                 <span className="lg:w-24 xl:w-32">Data e hora:</span>
-                <span className="font-semibold flex w-1/3 xl:w-1/2 1.5xl:w-3/5 2xl:flex-1">
+                <span className="flex w-1/3 font-semibold xl:w-1/2 1.5xl:w-3/5 2xl:flex-1">
                   {formatDateTime(occurence.event.time_event)}
                 </span>
               </div>
@@ -397,7 +397,7 @@ export function EventDetails({
                 <span
                   className={cn(
                     occurence.event.description
-                      ? "font-semibold flex w-1/3 xl:w-1/2 1.5xl:w-3/5 2xl:flex-1 text-justify"
+                      ? "flex w-1/3 text-justify font-semibold xl:w-1/2 1.5xl:w-3/5 2xl:flex-1"
                       : "italic text-zinc-500",
                   )}
                 >

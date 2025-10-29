@@ -10,10 +10,10 @@ export function LoadingToast({ isReactToastifyComponent }: LoadingToastProps) {
     <>
       <div
         className={cn(
-          "bg-white flex w-fit gap-5 text-zinc-700  rounded-xl opacity-70 items-end justify-end",
+          "flex w-fit items-end justify-end gap-5 rounded-xl bg-white text-zinc-700 opacity-70",
           isReactToastifyComponent
             ? "py-4"
-            : "absolute top-4 translate-x-1/2 left-1/3 px-5 py-5 shadow",
+            : "absolute left-1/3 top-4 translate-x-1/2 px-5 py-5 shadow",
         )}
       >
         Carregando requisição, aguarde.

@@ -106,15 +106,15 @@ function NotificationRow({
 
   return (
     <TableRow>
-      <TableCell className="text-center py-8 font-bold max-w-36">
+      <TableCell className="max-w-36 py-8 text-center font-bold">
         {notification.title}
       </TableCell>
-      <TableCell className="break-words max-w-72">
+      <TableCell className="max-w-72 break-words">
         <div className="flex items-center font-medium">
           {notification.message}
         </div>
       </TableCell>
-      <TableCell className="font-medium break-words max-w-44">
+      <TableCell className="max-w-44 break-words font-medium">
         {notification.is_all_users_checked
           ? "Todos os usuários"
           : `Usuários: ${targetsName}. `}
@@ -123,27 +123,27 @@ function NotificationRow({
           notification.device_options?.length > 0 &&
           `Portadores de dispositivos: ${notification.device_options?.join(", ")}`}
       </TableCell>
-      <TableCell className={cn("font-medium break-words")}>
+      <TableCell className={cn("break-words font-medium")}>
         {formatDateTime(notification.$createdAt!)}
       </TableCell>
-      <TableCell className="w-28 p-0 m-0">
+      <TableCell className="m-0 w-28 p-0">
         <div className="flex gap-2">
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <button
                 type="button"
                 disabled
-                className="rounded-lg w-10 h-10 group flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90 disabled:opacity-50 disabled:hover:ring-zinc-300 disabled:hover:bg-zinc-100"
+                className="group relative flex h-10 w-10 items-center justify-center rounded-lg ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700 disabled:opacity-50 disabled:hover:bg-zinc-100 disabled:hover:ring-zinc-300"
               >
                 <Pencil size={26} />
-                <span className="hidden group-disabled:group-hover:hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100 group-disabled:group-hover:hidden">
                   Editar contato
                 </span>
               </button>
             </DialogTrigger>
             <DialogContent className="rounded-xl p-0">
               <DialogHeader className="bg-secondary/10 p-2">
-                <DialogTitle className="text-secondary text-left w-full">
+                <DialogTitle className="w-full text-left text-secondary">
                   Editar contato
                 </DialogTitle>
                 <DialogDescription className="text-secondary"></DialogDescription>
@@ -152,7 +152,7 @@ function NotificationRow({
           </Dialog>
           <button
             type="button"
-            className="rounded-lg w-10 h-10 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
+            className="group relative flex h-10 w-10 items-center justify-center rounded-lg ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700"
             onClick={handleFillForm}
           >
             <SendHorizonal size={26} />

@@ -24,6 +24,12 @@ import { getUser } from "@/functions/user/get-user";
 import { toast } from "react-toastify";
 import { getUserById } from "@/functions/user/get-user-by-id";
 import { ConfirmationDialog } from "../ConfirmationDialog";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 function NotificationForm() {
   const [allUsers, setAllUsers] = useState(true);
@@ -301,20 +307,20 @@ function NotificationForm() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 text-zinc-900 self-center items-center justify-between rounded-xl bg-white pb-4 w-full"
+          className="flex w-full flex-col items-center justify-between gap-4 self-center rounded-xl bg-white pb-4 text-zinc-900"
         >
-          <div className="w-full bg-[#E6F1FD] flex justify-start px-4 py-2 rounded-t-xl font-medium">
+          <div className="flex w-full justify-start rounded-t-xl bg-[#E6F1FD] px-4 py-2 font-medium">
             {true ? "Criar notificação" : "Editar notificação"}
           </div>
 
-          <div className="px-2 w-full flex flex-col gap-4">
+          <div className="flex w-full flex-col gap-4 px-2">
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <FormLabel className="w-fit text-center items-center flex">
-                    <span className="text-red-500 h-6 flex align-text-bottom">
+                <FormItem className="flex w-full flex-col">
+                  <FormLabel className="flex w-fit items-center text-center">
+                    <span className="flex h-6 align-text-bottom text-red-500">
                       *
                     </span>
                     Título
@@ -335,9 +341,9 @@ function NotificationForm() {
               control={form.control}
               name="description"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <FormLabel className="w-fit text-center items-center flex">
-                    <span className="text-red-500 h-6 flex align-text-bottom">
+                <FormItem className="flex w-full flex-col">
+                  <FormLabel className="flex w-fit items-center text-center">
+                    <span className="flex h-6 align-text-bottom text-red-500">
                       *
                     </span>
                     Descrição
@@ -350,15 +356,15 @@ function NotificationForm() {
               )}
             />
 
-            <div className="bg-zinc-100 rounded-lg w-full px-8 py-4 flex justify-between">
+            <div className="flex w-full justify-between rounded-lg bg-zinc-100 px-8 py-4">
               <div className="flex flex-col gap-2">
                 <h3 className="font-medium">Usuários</h3>
 
-                <div className="flex gap-2 items-center">
+                <div className="flex items-center gap-2">
                   <Checkbox
                     checked={allUsers}
                     onClick={() => setAllUsers(!allUsers)}
-                    className="drop-shadow-sm shadow-sm bg-white"
+                    className="bg-white shadow-sm drop-shadow-sm"
                   />
                   Todos os usuários
                 </div>
@@ -389,7 +395,98 @@ function NotificationForm() {
                 </div> */}
               </div>
 
-              <div className="flex flex-col gap-2">
+              <Accordion
+                className="flex flex-col gap-2"
+                type="single"
+                collapsible
+              >
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>
+                    <h3 className="font-medium">Status de dispositivo</h3>
+                  </AccordionTrigger>
+                  <AccordionContent className="flex items-center gap-2">
+                    <>
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          onClick={toggleAllStatusOptions}
+                          className="bg-white shadow-sm drop-shadow-sm"
+                        />
+                        Todos
+                      </div>
+
+                      <div className="flex flex-col items-start gap-2 pl-4">
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            checked={statusOptions.Regular}
+                            onClick={() =>
+                              setStatusOptions({
+                                ...statusOptions,
+                                Regular: !statusOptions["Regular"],
+                              })
+                            }
+                            className="bg-white shadow-sm drop-shadow-sm"
+                          />
+                          Regular
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            checked={statusOptions.Roubado}
+                            onClick={() =>
+                              setStatusOptions({
+                                ...statusOptions,
+                                Roubado: !statusOptions["Roubado"],
+                              })
+                            }
+                            className="bg-white shadow-sm drop-shadow-sm"
+                          />
+                          Roubado
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            checked={statusOptions.Furtado}
+                            onClick={() =>
+                              setStatusOptions({
+                                ...statusOptions,
+                                Furtado: !statusOptions["Furtado"],
+                              })
+                            }
+                            className="bg-white shadow-sm drop-shadow-sm"
+                          />
+                          Furtado
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            checked={statusOptions.Perdido}
+                            onClick={() =>
+                              setStatusOptions({
+                                ...statusOptions,
+                                Perdido: !statusOptions["Perdido"],
+                              })
+                            }
+                            className="bg-white shadow-sm drop-shadow-sm"
+                          />
+                          Perdido
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            checked={statusOptions.Recuperado}
+                            onClick={() =>
+                              setStatusOptions({
+                                ...statusOptions,
+                                Recuperado: !statusOptions["Recuperado"],
+                              })
+                            }
+                            className="bg-white shadow-sm drop-shadow-sm"
+                          />
+                          Recuperado
+                        </div>
+                      </div>
+                    </>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+
+              {/* <div className="flex flex-col gap-2">
                 <h3 className="font-medium">Status de dispositivo</h3>
                 <div className="flex gap-2 items-center">
                   <Checkbox
@@ -466,21 +563,21 @@ function NotificationForm() {
                     Recuperado
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               <div className="flex flex-col gap-2">
                 <h3 className="font-medium">Localidade ou região</h3>
-                <div className="flex gap-2 items-center text-zinc-500">
+                <div className="flex items-center gap-2 text-zinc-500">
                   <Checkbox
                     disabled
                     onClick={toggleAllLocationsOptions}
-                    className="drop-shadow-sm shadow-sm bg-white"
+                    className="bg-white shadow-sm drop-shadow-sm"
                   />
                   Todos
                 </div>
 
-                <div className="flex gap-2 items-start flex-col pl-4">
-                  <div className="flex gap-2 items-center text-zinc-500">
+                <div className="flex flex-col items-start gap-2 pl-4">
+                  <div className="flex items-center gap-2 text-zinc-500">
                     <Checkbox
                       disabled
                       checked={locationOptions.JoaoPessoa}
@@ -490,11 +587,11 @@ function NotificationForm() {
                           JoaoPessoa: !locationOptions["JoaoPessoa"],
                         })
                       }
-                      className="drop-shadow-sm shadow-sm bg-white"
+                      className="bg-white shadow-sm drop-shadow-sm"
                     />
                     João Pessoa
                   </div>
-                  <div className="flex gap-2 items-center text-zinc-500">
+                  <div className="flex items-center gap-2 text-zinc-500">
                     <Checkbox
                       disabled
                       checked={locationOptions.Cabedelo}
@@ -504,11 +601,11 @@ function NotificationForm() {
                           Cabedelo: !locationOptions["Cabedelo"],
                         })
                       }
-                      className="drop-shadow-sm shadow-sm bg-white"
+                      className="bg-white shadow-sm drop-shadow-sm"
                     />
                     Cabedelo
                   </div>
-                  <div className="flex gap-2 items-center text-zinc-500">
+                  <div className="flex items-center gap-2 text-zinc-500">
                     <Checkbox
                       disabled
                       checked={locationOptions.CampinaGrande}
@@ -518,11 +615,11 @@ function NotificationForm() {
                           CampinaGrande: !locationOptions["CampinaGrande"],
                         })
                       }
-                      className="drop-shadow-sm shadow-sm bg-white"
+                      className="bg-white shadow-sm drop-shadow-sm"
                     />
                     Campina Grande
                   </div>
-                  <div className="flex gap-2 items-center text-zinc-500">
+                  <div className="flex items-center gap-2 text-zinc-500">
                     <Checkbox
                       disabled
                       checked={locationOptions.Bayeux}
@@ -532,11 +629,11 @@ function NotificationForm() {
                           Bayeux: !locationOptions["Bayeux"],
                         })
                       }
-                      className="drop-shadow-sm shadow-sm bg-white"
+                      className="bg-white shadow-sm drop-shadow-sm"
                     />
                     Bayeux
                   </div>
-                  <div className="flex gap-2 items-center text-zinc-500">
+                  <div className="flex items-center gap-2 text-zinc-500">
                     <Checkbox
                       disabled
                       checked={locationOptions.SantaRita}
@@ -546,7 +643,7 @@ function NotificationForm() {
                           SantaRita: !locationOptions["SantaRita"],
                         })
                       }
-                      className="drop-shadow-sm shadow-sm bg-white"
+                      className="bg-white shadow-sm drop-shadow-sm"
                     />
                     Santa Rita
                   </div>
@@ -554,7 +651,7 @@ function NotificationForm() {
               </div>
             </div>
 
-            <div className="flex justify-between w-full">
+            <div className="flex w-full justify-between">
               <Button variant="white" type="button" className="xl:text-base">
                 Cancelar
               </Button>
@@ -629,8 +726,8 @@ function NotificationForm() {
         </form>
       </Form>
 
-      <div className="w-full h-full bg-white rounded-xl flex flex-col gap-2">
-        <div className="w-full bg-[#E6F1FD] rounded-t-xl px-4 py-2 font-medium">
+      <div className="flex h-full w-full flex-col gap-2 rounded-xl bg-white">
+        <div className="w-full rounded-t-xl bg-[#E6F1FD] px-4 py-2 font-medium">
           Historico de notificações
         </div>
 

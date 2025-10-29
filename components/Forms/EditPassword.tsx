@@ -71,14 +71,14 @@ export function EditPassword() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col px-5 md:p-5 py-4 gap-6 bg-white w-full text-zinc-900 self-center  justify-center rounded-lg"
+        className="flex w-full flex-col justify-center gap-6 self-center rounded-lg bg-white px-5 py-4 text-zinc-900 md:p-5"
       >
         <div className="flex flex-col gap-4">
           <FormField
             control={form.control}
             name="oldPassword"
             render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
+              <FormItem className="flex w-full flex-col">
                 <Label className="">Senha antiga</Label>
                 <FormControl>
                   <Input
@@ -96,7 +96,7 @@ export function EditPassword() {
             control={form.control}
             name="newPassword"
             render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
+              <FormItem className="flex w-full flex-col">
                 <Label className="">Nova senha</Label>
                 <FormControl>
                   <Input type="password" placeholder="Nova senha" {...field} />
@@ -110,7 +110,7 @@ export function EditPassword() {
             control={form.control}
             name="confirmNewPassword"
             render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
+              <FormItem className="flex w-full flex-col">
                 <Label className="">Confirme a senha</Label>
                 <FormControl>
                   <Input
@@ -124,7 +124,7 @@ export function EditPassword() {
             )}
           />
         </div>
-        <div className="flex w-full gap-4 justify-between">
+        <div className="flex w-full justify-between gap-4">
           <Button variant="white" type="button">
             Cancelar
           </Button>
