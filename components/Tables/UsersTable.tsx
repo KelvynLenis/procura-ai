@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { Skeleton } from '../ui/skeleton'
-import { UserRow } from './UserRow'
+import { useEffect, useState } from "react";
+import { Skeleton } from "../ui/skeleton";
+import { UserRow } from "./UserRow";
 import {
   Table,
   TableBody,
@@ -10,98 +10,102 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../ui/table'
-import { Pagination, PaginationContent, PaginationItem } from '../ui/pagination'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import Button from '../Button'
-import { cn } from '@/lib/utils'
-import { toast } from 'react-toastify'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog'
-import { LoadingToast } from '@/components/LoadingToast'
-import { listUsers } from '@/functions/user/list-users'
-import { exportUsers } from '@/functions/export/export-users'
-import { exportAlerts } from '@/functions/export/export-alerts'
-import type { User } from '@/types'
+} from "../ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+} from "../ui/pagination";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import Button from "../Button";
+import { cn } from "@/lib/utils";
+import { toast } from "react-toastify";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { LoadingToast } from "@/components/LoadingToast";
+import { listUsers } from "@/functions/user/list-users";
+import { exportUsers } from "@/functions/export/export-users";
+import { exportAlerts } from "@/functions/export/export-alerts";
+import type { User } from "@/types";
 
 export function UsersTable() {
-  const [users, setUsers] = useState<User[]>([])
-  const [loading, setLoading] = useState(true)
-  const [page, setPage] = useState(1)
-  const [pages, setPages] = useState(1)
-  const [totalUsers, setTotalUsers] = useState(0)
-  const limit = 10
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const limit = 10;
 
-  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false)
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const [exportOptions, setExportOptions] = useState({
     users: true,
     alerts: false,
-  })
-  const [isExporting, setIsExporting] = useState(false)
+  });
+  const [isExporting, setIsExporting] = useState(false);
 
   function handleGoToNextPage() {
     if (page < pages) {
-      setPage(page + 1)
+      setPage(page + 1);
     }
   }
 
   function handleGoToPage(pageNumber: number) {
-    setPage(pageNumber)
+    setPage(pageNumber);
   }
 
   function handleGoToPreviousPage() {
     if (page > 0) {
-      setPage(page - 1)
+      setPage(page - 1);
     }
   }
 
-  const handleExportOptionChange = (option: 'users' | 'alerts') => {
-    setExportOptions(prev => ({
+  const handleExportOptionChange = (option: "users" | "alerts") => {
+    setExportOptions((prev) => ({
       ...prev,
       [option]: !prev[option],
-    }))
-  }
+    }));
+  };
 
   const handleExportClick = () => {
-    setIsExportDialogOpen(true)
-  }
+    setIsExportDialogOpen(true);
+  };
 
   const handleConfirmExport = async () => {
-    setIsExporting(true)
+    setIsExporting(true);
     try {
       if (exportOptions.users) {
-        await exportUsers()
+        await exportUsers();
       }
       if (exportOptions.alerts) {
-        await exportAlerts()
+        await exportAlerts();
       }
     } catch (error) {
-      console.error('Erro ao exportar:', error)
+      console.error("Erro ao exportar:", error);
     } finally {
-      setIsExporting(false)
-      setIsExportDialogOpen(false)
+      setIsExporting(false);
+      setIsExportDialogOpen(false);
     }
-  }
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
-      setLoading(true)
+      setLoading(true);
 
       try {
-        const result = await listUsers(page, limit)
-        const totalPages = Math.ceil(result.total / limit)
+        const result = await listUsers(page, limit);
+        const totalPages = Math.ceil(result.total / limit);
 
-        setUsers(result.documents || [])
-        setTotalUsers(result.total || 0)
-        setPages(totalPages)
+        setUsers(result.documents || []);
+        setTotalUsers(result.total || 0);
+        setPages(totalPages);
       } catch (error) {
-        console.error('Erro ao buscar usuários:', error)
-        toast.error('Erro ao buscar usuários. Tente novamente.')
+        console.error("Erro ao buscar usuários:", error);
+        toast.error("Erro ao buscar usuários. Tente novamente.");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    fetchUsers()
-  }, [page])
+    };
+    fetchUsers();
+  }, [page]);
 
   return (
     <>
@@ -128,7 +132,7 @@ export function UsersTable() {
                 <input
                   type="checkbox"
                   checked={exportOptions.users}
-                  onChange={() => handleExportOptionChange('users')}
+                  onChange={() => handleExportOptionChange("users")}
                   className="w-4 h-4"
                 />
                 Emitir Usuarios.csv
@@ -137,7 +141,7 @@ export function UsersTable() {
                 <input
                   type="checkbox"
                   checked={exportOptions.alerts}
-                  onChange={() => handleExportOptionChange('alerts')}
+                  onChange={() => handleExportOptionChange("alerts")}
                   className="w-4 h-4"
                 />
                 Emitir Alertas.csv
@@ -242,10 +246,10 @@ export function UsersTable() {
                           type="button"
                           onClick={() => handleGoToPage(index + 1)}
                           className={cn(
-                            'rounded-full px-3 py-1',
+                            "rounded-full px-3 py-1",
                             index === page - 1
-                              ? 'bg-zinc-200 hover:bg-zinc-300'
-                              : 'hover:bg-zinc-200'
+                              ? "bg-zinc-200 hover:bg-zinc-300"
+                              : "hover:bg-zinc-200",
                           )}
                         >
                           {index + 1}
@@ -271,5 +275,5 @@ export function UsersTable() {
         </Table>
       </div>
     </>
-  )
+  );
 }

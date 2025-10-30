@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { TableCell, TableRow } from '@/components/ui/table'
-import { Pencil, Trash2 } from 'lucide-react'
+import { TableCell, TableRow } from "@/components/ui/table";
+import { Pencil, Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -9,32 +9,34 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import type { Contact } from '@/types'
-import { cn } from '@/lib/utils'
-import { ConfirmationDialog } from '../ConfirmationDialog'
-import { deleteContact } from '@/functions/contact/delete-contact'
-import { toast } from 'react-toastify'
-import { ConctactForm } from '../Forms/ConctactForm'
-import { useState } from 'react'
+} from "@/components/ui/dialog";
+import type { Contact } from "@/types";
+import { cn } from "@/lib/utils";
+import { ConfirmationDialog } from "../ConfirmationDialog";
+import { deleteContact } from "@/functions/contact/delete-contact";
+import { toast } from "react-toastify";
+import { ConctactForm } from "../Forms/ConctactForm";
+import { useState } from "react";
 
 interface ContactRowProps {
-  contact: Contact
-  index: number
-  setContacts: React.Dispatch<React.SetStateAction<Contact[]>>
+  contact: Contact;
+  index: number;
+  setContacts: React.Dispatch<React.SetStateAction<Contact[]>>;
 }
 
 export function ContactRow({ contact, index, setContacts }: ContactRowProps) {
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   async function handleDelete() {
     toast.promise(deleteContact(contact.$id), {
-      pending: 'Excluindo contato...',
-      success: 'Contato excluido com sucesso!',
-      error: 'Erro ao excluir contato',
-    })
+      pending: "Excluindo contato...",
+      success: "Contato excluido com sucesso!",
+      error: "Erro ao excluir contato",
+    });
 
-    setContacts(prevContacts => prevContacts.filter(c => c.$id !== contact.$id))
+    setContacts((prevContacts) =>
+      prevContacts.filter((c) => c.$id !== contact.$id),
+    );
   }
 
   return (
@@ -49,13 +51,11 @@ export function ContactRow({ contact, index, setContacts }: ContactRowProps) {
           </div>
         </TableCell>
         <TableCell className="font-medium break-words">
-          {contact.email_contact || 'Não informado'}
+          {contact.email_contact || "Não informado"}
         </TableCell>
-        <TableCell className={cn('font-medium break-words')}>
+        <TableCell className={cn("font-medium break-words")}>
           <span
-            className={cn(
-              'font-medium break-words p-2 rounded-md capitalize'
-            )}
+            className={cn("font-medium break-words p-2 rounded-md capitalize")}
           >
             {`(${contact.number_contact.slice(0, 2)}) ${contact.number_contact.slice(2, 7)}-${contact.number_contact.slice(7, 11)}`}
           </span>
@@ -93,11 +93,12 @@ export function ContactRow({ contact, index, setContacts }: ContactRowProps) {
                   </span>
                 </button>
               </DialogTrigger>
-              <DialogContent className='rounded-xl p-0'>
-                <DialogHeader className='bg-secondary/10 p-2'>
-                  <DialogTitle className='text-secondary text-left w-full'>Editar contato</DialogTitle>
-                  <DialogDescription className='text-secondary'>
-                  </DialogDescription>
+              <DialogContent className="rounded-xl p-0">
+                <DialogHeader className="bg-secondary/10 p-2">
+                  <DialogTitle className="text-secondary text-left w-full">
+                    Editar contato
+                  </DialogTitle>
+                  <DialogDescription className="text-secondary"></DialogDescription>
                 </DialogHeader>
                 <ConctactForm
                   contact={contact}
@@ -126,5 +127,5 @@ export function ContactRow({ contact, index, setContacts }: ContactRowProps) {
         </TableCell>
       </TableRow>
     </>
-  )
+  );
 }

@@ -8,13 +8,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
+} from "@/components/ui/alert-dialog";
 
 interface ConfirmationDialogProps {
-  onConfirm: () => void
-  title: string
-  description: string
-  children: React.ReactNode
+  onConfirm: () => void;
+  title: string;
+  description: string;
+  children: React.ReactNode;
 }
 
 export function ConfirmationDialog({
@@ -46,5 +46,5 @@ export function ConfirmationDialog({
         </AlertDialogContent>
       </AlertDialog>
     </>
-  )
+  );
 }

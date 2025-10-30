@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
+import { useState } from "react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
+} from "@/components/ui/popover";
 import {
   Command,
   CommandEmpty,
@@ -13,20 +13,20 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command'
-import { Button as ButtonShadcn } from './ui/button'
-import { Check, ChevronDown, X } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { Badge } from './ui/badge'
+} from "@/components/ui/command";
+import { Button as ButtonShadcn } from "./ui/button";
+import { Check, ChevronDown, X } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Badge } from "./ui/badge";
 
 interface ComboboxProps {
-  values: string[]
-  options: { label: string; value: string }[]
-  onSelect: (options: string[]) => void
-  placeholder?: string
-  disabled?: boolean
-  maxSelections?: number
-  className?: string
+  values: string[];
+  options: { label: string; value: string }[];
+  onSelect: (options: string[]) => void;
+  placeholder?: string;
+  disabled?: boolean;
+  maxSelections?: number;
+  className?: string;
 }
 
 export function Combobox({
@@ -38,31 +38,31 @@ export function Combobox({
   maxSelections,
   className,
 }: ComboboxProps) {
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false)
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const handleSelect = (option: string) => {
-    let newValues: string[]
+    let newValues: string[];
 
     if (values?.includes(option)) {
       // Remove if already selected
-      newValues = values?.filter(val => val !== option)
+      newValues = values?.filter((val) => val !== option);
     } else {
       // Add if not selected and check max selections
       if (maxSelections && values?.length >= maxSelections) {
         // Replace the last item if max reached
-        newValues = [...values.slice(0, maxSelections - 1), option]
+        newValues = [...values.slice(0, maxSelections - 1), option];
       } else {
-        newValues = [...values, option]
+        newValues = [...values, option];
       }
     }
 
-    onSelect?.(newValues)
-  }
+    onSelect?.(newValues);
+  };
 
   const removeValue = (value: string, e: React.MouseEvent) => {
-    e.stopPropagation()
-    onSelect?.(values?.filter(val => val !== value))
-  }
+    e.stopPropagation();
+    onSelect?.(values?.filter((val) => val !== value));
+  };
 
   return (
     <>
@@ -79,13 +79,13 @@ export function Combobox({
               type="button"
               disabled={disabled}
               className={cn(
-                'w-56 h-20 p-2 text-base gap-2 justify-between bg-white ring-1 ring-[#232323]/20 shadow-none flex flex-wrap overflow-y-scroll custom-scroll',
-                className
+                "w-56 h-20 p-2 text-base gap-2 justify-between bg-white ring-1 ring-[#232323]/20 shadow-none flex flex-wrap overflow-y-scroll custom-scroll",
+                className,
               )}
             >
               {values?.length > 0 ? (
                 <div className="flex flex-wrap gap-1 items-center">
-                  {values?.map(value => (
+                  {values?.map((value) => (
                     <Badge
                       key={value}
                       className="px-2 py-1 flex items-center gap-1 bg-procura-ai-blue hover:opacity-70 shadow-none hover:bg-procura-ai-blue"
@@ -114,7 +114,7 @@ export function Combobox({
             <CommandList className="custom-scroll">
               <CommandEmpty>Nenhuma opção encontrada.</CommandEmpty>
               <CommandGroup>
-                {options.map(option => (
+                {options.map((option) => (
                   <CommandItem
                     value={option.label}
                     key={option.label}
@@ -123,10 +123,10 @@ export function Combobox({
                     {option.label}
                     <Check
                       className={cn(
-                        'ml-auto',
+                        "ml-auto",
                         values?.includes(option.label)
-                          ? 'opacity-100'
-                          : 'opacity-0'
+                          ? "opacity-100"
+                          : "opacity-0",
                       )}
                     />
                   </CommandItem>
@@ -137,5 +137,5 @@ export function Combobox({
         </PopoverContent>
       </Popover>
     </>
-  )
+  );
 }

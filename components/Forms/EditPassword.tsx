@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Form,
@@ -6,30 +6,30 @@ import {
   FormField,
   FormItem,
   FormMessage,
-} from '@/components/ui/form'
-import { useForm } from 'react-hook-form'
-import { Input } from '../Input'
-import { z } from 'zod'
-import { Label } from '../ui/label'
-import Button from '../Button'
-import { useEffect, useState } from 'react'
-import { getUserId } from '@/functions/user/get-user-id'
-import { getUser } from '@/functions/user/get-user'
-import Image from 'next/image'
-import { Upload } from 'lucide-react'
-import type { User } from '@/types'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { updateUser } from '@/functions/user/update-user'
-import { toast } from 'react-toastify'
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { Input } from "../Input";
+import { z } from "zod";
+import { Label } from "../ui/label";
+import Button from "../Button";
+import { useEffect, useState } from "react";
+import { getUserId } from "@/functions/user/get-user-id";
+import { getUser } from "@/functions/user/get-user";
+import Image from "next/image";
+import { Upload } from "lucide-react";
+import type { User } from "@/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { updateUser } from "@/functions/user/update-user";
+import { toast } from "react-toastify";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
-} from '@/components/ui/input-otp'
-import { validateCPF } from '@/lib/utils'
-import { updatePassword } from '@/functions/auth/update-password'
-import { uploadImage } from '@/functions/storage/upload-image'
+} from "@/components/ui/input-otp";
+import { validateCPF } from "@/lib/utils";
+import { updatePassword } from "@/functions/auth/update-password";
+import { uploadImage } from "@/functions/storage/upload-image";
 
 const formSchema = z
   .object({
@@ -37,33 +37,33 @@ const formSchema = z
     confirmNewPassword: z.string(),
     oldPassword: z.string(),
   })
-  .refine(data => data.newPassword === data.confirmNewPassword, {
-    path: ['confirmPassword'], // Indica onde mostrar o erro
-    message: 'As senhas precisam ser iguais',
-  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    path: ["confirmPassword"], // Indica onde mostrar o erro
+    message: "As senhas precisam ser iguais",
+  });
 
 export function EditPassword() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      newPassword: '',
-      confirmNewPassword: '',
-      oldPassword: '',
+      newPassword: "",
+      confirmNewPassword: "",
+      oldPassword: "",
     },
-  })
+  });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const callFunction = async () => {
-        await updatePassword(values.newPassword, values.oldPassword)
-      }
+        await updatePassword(values.newPassword, values.oldPassword);
+      };
       toast.promise(callFunction(), {
-        pending: 'Atualizando perfil...',
-        success: 'Perfil atualizado com sucesso!',
-        error: 'Erro ao atualizar perfil',
-      })
+        pending: "Atualizando perfil...",
+        success: "Perfil atualizado com sucesso!",
+        error: "Erro ao atualizar perfil",
+      });
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
@@ -134,5 +134,5 @@ export function EditPassword() {
         </div>
       </form>
     </Form>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Table,
@@ -7,33 +7,33 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from "@/components/ui/table";
 
-import { Skeleton } from '@/components/ui/skeleton'
-import type { DeviceProps, OccurrencesProps, QueryFilter } from '@/types'
-import { Check, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
-import { cn, validateIMEI } from '@/lib/utils'
-import { AlertRow } from './AlertRow'
-import { Input } from '@/components/Input'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Download, Search, Settings2 } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { Label } from '../ui/label'
-import { Combobox } from '../Combobox'
-import { DatePickerWithRange } from '../Datepicker'
+import { Skeleton } from "@/components/ui/skeleton";
+import type { DeviceProps, OccurrencesProps, QueryFilter } from "@/types";
+import { Check, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { cn, validateIMEI } from "@/lib/utils";
+import { AlertRow } from "./AlertRow";
+import { Input } from "@/components/Input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Download, Search, Settings2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Label } from "../ui/label";
+import { Combobox } from "../Combobox";
+import { DatePickerWithRange } from "../Datepicker";
 import {
   joinDevicesEventsUsers,
   joinUsersDevicesEvents,
-} from '@/functions/occurences/get-occurrences'
-import { exportOccurrences } from '@/functions/export/export-ocurrences'
-import { toast } from 'react-toastify'
+} from "@/functions/occurences/get-occurrences";
+import { exportOccurrences } from "@/functions/export/export-ocurrences";
+import { toast } from "react-toastify";
 
 interface DevicesTableProps {
-  totalDevices?: number
-  page?: number
-  pages?: number
-  limit?: number
-  isLoading?: boolean
+  totalDevices?: number;
+  page?: number;
+  pages?: number;
+  limit?: number;
+  isLoading?: boolean;
 }
 
 export function AlertsTable({
@@ -42,188 +42,188 @@ export function AlertsTable({
   pages,
   limit,
 }: DevicesTableProps) {
-  const [isLoading, setIsLoading] = useState(true)
-  const [isFilterOptionsOpen, setIsFilterOptionsOpen] = useState(false)
-  const [isBrandsPopoverOpen, setIsBrandsPopoverOpen] = useState(false)
-  const [totalFilters, setTotalFilters] = useState(3)
-  const [filterInput, setFilterInput] = useState('')
-  const [countdownId, setcountdownId] = useState<NodeJS.Timeout>()
+  const [isLoading, setIsLoading] = useState(true);
+  const [isFilterOptionsOpen, setIsFilterOptionsOpen] = useState(false);
+  const [isBrandsPopoverOpen, setIsBrandsPopoverOpen] = useState(false);
+  const [totalFilters, setTotalFilters] = useState(3);
+  const [filterInput, setFilterInput] = useState("");
+  const [countdownId, setcountdownId] = useState<NodeJS.Timeout>();
   const [brandFilter, setBrandFilter] = useState<QueryFilter>({
-    method: 'equal',
-    attribute: 'brand',
+    method: "equal",
+    attribute: "brand",
     values: [],
-  } as QueryFilter)
+  } as QueryFilter);
   const [statusFilter, setStatusFilter] = useState<QueryFilter>({
-    method: 'equal',
-    attribute: 'status',
-    values: ['Roubado', 'Furtado', 'Perdido'],
-  } as QueryFilter)
+    method: "equal",
+    attribute: "status",
+    values: ["Roubado", "Furtado", "Perdido"],
+  } as QueryFilter);
   const [imeiFilter, setImeiFilter] = useState<QueryFilter>({
-    method: 'equal',
-    attribute: 'imei',
+    method: "equal",
+    attribute: "imei",
     values: [],
-  } as QueryFilter)
+  } as QueryFilter);
   const [ownerFilter, setOwnerFilter] = useState({
-    method: 'equal',
-    attribute: 'name',
+    method: "equal",
+    attribute: "name",
     values: [],
-  } as QueryFilter)
+  } as QueryFilter);
   const [occurrences, setOccurrences] = useState<OccurrencesProps[]>(
-    [] as OccurrencesProps[]
-  )
+    [] as OccurrencesProps[],
+  );
 
   const brandsOptions = [
-    { label: 'Apple', value: 'apple' },
-    { label: 'Samsung', value: 'samsung' },
-    { label: 'Xiaomi', value: 'xiaomi' },
-    { label: 'Oppo', value: 'oppo' },
-    { label: 'Vivo', value: 'vivo' },
-    { label: 'Motorola', value: 'motorola' },
-    { label: 'Realme', value: 'realme' },
-    { label: 'Asus', value: 'asus' },
-    { label: 'Huawei', value: 'huawei' },
-    { label: 'Sony', value: 'sony' },
-  ]
+    { label: "Apple", value: "apple" },
+    { label: "Samsung", value: "samsung" },
+    { label: "Xiaomi", value: "xiaomi" },
+    { label: "Oppo", value: "oppo" },
+    { label: "Vivo", value: "vivo" },
+    { label: "Motorola", value: "motorola" },
+    { label: "Realme", value: "realme" },
+    { label: "Asus", value: "asus" },
+    { label: "Huawei", value: "huawei" },
+    { label: "Sony", value: "sony" },
+  ];
 
   const statusOptions = [
-    { label: 'Recuperado', value: 'Recuperado' },
-    { label: 'Roubado', value: 'Roubado' },
-    { label: 'Furtado', value: 'Furtado' },
-    { label: 'Perdido', value: 'Perdido' },
-  ]
+    { label: "Recuperado", value: "Recuperado" },
+    { label: "Roubado", value: "Roubado" },
+    { label: "Furtado", value: "Furtado" },
+    { label: "Perdido", value: "Perdido" },
+  ];
 
   function handleSelectBrandsFilter(strings: string[]) {
     setBrandFilter({
-      method: 'equal',
-      attribute: 'brand',
+      method: "equal",
+      attribute: "brand",
       values: strings,
-    })
+    });
   }
 
   function handleSelectStatusFilter(strings: string[]) {
     setStatusFilter({
-      method: 'equal',
-      attribute: 'status',
+      method: "equal",
+      attribute: "status",
       values: strings,
-    })
+    });
   }
 
   function handleInputFilter(value: string) {
-    clearTimeout(countdownId)
+    clearTimeout(countdownId);
 
     const timerId = setTimeout(() => {
       if (value.length === 0) {
         setImeiFilter({
-          method: 'equal',
-          attribute: 'imei',
+          method: "equal",
+          attribute: "imei",
           values: [],
-        } as QueryFilter)
+        } as QueryFilter);
 
         setOwnerFilter({
-          method: 'equal',
-          attribute: 'name',
+          method: "equal",
+          attribute: "name",
           values: [],
-        } as QueryFilter)
+        } as QueryFilter);
 
-        return
+        return;
       }
 
-      const isIMEI = /\d/.test(value)
+      const isIMEI = /\d/.test(value);
 
       if (isIMEI) {
         setImeiFilter({
-          method: 'contains',
-          attribute: 'imei',
+          method: "contains",
+          attribute: "imei",
           values: [value],
-        })
+        });
 
-        return
+        return;
       }
 
       setOwnerFilter({
-        method: 'contains',
-        attribute: 'name',
+        method: "contains",
+        attribute: "name",
         values: [value],
-      })
-    }, 2000)
+      });
+    }, 2000);
 
-    setcountdownId(timerId)
+    setcountdownId(timerId);
   }
 
   function clearFilters() {
     setBrandFilter({
-      method: 'equal',
-      attribute: 'brand',
+      method: "equal",
+      attribute: "brand",
       values: [],
-    })
+    });
 
     setStatusFilter({
-      method: 'equal',
-      attribute: 'status',
+      method: "equal",
+      attribute: "status",
       values: [],
-    })
+    });
 
     setImeiFilter({
-      method: 'equal',
-      attribute: 'imei',
+      method: "equal",
+      attribute: "imei",
       values: [],
-    })
+    });
   }
 
   useEffect(() => {
-    setIsLoading(true)
+    setIsLoading(true);
 
     async function getOccurrences() {
       const deviceActiveFilters = [
         ...(brandFilter.values.length > 0 ? [brandFilter] : []),
         ...(statusFilter.values.length > 0 ? [statusFilter] : []),
         ...(imeiFilter.values.length > 0 ? [imeiFilter] : []),
-      ]
+      ];
 
       const usersActiveFilters = [
         ...(ownerFilter.values.length > 0 ? [ownerFilter] : []),
-      ]
+      ];
 
       const defaultDevicesStatusFilters = [
         {
-          method: 'equal',
-          attribute: 'status',
-          values: ['Roubado', 'Furtado', 'Perdido', 'Recuperado'],
+          method: "equal",
+          attribute: "status",
+          values: ["Roubado", "Furtado", "Perdido", "Recuperado"],
         },
-      ]
+      ];
 
       const filterOptions = {
         devicesFilters:
           deviceActiveFilters.length > 0 ? deviceActiveFilters : [],
-      }
+      };
 
       if (statusFilter.values.length === 0) {
-        filterOptions.devicesFilters.push(defaultDevicesStatusFilters[0])
+        filterOptions.devicesFilters.push(defaultDevicesStatusFilters[0]);
       }
 
-      const occurrences = await joinDevicesEventsUsers(filterOptions)
+      const occurrences = await joinDevicesEventsUsers(filterOptions);
 
       if (ownerFilter.values.length > 0) {
-        const occurrencesFilteredByOwner = occurrences?.filter(occurrence => {
-          const user = occurrence.user
+        const occurrencesFilteredByOwner = occurrences?.filter((occurrence) => {
+          const user = occurrence.user;
 
           return user.name
             .toLowerCase()
-            .includes(ownerFilter.values[0].toLowerCase())
-        })
+            .includes(ownerFilter.values[0].toLowerCase());
+        });
 
-        setOccurrences(occurrencesFilteredByOwner || [])
-        setIsLoading(false)
-        return
+        setOccurrences(occurrencesFilteredByOwner || []);
+        setIsLoading(false);
+        return;
       }
 
-      setOccurrences(occurrences || [])
-      setIsLoading(false)
+      setOccurrences(occurrences || []);
+      setIsLoading(false);
     }
-    getOccurrences()
+    getOccurrences();
 
-    setTotalFilters(brandFilter.values.length + statusFilter.values.length)
-  }, [brandFilter, statusFilter, imeiFilter, ownerFilter])
+    setTotalFilters(brandFilter.values.length + statusFilter.values.length);
+  }, [brandFilter, statusFilter, imeiFilter, ownerFilter]);
 
   return (
     <>
@@ -233,7 +233,7 @@ export function AlertsTable({
           <Input
             placeholder="Pesquise por IMEI ou proprietário"
             className="w-96 pl-10 ring-[#232323]/20 shadow-none"
-            onChange={e => handleInputFilter(e.target.value)}
+            onChange={(e) => handleInputFilter(e.target.value)}
           />
         </div>
 
@@ -241,10 +241,10 @@ export function AlertsTable({
           <button
             type="button"
             className={cn(
-              'ring-1 ring-[#232323]/30 text-[#232323] flex items-center justify-center gap-3 h-fit px-4 py-2 rounded-lg',
+              "ring-1 ring-[#232323]/30 text-[#232323] flex items-center justify-center gap-3 h-fit px-4 py-2 rounded-lg",
               isFilterOptionsOpen
-                ? 'bg-zinc-200 hover:bg-white'
-                : 'bg-white hover:bg-zinc-200'
+                ? "bg-zinc-200 hover:bg-white"
+                : "bg-white hover:bg-zinc-200",
             )}
             onClick={() => setIsFilterOptionsOpen(!isFilterOptionsOpen)}
           >
@@ -275,7 +275,7 @@ export function AlertsTable({
                 // onClick={() => setIsFilterOptionsOpen(!isFilterOptionsOpen)}
               >
                 <Settings2 size={18} />
-                Filtros{' - '}
+                Filtros{" - "}
                 {totalFilters}
               </button>
               <button
@@ -439,5 +439,5 @@ export function AlertsTable({
         </TableBody>
       </Table>
     </>
-  )
+  );
 }

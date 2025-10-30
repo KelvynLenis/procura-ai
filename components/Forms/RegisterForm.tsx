@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Form,
@@ -7,132 +7,132 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
+} from "@/components/ui/form";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
-} from '@/components/ui/input-otp'
+} from "@/components/ui/input-otp";
 
-import { useForm } from 'react-hook-form'
-import { Input } from '../Input'
-import Link from 'next/link'
-import { account } from '@/lib/appwrite'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import logo from '../../assets/icons/logo-text-2.svg'
-import Image from 'next/image'
-import Button from '../Button'
-import { validateCPF } from '@/lib/utils'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { v4 as uuidv4 } from 'uuid'
-import { toast } from 'react-toastify'
-import { LoadingToast } from '../LoadingToast'
-import { createUser } from '@/functions/user/create-user'
-import { validateUserCpf } from '@/functions/user/validate-user-cpf'
-import { validateUserEmail } from '@/functions/user/validate-user-email'
+import { useForm } from "react-hook-form";
+import { Input } from "../Input";
+import Link from "next/link";
+import { account } from "@/lib/appwrite";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import logo from "../../assets/icons/logo-text-2.svg";
+import Image from "next/image";
+import Button from "../Button";
+import { validateCPF } from "@/lib/utils";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { v4 as uuidv4 } from "uuid";
+import { toast } from "react-toastify";
+import { LoadingToast } from "../LoadingToast";
+import { createUser } from "@/functions/user/create-user";
+import { validateUserCpf } from "@/functions/user/validate-user-cpf";
+import { validateUserEmail } from "@/functions/user/validate-user-email";
 
 interface RegisterFormProps {
-  admin?: boolean
+  admin?: boolean;
 }
 
 const formSchema = z
   .object({
     name: z.string(),
     cpf: z.string().min(11, {
-      message: 'O CPF deve conter exatamente 11 dígitos numéricos.',
+      message: "O CPF deve conter exatamente 11 dígitos numéricos.",
     }),
-    email: z.string().email({ message: 'Email inválido' }),
-    confirmEmail: z.string().email({ message: 'Email inválido' }),
+    email: z.string().email({ message: "Email inválido" }),
+    confirmEmail: z.string().email({ message: "Email inválido" }),
     password: z.string().min(8, {
-      message: 'A senha deve conter pelo menos 8 caracteres.',
+      message: "A senha deve conter pelo menos 8 caracteres.",
     }),
     confirmPassword: z.string().min(8, {
-      message: 'A senha deve conter pelo menos 8 caracteres.',
+      message: "A senha deve conter pelo menos 8 caracteres.",
     }),
   })
   // .refine(data => validateCPF(data.cpf), {
   //   path: ['cpf'],
   //   message: 'CPF inválido. Por favor, verifique os dígitos informados.',
   // })
-  .refine(data => data.password === data.confirmPassword, {
-    path: ['confirmPassword'],
-    message: 'As senhas precisam ser iguais',
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "As senhas precisam ser iguais",
   })
-  .refine(data => data.email === data.confirmEmail, {
-    path: ['confirmEmail'],
-    message: 'Os e-mails precisam ser iguais',
+  .refine((data) => data.email === data.confirmEmail, {
+    path: ["confirmEmail"],
+    message: "Os e-mails precisam ser iguais",
   })
   .refine(
-    async data => {
+    async (data) => {
       try {
-        return await validateUserCpf(data.cpf)
+        return await validateUserCpf(data.cpf);
       } catch (error) {
-        toast.error('Erro ao verificar CPF. Tente novamente.')
-        return false
+        toast.error("Erro ao verificar CPF. Tente novamente.");
+        return false;
       }
     },
     {
-      path: ['cpf'],
-      message: 'Este CPF já está cadastrado no sistema.',
-    }
+      path: ["cpf"],
+      message: "Este CPF já está cadastrado no sistema.",
+    },
   )
   .refine(
-    async data => {
+    async (data) => {
       try {
-        return await validateUserEmail(data.email)
+        return await validateUserEmail(data.email);
       } catch (error) {
-        toast.error('Erro ao verificar e-mail. Tente novamente.')
-        return false
+        toast.error("Erro ao verificar e-mail. Tente novamente.");
+        return false;
       }
     },
     {
-      path: ['email'],
-      message: 'Este e-mail já está cadastrado no sistema.',
-    }
-  )
+      path: ["email"],
+      message: "Este e-mail já está cadastrado no sistema.",
+    },
+  );
 
 export function RegisterForm({ admin }: RegisterFormProps) {
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      cpf: '',
-      email: '',
-      confirmEmail: '',
-      password: '',
-      confirmPassword: '',
+      name: "",
+      cpf: "",
+      email: "",
+      confirmEmail: "",
+      password: "",
+      confirmPassword: "",
     },
-  })
+  });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       if (values.email !== values.confirmEmail) {
-        toast.error('Os e-mails precisam ser iguais.')
-        return
+        toast.error("Os e-mails precisam ser iguais.");
+        return;
       }
 
       if (values.password !== values.confirmPassword) {
-        toast.error('As senhas precisam ser iguais.')
-        return
+        toast.error("As senhas precisam ser iguais.");
+        return;
       }
 
-      const cpf = values.cpf.trim()
+      const cpf = values.cpf.trim();
 
       // Regex para verificar se o CPF tem exatamente 11 dígitos numéricos
-      const isValidCPF = /^[0-9]{11}$/.test(cpf)
+      const isValidCPF = /^[0-9]{11}$/.test(cpf);
 
       if (!isValidCPF) {
-        toast.error('O CPF deve conter exatamente 11 dígitos numéricos.')
-        return
+        toast.error("O CPF deve conter exatamente 11 dígitos numéricos.");
+        return;
       }
 
-      const userId = uuidv4()
+      const userId = uuidv4();
 
       const promise = createUser({
         userId,
@@ -140,43 +140,43 @@ export function RegisterForm({ admin }: RegisterFormProps) {
         cpf: values.cpf,
         email: values.email,
         password: values.password,
-      })
+      });
 
       toast.promise(promise, {
-        pending: 'Cadastrando...',
-        success: 'Cadastro realizado com sucesso.',
-        error: 'Erro no cadastro.',
-      })
+        pending: "Cadastrando...",
+        success: "Cadastro realizado com sucesso.",
+        error: "Erro no cadastro.",
+      });
 
-      await promise
-      setIsLoading(true)
-      admin ? router.push('/admin-login') : router.push('/login')
+      await promise;
+      setIsLoading(true);
+      admin ? router.push("/admin-login") : router.push("/login");
     } catch (error) {
-      toast.error('Erro no cadastro.')
-      console.error('Erro no cadastro: ', error)
+      toast.error("Erro no cadastro.");
+      console.error("Erro no cadastro: ", error);
     }
   }
 
   function showLoadingToast() {
-    setIsLoading(true)
+    setIsLoading(true);
   }
 
   useEffect(() => {
     const getSession = async () => {
       try {
-        const sessions = await account.get()
+        const sessions = await account.get();
 
         if (sessions.status) {
-          setIsLoading(true)
-          admin ? router.push('/dashboard') : router.push('/meus-dispositivos')
+          setIsLoading(true);
+          admin ? router.push("/dashboard") : router.push("/meus-dispositivos");
         }
       } catch (error) {
-        console.error('Erro: ', error)
+        console.error("Erro: ", error);
       }
-    }
+    };
 
-    getSession()
-  }, [])
+    getSession();
+  }, []);
 
   return (
     <>
@@ -379,7 +379,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
 
           {admin ? (
             <div className="w-full flex flex-col gap-3">
-              <Link className="flex w-full" href={'/login'}>
+              <Link className="flex w-full" href={"/login"}>
                 <Button
                   onClick={showLoadingToast}
                   type="button"
@@ -393,8 +393,8 @@ export function RegisterForm({ admin }: RegisterFormProps) {
           ) : (
             <div className=" flex gap-3">
               <span className="font-bold self-center">
-                Já possui conta?{' '}
-                <Link href={'/login'}>
+                Já possui conta?{" "}
+                <Link href={"/login"}>
                   <button
                     onClick={showLoadingToast}
                     type="button"
@@ -402,9 +402,9 @@ export function RegisterForm({ admin }: RegisterFormProps) {
                   >
                     Entre com e-mail ou CPF
                   </button>
-                </Link>{' '}
-                ou{' '}
-                <Link href={'/login'}>
+                </Link>{" "}
+                ou{" "}
+                <Link href={"/login"}>
                   <button
                     onClick={showLoadingToast}
                     type="button"
@@ -421,5 +421,5 @@ export function RegisterForm({ admin }: RegisterFormProps) {
       </Form>
       {isLoading && <LoadingToast />}
     </>
-  )
+  );
 }

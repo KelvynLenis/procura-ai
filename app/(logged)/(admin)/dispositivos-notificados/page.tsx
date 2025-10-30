@@ -1,5 +1,5 @@
-import { AlertsTable } from '@/components/Tables/AlertsTable'
-import { joinDevicesEventsUsers } from '@/functions/occurences/get-occurrences'
+import { AlertsTable } from "@/components/Tables/AlertsTable";
+import { joinDevicesEventsUsers } from "@/functions/occurences/get-occurrences";
 
 export default async function page() {
   // const occurences = await joinDevicesEventsUsers()
@@ -10,5 +10,5 @@ export default async function page() {
         <AlertsTable />
       </div>
     </div>
-  )
+  );
 }

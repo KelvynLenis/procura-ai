@@ -1,5 +1,5 @@
-import { account } from '@/lib/appwrite'
+import { account } from "@/lib/appwrite";
 
 export async function updatePassword(password: string, oldPassword: string) {
-  await account.updatePassword(password, oldPassword)
+  await account.updatePassword(password, oldPassword);
 }

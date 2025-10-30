@@ -1,5 +1,5 @@
-import { EditProfileForm } from '@/components/Forms/EditProfileForm'
-import ProtectedRoute from '@/components/ProtectedRoute'
+import { EditProfileForm } from "@/components/Forms/EditProfileForm";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default async function Perfil() {
   return (
@@ -10,5 +10,5 @@ export default async function Perfil() {
         </div>
       </ProtectedRoute>
     </>
-  )
+  );
 }

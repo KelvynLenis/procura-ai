@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { Contact, type DeviceProps, type User } from '@/types'
+import { useEffect, useState } from "react";
+import { Contact, type DeviceProps, type User } from "@/types";
 import {
   Table,
   TableBody,
@@ -9,27 +9,27 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Eye, Trash2, UserX } from 'lucide-react'
+} from "@/components/ui/table";
+import { Eye, Trash2, UserX } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { cn, formatDateTime } from '@/lib/utils'
-import { toast } from 'react-toastify'
-import { deleteUser } from '@/functions/user/delete-user'
-import { updateUserStatus } from '@/functions/user/update-user-status'
-import { deleteUserSession } from '@/functions/user/delete-user'
-import { listUserDevices } from '@/functions/device/list-user-devices'
-import { ConfirmationDialog } from '../ConfirmationDialog'
-import deviceInfo from '../../assets/icons/device-info.png'
-import contactIcon from '../../assets/icons/contact-table-header.svg'
-import Image from 'next/image'
-import { getOperator } from '@/functions/operators/get-operator'
-import { listContacts } from '@/functions/contact/list-contacts'
+} from "@/components/ui/dialog";
+import { cn, formatDateTime } from "@/lib/utils";
+import { toast } from "react-toastify";
+import { deleteUser } from "@/functions/user/delete-user";
+import { updateUserStatus } from "@/functions/user/update-user-status";
+import { deleteUserSession } from "@/functions/user/delete-user";
+import { listUserDevices } from "@/functions/device/list-user-devices";
+import { ConfirmationDialog } from "../ConfirmationDialog";
+import deviceInfo from "../../assets/icons/device-info.png";
+import contactIcon from "../../assets/icons/contact-table-header.svg";
+import Image from "next/image";
+import { getOperator } from "@/functions/operators/get-operator";
+import { listContacts } from "@/functions/contact/list-contacts";
 
 // interface User {
 //   $id: string
@@ -45,139 +45,139 @@ import { listContacts } from '@/functions/contact/list-contacts'
 // }
 
 interface UserRowProps {
-  user: User
-  index: number
-  setUsers: React.Dispatch<React.SetStateAction<User[]>>
+  user: User;
+  index: number;
+  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
 }
 
 export function UserRow({ user, index, setUsers }: UserRowProps) {
-  const [devices, setDevices] = useState<DeviceProps[]>([] as DeviceProps[])
-  const [contacts, setContacts] = useState<Contact[]>([] as Contact[])
-  const [isLoading, setIsLoading] = useState(true)
-  const [color, setColor] = useState('')
+  const [devices, setDevices] = useState<DeviceProps[]>([] as DeviceProps[]);
+  const [contacts, setContacts] = useState<Contact[]>([] as Contact[]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [color, setColor] = useState("");
 
   async function buildParams() {
-    const userId = user.user_id
+    const userId = user.user_id;
     const params = new URLSearchParams({
-      'queries[0]': JSON.stringify({
-        method: 'equal',
-        attribute: 'auth_id',
+      "queries[0]": JSON.stringify({
+        method: "equal",
+        attribute: "auth_id",
         values: [userId],
       }),
-    })
-    return params
+    });
+    return params;
   }
 
   async function handleDeleteUser(userAuthid: string, userDocumentId: string) {
     try {
-      await deleteUser(userAuthid, userDocumentId)
+      await deleteUser(userAuthid, userDocumentId);
 
-      setUsers(prevUsers =>
-        prevUsers.filter(prevUser => prevUser.$id !== userDocumentId)
-      )
-      toast.success('Usuário deletado com sucesso!')
+      setUsers((prevUsers) =>
+        prevUsers.filter((prevUser) => prevUser.$id !== userDocumentId),
+      );
+      toast.success("Usuário deletado com sucesso!");
     } catch (error) {
-      toast.error('Erro ao deletar usuário. Tente novamente.')
-      console.error('Erro ao deletar usuário:', error)
+      toast.error("Erro ao deletar usuário. Tente novamente.");
+      console.error("Erro ao deletar usuário:", error);
     }
   }
 
   async function handleDeactivateUser() {
     try {
-      const newStatus = user.status === 'Ativo' ? 'Inativo' : 'Ativo'
+      const newStatus = user.status === "Ativo" ? "Inativo" : "Ativo";
 
       const updatedUser = await updateUserStatus(user.$id, {
         status: newStatus,
-      })
+      });
 
       if (updatedUser) {
-        setUsers(prevUsers =>
-          prevUsers.map(prevUser => {
+        setUsers((prevUsers) =>
+          prevUsers.map((prevUser) => {
             if (prevUser.$id === user.$id) {
               return {
                 ...prevUser,
                 status: newStatus,
-              }
+              };
             }
-            return prevUser
-          })
-        )
+            return prevUser;
+          }),
+        );
 
         try {
-          await deleteUserSession(user.user_id)
+          await deleteUserSession(user.user_id);
         } catch (error) {
-          console.error('Erro ao deletar sessão do usuário:', error)
+          console.error("Erro ao deletar sessão do usuário:", error);
           // Não vamos interromper o fluxo se falhar ao deletar a sessão
         }
 
         toast.success(
-          `Usuário ${newStatus === 'Ativo' ? 'ativado' : 'desativado'} com sucesso!`
-        )
+          `Usuário ${newStatus === "Ativo" ? "ativado" : "desativado"} com sucesso!`,
+        );
       }
     } catch (error) {
       toast.error(
-        `Erro ao ${user.status === 'Ativo' ? 'desativar' : 'ativar'} usuário. Tente novamente.`
-      )
+        `Erro ao ${user.status === "Ativo" ? "desativar" : "ativar"} usuário. Tente novamente.`,
+      );
       console.error(
-        `Erro ao ${user.status === 'Ativo' ? 'desativar' : 'ativar'} usuário:`,
-        error
-      )
+        `Erro ao ${user.status === "Ativo" ? "desativar" : "ativar"} usuário:`,
+        error,
+      );
     }
   }
 
   async function fetchOperator(operatorId: string) {
-    const operator = await getOperator(operatorId)
+    const operator = await getOperator(operatorId);
 
-    return operator
+    return operator;
   }
 
   useEffect(() => {
     const getDevices = async () => {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
-        const userDevices = await listUserDevices(user.user_id)
-        setDevices(userDevices)
+        const userDevices = await listUserDevices(user.user_id);
+        setDevices(userDevices);
       } catch (error) {
-        console.error('Erro ao buscar dispositivos:', error)
+        console.error("Erro ao buscar dispositivos:", error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
     const getContacts = async () => {
       try {
-        const contact = await listContacts({ userIdParam: user.user_id })
+        const contact = await listContacts({ userIdParam: user.user_id });
         if (contact) {
-          setContacts(contact)
+          setContacts(contact);
         }
       } catch (error) {
-        console.error('Erro ao buscar contato:', error)
+        console.error("Erro ao buscar contato:", error);
       }
-    }
+    };
 
-    getContacts()
-    getDevices()
-    getRandomProfileColor()
-  }, [user.user_id])
+    getContacts();
+    getDevices();
+    getRandomProfileColor();
+  }, [user.user_id]);
 
   function getRandomProfileColor() {
     const colors = [
-      '#FF5733',
-      '#33FF57',
-      '#3357FF',
-      '#FF33A8',
-      '#FFC300',
-      '#A833FF',
-      '#33FFF6',
-      '#FF8C33',
-      '#57FF33',
-      '#33A8FF',
-    ]
+      "#FF5733",
+      "#33FF57",
+      "#3357FF",
+      "#FF33A8",
+      "#FFC300",
+      "#A833FF",
+      "#33FFF6",
+      "#FF8C33",
+      "#57FF33",
+      "#33A8FF",
+    ];
 
-    setColor(colors[Math.floor(Math.random() * colors.length)])
+    setColor(colors[Math.floor(Math.random() * colors.length)]);
   }
 
-  const isUserActive = user.status === 'Ativo'
+  const isUserActive = user.status === "Ativo";
 
   return (
     <>
@@ -189,29 +189,29 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
           <div className="flex  items-center">
             <span
               className={cn(
-                'text-xl text-white font-bold uppercase rounded-full w-10 h-10 px-1 flex items-center justify-center mr-3 bg-procura-ai-blue'
+                "text-xl text-white font-bold uppercase rounded-full w-10 h-10 px-1 flex items-center justify-center mr-3 bg-procura-ai-blue",
               )}
             >
-              {user.name!.split(' ').length > 1
-                ? user.name!.split(' ')[0][0] + user.name!.split(' ')[1][0]
-                : user.name!.split(' ')[0][0]}
+              {user.name!.split(" ").length > 1
+                ? user.name!.split(" ")[0][0] + user.name!.split(" ")[1][0]
+                : user.name!.split(" ")[0][0]}
             </span>
-            <span className="text-lg font-bold">{user.name || 'N/A'}</span>
+            <span className="text-lg font-bold">{user.name || "N/A"}</span>
           </div>
         </TableCell>
         <TableCell className="font-bold text-lg break-words">
-          {user.email || 'N/A'}
+          {user.email || "N/A"}
         </TableCell>
-        <TableCell className={cn('font-bold break-words')}>
+        <TableCell className={cn("font-bold break-words")}>
           <span
             className={cn(
-              'font-bold text-lg break-words p-2 rounded-md capitalize',
-              user.type === 'Usuario'
-                ? 'bg-sky-400/40 text-sky-700'
-                : 'bg-purple-500/35 text-purple-800'
+              "font-bold text-lg break-words p-2 rounded-md capitalize",
+              user.type === "Usuario"
+                ? "bg-sky-400/40 text-sky-700"
+                : "bg-purple-500/35 text-purple-800",
             )}
           >
-            {user.type === 'Usuario' ? 'Usuário' : user.type || 'N/A'}
+            {user.type === "Usuario" ? "Usuário" : user.type || "N/A"}
           </span>
         </TableCell>
         <TableCell>
@@ -246,10 +246,10 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                         />
                       ) : (
                         <div className="w-12 h-12 flex items-center justify-center text-white rounded-full bg-procura-ai-blue ">
-                          {user.name!.split(' ').length > 1
-                            ? user.name!.split(' ')[0][0] +
-                              user.name!.split(' ')[1][0]
-                            : user.name!.split(' ')[0][0]}
+                          {user.name!.split(" ").length > 1
+                            ? user.name!.split(" ")[0][0] +
+                              user.name!.split(" ")[1][0]
+                            : user.name!.split(" ")[0][0]}
                         </div>
                       )}
                       Dados pessoais
@@ -272,7 +272,7 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                         <span className="w-full">
                           {user.accessed_at
                             ? formatDateTime(user.accessed_at)
-                            : 'N/A'}
+                            : "N/A"}
                         </span>
                       </div>
                       <div className="flex">
@@ -280,7 +280,7 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                         <span className="w-full">
                           {user.$createdAt
                             ? formatDateTime(user.$createdAt)
-                            : 'N/A'}
+                            : "N/A"}
                         </span>
                       </div>
                     </div>
@@ -331,9 +331,9 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                                 <TableCell className="">
                                   {device.operator_id
                                     ? fetchOperator(device.operator_id).then(
-                                        operator => operator?.name_operator
+                                        (operator) => operator?.name_operator,
                                       )
-                                    : 'N/A'}
+                                    : "N/A"}
                                 </TableCell>
                                 <TableCell className="capitalize">
                                   {device.brand}
@@ -347,17 +347,17 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                                 <TableCell className="font-medium">
                                   <span
                                     className={cn(
-                                      'w-fit rounded-sm flex items-center justify-center',
-                                      device.status === 'Roubado' &&
-                                        'bg-robbery-bg text-red-600 px-3 py-1 ring-red-500',
-                                      device.status === 'Furtado' &&
-                                        'bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500',
-                                      device.status === 'Perdido' &&
-                                        'bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500',
-                                      device.status === 'Recuperado' &&
-                                        'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500',
-                                      device.status === 'Regular' &&
-                                        'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500'
+                                      "w-fit rounded-sm flex items-center justify-center",
+                                      device.status === "Roubado" &&
+                                        "bg-robbery-bg text-red-600 px-3 py-1 ring-red-500",
+                                      device.status === "Furtado" &&
+                                        "bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500",
+                                      device.status === "Perdido" &&
+                                        "bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500",
+                                      device.status === "Recuperado" &&
+                                        "bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500",
+                                      device.status === "Regular" &&
+                                        "bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500",
                                     )}
                                   >
                                     {device.status}
@@ -408,13 +408,19 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                             contacts.map((contact, index) => (
                               <TableRow key={index}>
                                 <TableCell className="capitalize">
-                                  {contact.name_contact ? contact.name_contact : 'Não Informado'}
+                                  {contact.name_contact
+                                    ? contact.name_contact
+                                    : "Não Informado"}
                                 </TableCell>
                                 <TableCell className="capitalize">
-                                  {contact.email_contact ? contact.email_contact : 'Não Informado'}
+                                  {contact.email_contact
+                                    ? contact.email_contact
+                                    : "Não Informado"}
                                 </TableCell>
                                 <TableCell className="">
-                                  {`(${contact.number_contact.slice(0, 2)}) ${contact.number_contact.slice(2, 7)}-${contact.number_contact.slice(7, 11)}` ? `(${contact.number_contact.slice(0, 2)}) ${contact.number_contact.slice(2, 7)}-${contact.number_contact.slice(7, 11)}` : 'Não Informado'}
+                                  {`(${contact.number_contact.slice(0, 2)}) ${contact.number_contact.slice(2, 7)}-${contact.number_contact.slice(7, 11)}`
+                                    ? `(${contact.number_contact.slice(0, 2)}) ${contact.number_contact.slice(2, 7)}-${contact.number_contact.slice(7, 11)}`
+                                    : "Não Informado"}
                                 </TableCell>
                               </TableRow>
                             ))
@@ -436,28 +442,28 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
             <ConfirmationDialog
               title={
                 isUserActive
-                  ? 'Tem certeza que deseja desativar o usuário?'
-                  : 'Tem certeza que deseja ativar o usuário?'
+                  ? "Tem certeza que deseja desativar o usuário?"
+                  : "Tem certeza que deseja ativar o usuário?"
               }
               description={
                 isUserActive
-                  ? 'Os dados do usuáiro permaneceram na base de dados, entretanto seu acesso será revogado.'
-                  : 'O acesso do usuário será restaurado.'
+                  ? "Os dados do usuáiro permaneceram na base de dados, entretanto seu acesso será revogado."
+                  : "O acesso do usuário será restaurado."
               }
               onConfirm={handleDeactivateUser}
             >
               <button
                 type="button"
                 className={cn(
-                  'rounded-lg w-10 h-10 flex ring-1  group relative  items-center justify-center p-1 hover:opacity-90',
+                  "rounded-lg w-10 h-10 flex ring-1  group relative  items-center justify-center p-1 hover:opacity-90",
                   isUserActive
-                    ? 'ring-zinc-300 hover:bg-orange-100 hover:ring-orange-600 hover:text-orange-700 text-orange-600'
-                    : 'bg-orange-100 ring-orange-600 hover:ring-orange-300 hover:text-orange-500 text-orange-600'
+                    ? "ring-zinc-300 hover:bg-orange-100 hover:ring-orange-600 hover:text-orange-700 text-orange-600"
+                    : "bg-orange-100 ring-orange-600 hover:ring-orange-300 hover:text-orange-500 text-orange-600",
                 )}
               >
                 <UserX size={26} />
                 <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
-                  {isUserActive ? 'Desativar usuário' : 'Ativar usuário'}
+                  {isUserActive ? "Desativar usuário" : "Ativar usuário"}
                 </span>
               </button>
             </ConfirmationDialog>
@@ -481,5 +487,5 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
         </TableCell>
       </TableRow>
     </>
-  )
+  );
 }

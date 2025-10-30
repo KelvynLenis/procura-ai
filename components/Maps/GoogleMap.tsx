@@ -19,7 +19,10 @@ interface GoogleMapProps {
   setNeighborhoodId: (districtId: string) => void;
 }
 
-export default function GoogleMap({ setPosition, setNeighborhoodId }: ParaibaMapProps) {
+export default function GoogleMap({
+  setPosition,
+  setNeighborhoodId,
+}: ParaibaMapProps) {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const markerRef = useRef<google.maps.Marker | null>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
@@ -33,7 +36,7 @@ export default function GoogleMap({ setPosition, setNeighborhoodId }: ParaibaMap
   // ⬇️ Externas ao useEffect
   const setMarker = (
     position: google.maps.LatLngLiteral,
-    map: google.maps.Map
+    map: google.maps.Map,
   ) => {
     if (markerRef.current) markerRef.current.setMap(null);
 
@@ -47,7 +50,7 @@ export default function GoogleMap({ setPosition, setNeighborhoodId }: ParaibaMap
   };
 
   const checkIfPointIsInParaiba = (
-    latLng: google.maps.LatLngLiteral
+    latLng: google.maps.LatLngLiteral,
   ): boolean => {
     const data = geoJsonPBDataRef.current;
     if (!data?.features) return false;
@@ -68,35 +71,35 @@ export default function GoogleMap({ setPosition, setNeighborhoodId }: ParaibaMap
 
     if (!data?.features) {
       toast.error("Houve um erro ao verificar o bairro.");
-    };
+    }
 
-    let foundFeature = null
+    let foundFeature = null;
 
     const point = turf.point([latLng.lng, latLng.lat]);
     for (const feature of data.features) {
       if (turf.booleanPointInPolygon(point, feature)) {
-        foundFeature = feature
-        break
+        foundFeature = feature;
+        break;
       }
     }
-    
+
     if (foundFeature) {
       const neighborhoodId = await getNeighborhoodId(
-        Number(foundFeature?.properties?.cod_bairro)
-      )
+        Number(foundFeature?.properties?.cod_bairro),
+      );
       console.log(foundFeature);
 
-      setNeighborhoodId(neighborhoodId)
+      setNeighborhoodId(neighborhoodId);
     }
   };
 
   const handlePredictionSelect = async (
     placeId: string,
-    description: string
+    description: string,
   ) => {
     try {
       const res = await fetch(
-        `/api/select-prediction?placeId=${encodeURIComponent(placeId)}`
+        `/api/select-prediction?placeId=${encodeURIComponent(placeId)}`,
       );
       const json = await res.json();
 
@@ -110,7 +113,7 @@ export default function GoogleMap({ setPosition, setNeighborhoodId }: ParaibaMap
 
       // const isInPB = checkIfPointIsInParaiba(latLng);
       // if (!isInPB) return;
-      checkDistrict(latLng)
+      checkDistrict(latLng);
 
       mapInstance.current.setCenter(latLng);
       mapInstance.current.setZoom(14);
@@ -133,12 +136,14 @@ export default function GoogleMap({ setPosition, setNeighborhoodId }: ParaibaMap
 
     const timerId = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/autocomplete?input=${encodeURIComponent(text)}`);
+        const res = await fetch(
+          `/api/autocomplete?input=${encodeURIComponent(text)}`,
+        );
         const json = await res.json();
 
         if (json.status === "OK") {
           const filtered = json.predictions.filter((p: any) =>
-            /PB|Paraíba/i.test(p.description)
+            /PB|Paraíba/i.test(p.description),
           );
           setPredictions(filtered);
         } else {
@@ -153,14 +158,13 @@ export default function GoogleMap({ setPosition, setNeighborhoodId }: ParaibaMap
   };
 
   useEffect(() => {
-    Promise.all([
-      getGeoJsonData(geoJsonLink),
-      getGeoJsonData(geoJsonPB),
-    ]).then(([neighborhoodData, paraibaData]) => {
-      geoJsonPBDataRef.current = paraibaData;
-      geoJsonNeighborhoodDataRef.current = neighborhoodData;
-      // Se precisar usar neighborhoodData também, adicione outra ref
-    });
+    Promise.all([getGeoJsonData(geoJsonLink), getGeoJsonData(geoJsonPB)]).then(
+      ([neighborhoodData, paraibaData]) => {
+        geoJsonPBDataRef.current = paraibaData;
+        geoJsonNeighborhoodDataRef.current = neighborhoodData;
+        // Se precisar usar neighborhoodData também, adicione outra ref
+      },
+    );
 
     const loadScript = () => {
       if (document.getElementById("google-maps-script")) {
@@ -228,22 +232,22 @@ export default function GoogleMap({ setPosition, setNeighborhoodId }: ParaibaMap
           value={search}
           onChange={(e) => handleSearchChange(e.target.value)}
           className="w-full h-10 px-4 border rounded shadow-sm text-sm"
-          />
-          {predictions.length > 0 && (
-            <ul className="relative z-50 w-full flex flex-col-reverse bg-white border rounded shadow max-h-32 overflow-auto">
-              {predictions.map((place) => (
-                <li
-                  key={place.place_id}
-                  onClick={() =>
-                    handlePredictionSelect(place.place_id, place.description)
-                  }
-                  className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                >
-                  {place.description}
-                </li>
-              ))}
-            </ul>
-          )}
+        />
+        {predictions.length > 0 && (
+          <ul className="relative z-50 w-full flex flex-col-reverse bg-white border rounded shadow max-h-32 overflow-auto">
+            {predictions.map((place) => (
+              <li
+                key={place.place_id}
+                onClick={() =>
+                  handlePredictionSelect(place.place_id, place.description)
+                }
+                className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+              >
+                {place.description}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
       <div
         ref={mapRef}

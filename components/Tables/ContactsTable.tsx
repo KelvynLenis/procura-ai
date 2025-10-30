@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Table,
@@ -7,24 +7,24 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from "@/components/ui/table";
 
-import { useEffect, useState } from 'react'
-import { Skeleton } from '../ui/skeleton'
-import type { Contact } from '@/types'
-import { ContactRow } from './ContactRow'
-import Button from '../Button'
-import { ConctactForm } from '../Forms/ConctactForm'
-import { listContacts } from '@/functions/contact/list-contacts'
-import { cn } from '@/lib/utils'
+import { useEffect, useState } from "react";
+import { Skeleton } from "../ui/skeleton";
+import type { Contact } from "@/types";
+import { ContactRow } from "./ContactRow";
+import Button from "../Button";
+import { ConctactForm } from "../Forms/ConctactForm";
+import { listContacts } from "@/functions/contact/list-contacts";
+import { cn } from "@/lib/utils";
 
 interface ContactsTableProps {
-  contacts: Contact[]
-  setContacts: React.Dispatch<React.SetStateAction<Contact[]>>
+  contacts: Contact[];
+  setContacts: React.Dispatch<React.SetStateAction<Contact[]>>;
 }
 
 export function ContactsTable({ contacts, setContacts }: ContactsTableProps) {
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
     <>
@@ -68,5 +68,5 @@ export function ContactsTable({ contacts, setContacts }: ContactsTableProps) {
         </TableBody>
       </Table>
     </>
-  )
+  );
 }

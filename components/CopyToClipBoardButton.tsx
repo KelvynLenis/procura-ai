@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { Check, Clipboard } from "lucide-react";
 import { useState } from "react";
@@ -21,9 +21,9 @@ export function CopyToClipBoardButton({ text }: CopyToClipBoardButtonProps) {
         hideProgressBar: true,
         closeOnClick: true,
         style: {
-          color: '#65A30D'
-        }
-      })
+          color: "#65A30D",
+        },
+      });
       setCopied(true);
       setTimeout(() => setCopied(false), 2000); // Reseta o estado após 2 segundos
     } catch (err) {
@@ -34,14 +34,12 @@ export function CopyToClipBoardButton({ text }: CopyToClipBoardButtonProps) {
   return (
     <>
       <button onClick={() => handleCopy(text)}>
-        {
-          copied ? (
-            <Check size={16} className="text-lime-600" />
-          ) : (
-            <Clipboard size={16} />
-          )
-        }
+        {copied ? (
+          <Check size={16} className="text-lime-600" />
+        ) : (
+          <Clipboard size={16} />
+        )}
       </button>
     </>
-  )
+  );
 }

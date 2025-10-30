@@ -1,14 +1,14 @@
-import { DevicesWrapper } from '@/components/Devices/DevicesWrapper'
-import ProtectedRoute from '@/components/ProtectedRoute'
+import { DevicesWrapper } from "@/components/Devices/DevicesWrapper";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 interface MeusDispositivosProps {
-  searchParams: { id?: string }
+  searchParams: { id?: string };
 }
 
 export default async function MyDevicesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ id?: string }>
+  searchParams: Promise<{ id?: string }>;
 }) {
   const { id } = await searchParams;
 
@@ -18,5 +18,5 @@ export default async function MyDevicesPage({
         <DevicesWrapper deviceNotificationId={id} />
       </div>
     </ProtectedRoute>
-  )
+  );
 }

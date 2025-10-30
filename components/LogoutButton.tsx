@@ -1,25 +1,28 @@
-'use client'
+"use client";
 
-import { useToast } from "@/hooks/use-toast"
-import Button from "./Button"
-import { LogOut } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { account } from "@/lib/appwrite"
+import { useToast } from "@/hooks/use-toast";
+import Button from "./Button";
+import { LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { account } from "@/lib/appwrite";
 
 export function LogoutButton() {
-  const { toast } = useToast()
-  const router = useRouter()
-
+  const { toast } = useToast();
+  const router = useRouter();
 
   async function handleLogOut() {
-    await account.deleteSession('current')
+    await account.deleteSession("current");
 
-    router.push('/')
-
+    router.push("/");
   }
   return (
-    <Button variant='red' type='button' className="self-start" onClick={handleLogOut}>
+    <Button
+      variant="red"
+      type="button"
+      className="self-start"
+      onClick={handleLogOut}
+    >
       <LogOut />
     </Button>
-  )
+  );
 }

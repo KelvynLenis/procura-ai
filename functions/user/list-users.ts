@@ -3,15 +3,18 @@ interface ListUsersResponse {
   total: number;
 }
 
-export async function listUsers(page: number, limit: number): Promise<ListUsersResponse> {
+export async function listUsers(
+  page: number,
+  limit: number,
+): Promise<ListUsersResponse> {
   try {
     const params = new URLSearchParams({
-      'queries[0]': JSON.stringify({
-        method: 'limit',
+      "queries[0]": JSON.stringify({
+        method: "limit",
         values: [limit],
       }),
-      'queries[1]': JSON.stringify({
-        method: 'offset',
+      "queries[1]": JSON.stringify({
+        method: "offset",
         values: [(page - 1) * limit],
       }),
     });
@@ -19,12 +22,13 @@ export async function listUsers(page: number, limit: number): Promise<ListUsersR
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,
       {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'X-Appwrite-Project': process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || '',
+          "Content-Type": "application/json",
+          "X-Appwrite-Project":
+            process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID || "",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -37,7 +41,7 @@ export async function listUsers(page: number, limit: number): Promise<ListUsersR
       total: result.total || 0,
     };
   } catch (error) {
-    console.error('Erro ao buscar usuários:', error);
+    console.error("Erro ao buscar usuários:", error);
     throw error;
   }
-} 
+}

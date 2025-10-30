@@ -1,8 +1,8 @@
-import { RegisterForm } from '@/components/Forms/RegisterForm'
-import loginImages from '../../assets/images/landing-image.png'
-import Image from 'next/image'
-import { Footer } from '@/components/Footer'
-import logo from '../../assets/icons/logo-text.svg'
+import { RegisterForm } from "@/components/Forms/RegisterForm";
+import loginImages from "../../assets/images/landing-image.png";
+import Image from "next/image";
+import { Footer } from "@/components/Footer";
+import logo from "../../assets/icons/logo-text.svg";
 
 export default function Login() {
   return (
@@ -25,5 +25,5 @@ export default function Login() {
       </main>
       <Footer />
     </>
-  )
+  );
 }

@@ -1,12 +1,12 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import type { Contact } from '@/types'
-import { listContacts } from '@/functions/contact/list-contacts'
-import ClipLoader from 'react-spinners/ClipLoader'
-import { ContactsTable } from './Tables/ContactsTable'
-import { ContactsList } from './ContactsList'
-import { cn } from '@/lib/utils'
+import { useEffect, useState } from "react";
+import type { Contact } from "@/types";
+import { listContacts } from "@/functions/contact/list-contacts";
+import ClipLoader from "react-spinners/ClipLoader";
+import { ContactsTable } from "./Tables/ContactsTable";
+import { ContactsList } from "./ContactsList";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -14,26 +14,26 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { ConctactForm } from './Forms/ConctactForm'
-import Button from './Button'
+} from "@/components/ui/dialog";
+import { ConctactForm } from "./Forms/ConctactForm";
+import Button from "./Button";
 
 export function ContactsComponent() {
-  const [contacts, setContacts] = useState<Contact[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     const getContacts = async () => {
-      const contactsResponse = await listContacts({})
+      const contactsResponse = await listContacts({});
 
-      setContacts(contactsResponse)
+      setContacts(contactsResponse);
 
-      setIsLoading(false)
-    }
+      setIsLoading(false);
+    };
 
-    getContacts()
-  }, [])
+    getContacts();
+  }, []);
 
   return (
     <>
@@ -75,12 +75,12 @@ export function ContactsComponent() {
             </Dialog>
             <span
               className={cn(
-                'flex self-end font-medium mt-3',
-                contacts.length >= 3 && 'text-red-500'
+                "flex self-end font-medium mt-3",
+                contacts.length >= 3 && "text-red-500",
               )}
             >
               {contacts.length >= 3
-                ? 'Você atingiu o limite máximo de contatos cadastrados.'
+                ? "Você atingiu o limite máximo de contatos cadastrados."
                 : `Você cadastrou ${contacts.length} contatos. Limite máximo de 3
               contatos.`}
             </span>
@@ -88,5 +88,5 @@ export function ContactsComponent() {
         </>
       )}
     </>
-  )
+  );
 }

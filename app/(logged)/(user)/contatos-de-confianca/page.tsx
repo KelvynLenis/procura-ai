@@ -1,5 +1,5 @@
-import { ContactsComponent } from '@/components/ContactsWrapper'
-import ProtectedRoute from '@/components/ProtectedRoute'
+import { ContactsComponent } from "@/components/ContactsWrapper";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default async function MyDevicesPage() {
   return (
@@ -8,5 +8,5 @@ export default async function MyDevicesPage() {
         <ContactsComponent />
       </div>
     </ProtectedRoute>
-  )
+  );
 }

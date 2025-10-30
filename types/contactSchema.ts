@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from "zod";
 
 const ContactSchema = z.object({
   $collectionId: z.string(),
@@ -11,6 +11,6 @@ const ContactSchema = z.object({
   email_contact: z.string().optional(),
   number_contact: z.string(),
   user_id: z.string(),
-})
+});
 
-export default ContactSchema
+export default ContactSchema;

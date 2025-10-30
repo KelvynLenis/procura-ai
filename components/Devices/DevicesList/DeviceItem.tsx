@@ -1,33 +1,33 @@
-'use client'
+"use client";
 
-import { cn } from '@/lib/utils'
-import { IoIosWarning } from 'react-icons/io'
-import { AlertForm } from '../../Forms/AlertForm'
-import type { DeviceProps } from '@/types'
-import { Eye, X } from 'lucide-react'
-import { ViewMyAlert } from '../../ViewMyAlert'
-import { toast } from 'react-toastify'
-import { useEffect, useState } from 'react'
-import { DeviceDetailsCard } from './DeviceDetailsCard'
-import { createEvent } from '@/functions/event/create-event'
-import { updateDeviceStatus } from '@/functions/device/update-device-status'
+import { cn } from "@/lib/utils";
+import { IoIosWarning } from "react-icons/io";
+import { AlertForm } from "../../Forms/AlertForm";
+import type { DeviceProps } from "@/types";
+import { Eye, X } from "lucide-react";
+import { ViewMyAlert } from "../../ViewMyAlert";
+import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { DeviceDetailsCard } from "./DeviceDetailsCard";
+import { createEvent } from "@/functions/event/create-event";
+import { updateDeviceStatus } from "@/functions/device/update-device-status";
 
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
-import { ViewMyAlerts } from '@/components/ViewMyAlerts'
-import { useRouter } from 'next/navigation'
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { ViewMyAlerts } from "@/components/ViewMyAlerts";
+import { useRouter } from "next/navigation";
 
 interface DeviceItemProps {
-  id: string // ID do dispositivo
-  phone_number: string // Número de telefone
-  phone_model: string // Modelo do telefone
-  brand: string // Fabricante do telefone
-  operator_id: string | undefined // ID do operador
-  imei: string // IMEI do telefone
-  isStolen: boolean // Status de "roubado" (true/false)
-  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
-  index: number
-  status: string
-  deviceNotificationId?: string
+  id: string; // ID do dispositivo
+  phone_number: string; // Número de telefone
+  phone_model: string; // Modelo do telefone
+  brand: string; // Fabricante do telefone
+  operator_id: string | undefined; // ID do operador
+  imei: string; // IMEI do telefone
+  isStolen: boolean; // Status de "roubado" (true/false)
+  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>;
+  index: number;
+  status: string;
+  deviceNotificationId?: string;
 }
 
 export function DeviceItem({
@@ -41,15 +41,15 @@ export function DeviceItem({
   status,
   setDevices,
   index,
-  deviceNotificationId
+  deviceNotificationId,
 }: DeviceItemProps) {
   const [isViewDeviceDetailsCardOpen, setIsViewDeviceDetailsCardOpen] =
-    useState(false)
-  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false)
+    useState(false);
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
 
-  const router = useRouter()
+  const router = useRouter();
 
-  const isRegular = status === 'Regular' || status === 'Recuperado'
+  const isRegular = status === "Regular" || status === "Recuperado";
 
   async function handleDeviceRecovery(id: string) {
     try {
@@ -57,46 +57,45 @@ export function DeviceItem({
         id_device: id,
         time_event: new Date().toISOString(),
         last_location: [0, 0],
-        description: 'Evento Cancelado pelo usuário',
-        type: 'Regular',
+        description: "Evento Cancelado pelo usuário",
+        type: "Regular",
         is_alert_on: false,
-        id_district: '',
-      })
+        id_district: "",
+      });
       const success = await updateDeviceStatus(id, {
         is_stolen: false,
-        status: 'Regular',
-      })
+        status: "Regular",
+      });
 
       if (success) {
-        setDevices(prevDevices =>
-          prevDevices.map(device =>
+        setDevices((prevDevices) =>
+          prevDevices.map((device) =>
             device.$id === id
-              ? { ...device, is_stolen: false, status: 'Regular' }
-              : device
-          )
-        )
+              ? { ...device, is_stolen: false, status: "Regular" }
+              : device,
+          ),
+        );
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
   function handleViewDevice() {
-    setIsViewDeviceDetailsCardOpen(true)
+    setIsViewDeviceDetailsCardOpen(true);
   }
 
   useEffect(() => {
-    console.log(deviceNotificationId, id)
-    
+    console.log(deviceNotificationId, id);
+
     if (window.innerWidth >= 1080) {
-      return
+      return;
     }
 
     if (deviceNotificationId && deviceNotificationId === id) {
-      setIsAlertModalOpen(true)
+      setIsAlertModalOpen(true);
     }
-
-  }, [])
+  }, []);
 
   return (
     <>
@@ -107,15 +106,16 @@ export function DeviceItem({
         <div className="flex justify-center gap-2">
           <span
             className={cn(
-              'rounded-md mobile:w-24 mobile:text-sm mobile-sm:w-20 mobile-sm:text-xs mobile: flex self-center items-center justify-center capitalize font-medium',
-              status === 'Roubado' && 'bg-robbery-bg text-robbery-text p-2',
-              status === 'Recuperado' && 'bg-recovered-bg text-recovered-text p-2',
-              status === 'Regular' && 'bg-regular-bg text-regular-text p-2',
-              status === 'Furtado' && 'bg-theft-bg text-theft-text p-2',
-              status === 'Perdido' && 'bg-lost-bg text-lost-text p-2'
+              "rounded-md mobile:w-24 mobile:text-sm mobile-sm:w-20 mobile-sm:text-xs mobile: flex self-center items-center justify-center capitalize font-medium",
+              status === "Roubado" && "bg-robbery-bg text-robbery-text p-2",
+              status === "Recuperado" &&
+                "bg-recovered-bg text-recovered-text p-2",
+              status === "Regular" && "bg-regular-bg text-regular-text p-2",
+              status === "Furtado" && "bg-theft-bg text-theft-text p-2",
+              status === "Perdido" && "bg-lost-bg text-lost-text p-2",
             )}
           >
-            {status.replace(' ', '')}
+            {status.replace(" ", "")}
           </span>
 
           <Dialog open={isAlertModalOpen} onOpenChange={setIsAlertModalOpen}>
@@ -123,22 +123,24 @@ export function DeviceItem({
               <button
                 type="button"
                 className={cn(
-                  'rounded-lg group relative w-8 h-8 ring-1 flex flex-col md:flex-row items-center justify-center',
-                  status === 'Recuperado' 
-                  ? 'bg-recovered-bg text-recovered-text' 
-                  : status === 'Regular' 
-                    ? 'ring-zinc-300 bg-white text-red-600 hover:bg-red-300 hover:ring-red-500'
-                    : 'ring-red-700 text-white bg-red-600 hover:bg-red-100 hover:text-red-600'
+                  "rounded-lg group relative w-8 h-8 ring-1 flex flex-col md:flex-row items-center justify-center",
+                  status === "Recuperado"
+                    ? "bg-recovered-bg text-recovered-text"
+                    : status === "Regular"
+                      ? "ring-zinc-300 bg-white text-red-600 hover:bg-red-300 hover:ring-red-500"
+                      : "ring-red-700 text-white bg-red-600 hover:bg-red-100 hover:text-red-600",
                 )}
               >
                 <IoIosWarning size={28} />
               </button>
             </DialogTrigger>
             <DialogContent className="h-[95%] overflow-scroll flex flex-col w-[93%] px-0 pt-0">
-              {status !== 'Regular' ? (
+              {status !== "Regular" ? (
                 <>
                   <span className="w-full flex bg-secondary/10 py-4 items-center px-2">
-                    <h2 className='text-lg font-medium text-secondary'>Informações da ocorrência</h2>
+                    <h2 className="text-lg font-medium text-secondary">
+                      Informações da ocorrência
+                    </h2>
                   </span>
                   <ViewMyAlert
                     id={id}
@@ -148,7 +150,7 @@ export function DeviceItem({
                   />
                 </>
               ) : (
-                <div className='px-3 py-2'>
+                <div className="px-3 py-2">
                   <h2 className="font-bold">Preencha as informações</h2>
                   <AlertForm
                     id={id}
@@ -189,21 +191,21 @@ export function DeviceItem({
         </div>
       </div>
     </>
-  )
+  );
 }
 
 interface ModalProps {
-  phone_number: string
-  phone_model: string
-  brand: string
-  imei: string
-  status: string
-  setModalOpen: (value: boolean) => void
-  operator_id: string
-  id: string // ID do dispositivo
-  isStolen: boolean // Status de "roubado" (true/false)
-  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
-  index: number
+  phone_number: string;
+  phone_model: string;
+  brand: string;
+  imei: string;
+  status: string;
+  setModalOpen: (value: boolean) => void;
+  operator_id: string;
+  id: string; // ID do dispositivo
+  isStolen: boolean; // Status de "roubado" (true/false)
+  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>;
+  index: number;
 }
 
 function ViewDeviceInfoModal({
@@ -247,5 +249,5 @@ function ViewDeviceInfoModal({
         />
       </div>
     </>
-  )
+  );
 }

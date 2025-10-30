@@ -1,5 +1,5 @@
-import { DeviceForm } from '@/components/Forms/DeviceForm'
-import ProtectedRoute from '@/components/ProtectedRoute'
+import { DeviceForm } from "@/components/Forms/DeviceForm";
+import ProtectedRoute from "@/components/ProtectedRoute";
 export default async function AddDevice() {
   return (
     <>
@@ -9,5 +9,5 @@ export default async function AddDevice() {
         </div>
       </ProtectedRoute>
     </>
-  )
+  );
 }

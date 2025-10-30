@@ -1,4 +1,4 @@
-import { EditProfileForm } from '@/components/Forms/EditProfileForm'
+import { EditProfileForm } from "@/components/Forms/EditProfileForm";
 
 export default async function Perfil() {
   return (
@@ -7,5 +7,5 @@ export default async function Perfil() {
         <EditProfileForm />
       </div>
     </>
-  )
+  );
 }

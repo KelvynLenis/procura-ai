@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Table,
@@ -7,23 +7,20 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Skeleton } from '@/components/ui/skeleton'
-import type { DeviceProps } from '@/types'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { DeviceRow } from './DeviceRow'
-import { useEffect } from 'react'
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { DeviceProps } from "@/types";
+import { DeviceRow } from "./DeviceRow";
 
 interface DevicesTableProps {
-  devices: DeviceProps[]
-  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>
-  totalDevices: number
-  page: number
-  pages: number
-  limit: number
-  isLoading: boolean
-  deviceNotificationId?: string
+  devices: DeviceProps[];
+  setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>;
+  totalDevices: number;
+  page: number;
+  pages: number;
+  limit: number;
+  isLoading: boolean;
+  deviceNotificationId?: string;
 }
 
 export function DevicesTable({
@@ -34,9 +31,8 @@ export function DevicesTable({
   pages,
   limit,
   isLoading,
-  deviceNotificationId
+  deviceNotificationId,
 }: DevicesTableProps) {
-
   return (
     <>
       <Table className="bg-white shadow-lg rounded-xl self-center">
@@ -94,16 +90,10 @@ export function DevicesTable({
           ) : devices.length > 0 ? (
             devices.map((device, index) => (
               <DeviceRow
-                key={device.$id}
+                // key={device.$id!}
                 index={index + 1 * ((page - 1) * limit)}
                 id={device.$id!}
-                phone_number={device.phone_number}
-                phone_model={device.phone_model}
-                brand={device.brand}
-                imei={device.imei}
-                isStolen={device.is_stolen!}
-                status={device.status!}
-                operator_id={device.operator_id}
+                device={device}
                 setDevices={setDevices}
                 deviceNotificationId={deviceNotificationId}
               />
@@ -115,48 +105,8 @@ export function DevicesTable({
               </TableCell>
             </TableRow>
           )}
-
-          {/* <TableRow>
-            <TableCell colSpan={6} className="text-center">
-              <Pagination className="flex items-center justify-center w-full">
-                <PaginationContent className="py-1">
-                  <PaginationItem>
-                    <button
-                      disabled={page === 1}
-                      className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent"
-                      onClick={handleGoToPreviousPage}
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                      <span>Anterior</span>
-                    </button>
-                  </PaginationItem>
-                  {
-                    [...Array(pages)].map((_, index) => (
-                      <PaginationItem key={index}>
-                        <button
-                          onClick={() => handleGoToPage(index + 1)}
-                          className={cn("rounded-full px-3 py-1", index === page - 1 ? "bg-zinc-200 hover:bg-zinc-300" : "hover:bg-zinc-200")}
-                        >
-                          {index + 1}
-                        </button>
-                      </PaginationItem>
-                    ))
-                  }
-                  <PaginationItem>
-                    <button
-                      disabled={page * limit >= totalDevices}
-                      className="flex items-center gap-1 hover:bg-zinc-200 rounded-md p-2 disabled:text-zinc-500 disabled:hover:bg-transparent"
-                      onClick={handleGoToNextPage}>
-                      Próximo
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </TableCell>
-          </TableRow> */}
         </TableBody>
       </Table>
     </>
-  )
+  );
 }

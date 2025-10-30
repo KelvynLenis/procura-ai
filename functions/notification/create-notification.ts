@@ -1,15 +1,14 @@
-
-import { Notification } from "@/types"
-import { ID } from "appwrite"
+import { Notification } from "@/types";
+import { ID } from "appwrite";
 
 export async function createNotification(values: Notification) {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_NOTIFICATION}/documents`,
     {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'X-Appwrite-Project': `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+        "Content-Type": "application/json",
+        "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
       },
       body: JSON.stringify({
         documentId: ID.unique(),
@@ -25,16 +24,16 @@ export async function createNotification(values: Notification) {
           device_options: values.device_options,
           location_options: values.location_options,
           selected_targets: values.selected_targets,
-          is_all_users_checked: values.is_all_users_checked
+          is_all_users_checked: values.is_all_users_checked,
         },
       }),
-    }
-  )
+    },
+  );
 
   if (!response.ok) {
-    const error = await response.text()
-    throw new Error(`Error: ${error}`)
+    const error = await response.text();
+    throw new Error(`Error: ${error}`);
   }
 
-  return response.json()
-} 
+  return response.json();
+}

@@ -1,7 +1,7 @@
-import { account } from '@/lib/appwrite'
+import { account } from "@/lib/appwrite";
 
 export async function getUserId() {
-  const { $id: userId } = await account.get()
+  const { $id: userId } = await account.get();
 
-  return userId
+  return userId;
 }

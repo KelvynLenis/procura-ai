@@ -1,71 +1,71 @@
-'use client'
+"use client";
 
-import { Eye } from 'lucide-react'
+import { Eye } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import deviceInfo from '../assets/icons/device-info.png'
-import occurrenceInfo from '../assets/icons/occurrence-info.png'
-import ownerInfo from '../assets/icons/owner-info.png'
-import { cn, formatDateTime } from '@/lib/utils'
+} from "@/components/ui/dialog";
+import deviceInfo from "../assets/icons/device-info.png";
+import occurrenceInfo from "../assets/icons/occurrence-info.png";
+import ownerInfo from "../assets/icons/owner-info.png";
+import { cn, formatDateTime } from "@/lib/utils";
 
-import type { Contact, Event, OccurrencesProps, Operator } from '@/types'
-import Image from 'next/image'
-import { useEffect, useState } from 'react'
-import { listContacts } from '@/functions/contact/list-contacts'
-import { getOperator } from '@/functions/operators/get-operator'
-import { listAllEvents } from '@/functions/event/list-all-events'
+import type { Contact, Event, OccurrencesProps, Operator } from "@/types";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { listContacts } from "@/functions/contact/list-contacts";
+import { getOperator } from "@/functions/operators/get-operator";
+import { listAllEvents } from "@/functions/event/list-all-events";
 
 interface RecoverDeviceFormProps {
-  occurrence?: OccurrencesProps
+  occurrence?: OccurrencesProps;
 }
 export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
-  const [contacts, setContacts] = useState<Contact[]>([])
-  const [operator, setOperator] = useState<Operator>()
-  const [events, setEvents] = useState<Event[]>([])
-  const [isShowAllEventsOn, setIsShowAllEventsOn] = useState(false)
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [operator, setOperator] = useState<Operator>();
+  const [events, setEvents] = useState<Event[]>([]);
+  const [isShowAllEventsOn, setIsShowAllEventsOn] = useState(false);
 
   async function getContacts() {
     const contacts = await listContacts({
       userIdParam: occurrence?.device.auth_id,
-    })
+    });
 
-    setContacts(contacts)
+    setContacts(contacts);
 
-    return contacts
+    return contacts;
   }
 
   async function fetchEvents() {
     try {
-      const events = await listAllEvents(occurrence?.device.$id!)
+      const events = await listAllEvents(occurrence?.device.$id!);
 
-      setEvents(events)
+      setEvents(events);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
   async function fetchOperator() {
     try {
-      const operator = await getOperator(occurrence?.device.operator_id)
+      const operator = await getOperator(occurrence?.device.operator_id);
 
-      setOperator(operator)
+      setOperator(operator);
 
-      return operator
+      return operator;
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
   useEffect(() => {
-    getContacts()
-    fetchEvents()
-    fetchOperator()
-  }, [])
+    getContacts();
+    fetchEvents();
+    fetchOperator();
+  }, []);
 
   return (
     <>
@@ -107,7 +107,7 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                 <div className="flex">
                   <span className="w-28 font-medium">Operadora</span>
                   <span className="w-full">
-                    {operator?.name_operator ?? 'Não informado'}
+                    {operator?.name_operator ?? "Não informado"}
                   </span>
                 </div>
                 <div className="flex">
@@ -129,17 +129,17 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                   <div className="w-full">
                     <span
                       className={cn(
-                        'w-fit rounded-sm flex items-center justify-center',
-                        occurrence?.device.status === 'Roubado' &&
-                          'bg-robbery-bg text-red-600 px-3 py-1 ring-red-500',
-                        occurrence?.device.status === 'Furtado' &&
-                          'bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500',
-                        occurrence?.device.status === 'Perdido' &&
-                          'bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500',
-                        occurrence?.device.status === 'Recuperado' &&
-                          'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500',
-                        occurrence?.device.status === 'Regular' &&
-                          'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500'
+                        "w-fit rounded-sm flex items-center justify-center",
+                        occurrence?.device.status === "Roubado" &&
+                          "bg-robbery-bg text-red-600 px-3 py-1 ring-red-500",
+                        occurrence?.device.status === "Furtado" &&
+                          "bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500",
+                        occurrence?.device.status === "Perdido" &&
+                          "bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500",
+                        occurrence?.device.status === "Recuperado" &&
+                          "bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500",
+                        occurrence?.device.status === "Regular" &&
+                          "bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500",
                       )}
                     >
                       {occurrence?.device.status}
@@ -160,15 +160,15 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
               </div>
               <div
                 className={cn(
-                  'flex flex-col gap-2 border-x rounded-none border-zinc-200 p-4  drop-shadow-sm'
+                  "flex flex-col gap-2 border-x rounded-none border-zinc-200 p-4  drop-shadow-sm",
                 )}
               >
                 <div className="flex">
                   <span className="w-40 font-medium">ID</span>
                   <span className="w-full">
                     {occurrence?.event
-                      ? '#' + occurrence?.event?.$id.slice(0, 5)
-                      : 'Este evento não existe.'}
+                      ? "#" + occurrence?.event?.$id.slice(0, 5)
+                      : "Este evento não existe."}
                   </span>
                 </div>
                 <div className="flex">
@@ -176,7 +176,7 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                   <span className="w-full">
                     {occurrence?.event
                       ? formatDateTime(occurrence?.event?.time_event!)
-                      : 'Este evento não existe.'}
+                      : "Este evento não existe."}
                   </span>
                 </div>
                 <div className="flex">
@@ -187,28 +187,28 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                   <span className="w-40 font-medium">Descrição</span>
                   <span className="w-full">
                     {occurrence?.event
-                      ? occurrence?.event?.description || 'Não informado'
-                      : 'Este evento não existe.'}
+                      ? occurrence?.event?.description || "Não informado"
+                      : "Este evento não existe."}
                   </span>
                 </div>
               </div>
               {events.length > 0 && (
                 <div
                   className={cn(
-                    'w-full flex justify-center border-x pt-4 pb-1',
+                    "w-full flex justify-center border-x pt-4 pb-1",
                     isShowAllEventsOn
-                      ? 'bg-zinc-100/90 border-b-0'
-                      : 'border-b rounded-b-3xl'
+                      ? "bg-zinc-100/90 border-b-0"
+                      : "border-b rounded-b-3xl",
                   )}
                 >
                   <button
                     type="button"
                     onClick={() => setIsShowAllEventsOn(!isShowAllEventsOn)}
-                    className={'text-primary underline hover:text-blue-400'}
+                    className={"text-primary underline hover:text-blue-400"}
                   >
                     {isShowAllEventsOn
-                      ? 'Ocultar histórico de ocorrências'
-                      : 'Ver ocorrências anteriores'}
+                      ? "Ocultar histórico de ocorrências"
+                      : "Ver ocorrências anteriores"}
                   </button>
                 </div>
               )}
@@ -217,9 +217,9 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                   <div
                     key={prevEvent.$id}
                     className={cn(
-                      'flex flex-col gap-2 bg-zinc-100/90 border border-zinc-200 p-4 drop-shadow-sm',
-                      index === events.length - 1 && 'rounded-b-3xl',
-                      index === 0 && 'border-t-0'
+                      "flex flex-col gap-2 bg-zinc-100/90 border border-zinc-200 p-4 drop-shadow-sm",
+                      index === events.length - 1 && "rounded-b-3xl",
+                      index === 0 && "border-t-0",
                     )}
                   >
                     <div className="flex">
@@ -227,7 +227,7 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                       <span className="w-full">
                         {prevEvent
                           ? prevEvent?.$id.slice(0, 5)
-                          : 'Este evento não existe.'}
+                          : "Este evento não existe."}
                       </span>
                     </div>
                     <div className="flex">
@@ -235,24 +235,24 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                       <span className="w-full">
                         {prevEvent
                           ? formatDateTime(prevEvent?.time_event!)
-                          : 'Este evento não existe.'}
+                          : "Este evento não existe."}
                       </span>
                     </div>
                     <div className="flex">
                       <span className="w-32 font-medium">Tipo</span>
                       <span
                         className={cn(
-                          'w-fit rounded-sm flex items-start justify-start',
-                          prevEvent?.type === 'Roubo' &&
-                            'bg-robbery-bg text-red-600 px-3 py-1 ring-red-500',
-                          prevEvent?.type === 'Furto simples' &&
-                            'bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500',
-                          prevEvent?.type === 'Extravio ou Perda' &&
-                            'bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500',
-                          prevEvent?.type === 'Recuperado' &&
-                            'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500',
-                          prevEvent?.type === 'Regular' &&
-                            'bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500'
+                          "w-fit rounded-sm flex items-start justify-start",
+                          prevEvent?.type === "Roubo" &&
+                            "bg-robbery-bg text-red-600 px-3 py-1 ring-red-500",
+                          prevEvent?.type === "Furto simples" &&
+                            "bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500",
+                          prevEvent?.type === "Extravio ou Perda" &&
+                            "bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500",
+                          prevEvent?.type === "Recuperado" &&
+                            "bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500",
+                          prevEvent?.type === "Regular" &&
+                            "bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500",
                         )}
                       >
                         {prevEvent?.type}
@@ -263,8 +263,8 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                       <span className="w-40 font-medium">Descrição</span>
                       <span className="w-full">
                         {prevEvent
-                          ? prevEvent?.description || 'Não informado'
-                          : 'Este evento não existe.'}
+                          ? prevEvent?.description || "Não informado"
+                          : "Este evento não existe."}
                       </span>
                     </div>
                   </div>
@@ -303,12 +303,12 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                   </span>
                   <div className="w-full flex gap-14">
                     {contacts.length > 0 ? (
-                      contacts.map(contact => (
+                      contacts.map((contact) => (
                         <div key={contact.$id} className="flex flex-col">
                           <span>{contact.name_contact}</span>
                           <span>{contact.number_contact}</span>
                           <span>
-                            {contact.email_contact || 'Não informado'}
+                            {contact.email_contact || "Não informado"}
                           </span>
                         </div>
                       ))
@@ -323,5 +323,5 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

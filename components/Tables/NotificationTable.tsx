@@ -1,4 +1,4 @@
-import React, { Dispatch, useEffect, useState } from 'react'
+import React, { Dispatch, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -6,52 +6,59 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import NotificationRow from './NotificationRow'
-import { getPushNotificationHistory } from '@/functions/notification/getPushNotificationHistory'
-import { Notification } from '@/types'
-import { z } from 'zod'
-import { useForm, UseFormProps } from 'react-hook-form'
+} from "@/components/ui/table";
+import NotificationRow from "./NotificationRow";
+import { getPushNotificationHistory } from "@/functions/notification/getPushNotificationHistory";
+import { Notification } from "@/types";
+import { z } from "zod";
+import { useForm, UseFormProps } from "react-hook-form";
 
-const formSchema = z
-  .object({
-    title: z.string().min(1, {
-      message: 'O título é obrigatório.',
+const formSchema = z.object({
+  title: z
+    .string()
+    .min(1, {
+      message: "O título é obrigatório.",
     })
-    .max(65, 'O título deve ter no máximo 65 caracteres'),
-    description: z.string().min(1, {
-      message: 'O corpo da notificação é obrigatória.',
+    .max(65, "O título deve ter no máximo 65 caracteres"),
+  description: z
+    .string()
+    .min(1, {
+      message: "O corpo da notificação é obrigatória.",
     })
-    .max(240, 'O corpo da notificação deve ter no máximo 240 caracteres'),
-  })
+    .max(240, "O corpo da notificação deve ter no máximo 240 caracteres"),
+});
 
 interface NotificationTableProps {
-  form: ReturnType<typeof useForm<z.infer<typeof formSchema>>>
-  refresh: boolean
-  restoreNotification: ({ 
-    is_all_users_checked, 
-    selected_targets, 
-    device_options, 
-    location_options }: { 
-      is_all_users_checked: boolean, 
-      selected_targets: string[], 
-      device_options: string[], 
-      location_options: string[] 
-    }) => void
+  form: ReturnType<typeof useForm<z.infer<typeof formSchema>>>;
+  refresh: boolean;
+  restoreNotification: ({
+    is_all_users_checked,
+    selected_targets,
+    device_options,
+    location_options,
+  }: {
+    is_all_users_checked: boolean;
+    selected_targets: string[];
+    device_options: string[];
+    location_options: string[];
+  }) => void;
 }
 
-
-function NotificationTable({ form, refresh, restoreNotification }: NotificationTableProps) {
-  const [notifications, setNotifications] = useState<Notification[]>([])
+function NotificationTable({
+  form,
+  refresh,
+  restoreNotification,
+}: NotificationTableProps) {
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
     const fetchNotifications = async () => {
-      const notifications = await getPushNotificationHistory()
-      setNotifications(notifications.toReversed())
-    }
+      const notifications = await getPushNotificationHistory();
+      setNotifications(notifications.toReversed());
+    };
 
-    fetchNotifications()
-  }, [refresh])
+    fetchNotifications();
+  }, [refresh]);
 
   return (
     <Table className="bg-white shadow-lg rounded-lg w-full">
@@ -93,7 +100,7 @@ function NotificationTable({ form, refresh, restoreNotification }: NotificationT
         )}
       </TableBody>
     </Table>
-  )
+  );
 }
 
-export default NotificationTable
+export default NotificationTable;
