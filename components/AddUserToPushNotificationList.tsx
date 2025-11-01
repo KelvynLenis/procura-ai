@@ -10,7 +10,13 @@ import { getUser } from "@/functions/user/get-user";
 import { listAllUsers } from "@/functions/user/list-all-users";
 import { User } from "@/types";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { ChevronRightCircle, Search, X } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  ChevronRightCircle,
+  Search,
+  X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { LiaSearchSolid } from "react-icons/lia";
 import { PiArrowCircleRight } from "react-icons/pi";
@@ -105,8 +111,17 @@ function AddUserToPushNotificationList({
 
   return (
     <Dialog>
-      <DialogTrigger className="rounded-md bg-white px-4 py-2 shadow-lg ring-1 ring-zinc-300 transition-all duration-200 hover:bg-secondary hover:text-white hover:ring-secondary">
-        Adicionar usuários
+      <DialogTrigger className="ring-100 flex h-fit max-h-[81px] w-full flex-col gap-2 rounded-lg bg-zinc-100 px-3 py-1.5 ring-1 ring-zinc-300">
+        <div className="flex flex-col items-start gap-1 ring-0">
+          <div className="flex w-full justify-between">
+            <h3 className="text-sm font-medium">Usuários cadastrados</h3>
+            <ChevronDown className="h-6 w-6" />
+          </div>
+          <span className="text-start text-sm font-normal">
+            Defina o público selecionando todos os usuários ou pesquise por nome
+            ou CPF
+          </span>
+        </div>
       </DialogTrigger>
       <DialogContent className="flex h-fit flex-col gap-2 p-0">
         <DialogHeader className="bg-[#F2F8FD] px-4 py-5">

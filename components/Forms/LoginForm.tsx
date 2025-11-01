@@ -72,7 +72,7 @@ export function LoginForm() {
         }
       };
 
-      toast.promise(callFunction(), {
+      toast.promise(callFunction, {
         pending: "Logando...",
       });
     } catch (error: any) {
