@@ -30,9 +30,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { LiaSearchSolid } from "react-icons/lia";
+import { listAllUsers } from "@/functions/user/list-all-users";
 
 function NotificationForm() {
   const [allUsers, setAllUsers] = useState(true);
+  const [numberOfTotalUsers, setNumberOfTotalUsers] = useState(0);
+  const [numberOfSelectedUsers, setNumberOfSelectedUsers] = useState(0);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [statusOptions, setStatusOptions] = useState({
     Regular: false,
@@ -182,7 +186,7 @@ function NotificationForm() {
 
     // console.log("targets", targets)
 
-    console.log(statusTarget);
+    // console.log(statusTarget);
 
     const selectedTargetsId = selectedUsers.map((user) => user.user_id);
 
@@ -299,8 +303,87 @@ function NotificationForm() {
   useEffect(() => {
     if (allUsers) {
       setSelectedUsers([]);
+      setStatusOptions({
+        Regular: false,
+        Roubado: false,
+        Furtado: false,
+        Perdido: false,
+        Recuperado: false,
+      });
+      setLocationOptions({
+        JoaoPessoa: false,
+        Cabedelo: false,
+        CampinaGrande: false,
+        Bayeux: false,
+        SantaRita: false,
+      });
     }
   }, [allUsers]);
+
+  useEffect(() => {
+    if (
+      statusOptions["Regular"] ||
+      statusOptions["Roubado"] ||
+      statusOptions["Furtado"] ||
+      statusOptions["Perdido"] ||
+      statusOptions["Recuperado"]
+    ) {
+      setAllUsers(false);
+    }
+
+    if (
+      !statusOptions["Regular"] &&
+      !statusOptions["Roubado"] &&
+      !statusOptions["Furtado"] &&
+      !statusOptions["Perdido"] &&
+      !statusOptions["Recuperado"]
+    ) {
+      setAllUsers(true);
+    }
+  }, [statusOptions]);
+
+  useEffect(() => {
+    const getAllUsers = async () => {
+      const userFilter = {
+        method: "equal",
+        attribute: "type",
+        values: ["Usuario"],
+      };
+
+      const users = await getUser({ filters: [userFilter] });
+
+      setNumberOfTotalUsers(users.length);
+    };
+
+    getAllUsers();
+  }, []);
+
+  useEffect(() => {
+    const updateUsersCount = async () => {
+      const response = await fetch("/api/get-users-count", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          isAllUsersChecked: allUsers,
+          statusOptions,
+          locationOptions,
+          selectedUsers,
+        }),
+      });
+
+      if (!response.ok) {
+        console.error("Erro ao buscar dados:", response.status);
+        return;
+      }
+
+      const count = await response.json();
+      // console.log("Dados retornados:", count);
+
+      setNumberOfSelectedUsers(count);
+    };
+
+    updateUsersCount();
+  }, [allUsers, selectedUsers, statusOptions, locationOptions]);
 
   return (
     <>
@@ -383,12 +466,12 @@ function NotificationForm() {
                   collapsible
                 >
                   <AccordionItem value="item-1">
-                    <div className="mb-2 flex flex-col items-start gap-0 ring-0">
+                    <div className="mb-2 flex w-full flex-col items-start gap-0 ring-0">
                       <AccordionTrigger
                         size="sm"
                         className="flex w-full justify-between pb-0 pt-1 hover:no-underline"
                       >
-                        <div className="flex w-[17rem]">
+                        <div className="flex">
                           <h3 className="w-full font-medium">
                             Status de dispositivo
                           </h3>
@@ -486,7 +569,7 @@ function NotificationForm() {
                 </Accordion>
 
                 <Accordion
-                  className="ring-100 flex h-fit w-full flex-col gap-2 rounded-lg bg-zinc-100 px-3 ring-1 ring-zinc-300"
+                  className="ring-100 flex h-fit max-h-[297px] w-full flex-col gap-2 rounded-lg bg-zinc-100 px-3 ring-1 ring-zinc-300"
                   type="single"
                   collapsible
                 >
@@ -496,7 +579,7 @@ function NotificationForm() {
                         size="sm"
                         className="flex w-full justify-between pb-0 pt-1 hover:no-underline"
                       >
-                        <div className="flex w-[17rem]">
+                        <div className="flex">
                           <h3 className="font-medium">Localidade ou região</h3>
                         </div>
                       </AccordionTrigger>
@@ -505,10 +588,22 @@ function NotificationForm() {
                         notificação.
                       </span>
                     </div>
-                    <AccordionContent className="flex flex-col items-start gap-2">
+                    <AccordionContent className="flex-co flex max-h-[216px] items-start gap-2 overflow-y-scroll pr-2">
                       <>
                         <div className="flex w-full flex-col items-start gap-3">
-                          <h3 className="font-medium">Localidade ou região</h3>
+                          <div className="flex w-fit items-center gap-1 rounded-md bg-white px-4 py-2 ring-1 ring-zinc-300">
+                            <LiaSearchSolid className="h-6 w-6" />
+                            <input
+                              // value={search}
+                              // onChange={(e) => handleSearchChange(e.target.value)}
+                              type="text"
+                              name="search"
+                              id="search"
+                              // onInput={(e) => setSearch}
+                              placeholder="Pesquise por cidade"
+                              className="w-56 px-2 py-0 focus:outline-none"
+                            />
+                          </div>
                           <div className="flex items-center gap-2 text-zinc-500">
                             <Checkbox
                               disabled
@@ -518,8 +613,10 @@ function NotificationForm() {
                             Todos
                           </div>
 
-                          <div className="flex flex-col items-start gap-2 pl-4">
-                            <div className="flex items-center gap-2 text-zinc-500">
+                          <span className="h-[1px] w-full bg-zinc-300" />
+
+                          <div className="flex w-full flex-col items-start gap-4">
+                            <div className="flex items-center gap-2 pl-4 text-zinc-500">
                               <Checkbox
                                 disabled
                                 checked={locationOptions.JoaoPessoa}
@@ -533,7 +630,10 @@ function NotificationForm() {
                               />
                               João Pessoa
                             </div>
-                            <div className="flex items-center gap-2 text-zinc-500">
+
+                            <span className="h-[1px] w-full bg-zinc-300" />
+
+                            <div className="flex items-center gap-2 pl-4 text-zinc-500">
                               <Checkbox
                                 disabled
                                 checked={locationOptions.Cabedelo}
@@ -547,7 +647,10 @@ function NotificationForm() {
                               />
                               Cabedelo
                             </div>
-                            <div className="flex items-center gap-2 text-zinc-500">
+
+                            <span className="h-[1px] w-full bg-zinc-300" />
+
+                            <div className="flex items-center gap-2 pl-4 text-zinc-500">
                               <Checkbox
                                 disabled
                                 checked={locationOptions.CampinaGrande}
@@ -562,7 +665,10 @@ function NotificationForm() {
                               />
                               Campina Grande
                             </div>
-                            <div className="flex items-center gap-2 text-zinc-500">
+
+                            <span className="h-[1px] w-full bg-zinc-300" />
+
+                            <div className="flex items-center gap-2 pl-4 text-zinc-500">
                               <Checkbox
                                 disabled
                                 checked={locationOptions.Bayeux}
@@ -576,7 +682,10 @@ function NotificationForm() {
                               />
                               Bayeux
                             </div>
-                            <div className="flex items-center gap-2 text-zinc-500">
+
+                            <span className="h-[1px] w-full bg-zinc-300" />
+
+                            <div className="flex items-center gap-2 pl-4 text-zinc-500">
                               <Checkbox
                                 disabled
                                 checked={locationOptions.SantaRita}
@@ -608,7 +717,8 @@ function NotificationForm() {
                   Selecionar todos os usuários cadastrados
                 </div>
                 <span className="text-secondary">
-                  0 de 25 usuários selecionados
+                  {numberOfSelectedUsers} de {numberOfTotalUsers} usuários
+                  selecionados
                 </span>
               </div>
             </div>
