@@ -115,7 +115,7 @@ export function ConctactForm({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 text-zinc-900 self-center items-center justify-between rounded-xl px-2 py-4"
+          className="flex flex-col items-center justify-between gap-4 self-center rounded-xl px-2 py-4 text-zinc-900"
         >
           {contact
             ? "Atualize as informações do seu contato de confiança."
@@ -124,9 +124,9 @@ export function ConctactForm({
             control={form.control}
             name="contact_name"
             render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
-                <FormLabel className="w-fit text-center items-center flex">
-                  <span className="text-red-500 h-6 flex align-text-bottom">
+              <FormItem className="flex w-full flex-col">
+                <FormLabel className="flex w-fit items-center text-center">
+                  <span className="flex h-6 align-text-bottom text-red-500">
                     *
                   </span>
                   Nome do contato
@@ -147,9 +147,9 @@ export function ConctactForm({
             control={form.control}
             name="contact_number"
             render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
-                <FormLabel className="w-fit text-center items-center flex">
-                  <span className="text-red-500 h-6 flex align-text-bottom">
+              <FormItem className="flex w-full flex-col">
+                <FormLabel className="flex w-fit items-center text-center">
+                  <span className="flex h-6 align-text-bottom text-red-500">
                     *
                   </span>
                   Número do contato
@@ -158,16 +158,16 @@ export function ConctactForm({
                   <InputOTP
                     maxLength={11}
                     {...field}
-                    className="w-full flex justify-center items-center"
+                    className="flex w-full items-center justify-center"
                   >
                     <InputOTPGroup>
                       <span>(</span>
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5 border-t-0 border-r-0 border-black  shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5"
                         index={0}
                       />
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5"
                         index={1}
                       />
                       <span>)</span>
@@ -175,42 +175,42 @@ export function ConctactForm({
                     <span />
                     <InputOTPGroup>
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5"
                         index={2}
                       />
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5"
                         index={3}
                       />
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5 border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5"
                         index={4}
                       />
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5"
                         index={5}
                       />
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5"
                         index={6}
                       />
                     </InputOTPGroup>
                     <InputOTPSeparator data-dash />
                     <InputOTPGroup>
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5"
                         index={7}
                       />
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5"
                         index={8}
                       />
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5"
                         index={9}
                       />
                       <InputOTPSlot
-                        className="w-4 md:w-5 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5"
                         index={10}
                       />
                     </InputOTPGroup>
@@ -225,8 +225,8 @@ export function ConctactForm({
             control={form.control}
             name="contact_email"
             render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
-                <FormLabel className="w-fit text-center items-center flex">
+              <FormItem className="flex w-full flex-col">
+                <FormLabel className="flex w-fit items-center text-center">
                   Email
                 </FormLabel>
                 <FormControl>
@@ -244,7 +244,7 @@ export function ConctactForm({
           <Button
             variant="blue"
             type="submit"
-            className="w-fit h-10 flex items-center justify-center text-white self-center"
+            className="flex h-10 w-fit items-center justify-center self-center text-white"
           >
             Salvar
           </Button>

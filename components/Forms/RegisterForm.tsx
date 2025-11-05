@@ -183,10 +183,10 @@ export function RegisterForm({ admin }: RegisterFormProps) {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full lg:w-[400px] h-fit flex flex-col gap-6 bg-white items-center self-center pl-0 px-0 py-5 rounded-xl"
+          className="flex h-fit w-full flex-col items-center gap-6 self-center rounded-xl bg-white px-0 py-5 pl-0 lg:w-[400px]"
         >
           {/* <Image src={logo} alt="logo" width={200} height={100} /> */}
-          <h3 className="text-center flex">
+          <h3 className="flex text-center">
             Para se cadastrar, preencha as informações a seguir:
           </h3>
 
@@ -194,8 +194,8 @@ export function RegisterForm({ admin }: RegisterFormProps) {
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
-                <FormLabel className="text-zinc-900 ml-4 font-bold">
+              <FormItem className="flex w-full flex-col">
+                <FormLabel className="ml-4 font-bold text-zinc-900">
                   Nome completo
                 </FormLabel>
                 <FormControl>
@@ -214,8 +214,8 @@ export function RegisterForm({ admin }: RegisterFormProps) {
             control={form.control}
             name="cpf"
             render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
-                <FormLabel className="text-zinc-900 ml-4 font-bold">
+              <FormItem className="flex w-full flex-col">
+                <FormLabel className="ml-4 font-bold text-zinc-900">
                   CPF
                 </FormLabel>
                 <FormControl>
@@ -223,60 +223,60 @@ export function RegisterForm({ admin }: RegisterFormProps) {
                     maxLength={11}
                     {...field}
                     containerClassName="ring-1 ring-secondary/60"
-                    className="w-full flex justify-center items-center"
+                    className="flex w-full items-center justify-center"
                   >
                     <InputOTPGroup>
                       <InputOTPSlot
-                        className="w-4 h-5 border-t-0 border-r-0 border-black  shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
                         index={0}
                       />
                       <InputOTPSlot
-                        className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
                         index={1}
                       />
                       <InputOTPSlot
-                        className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
                         index={2}
                       />
                     </InputOTPGroup>
                     <InputOTPSeparator className="relative -bottom-2" />
                     <InputOTPGroup>
                       <InputOTPSlot
-                        className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
                         index={3}
                       />
                       <InputOTPSlot
-                        className="w-4 h-5 border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
                         index={4}
                       />
                       <InputOTPSlot
-                        className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
                         index={5}
                       />
                     </InputOTPGroup>
                     <InputOTPSeparator className="relative -bottom-2" />
                     <InputOTPGroup>
                       <InputOTPSlot
-                        className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
                         index={6}
                       />
                       <InputOTPSlot
-                        className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
                         index={7}
                       />
                       <InputOTPSlot
-                        className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
                         index={8}
                       />
                     </InputOTPGroup>
                     <InputOTPSeparator data-dash />
                     <InputOTPGroup>
                       <InputOTPSlot
-                        className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
                         index={9}
                       />
                       <InputOTPSlot
-                        className="w-4 h-5  border-t-0 border-r-0 border-black shadow-transparent"
+                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
                         index={10}
                       />
                     </InputOTPGroup>
@@ -291,8 +291,8 @@ export function RegisterForm({ admin }: RegisterFormProps) {
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
-                <FormLabel className="text-zinc-900 ml-4 font-bold">
+              <FormItem className="flex w-full flex-col">
+                <FormLabel className="ml-4 font-bold text-zinc-900">
                   e-mail
                 </FormLabel>
                 <FormControl>
@@ -312,8 +312,8 @@ export function RegisterForm({ admin }: RegisterFormProps) {
             control={form.control}
             name="confirmEmail"
             render={({ field }) => (
-              <FormItem className="flex flex-col w-full h-fit">
-                <FormLabel className="text-zinc-900 ml-4 font-bold">
+              <FormItem className="flex h-fit w-full flex-col">
+                <FormLabel className="ml-4 font-bold text-zinc-900">
                   Confirmar e-mail
                 </FormLabel>
                 <FormControl>
@@ -333,8 +333,8 @@ export function RegisterForm({ admin }: RegisterFormProps) {
             control={form.control}
             name="password"
             render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
-                <FormLabel className="text-zinc-900 ml-4 font-bold">
+              <FormItem className="flex w-full flex-col">
+                <FormLabel className="ml-4 font-bold text-zinc-900">
                   Senha
                 </FormLabel>
                 <FormControl>
@@ -354,8 +354,8 @@ export function RegisterForm({ admin }: RegisterFormProps) {
             control={form.control}
             name="confirmPassword"
             render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
-                <FormLabel className="text-zinc-900 ml-4 font-bold">
+              <FormItem className="flex w-full flex-col">
+                <FormLabel className="ml-4 font-bold text-zinc-900">
                   Confirmar senha
                 </FormLabel>
                 <FormControl>
@@ -371,34 +371,34 @@ export function RegisterForm({ admin }: RegisterFormProps) {
             )}
           />
 
-          <Button type="submit" variant="blue" className="text-base !w-40">
+          <Button type="submit" variant="blue" className="!w-40 text-base">
             Criar conta
           </Button>
 
-          <span className="w-full h-[1px] rounded-full bg-secondary" />
+          <span className="h-[1px] w-full rounded-full bg-secondary" />
 
           {admin ? (
-            <div className="w-full flex flex-col gap-3">
+            <div className="flex w-full flex-col gap-3">
               <Link className="flex w-full" href={"/login"}>
                 <Button
                   onClick={showLoadingToast}
                   type="button"
                   variant="blue"
-                  className="text-base !w-40"
+                  className="!w-40 text-base"
                 >
                   Retroceder à página do usuário
                 </Button>
               </Link>
             </div>
           ) : (
-            <div className=" flex gap-3">
-              <span className="font-bold self-center">
+            <div className="flex gap-3">
+              <span className="self-center font-bold">
                 Já possui conta?{" "}
                 <Link href={"/login"}>
                   <button
                     onClick={showLoadingToast}
                     type="button"
-                    className="text-blue-500 underline w-fit hover:opacity-70"
+                    className="w-fit text-blue-500 underline hover:opacity-70"
                   >
                     Entre com e-mail ou CPF
                   </button>
@@ -409,7 +409,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
                     onClick={showLoadingToast}
                     type="button"
                     disabled
-                    className="text-zinc-400 underline w-fit"
+                    className="w-fit text-zinc-400 underline"
                   >
                     entre com a conta Gov.br
                   </button>

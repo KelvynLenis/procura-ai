@@ -227,12 +227,12 @@ export function AlertsTable({
 
   return (
     <>
-      <div className="flex w-full justify-between py-2 px-4">
+      <div className="flex w-full justify-between px-4 py-2">
         <div className="relative">
-          <Search className="absolute top-5 -translate-y-1/2 left-2 text-[#232323]/90" />
+          <Search className="absolute left-2 top-5 -translate-y-1/2 text-[#232323]/90" />
           <Input
             placeholder="Pesquise por IMEI ou proprietário"
-            className="w-96 pl-10 ring-[#232323]/20 shadow-none"
+            className="w-96 pl-10 shadow-none ring-[#232323]/20"
             onChange={(e) => handleInputFilter(e.target.value)}
           />
         </div>
@@ -241,7 +241,7 @@ export function AlertsTable({
           <button
             type="button"
             className={cn(
-              "ring-1 ring-[#232323]/30 text-[#232323] flex items-center justify-center gap-3 h-fit px-4 py-2 rounded-lg",
+              "flex h-fit items-center justify-center gap-3 rounded-lg px-4 py-2 text-[#232323] ring-1 ring-[#232323]/30",
               isFilterOptionsOpen
                 ? "bg-zinc-200 hover:bg-white"
                 : "bg-white hover:bg-zinc-200",
@@ -254,7 +254,7 @@ export function AlertsTable({
 
           <button
             type="button"
-            className="ring-1 ring-[#232323]/30 bg-white hover:bg-zinc-200 text-[#232323] flex items-center justify-center gap-3 h-fit px-4 py-2 rounded-lg"
+            className="flex h-fit items-center justify-center gap-3 rounded-lg bg-white px-4 py-2 text-[#232323] ring-1 ring-[#232323]/30 hover:bg-zinc-200"
             onClick={() => exportOccurrences(occurrences)}
           >
             <Download size={18} />
@@ -265,13 +265,13 @@ export function AlertsTable({
 
       {isFilterOptionsOpen && (
         <div className="flex flex-col gap-4 px-4 py-3">
-          <div className="flex w-ful items-center justify-between">
+          <div className="w-ful flex items-center justify-between">
             <span>Filtre por</span>
 
             <div className="flex gap-2">
               <button
                 type="button"
-                className="ring-1 ring-[#232323]/30 font-medium bg-blue-600/20 hover:bg-zinc-200 text-procura-ai-zinc flex items-center justify-center gap-3 h-fit px-4 py-2 rounded-lg"
+                className="flex h-fit items-center justify-center gap-3 rounded-lg bg-blue-600/20 px-4 py-2 font-medium text-procura-ai-zinc ring-1 ring-[#232323]/30 hover:bg-zinc-200"
                 // onClick={() => setIsFilterOptionsOpen(!isFilterOptionsOpen)}
               >
                 <Settings2 size={18} />
@@ -281,7 +281,7 @@ export function AlertsTable({
               <button
                 type="button"
                 onClick={clearFilters}
-                className="text-primary font-medium"
+                className="font-medium text-primary"
               >
                 Limpar filtros
               </button>
@@ -296,7 +296,7 @@ export function AlertsTable({
                 values={statusFilter.values}
                 onSelect={handleSelectStatusFilter}
                 placeholder="Status"
-                className="min-h-10 h-fit"
+                className="h-fit min-h-10"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -306,7 +306,7 @@ export function AlertsTable({
                 values={brandFilter ? brandFilter.values : []}
                 onSelect={handleSelectBrandsFilter}
                 placeholder="Fabricante"
-                className="min-h-10 h-fit"
+                className="h-fit min-h-10"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -318,7 +318,7 @@ export function AlertsTable({
                 placeholder="Localização"
                 disabled
               /> */}
-              <span className="w-40 h-10 cursor-default bg-zinc-200 ring-1 ring-[#232323]/30 text-center flex items-center justify-center text-zinc-400 italic rounded-md">
+              <span className="flex h-10 w-40 cursor-default items-center justify-center rounded-md bg-zinc-200 text-center italic text-zinc-400 ring-1 ring-[#232323]/30">
                 Indisponível
               </span>
             </div>
@@ -329,25 +329,25 @@ export function AlertsTable({
           </div>
         </div>
       )}
-      <Table className="bg-white shadow-lg rounded-xl self-center">
-        <TableHeader className="bg-zinc-200/60 rounded-xl">
-          <TableRow className="ring-1 ring-zinc-200/60 border-y border-[#232323]/20">
-            <TableHead className="text-black/80 text-lg font-medium pl-5">
+      <Table className="self-center rounded-xl bg-white shadow-lg">
+        <TableHeader className="rounded-xl bg-zinc-200/60">
+          <TableRow className="border-y border-[#232323]/20 ring-1 ring-zinc-200/60">
+            <TableHead className="pl-5 text-lg font-medium text-black/80">
               ID
             </TableHead>
-            <TableHead className="text-black/80 text-lg font-medium">
+            <TableHead className="text-lg font-medium text-black/80">
               Dispositivo
             </TableHead>
-            <TableHead className="text-black/80 text-lg font-medium">
+            <TableHead className="text-lg font-medium text-black/80">
               Propietário
             </TableHead>
-            <TableHead className="text-black/80 text-lg font-medium">
+            <TableHead className="text-lg font-medium text-black/80">
               IMEI
             </TableHead>
-            <TableHead className="text-black/80 text-lg font-medium pr-28">
+            <TableHead className="pr-28 text-lg font-medium text-black/80">
               Status
             </TableHead>
-            <TableHead className="text-black/80 text-lg w-20 font-medium">
+            <TableHead className="w-20 text-lg font-medium text-black/80">
               Ações
             </TableHead>
           </TableRow>
@@ -375,7 +375,7 @@ export function AlertsTable({
                 <Skeleton className="h-8" />
               </TableCell>
 
-              <TableCell className="flex items-center gap-2 mr-5">
+              <TableCell className="mr-5 flex items-center gap-2">
                 <Skeleton className="h-10 w-10" />
                 <Skeleton className="h-10 w-10" />
               </TableCell>

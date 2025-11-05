@@ -73,31 +73,31 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
         <DialogTrigger asChild>
           <button
             type="button"
-            className="rounded-lg w-10 h-10 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
+            className="group relative flex h-10 w-10 items-center justify-center rounded-lg ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700"
           >
             <Eye size={26} />
-            <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+            <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
               Exibir informações
             </span>
           </button>
         </DialogTrigger>
-        <DialogContent className="flex flex-col p-0 gap-3 w-[840px] max-h-[75%]">
-          <DialogHeader className="text-xl text-procura-ai-blue bg-sky-100/40 rounded-md py-5 px-6">
+        <DialogContent className="flex max-h-[75%] w-[840px] flex-col gap-3 p-0">
+          <DialogHeader className="rounded-md bg-sky-100/40 px-6 py-5 text-xl text-procura-ai-blue">
             <DialogTitle className="text-xl">
               Detalhes da ocorrência
             </DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col gap-2 overflow-y-scroll custom-scroll px-4 pb-4">
+          <div className="custom-scroll flex flex-col gap-2 overflow-y-scroll px-4 pb-4">
             <div className="flex flex-col">
-              <div className="flex items-center px-5 w-full h-20 text-lg font-medium bg-zinc-100 rounded-t-lg  border-zinc-200 gap-3">
+              <div className="flex h-20 w-full items-center gap-3 rounded-t-lg border-zinc-200 bg-zinc-100 px-5 text-lg font-medium">
                 <Image
                   src={deviceInfo}
                   alt="device-info"
-                  className="w-12 h-12"
+                  className="h-12 w-12"
                 />
                 Informações do dispositivo
               </div>
-              <div className="flex flex-col gap-2 border border-zinc-200 p-4 rounded-b-3xl drop-shadow-sm">
+              <div className="flex flex-col gap-2 rounded-b-3xl border border-zinc-200 p-4 drop-shadow-sm">
                 <div className="flex">
                   <span className="w-28 font-medium">Número</span>
                   <span className="w-full">
@@ -129,17 +129,17 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                   <div className="w-full">
                     <span
                       className={cn(
-                        "w-fit rounded-sm flex items-center justify-center",
+                        "flex w-fit items-center justify-center rounded-sm",
                         occurrence?.device.status === "Roubado" &&
-                          "bg-robbery-bg text-red-600 px-3 py-1 ring-red-500",
+                          "bg-robbery-bg px-3 py-1 text-red-600 ring-red-500",
                         occurrence?.device.status === "Furtado" &&
-                          "bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500",
+                          "bg-theft-bg px-3 py-1 text-orange-600 ring-orange-500",
                         occurrence?.device.status === "Perdido" &&
-                          "bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500",
+                          "bg-lost-bg px-3 py-1 text-yellow-600 ring-yellow-500",
                         occurrence?.device.status === "Recuperado" &&
-                          "bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500",
+                          "bg-lime-500/30 px-3 py-1 text-lime-600 ring-lime-500",
                         occurrence?.device.status === "Regular" &&
-                          "bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500",
+                          "bg-lime-500/30 px-3 py-1 text-lime-600 ring-lime-500",
                       )}
                     >
                       {occurrence?.device.status}
@@ -150,17 +150,17 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
             </div>
 
             <div className="flex flex-col">
-              <div className="flex items-center px-5 w-full h-20 text-lg font-medium bg-zinc-100 rounded-t-lg  border-zinc-200 gap-3">
+              <div className="flex h-20 w-full items-center gap-3 rounded-t-lg border-zinc-200 bg-zinc-100 px-5 text-lg font-medium">
                 <Image
                   src={occurrenceInfo}
                   alt="device-info"
-                  className="w-12 h-12"
+                  className="h-12 w-12"
                 />
                 <span>Informações da ocorrência</span>
               </div>
               <div
                 className={cn(
-                  "flex flex-col gap-2 border-x rounded-none border-zinc-200 p-4  drop-shadow-sm",
+                  "flex flex-col gap-2 rounded-none border-x border-zinc-200 p-4 drop-shadow-sm",
                 )}
               >
                 <div className="flex">
@@ -195,10 +195,10 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
               {events.length > 0 && (
                 <div
                   className={cn(
-                    "w-full flex justify-center border-x pt-4 pb-1",
+                    "flex w-full justify-center border-x pb-1 pt-4",
                     isShowAllEventsOn
-                      ? "bg-zinc-100/90 border-b-0"
-                      : "border-b rounded-b-3xl",
+                      ? "border-b-0 bg-zinc-100/90"
+                      : "rounded-b-3xl border-b",
                   )}
                 >
                   <button
@@ -217,7 +217,7 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                   <div
                     key={prevEvent.$id}
                     className={cn(
-                      "flex flex-col gap-2 bg-zinc-100/90 border border-zinc-200 p-4 drop-shadow-sm",
+                      "flex flex-col gap-2 border border-zinc-200 bg-zinc-100/90 p-4 drop-shadow-sm",
                       index === events.length - 1 && "rounded-b-3xl",
                       index === 0 && "border-t-0",
                     )}
@@ -242,17 +242,17 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                       <span className="w-32 font-medium">Tipo</span>
                       <span
                         className={cn(
-                          "w-fit rounded-sm flex items-start justify-start",
+                          "flex w-fit items-start justify-start rounded-sm",
                           prevEvent?.type === "Roubo" &&
-                            "bg-robbery-bg text-red-600 px-3 py-1 ring-red-500",
+                            "bg-robbery-bg px-3 py-1 text-red-600 ring-red-500",
                           prevEvent?.type === "Furto simples" &&
-                            "bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500",
+                            "bg-theft-bg px-3 py-1 text-orange-600 ring-orange-500",
                           prevEvent?.type === "Extravio ou Perda" &&
-                            "bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500",
+                            "bg-lost-bg px-3 py-1 text-yellow-600 ring-yellow-500",
                           prevEvent?.type === "Recuperado" &&
-                            "bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500",
+                            "bg-lime-500/30 px-3 py-1 text-lime-600 ring-lime-500",
                           prevEvent?.type === "Regular" &&
-                            "bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500",
+                            "bg-lime-500/30 px-3 py-1 text-lime-600 ring-lime-500",
                         )}
                       >
                         {prevEvent?.type}
@@ -272,15 +272,15 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
             </div>
 
             <div className="flex flex-col">
-              <div className="flex items-center px-5 w-full h-20 text-lg font-medium bg-zinc-100 rounded-t-lg  border-zinc-200">
+              <div className="flex h-20 w-full items-center rounded-t-lg border-zinc-200 bg-zinc-100 px-5 text-lg font-medium">
                 <Image
                   src={ownerInfo}
                   alt="device-info"
-                  className="w-12 h-12"
+                  className="h-12 w-12"
                 />
                 Informações do proprietário
               </div>
-              <div className="flex flex-col gap-2 border border-zinc-200 p-4 rounded-b-3xl drop-shadow-sm">
+              <div className="flex flex-col gap-2 rounded-b-3xl border border-zinc-200 p-4 drop-shadow-sm">
                 <div className="flex">
                   <span className="w-28 font-medium">Nome</span>
                   <span className="w-full">{occurrence?.user.name}</span>
@@ -301,7 +301,7 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
                   <span className="w-28 font-medium">
                     Contatos de confiança
                   </span>
-                  <div className="w-full flex gap-14">
+                  <div className="flex w-full gap-14">
                     {contacts.length > 0 ? (
                       contacts.map((contact) => (
                         <div key={contact.$id} className="flex flex-col">

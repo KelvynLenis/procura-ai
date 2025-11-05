@@ -35,25 +35,25 @@ export function DevicesTable({
 }: DevicesTableProps) {
   return (
     <>
-      <Table className="bg-white shadow-lg rounded-xl self-center">
-        <TableHeader className="bg-secondary/10 rounded-xl">
+      <Table className="self-center rounded-xl bg-white shadow-lg">
+        <TableHeader className="rounded-xl bg-secondary/10">
           <TableRow>
-            <TableHead className="text-black/80 text-lg pl-5 font-medium hidden lg:table-cell lg:w-1/12">
+            <TableHead className="hidden pl-5 text-lg font-medium text-black/80 lg:table-cell lg:w-1/12">
               ID
             </TableHead>
-            <TableHead className="text-black/80 text-lg font-medium flex w-28 md:flex lg:table-cell lg:w-48 items-end">
+            <TableHead className="flex w-28 items-end text-lg font-medium text-black/80 md:flex lg:table-cell lg:w-48">
               Modelo
             </TableHead>
-            <TableHead className="text-black/80 text-lg font-medium hidden md:table-cell lg:w-32">
+            <TableHead className="hidden text-lg font-medium text-black/80 md:table-cell lg:w-32">
               Fabricante
             </TableHead>
-            <TableHead className="text-black/80 text-lg font-medium hidden md:table-cell lg:w-1/4">
+            <TableHead className="hidden text-lg font-medium text-black/80 md:table-cell lg:w-1/4">
               IMEI
             </TableHead>
-            <TableHead className="text-black/80 text-lg font-medium md:flex w-32 lg:w-36">
+            <TableHead className="w-32 text-lg font-medium text-black/80 md:flex lg:w-36">
               Status
             </TableHead>
-            <TableHead className="text-black/80 text-lg w-20 font-medium">
+            <TableHead className="w-20 text-lg font-medium text-black/80">
               Ações
             </TableHead>
           </TableRow>
@@ -81,7 +81,7 @@ export function DevicesTable({
                 <Skeleton className="h-8 w-20" />
               </TableCell>
 
-              <TableCell className=" flex items-center gap-0.5">
+              <TableCell className="flex items-center gap-0.5">
                 <Skeleton className="h-10 w-10" />
                 <Skeleton className="h-10 w-10" />
                 <Skeleton className="h-10 w-10" />

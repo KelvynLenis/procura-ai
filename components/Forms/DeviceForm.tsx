@@ -315,15 +315,15 @@ export function DeviceForm({
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className={cn(
-              "w-full md:w-10/12 lg:w-full bg-white flex flex-col px-5 md:px-10 py-4 gap-8 text-zinc-900 self-center items-center justify-center rounded-3xl shadow-md",
+              "flex w-full flex-col items-center justify-center gap-8 self-center rounded-3xl bg-white px-5 py-4 text-zinc-900 shadow-md md:w-10/12 md:px-10 lg:w-full",
             )}
           >
             {!device && (
-              <div className="flex flex-col w-full gap-2">
+              <div className="flex w-full flex-col gap-2">
                 <span className="font-medium">Insira os dados abaixo:</span>
-                <div className="flex flex-col w-full gap-1">
+                <div className="flex w-full flex-col gap-1">
                   <span className="h-0.5 w-full bg-zinc-400" />
-                  <span className="text-red-500 text-sm flex items-start">
+                  <span className="flex items-start text-sm text-red-500">
                     *Campos obrigatórios
                   </span>
                 </div>
@@ -334,84 +334,84 @@ export function DeviceForm({
               control={form.control}
               name="imei"
               render={({ field }) => (
-                <FormItem className="flex flex-col md:flex-row gap-5 w-full">
+                <FormItem className="flex w-full flex-col gap-5 md:flex-row">
                   <div>
-                    <FormLabel className="text-lg w-fit text-center items-start flex">
-                      <span className="text-red-500 text-base">*</span>
+                    <FormLabel className="flex w-fit items-start text-center text-lg">
+                      <span className="text-base text-red-500">*</span>
                       IMEI
                     </FormLabel>
                     <FormControl>
                       <InputOTP
                         maxLength={15}
                         {...field}
-                        className="w-full flex justify-center items-center"
+                        className="flex w-full items-center justify-center"
                       >
                         <InputOTPGroup>
                           <InputOTPSlot
-                            className="w-3 md:w-4 h-5 xl:w-6 border-t-0 border-r-0 border-black  shadow-transparent"
+                            className="h-5 w-3 border-r-0 border-t-0 border-black shadow-transparent md:w-4 xl:w-6"
                             index={0}
                           />
                           <InputOTPSlot
-                            className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                            className="h-5 w-3 border-r-0 border-t-0 border-black shadow-transparent md:w-4 xl:w-6"
                             index={1}
                           />
                         </InputOTPGroup>
                         <span />
                         <InputOTPGroup>
                           <InputOTPSlot
-                            className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                            className="h-5 w-3 border-r-0 border-t-0 border-black shadow-transparent md:w-4 xl:w-6"
                             index={2}
                           />
                           <InputOTPSlot
-                            className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                            className="h-5 w-3 border-r-0 border-t-0 border-black shadow-transparent md:w-4 xl:w-6"
                             index={3}
                           />
                           <InputOTPSlot
-                            className="w-3 md:w-4 h-5 xl:w-6 border-t-0 border-r-0 border-black shadow-transparent"
+                            className="h-5 w-3 border-r-0 border-t-0 border-black shadow-transparent md:w-4 xl:w-6"
                             index={4}
                           />
                           <InputOTPSlot
-                            className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                            className="h-5 w-3 border-r-0 border-t-0 border-black shadow-transparent md:w-4 xl:w-6"
                             index={5}
                           />
                           <InputOTPSlot
-                            className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                            className="h-5 w-3 border-r-0 border-t-0 border-black shadow-transparent md:w-4 xl:w-6"
                             index={6}
                           />
                           <InputOTPSlot
-                            className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                            className="h-5 w-3 border-r-0 border-t-0 border-black shadow-transparent md:w-4 xl:w-6"
                             index={7}
                           />
                         </InputOTPGroup>
                         <InputOTPGroup>
                           <InputOTPSlot
-                            className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                            className="h-5 w-3 border-r-0 border-t-0 border-black shadow-transparent md:w-4 xl:w-6"
                             index={8}
                           />
                           <InputOTPSlot
-                            className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                            className="h-5 w-3 border-r-0 border-t-0 border-black shadow-transparent md:w-4 xl:w-6"
                             index={9}
                           />
                           <InputOTPSlot
-                            className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                            className="h-5 w-3 border-r-0 border-t-0 border-black shadow-transparent md:w-4 xl:w-6"
                             index={10}
                           />
                           <InputOTPSlot
-                            className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                            className="h-5 w-3 border-r-0 border-t-0 border-black shadow-transparent md:w-4 xl:w-6"
                             index={11}
                           />
                           <InputOTPSlot
-                            className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                            className="h-5 w-3 border-r-0 border-t-0 border-black shadow-transparent md:w-4 xl:w-6"
                             index={12}
                           />
                           <InputOTPSlot
-                            className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                            className="h-5 w-3 border-r-0 border-t-0 border-black shadow-transparent md:w-4 xl:w-6"
                             index={13}
                           />
                         </InputOTPGroup>
                         <InputOTPGroup>
                           <InputOTPSlot
-                            className="w-3 md:w-4 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                            className="h-5 w-3 border-r-0 border-t-0 border-black shadow-transparent md:w-4 xl:w-6"
                             index={14}
                           />
                         </InputOTPGroup>
@@ -419,7 +419,7 @@ export function DeviceForm({
                     </FormControl>
                     <FormMessage>{imeiError}</FormMessage>
                   </div>
-                  <span className="w-64 md:w-80 bg-[#C4F3F2] text-procura-ai-black/60 font-medium py-2 px-4 rounded-xl">
+                  <span className="w-64 rounded-xl bg-[#C4F3F2] px-4 py-2 font-medium text-procura-ai-black/60 md:w-80">
                     🛈 O IMEI é composto por 15 números e pode ser encontrado na
                     embalagem do aparelho ou digitando *#06# no teclado do
                     aparelho.
@@ -432,25 +432,25 @@ export function DeviceForm({
               control={form.control}
               name="phone_number"
               render={({ field }) => (
-                <FormItem className="flex flex-col md:w-fit self-start">
-                  <FormLabel className="text-lg w-fit text-center items-start flex">
-                    <span className="text-red-500 text-base">*</span>
+                <FormItem className="flex flex-col self-start md:w-fit">
+                  <FormLabel className="flex w-fit items-start text-center text-lg">
+                    <span className="text-base text-red-500">*</span>
                     Número do celular
                   </FormLabel>
                   <FormControl>
                     <InputOTP
                       maxLength={11}
                       {...field}
-                      className="w-full flex justify-center items-center"
+                      className="flex w-full items-center justify-center"
                     >
                       <InputOTPGroup>
                         <span>(</span>
                         <InputOTPSlot
-                          className="w-4 md:w-5 h-5 xl:w-6 border-t-0 border-r-0 border-black  shadow-transparent"
+                          className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5 xl:w-6"
                           index={0}
                         />
                         <InputOTPSlot
-                          className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5 xl:w-6"
                           index={1}
                         />
                         <span>)</span>
@@ -458,42 +458,42 @@ export function DeviceForm({
                       <span />
                       <InputOTPGroup>
                         <InputOTPSlot
-                          className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5 xl:w-6"
                           index={2}
                         />
                         <InputOTPSlot
-                          className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5 xl:w-6"
                           index={3}
                         />
                         <InputOTPSlot
-                          className="w-4 md:w-5 h-5 xl:w-6 border-t-0 border-r-0 border-black shadow-transparent"
+                          className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5 xl:w-6"
                           index={4}
                         />
                         <InputOTPSlot
-                          className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5 xl:w-6"
                           index={5}
                         />
                         <InputOTPSlot
-                          className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5 xl:w-6"
                           index={6}
                         />
                       </InputOTPGroup>
                       <InputOTPSeparator data-dash />
                       <InputOTPGroup>
                         <InputOTPSlot
-                          className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5 xl:w-6"
                           index={7}
                         />
                         <InputOTPSlot
-                          className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5 xl:w-6"
                           index={8}
                         />
                         <InputOTPSlot
-                          className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5 xl:w-6"
                           index={9}
                         />
                         <InputOTPSlot
-                          className="w-4 md:w-5 h-5 xl:w-6  border-t-0 border-r-0 border-black shadow-transparent"
+                          className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent md:w-5 xl:w-6"
                           index={10}
                         />
                       </InputOTPGroup>
@@ -508,8 +508,8 @@ export function DeviceForm({
               control={form.control}
               name="brand"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full md:w-fit self-start">
-                  <FormLabel className="text-lg w-fit text-center items-start flex">
+                <FormItem className="flex w-full flex-col self-start md:w-fit">
+                  <FormLabel className="flex w-fit items-start text-center text-lg">
                     Fabricante
                   </FormLabel>
                   <Popover
@@ -517,7 +517,7 @@ export function DeviceForm({
                     onOpenChange={setIsBrandsPopoverOpen}
                   >
                     <PopoverTrigger asChild disabled>
-                      <div className="self-start w-full md:w-fit">
+                      <div className="w-full self-start md:w-fit">
                         <FormControl>
                           <ButtonShadcn
                             variant="outline"
@@ -525,7 +525,7 @@ export function DeviceForm({
                             type="button"
                             disabled
                             className={cn(
-                              "w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100 xl:w-[25.5rem]",
+                              "w-full justify-between gap-0 bg-zinc-100 p-2 text-xs md:w-96 md:p-4 md:text-base lg:gap-2 xl:w-[25.5rem]",
                               !field.value &&
                                 "text-muted-foreground text-zinc-500",
                               "cursor-not-allowed opacity-50",
@@ -546,13 +546,13 @@ export function DeviceForm({
               control={form.control}
               name="phone_model"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full md:w-fit self-start">
-                  <FormLabel className="text-lg w-fit text-center items-start flex">
+                <FormItem className="flex w-full flex-col self-start md:w-fit">
+                  <FormLabel className="flex w-fit items-start text-center text-lg">
                     Modelo do dispositivo
                   </FormLabel>
                   <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild disabled>
-                      <div className="self-start w-full md:w-fit">
+                      <div className="w-full self-start md:w-fit">
                         <FormControl>
                           <ButtonShadcn
                             variant="outline"
@@ -560,7 +560,7 @@ export function DeviceForm({
                             type="button"
                             disabled
                             className={cn(
-                              "w-full md:w-96 text-xs gap-0 p-2 md:p-4 md:text-base lg:gap-2 justify-between bg-zinc-100 xl:w-[25.5rem]",
+                              "w-full justify-between gap-0 bg-zinc-100 p-2 text-xs md:w-96 md:p-4 md:text-base lg:gap-2 xl:w-[25.5rem]",
                               !field.value &&
                                 "text-muted-foreground text-zinc-500",
                               "cursor-not-allowed opacity-50",
@@ -581,13 +581,13 @@ export function DeviceForm({
               control={form.control}
               name="operator_id"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full md:w-fit self-start">
-                  <FormLabel className="text-lg w-fit text-center items-start flex">
+                <FormItem className="flex w-full flex-col self-start md:w-fit">
+                  <FormLabel className="flex w-fit items-start text-center text-lg">
                     Operadora do dispositivo
                   </FormLabel>
 
                   {/* Versão alternativa usando select nativo */}
-                  <div className="self-start w-full md:w-fit relative">
+                  <div className="relative w-full self-start md:w-fit">
                     <FormControl>
                       <select
                         {...field}
@@ -595,8 +595,8 @@ export function DeviceForm({
                           !operatorsLoaded || operatorOptions.length === 0
                         }
                         className={cn(
-                          "w-full md:w-96 xl:w-[25.5rem] h-10 px-3 pr-10 text-sm md:text-base bg-zinc-100 border border-input rounded-md shadow-sm appearance-none",
-                          "focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent",
+                          "border-input h-10 w-full appearance-none rounded-md border bg-zinc-100 px-3 pr-10 text-sm shadow-sm md:w-96 md:text-base xl:w-[25.5rem]",
+                          "focus:ring-ring focus:border-transparent focus:outline-none focus:ring-2",
                           !field.value && "text-muted-foreground text-zinc-500",
                           (!operatorsLoaded || operatorOptions.length === 0) &&
                             "cursor-not-allowed opacity-50",
@@ -619,7 +619,7 @@ export function DeviceForm({
                         ))}
                       </select>
                     </FormControl>
-                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
                     <FormMessage />
                   </div>
                 </FormItem>
@@ -627,7 +627,7 @@ export function DeviceForm({
             />
 
             {device ? (
-              <div className="flex justify-between w-full">
+              <div className="flex w-full justify-between">
                 {isPopover ? (
                   <DialogClose asChild>
                     <Button
@@ -656,7 +656,7 @@ export function DeviceForm({
                 </Button>
               </div>
             ) : (
-              <div className="flex justify-between w-full">
+              <div className="flex w-full justify-between">
                 {isPopover ? (
                   <Button
                     onClick={() => setModalOpen!(false)}
@@ -688,15 +688,15 @@ export function DeviceForm({
       </div>
 
       {/* Layout Mobile - nova estilização baseada na imagem */}
-      <div className="block md:hidden min-h-screen bg-gray-50">
+      <div className="block min-h-screen bg-gray-50 md:hidden">
         <div className="bg-white">
           {/* Header */}
-          <div className="px-4 py-4 border-b border-gray-200">
+          <div className="border-b border-gray-200 px-4 py-4">
             <h1 className="text-lg font-medium text-gray-900">
               {device ? "Editar dispositivo" : "Cadastrar dispositivo"}
             </h1>
             {!device && (
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="mt-1 text-sm text-gray-600">
                 Insira os dados abaixo:
               </p>
             )}
@@ -705,7 +705,7 @@ export function DeviceForm({
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="p-4 space-y-4"
+              className="space-y-4 p-4"
             >
               {/* IMEI Field */}
               <FormField
@@ -722,7 +722,7 @@ export function DeviceForm({
                           placeholder="12 345678 901234 5"
                           value={formatImei(field.value || "")}
                           maxLength={19} // 15 números + 4 espaços
-                          className="h-12 bg-gray-50 border-gray-200 rounded-lg text-base placeholder:text-gray-400 text-center font-mono tracking-wider"
+                          className="h-12 rounded-lg border-gray-200 bg-gray-50 text-center font-mono text-base tracking-wider placeholder:text-gray-400"
                           onChange={(e) => {
                             const rawValue = e.target.value
                               .replace(/\D/g, "")
@@ -734,9 +734,9 @@ export function DeviceForm({
                     </FormControl>
 
                     {/* Info Box */}
-                    <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-3">
-                      <p className="text-xs text-cyan-800 flex items-start gap-2">
-                        <span className="text-cyan-600 text-sm shrink-0">
+                    <div className="rounded-lg border border-cyan-200 bg-cyan-50 p-3">
+                      <p className="flex items-start gap-2 text-xs text-cyan-800">
+                        <span className="shrink-0 text-sm text-cyan-600">
                           ℹ
                         </span>
                         O IMEI é composto por 15 números e pode ser encontrado
@@ -767,7 +767,7 @@ export function DeviceForm({
                         placeholder="(11) 99999-9999"
                         value={formatPhone(field.value || "")}
                         maxLength={15} // (11) 99999-9999
-                        className="h-12 bg-gray-50 border-gray-200 rounded-lg text-base placeholder:text-gray-400 text-center font-mono tracking-wide"
+                        className="h-12 rounded-lg border-gray-200 bg-gray-50 text-center font-mono text-base tracking-wide placeholder:text-gray-400"
                         onChange={(e) => {
                           const rawValue = e.target.value
                             .replace(/\D/g, "")
@@ -795,7 +795,7 @@ export function DeviceForm({
                         placeholder="Pesquise o fabricante do dispositivo"
                         {...field}
                         disabled
-                        className="h-12 bg-gray-100 border-gray-200 rounded-lg text-base placeholder:text-gray-400 cursor-not-allowed"
+                        className="h-12 cursor-not-allowed rounded-lg border-gray-200 bg-gray-100 text-base placeholder:text-gray-400"
                       />
                     </FormControl>
                     <FormMessage />
@@ -817,7 +817,7 @@ export function DeviceForm({
                         placeholder="Selecione o modelo do dispositivo"
                         {...field}
                         disabled
-                        className="h-12 bg-gray-100 border-gray-200 rounded-lg text-base placeholder:text-gray-400 cursor-not-allowed"
+                        className="h-12 cursor-not-allowed rounded-lg border-gray-200 bg-gray-100 text-base placeholder:text-gray-400"
                       />
                     </FormControl>
                     <FormMessage />
@@ -844,8 +844,8 @@ export function DeviceForm({
                             !operatorsLoaded || operatorOptions.length === 0
                           }
                           className={cn(
-                            "w-full h-12 px-3 pr-10 text-base bg-gray-50 border-gray-200 rounded-lg appearance-none",
-                            "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+                            "h-12 w-full appearance-none rounded-lg border-gray-200 bg-gray-50 px-3 pr-10 text-base",
+                            "focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500",
                             !field.value && "text-gray-400",
                             (!operatorsLoaded ||
                               operatorOptions.length === 0) &&
@@ -869,7 +869,7 @@ export function DeviceForm({
                           ))}
                         </select>
                       </FormControl>
-                      <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
                     </div>
                     <FormMessage />
                   </FormItem>
@@ -877,7 +877,7 @@ export function DeviceForm({
               />
 
               {/* Action Buttons */}
-              <div className="flex justify-center gap-4 w-full pt-6">
+              <div className="flex w-full justify-center gap-4 pt-6">
                 {device ? (
                   <>
                     {isPopover ? (

@@ -24,15 +24,15 @@ export default function Button({
   return (
     <button
       className={cn(
-        "rounded-full drop-shadow text-sm lg:text-xl font-semibold text-center items-center justify-center flex w-fit px-6 py-2 transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0",
+        "flex w-fit items-center justify-center rounded-full px-6 py-2 text-center text-sm font-semibold drop-shadow transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0 lg:text-xl",
         variant === "blue" &&
-          "bg-secondary border-[0.5px] border-secondary text-white hover:bg-white hover:text-secondary",
+          "border-[0.5px] border-secondary bg-secondary text-white hover:bg-white hover:text-secondary",
         variant === "white" &&
-          "bg-white border-[0.5px] border-red-500 text-red-500 hover:bg-red-500 hover:text-white",
+          "border-[0.5px] border-red-500 bg-white text-red-500 hover:bg-red-500 hover:text-white",
         variant === "black" &&
-          "bg-white border-[0.5px] border-black text-black hover:bg-black hover:text-white",
+          "border-[0.5px] border-black bg-white text-black hover:bg-black hover:text-white",
         variant === "red" &&
-          "bg-red-500 border-[0.5px] border-red-500 text-white hover:bg-white hover:text-red-500",
+          "border-[0.5px] border-red-500 bg-red-500 text-white hover:bg-white hover:text-red-500",
         className,
       )}
       onClick={() => setIsLoading(true)}

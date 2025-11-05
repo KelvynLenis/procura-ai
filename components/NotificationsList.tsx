@@ -48,15 +48,15 @@ function NotificationItem({
   }, []);
 
   return (
-    <div className="w-full rounded-lg ring-1 ring-zinc-200 flex px-4 py-6 gap-6">
+    <div className="flex w-full gap-6 rounded-lg px-4 py-6 ring-1 ring-zinc-200">
       <span
         className={cn(
-          "w-2 h-full rounded-lg",
+          "h-full w-2 rounded-lg",
           isRead ? "bg-zinc-400" : "bg-secondary",
         )}
       />
       <div className="flex flex-col gap-2">
-        <h1 className="font-medium text-lg">
+        <h1 className="text-lg font-medium">
           {notification.type === "push"
             ? notification.title
             : "Seu dispositivo foi recuperado"}
@@ -69,7 +69,7 @@ function NotificationItem({
         <button
           onClick={markAsReadAndRedirect}
           type="button"
-          className="text-secondary underline text-sm mt-2 flex self-end"
+          className="mt-2 flex self-end text-sm text-secondary underline"
         >
           ir para página de recuperação
           <ChevronRight className="h-4 w-4" />
@@ -128,8 +128,8 @@ export function NotificationsList() {
   }, [refetch]);
 
   return (
-    <div className="w-full min-h-screen flex flex-col rounded-lg bg-white px-4 py-6 gap-4">
-      <h1 className="font-semibold text-lg">Notificação em destaque</h1>
+    <div className="flex min-h-screen w-full flex-col gap-4 rounded-lg bg-white px-4 py-6">
+      <h1 className="text-lg font-semibold">Notificação em destaque</h1>
       {NewNotifications.length > 0 ? (
         NewNotifications.map((notification) => (
           <NotificationItem
@@ -140,11 +140,11 @@ export function NotificationsList() {
           />
         ))
       ) : (
-        <p className="text-sm text-zinc-500 self-center">
+        <p className="self-center text-sm text-zinc-500">
           Nenhuma notificação em destaque
         </p>
       )}
-      <h1 className="font-semibold text-lg">Notificação anteriores</h1>
+      <h1 className="text-lg font-semibold">Notificação anteriores</h1>
       {oldNotifications.length > 0 ? (
         oldNotifications.map((notification) => (
           <NotificationItem
@@ -155,7 +155,7 @@ export function NotificationsList() {
           />
         ))
       ) : (
-        <p className="text-sm text-zinc-500 self-center">
+        <p className="self-center text-sm text-zinc-500">
           Nenhuma notificação anteriores
         </p>
       )}

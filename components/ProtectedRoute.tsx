@@ -64,7 +64,7 @@ export default function ProtectedRoute({
 
   if (isLoading) {
     return (
-      <div className="w-full h-screen flex justify-center items-center">
+      <div className="flex h-screen w-full items-center justify-center">
         <ClipLoader color="#0F2498" size={75} />
       </div>
     );

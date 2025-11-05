@@ -79,31 +79,31 @@ export function AdminNotificationButton({
       <div key={notification.$id} className="w-full">
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          className={`py-3 w-full flex items-start flex-col gap-2 relative ${
-            isRecovered ? "" : "hover:bg-zinc-50 cursor-pointer"
+          className={`relative flex w-full flex-col items-start gap-2 py-3 ${
+            isRecovered ? "" : "cursor-pointer hover:bg-zinc-50"
           }`}
           onClick={() => !isRecovered && handleNotificationClick(notification)}
         >
           <button
             onClick={(e) => handleCloseNotification(e, notification.$id)}
-            className="absolute top-2 right-2 p-1 hover:bg-zinc-200 rounded-full transition-colors z-10"
+            className="absolute right-2 top-2 z-10 rounded-full p-1 transition-colors hover:bg-zinc-200"
             title="Fechar notificação"
           >
             <X size={16} />
           </button>
 
           <div className="w-full pr-8">
-            <h1 className="font-bold text-sm">Novo {notification.type}</h1>
-            <p className="text-sm text-gray-600 text-justify mt-1">
+            <h1 className="text-sm font-bold">Novo {notification.type}</h1>
+            <p className="mt-1 text-justify text-sm text-gray-600">
               <span className="font-semibold">Descrição: </span>
               {notification.description}
             </p>
-            <span className="text-xs text-zinc-500 mt-2 block">
+            <span className="mt-2 block text-xs text-zinc-500">
               {formatDateTime(notification.time_event)}
             </span>
 
             {!isRecovered && (
-              <div className="mt-2 text-xs text-blue-600 flex items-center gap-1">
+              <div className="mt-2 flex items-center gap-1 text-xs text-blue-600">
                 Clique para ver detalhes
                 <ChevronRight size={12} />
               </div>
@@ -117,22 +117,22 @@ export function AdminNotificationButton({
   return (
     <>
       <DropdownMenu open={isListVisible} onOpenChange={toggleList}>
-        <DropdownMenuTrigger className="relative bg-procura-ai-white p-2 rounded-full hover:bg-procura-ai-blue hover:ring-1 hover:ring-procura-ai-white hover:text-white transition-all duration-500">
+        <DropdownMenuTrigger className="relative rounded-full bg-procura-ai-white p-2 transition-all duration-500 hover:bg-procura-ai-blue hover:text-white hover:ring-1 hover:ring-procura-ai-white">
           <Bell className="size-7" />
           {sortedNotifications.length > 0 && (
-            <span className="bg-secondary text-white rounded-full w-6 h-6 font-bold flex items-center justify-center absolute -top-1 right-3">
+            <span className="absolute -top-1 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-secondary font-bold text-white">
               {sortedNotifications.length}
             </span>
           )}
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="bg-white shadow-lg rounded-md w-80 border">
-          <div className="p-2 text-gray-700 font-semibold border-b w-full flex justify-between items-center">
+        <DropdownMenuContent className="w-80 rounded-md border bg-white shadow-lg">
+          <div className="flex w-full items-center justify-between border-b p-2 font-semibold text-gray-700">
             Notificações
             <button onClick={toggleList} type="button">
               <X className="ml-2" size={24} />
             </button>
           </div>
-          <div className="max-h-96 overflow-y-auto flex flex-col items-center justify-center py-2 px-2">
+          <div className="flex max-h-96 flex-col items-center justify-center overflow-y-auto px-2 py-2">
             {/* <div className='w-full flex h-full px-5 py-3 rounded-lg bg-blue-100/40 gap-4'>
                 <Image src={DeviceCheck} alt="device-check" className="w-6 h-6 self-center" />
                 <div className='flex flex-col gap-4'>
@@ -160,7 +160,7 @@ export function AdminNotificationButton({
                 renderNotification(notification),
               )
             ) : (
-              <p className="p-3 text-gray-500 text-sm">Nenhuma notificação</p>
+              <p className="p-3 text-sm text-gray-500">Nenhuma notificação</p>
             )}
           </div>
         </DropdownMenuContent>

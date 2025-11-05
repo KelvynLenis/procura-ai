@@ -31,23 +31,23 @@ export function DevicesList({
 
   return (
     <>
-      <div className="flex flex-col w-full self-center gap-2 bg-[#F9F9F9] ring-1 ring-zinc-300 rounded-xl">
-        <div className="flex w-full gap-2 px-2.5 bg-zinc-200/50 rounded-t-xl py-3 drop-shadow-sm justify-between">
+      <div className="flex w-full flex-col gap-2 self-center rounded-xl bg-[#F9F9F9] ring-1 ring-zinc-300">
+        <div className="flex w-full justify-between gap-2 rounded-t-xl bg-zinc-200/50 px-2.5 py-3 drop-shadow-sm">
           <span>Modelo</span>
-          <div className="flex -ml-10">
+          <div className="-ml-10 flex">
             <span className="text-left mobile-sm:w-20 mobile:w-24">Status</span>
             <span className="text-left mobile-sm:w-20 mobile:w-20">Ações</span>
           </div>
         </div>
-        <div className="flex flex-col w-full self-center gap-1 px-1 py-2">
+        <div className="flex w-full flex-col gap-1 self-center px-1 py-2">
           {isLoading ? (
-            <div className="flex flex-col w-full h-fit bg-white rounded-lg ring-1 ring-zinc-200">
+            <div className="flex h-fit w-full flex-col rounded-lg bg-white ring-1 ring-zinc-200">
               <div className="flex w-full justify-end gap-5 px-2.5 py-3">
-                <Skeleton className="w-20 h-6" />
-                <Skeleton className="w-16 h-6 ml-6" />
-                <div className="flex gap-1 ml-3">
-                  <Skeleton className="w-6 h-6" />
-                  <Skeleton className="w-6 h-6" />
+                <Skeleton className="h-6 w-20" />
+                <Skeleton className="ml-6 h-6 w-16" />
+                <div className="ml-3 flex gap-1">
+                  <Skeleton className="h-6 w-6" />
+                  <Skeleton className="h-6 w-6" />
                 </div>
               </div>
             </div>

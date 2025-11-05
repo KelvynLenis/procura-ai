@@ -32,10 +32,10 @@ export function MobileNavBar() {
 
   return (
     <>
-      <div className="h-[86px] shadow-lg bg-white flex justify-center items-center lg:hidden px-2">
+      <div className="flex h-[86px] items-center justify-center bg-white px-2 shadow-lg lg:hidden">
         <button
           type="button"
-          className="flex flex-col text-xs items-center justify-between w-1/4 gap-2"
+          className="flex w-1/4 flex-col items-center justify-between gap-2 text-xs"
           onClick={() => showLoadingToast("/meus-dispositivos")}
         >
           <Smartphone
@@ -52,24 +52,24 @@ export function MobileNavBar() {
               Meus dispositivos
             </span>
             {pathname === "meus-dispositivos" && (
-              <span className="w-1/2 h-0.5 bg-secondary rounded-xl" />
+              <span className="h-0.5 w-1/2 rounded-xl bg-secondary" />
             )}
           </div>
         </button>
 
         <button
           type="button"
-          className="flex flex-col text-xs items-center justify-between w-1/4 gap-2"
+          className="flex w-1/4 flex-col items-center justify-between gap-2 text-xs"
           onClick={() => showLoadingToast("/cadastrar-dispositivo")}
         >
           {pathname === "cadastrar-dispositivo" ? (
             <Image
               src={AddDeviceFocused}
               alt="Devices icon"
-              className="w-6 h-6"
+              className="h-6 w-6"
             />
           ) : (
-            <Image src={AddDevice} alt="Devices icon" className="w-6 h-6" />
+            <Image src={AddDevice} alt="Devices icon" className="h-6 w-6" />
           )}
           <div className="flex flex-col items-center justify-center">
             <span
@@ -81,24 +81,24 @@ export function MobileNavBar() {
               Adicionar novo
             </span>
             {pathname === "cadastrar-dispositivo" && (
-              <span className="w-1/2 h-0.5 bg-secondary rounded-xl" />
+              <span className="h-0.5 w-1/2 rounded-xl bg-secondary" />
             )}
           </div>
         </button>
 
         <button
           type="button"
-          className="flex flex-col text-xs items-center justify-between w-1/4 gap-2"
+          className="flex w-1/4 flex-col items-center justify-between gap-2 text-xs"
           onClick={() => showLoadingToast("/contatos-de-confianca")}
         >
           {pathname === "contatos-de-confianca" ? (
             <Image
               src={ContactsFocusedIcon}
               alt="Devices icon"
-              className="w-6 h-6"
+              className="h-6 w-6"
             />
           ) : (
-            <Image src={ContactsIcon} alt="Devices icon" className="w-6 h-6" />
+            <Image src={ContactsIcon} alt="Devices icon" className="h-6 w-6" />
           )}
           <div className="flex flex-col items-center justify-center">
             <span
@@ -110,14 +110,14 @@ export function MobileNavBar() {
               Contatos de confiança
             </span>
             {pathname === "contatos-de-confianca" && (
-              <span className="w-1/2 h-0.5 bg-secondary rounded-xl" />
+              <span className="h-0.5 w-1/2 rounded-xl bg-secondary" />
             )}
           </div>
         </button>
 
         <button
           type="button"
-          className="flex flex-col text-xs items-center justify-between w-1/4 gap-2"
+          className="flex w-1/4 flex-col items-center justify-between gap-2 text-xs"
           onClick={() => showLoadingToast("/perfil")}
         >
           <User className={cn(pathname === "perfil" && "text-secondary")} />

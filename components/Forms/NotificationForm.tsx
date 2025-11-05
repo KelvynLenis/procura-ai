@@ -24,9 +24,19 @@ import { getUser } from "@/functions/user/get-user";
 import { toast } from "react-toastify";
 import { getUserById } from "@/functions/user/get-user-by-id";
 import { ConfirmationDialog } from "../ConfirmationDialog";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { LiaSearchSolid } from "react-icons/lia";
+import { listAllUsers } from "@/functions/user/list-all-users";
 
 function NotificationForm() {
   const [allUsers, setAllUsers] = useState(true);
+  const [numberOfTotalUsers, setNumberOfTotalUsers] = useState(0);
+  const [numberOfSelectedUsers, setNumberOfSelectedUsers] = useState(0);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [statusOptions, setStatusOptions] = useState({
     Regular: false,
@@ -176,7 +186,7 @@ function NotificationForm() {
 
     // console.log("targets", targets)
 
-    console.log(statusTarget);
+    // console.log(statusTarget);
 
     const selectedTargetsId = selectedUsers.map((user) => user.user_id);
 
@@ -293,28 +303,107 @@ function NotificationForm() {
   useEffect(() => {
     if (allUsers) {
       setSelectedUsers([]);
+      setStatusOptions({
+        Regular: false,
+        Roubado: false,
+        Furtado: false,
+        Perdido: false,
+        Recuperado: false,
+      });
+      setLocationOptions({
+        JoaoPessoa: false,
+        Cabedelo: false,
+        CampinaGrande: false,
+        Bayeux: false,
+        SantaRita: false,
+      });
     }
   }, [allUsers]);
+
+  useEffect(() => {
+    if (
+      statusOptions["Regular"] ||
+      statusOptions["Roubado"] ||
+      statusOptions["Furtado"] ||
+      statusOptions["Perdido"] ||
+      statusOptions["Recuperado"]
+    ) {
+      setAllUsers(false);
+    }
+
+    if (
+      !statusOptions["Regular"] &&
+      !statusOptions["Roubado"] &&
+      !statusOptions["Furtado"] &&
+      !statusOptions["Perdido"] &&
+      !statusOptions["Recuperado"]
+    ) {
+      setAllUsers(true);
+    }
+  }, [statusOptions]);
+
+  useEffect(() => {
+    const getAllUsers = async () => {
+      const userFilter = {
+        method: "equal",
+        attribute: "type",
+        values: ["Usuario"],
+      };
+
+      const users = await getUser({ filters: [userFilter] });
+
+      setNumberOfTotalUsers(users.length);
+    };
+
+    getAllUsers();
+  }, []);
+
+  useEffect(() => {
+    const updateUsersCount = async () => {
+      const response = await fetch("/api/get-users-count", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          isAllUsersChecked: allUsers,
+          statusOptions,
+          locationOptions,
+          selectedUsers,
+        }),
+      });
+
+      if (!response.ok) {
+        console.error("Erro ao buscar dados:", response.status);
+        return;
+      }
+
+      const count = await response.json();
+      // console.log("Dados retornados:", count);
+
+      setNumberOfSelectedUsers(count);
+    };
+
+    updateUsersCount();
+  }, [allUsers, selectedUsers, statusOptions, locationOptions]);
 
   return (
     <>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 text-zinc-900 self-center items-center justify-between rounded-xl bg-white pb-4 w-full"
+          className="flex w-full flex-col items-center justify-between gap-4 self-center rounded-xl bg-white pb-4 text-zinc-900"
         >
-          <div className="w-full bg-[#E6F1FD] flex justify-start px-4 py-2 rounded-t-xl font-medium">
+          <div className="flex w-full justify-start rounded-t-xl bg-[#E6F1FD] px-4 py-2 font-medium">
             {true ? "Criar notificação" : "Editar notificação"}
           </div>
 
-          <div className="px-2 w-full flex flex-col gap-4">
+          <div className="flex w-full flex-col gap-4 px-2">
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <FormLabel className="w-fit text-center items-center flex">
-                    <span className="text-red-500 h-6 flex align-text-bottom">
+                <FormItem className="flex w-full flex-col">
+                  <FormLabel className="flex w-fit items-center text-center text-base">
+                    <span className="flex h-6 align-text-bottom text-red-500">
                       *
                     </span>
                     Título
@@ -327,6 +416,9 @@ function NotificationForm() {
                     />
                   </FormControl>
                   <FormMessage />
+                  <span className="text-sm">
+                    * Escreva um breve título com no máximo 65 caracteres
+                  </span>
                 </FormItem>
               )}
             />
@@ -335,9 +427,9 @@ function NotificationForm() {
               control={form.control}
               name="description"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <FormLabel className="w-fit text-center items-center flex">
-                    <span className="text-red-500 h-6 flex align-text-bottom">
+                <FormItem className="flex w-full flex-col">
+                  <FormLabel className="flex w-fit items-center text-center text-base">
+                    <span className="flex h-6 align-text-bottom text-red-500">
                       *
                     </span>
                     Descrição
@@ -346,215 +438,292 @@ function NotificationForm() {
                     <Textarea {...field} className="ring-1 ring-zinc-300" />
                   </FormControl>
                   <FormMessage />
+                  <span className="text-sm">
+                    * Escreva a descrição com no máximo 240 caracteres
+                  </span>
                 </FormItem>
               )}
             />
 
-            <div className="bg-zinc-100 rounded-lg w-full px-8 py-4 flex justify-between">
-              <div className="flex flex-col gap-2">
-                <h3 className="font-medium">Usuários</h3>
+            <div className="flex w-full flex-col justify-between gap-4 rounded-lg">
+              <div className="flex flex-col gap-1">
+                <h1 className="font-medium">Público notificado</h1>
+                <p className="text-sm">
+                  Escolha um dos filtros abaixo para selecionar os usuários que
+                  serão notificados:
+                </p>
+              </div>
 
-                <div className="flex gap-2 items-center">
-                  <Checkbox
-                    checked={allUsers}
-                    onClick={() => setAllUsers(!allUsers)}
-                    className="drop-shadow-sm shadow-sm bg-white"
-                  />
-                  Todos os usuários
-                </div>
-                <span>Ou selecione usuários específicos</span>
-
+              <div className="flex w-full justify-between gap-2">
                 <AddUserToPushNotificationList
                   targets={selectedUsers}
                   setTargets={setSelectedUsers}
                 />
-                {/* <div className='flex flex-col'>
-                  <div className='ring-1 ring-zinc-300 flex items-center gap-2 bg-white px-4 py-2 w-fit'>
-                    <Search className='w-6 h-6' />
-                    <input value={search} onChange={(e) => handleSearchChange(e.target.value)} placeholder='Pesquise por nome ou CPF' className='px-4 py-1 w-56 focus:outline-none' />
-                  </div>
-                  {predictions.length > 0 && (
-                    <ul className="w-full h-20 flex flex-col bg-zinc-100 ring-1 ring-zinc-300 max-h-32 overflow-auto">
-                      {predictions && predictions.map((user: User) => (
-                        <li
-                          key={user.$id}
-                          className="px-4 py-2 cursor-pointer hover:bg-white ring-1 ring-zinc-300 italic"
-                          onClick={() => handlePredictionSelect(user.push_token)}
-                        >
-                          {user.name}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div> */}
+
+                <Accordion
+                  className="ring-100 flex h-fit w-full flex-col gap-2 rounded-lg bg-zinc-100 px-3 ring-1 ring-zinc-300"
+                  type="single"
+                  collapsible
+                >
+                  <AccordionItem value="item-1">
+                    <div className="mb-2 flex w-full flex-col items-start gap-0 ring-0">
+                      <AccordionTrigger
+                        size="sm"
+                        className="flex w-full justify-between pb-0 pt-1 hover:no-underline"
+                      >
+                        <div className="flex">
+                          <h3 className="w-full font-medium">
+                            Status de dispositivo
+                          </h3>
+                        </div>
+                      </AccordionTrigger>
+                      <span className="text-sm font-normal">
+                        Defina o público selecioando um ou mais status de
+                        dispositivos
+                      </span>
+                    </div>
+                    <AccordionContent className="flex flex-col items-start gap-2">
+                      <>
+                        <div className="flex w-full flex-col items-start gap-3">
+                          <div className="ml-4 flex items-center gap-2">
+                            <Checkbox
+                              checked={statusOptions.Regular}
+                              onClick={() =>
+                                setStatusOptions({
+                                  ...statusOptions,
+                                  Regular: !statusOptions["Regular"],
+                                })
+                              }
+                              className="bg-white shadow-sm drop-shadow-sm"
+                            />
+                            Regular
+                          </div>
+
+                          <span className="h-[1px] w-full bg-zinc-300" />
+
+                          <div className="ml-4 flex items-center gap-2">
+                            <Checkbox
+                              checked={statusOptions.Roubado}
+                              onClick={() =>
+                                setStatusOptions({
+                                  ...statusOptions,
+                                  Roubado: !statusOptions["Roubado"],
+                                })
+                              }
+                              className="bg-white shadow-sm drop-shadow-sm"
+                            />
+                            Roubado
+                          </div>
+
+                          <span className="h-[1px] w-full bg-zinc-300" />
+
+                          <div className="ml-4 flex items-center gap-2">
+                            <Checkbox
+                              checked={statusOptions.Furtado}
+                              onClick={() =>
+                                setStatusOptions({
+                                  ...statusOptions,
+                                  Furtado: !statusOptions["Furtado"],
+                                })
+                              }
+                              className="bg-white shadow-sm drop-shadow-sm"
+                            />
+                            Furtado
+                          </div>
+
+                          <span className="h-[1px] w-full bg-zinc-300" />
+
+                          <div className="ml-4 flex items-center gap-2">
+                            <Checkbox
+                              checked={statusOptions.Perdido}
+                              onClick={() =>
+                                setStatusOptions({
+                                  ...statusOptions,
+                                  Perdido: !statusOptions["Perdido"],
+                                })
+                              }
+                              className="bg-white shadow-sm drop-shadow-sm"
+                            />
+                            Perdido
+                          </div>
+
+                          <span className="h-[1px] w-full bg-zinc-300" />
+
+                          <div className="ml-4 flex items-center gap-2">
+                            <Checkbox
+                              checked={statusOptions.Recuperado}
+                              onClick={() =>
+                                setStatusOptions({
+                                  ...statusOptions,
+                                  Recuperado: !statusOptions["Recuperado"],
+                                })
+                              }
+                              className="bg-white shadow-sm drop-shadow-sm"
+                            />
+                            Recuperado
+                          </div>
+                        </div>
+                      </>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+
+                <Accordion
+                  className="ring-100 flex h-fit max-h-[297px] w-full flex-col gap-2 rounded-lg bg-zinc-100 px-3 ring-1 ring-zinc-300"
+                  type="single"
+                  collapsible
+                >
+                  <AccordionItem value="item-1">
+                    <div className="group mb-2 flex flex-col items-start ring-0">
+                      <AccordionTrigger
+                        size="sm"
+                        className="flex w-full justify-between pb-0 pt-1 hover:no-underline"
+                      >
+                        <div className="flex">
+                          <h3 className="font-medium">Localidade ou região</h3>
+                        </div>
+                      </AccordionTrigger>
+                      <span className="text-sm font-normal group-hover:cursor-pointer">
+                        Defina o público por bairro ou região de abrangência da
+                        notificação.
+                      </span>
+                    </div>
+                    <AccordionContent className="flex-co flex max-h-[216px] items-start gap-2 overflow-y-scroll pr-2">
+                      <>
+                        <div className="flex w-full flex-col items-start gap-3">
+                          <div className="flex w-fit items-center gap-1 rounded-md bg-white px-4 py-2 ring-1 ring-zinc-300">
+                            <LiaSearchSolid className="h-6 w-6" />
+                            <input
+                              // value={search}
+                              // onChange={(e) => handleSearchChange(e.target.value)}
+                              type="text"
+                              name="search"
+                              id="search"
+                              // onInput={(e) => setSearch}
+                              placeholder="Pesquise por cidade"
+                              className="w-56 px-2 py-0 focus:outline-none"
+                            />
+                          </div>
+                          <div className="flex items-center gap-2 text-zinc-500">
+                            <Checkbox
+                              disabled
+                              onClick={toggleAllLocationsOptions}
+                              className="bg-white shadow-sm drop-shadow-sm"
+                            />
+                            Todos
+                          </div>
+
+                          <span className="h-[1px] w-full bg-zinc-300" />
+
+                          <div className="flex w-full flex-col items-start gap-4">
+                            <div className="flex items-center gap-2 pl-4 text-zinc-500">
+                              <Checkbox
+                                disabled
+                                checked={locationOptions.JoaoPessoa}
+                                onClick={() =>
+                                  setLocationOptions({
+                                    ...locationOptions,
+                                    JoaoPessoa: !locationOptions["JoaoPessoa"],
+                                  })
+                                }
+                                className="bg-white shadow-sm drop-shadow-sm"
+                              />
+                              João Pessoa
+                            </div>
+
+                            <span className="h-[1px] w-full bg-zinc-300" />
+
+                            <div className="flex items-center gap-2 pl-4 text-zinc-500">
+                              <Checkbox
+                                disabled
+                                checked={locationOptions.Cabedelo}
+                                onClick={() =>
+                                  setLocationOptions({
+                                    ...locationOptions,
+                                    Cabedelo: !locationOptions["Cabedelo"],
+                                  })
+                                }
+                                className="bg-white shadow-sm drop-shadow-sm"
+                              />
+                              Cabedelo
+                            </div>
+
+                            <span className="h-[1px] w-full bg-zinc-300" />
+
+                            <div className="flex items-center gap-2 pl-4 text-zinc-500">
+                              <Checkbox
+                                disabled
+                                checked={locationOptions.CampinaGrande}
+                                onClick={() =>
+                                  setLocationOptions({
+                                    ...locationOptions,
+                                    CampinaGrande:
+                                      !locationOptions["CampinaGrande"],
+                                  })
+                                }
+                                className="bg-white shadow-sm drop-shadow-sm"
+                              />
+                              Campina Grande
+                            </div>
+
+                            <span className="h-[1px] w-full bg-zinc-300" />
+
+                            <div className="flex items-center gap-2 pl-4 text-zinc-500">
+                              <Checkbox
+                                disabled
+                                checked={locationOptions.Bayeux}
+                                onClick={() =>
+                                  setLocationOptions({
+                                    ...locationOptions,
+                                    Bayeux: !locationOptions["Bayeux"],
+                                  })
+                                }
+                                className="bg-white shadow-sm drop-shadow-sm"
+                              />
+                              Bayeux
+                            </div>
+
+                            <span className="h-[1px] w-full bg-zinc-300" />
+
+                            <div className="flex items-center gap-2 pl-4 text-zinc-500">
+                              <Checkbox
+                                disabled
+                                checked={locationOptions.SantaRita}
+                                onClick={() =>
+                                  setLocationOptions({
+                                    ...locationOptions,
+                                    SantaRita: !locationOptions["SantaRita"],
+                                  })
+                                }
+                                className="bg-white shadow-sm drop-shadow-sm"
+                              />
+                              Santa Rita
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </div>
 
               <div className="flex flex-col gap-2">
-                <h3 className="font-medium">Status de dispositivo</h3>
-                <div className="flex gap-2 items-center">
+                <div className="flex items-center gap-2">
                   <Checkbox
-                    onClick={toggleAllStatusOptions}
-                    className="drop-shadow-sm shadow-sm bg-white"
+                    checked={allUsers}
+                    onClick={() => setAllUsers(!allUsers)}
+                    className="bg-white shadow-sm drop-shadow-sm"
                   />
-                  Todos
+                  Selecionar todos os usuários cadastrados
                 </div>
-
-                <div className="flex gap-2 items-start flex-col pl-4">
-                  <div className="flex gap-2 items-center">
-                    <Checkbox
-                      checked={statusOptions.Regular}
-                      onClick={() =>
-                        setStatusOptions({
-                          ...statusOptions,
-                          Regular: !statusOptions["Regular"],
-                        })
-                      }
-                      className="drop-shadow-sm shadow-sm bg-white"
-                    />
-                    Regular
-                  </div>
-                  <div className="flex gap-2 items-center">
-                    <Checkbox
-                      checked={statusOptions.Roubado}
-                      onClick={() =>
-                        setStatusOptions({
-                          ...statusOptions,
-                          Roubado: !statusOptions["Roubado"],
-                        })
-                      }
-                      className="drop-shadow-sm shadow-sm bg-white"
-                    />
-                    Roubado
-                  </div>
-                  <div className="flex gap-2 items-center">
-                    <Checkbox
-                      checked={statusOptions.Furtado}
-                      onClick={() =>
-                        setStatusOptions({
-                          ...statusOptions,
-                          Furtado: !statusOptions["Furtado"],
-                        })
-                      }
-                      className="drop-shadow-sm shadow-sm bg-white"
-                    />
-                    Furtado
-                  </div>
-                  <div className="flex gap-2 items-center">
-                    <Checkbox
-                      checked={statusOptions.Perdido}
-                      onClick={() =>
-                        setStatusOptions({
-                          ...statusOptions,
-                          Perdido: !statusOptions["Perdido"],
-                        })
-                      }
-                      className="drop-shadow-sm shadow-sm bg-white"
-                    />
-                    Perdido
-                  </div>
-                  <div className="flex gap-2 items-center">
-                    <Checkbox
-                      checked={statusOptions.Recuperado}
-                      onClick={() =>
-                        setStatusOptions({
-                          ...statusOptions,
-                          Recuperado: !statusOptions["Recuperado"],
-                        })
-                      }
-                      className="drop-shadow-sm shadow-sm bg-white"
-                    />
-                    Recuperado
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <h3 className="font-medium">Localidade ou região</h3>
-                <div className="flex gap-2 items-center text-zinc-500">
-                  <Checkbox
-                    disabled
-                    onClick={toggleAllLocationsOptions}
-                    className="drop-shadow-sm shadow-sm bg-white"
-                  />
-                  Todos
-                </div>
-
-                <div className="flex gap-2 items-start flex-col pl-4">
-                  <div className="flex gap-2 items-center text-zinc-500">
-                    <Checkbox
-                      disabled
-                      checked={locationOptions.JoaoPessoa}
-                      onClick={() =>
-                        setLocationOptions({
-                          ...locationOptions,
-                          JoaoPessoa: !locationOptions["JoaoPessoa"],
-                        })
-                      }
-                      className="drop-shadow-sm shadow-sm bg-white"
-                    />
-                    João Pessoa
-                  </div>
-                  <div className="flex gap-2 items-center text-zinc-500">
-                    <Checkbox
-                      disabled
-                      checked={locationOptions.Cabedelo}
-                      onClick={() =>
-                        setLocationOptions({
-                          ...locationOptions,
-                          Cabedelo: !locationOptions["Cabedelo"],
-                        })
-                      }
-                      className="drop-shadow-sm shadow-sm bg-white"
-                    />
-                    Cabedelo
-                  </div>
-                  <div className="flex gap-2 items-center text-zinc-500">
-                    <Checkbox
-                      disabled
-                      checked={locationOptions.CampinaGrande}
-                      onClick={() =>
-                        setLocationOptions({
-                          ...locationOptions,
-                          CampinaGrande: !locationOptions["CampinaGrande"],
-                        })
-                      }
-                      className="drop-shadow-sm shadow-sm bg-white"
-                    />
-                    Campina Grande
-                  </div>
-                  <div className="flex gap-2 items-center text-zinc-500">
-                    <Checkbox
-                      disabled
-                      checked={locationOptions.Bayeux}
-                      onClick={() =>
-                        setLocationOptions({
-                          ...locationOptions,
-                          Bayeux: !locationOptions["Bayeux"],
-                        })
-                      }
-                      className="drop-shadow-sm shadow-sm bg-white"
-                    />
-                    Bayeux
-                  </div>
-                  <div className="flex gap-2 items-center text-zinc-500">
-                    <Checkbox
-                      disabled
-                      checked={locationOptions.SantaRita}
-                      onClick={() =>
-                        setLocationOptions({
-                          ...locationOptions,
-                          SantaRita: !locationOptions["SantaRita"],
-                        })
-                      }
-                      className="drop-shadow-sm shadow-sm bg-white"
-                    />
-                    Santa Rita
-                  </div>
-                </div>
+                <span className="text-secondary">
+                  {numberOfSelectedUsers} de {numberOfTotalUsers} usuários
+                  selecionados
+                </span>
               </div>
             </div>
 
-            <div className="flex justify-between w-full">
+            <div className="flex w-full justify-between">
               <Button variant="white" type="button" className="xl:text-base">
                 Cancelar
               </Button>
@@ -629,8 +798,8 @@ function NotificationForm() {
         </form>
       </Form>
 
-      <div className="w-full h-full bg-white rounded-xl flex flex-col gap-2">
-        <div className="w-full bg-[#E6F1FD] rounded-t-xl px-4 py-2 font-medium">
+      <div className="flex h-full w-full flex-col gap-2 rounded-xl bg-white">
+        <div className="w-full rounded-t-xl bg-[#E6F1FD] px-4 py-2 font-medium">
           Historico de notificações
         </div>
 

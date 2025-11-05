@@ -8,7 +8,7 @@ export function Input({ className, ...props }: InputProps) {
     <input
       className={twMerge(
         clsx(
-          " bg-white px-4 py-1 shadow-md rounded-md placeholder:text-zinc-500 w-full ring-1 ring-secondary/60  h-10 outline-primary",
+          "h-10 w-full rounded-md bg-white px-4 py-1 shadow-md outline-primary ring-1 ring-secondary/60 placeholder:text-zinc-500",
           className,
         ),
       )}

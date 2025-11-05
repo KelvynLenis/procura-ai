@@ -28,22 +28,22 @@ export function ContactsTable({ contacts, setContacts }: ContactsTableProps) {
 
   return (
     <>
-      <Table className="bg-white shadow-lg rounded-lg w-full">
+      <Table className="w-full rounded-lg bg-white shadow-lg">
         <TableHeader className="bg-secondary/10">
           <TableRow>
-            <TableHead className="text-black/80 text-lg font-medium text-center">
+            <TableHead className="text-center text-lg font-medium text-black/80">
               ID
             </TableHead>
-            <TableHead className="text-black/80 text-lg font-medium ">
+            <TableHead className="text-lg font-medium text-black/80">
               Nome
             </TableHead>
-            <TableHead className="text-black/80 text-lg font-medium ">
+            <TableHead className="text-lg font-medium text-black/80">
               Email
             </TableHead>
-            <TableHead className="text-black/80 text-lg font-medium ">
+            <TableHead className="text-lg font-medium text-black/80">
               Número
             </TableHead>
-            <TableHead className="text-black/80 text-lg font-medium ">
+            <TableHead className="text-lg font-medium text-black/80">
               Ações
             </TableHead>
           </TableRow>

@@ -61,22 +61,22 @@ function NotificationTable({
   }, [refresh]);
 
   return (
-    <Table className="bg-white shadow-lg rounded-lg w-full">
+    <Table className="w-full rounded-lg bg-white shadow-lg">
       <TableHeader className="bg-zinc-100/80">
         <TableRow>
-          <TableHead className="text-black/80 text-lg font-medium text-center">
+          <TableHead className="text-center text-lg font-medium text-black/80">
             Título
           </TableHead>
-          <TableHead className="text-black/80 text-lg font-medium ">
+          <TableHead className="text-lg font-medium text-black/80">
             Descrição
           </TableHead>
-          <TableHead className="text-black/80 text-lg font-medium ">
+          <TableHead className="text-lg font-medium text-black/80">
             Público
           </TableHead>
-          <TableHead className="text-black/80 text-lg font-medium ">
+          <TableHead className="text-lg font-medium text-black/80">
             Data de publicação
           </TableHead>
-          <TableHead className="text-black/80 text-lg font-medium ">
+          <TableHead className="text-lg font-medium text-black/80">
             Ações
           </TableHead>
         </TableRow>

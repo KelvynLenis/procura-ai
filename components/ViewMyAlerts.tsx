@@ -105,42 +105,42 @@ export function ViewMyAlerts({
             onClick={() => setIsDialogOpen(true)}
             type="button"
             className={cn(
-              "w-10 h-10 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white",
+              "group relative flex h-10 w-10 flex-col items-center justify-center rounded-lg hover:bg-white md:flex-row",
               status === "Roubado" &&
-                "bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500",
+                "bg-robbery-bg p-1 text-red-600 ring-1 ring-red-500",
               status === "Furtado" &&
-                "bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500",
+                "bg-theft-bg p-1 text-orange-600 ring-1 ring-orange-500",
               status === "Perdido" &&
-                "bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500",
+                "bg-lost-bg p-1 text-yellow-600 ring-1 ring-yellow-500",
               status === "Recuperado" &&
-                "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
+                "bg-lime-500/30 p-1 text-lime-600 ring-1 ring-lime-500",
               status === "Regular" &&
-                "bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500",
+                "bg-lime-500/30 p-1 text-lime-600 ring-1 ring-lime-500",
             )}
           >
             <IoIosWarning
               className={cn(
-                status === "Recuperado" && "text-lime-600 animate-pulse",
+                status === "Recuperado" && "animate-pulse text-lime-600",
               )}
               size={28}
             />
-            <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 group-hover:animate-none bg-black/60 w-64 rounded-sm absolute -top-8 right-5 py-1 px-2 text-white transition- duration-300">
+            <span className="transition- absolute -top-8 right-5 hidden w-64 rounded-sm bg-black/60 px-2 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:animate-none group-hover:opacity-100">
               Dispositivo recuperado, clique para ver o local da retirada
             </span>
           </button>
         </DialogTrigger>
-        <DialogContent className="flex flex-col h-4/5 md:h-fit overflow-y-scroll w-[800px] p-0">
+        <DialogContent className="flex h-4/5 w-[800px] flex-col overflow-y-scroll p-0 md:h-fit">
           <DialogHeader className="bg-sky-100/40 p-6">
             <DialogTitle className="text-primary">
               Informações da ocorrência
             </DialogTitle>
           </DialogHeader>
           {isLoading ? (
-            <div className="flex w-full h-full items-center justify-center">
+            <div className="flex h-full w-full items-center justify-center">
               <ClipLoader color="#002E72" loading={isLoading} size={50} />
             </div>
           ) : (
-            <div className="flex flex-col gap-5 overflow-y-auto max-h-[500px] pr-2 p-4">
+            <div className="flex max-h-[500px] flex-col gap-5 overflow-y-auto p-4 pr-2">
               {/* <div className="flex">
               <div className="flex flex-col gap-2 w-full">
                 <div className="font-bold">
@@ -284,32 +284,32 @@ export function ViewMyAlerts({
                 )}
               </div>
 
-              <div className="bg-zinc-200/50 w-full flex flex-col items-center p-4 gap-4">
-                <span className="text-secondary font-medium">
+              <div className="flex w-full flex-col items-center gap-4 bg-zinc-200/50 p-4">
+                <span className="font-medium text-secondary">
                   Atualizações da ocorrência
                 </span>
 
-                <div className="w-full flex justify-around">
-                  <div className="w-60 flex flex-col items-center">
+                <div className="flex w-full justify-around">
+                  <div className="flex w-60 flex-col items-center">
                     <span
                       className={cn(
-                        "w-10 h-10 border-2 border-secondary rounded-full",
+                        "h-10 w-10 rounded-full border-2 border-secondary",
                       )}
                     />
-                    <span className="text-secondary font-medium">
+                    <span className="font-medium text-secondary">
                       Ocorrência criada
                     </span>
-                    <span className="text-secondary text-sm">
+                    <span className="text-sm text-secondary">
                       {events.length > 1
                         ? formatDateTime(events[1].time_event)
                         : formatDateTime(events[0].time_event)}
                     </span>
                   </div>
 
-                  <div className="w-60 flex flex-col items-center">
+                  <div className="flex w-60 flex-col items-center">
                     <span
                       className={cn(
-                        "w-10 h-10 border-2 rounded-full",
+                        "h-10 w-10 rounded-full border-2",
                         status === "Recuperado"
                           ? "border-secondary"
                           : "border-zinc-500",
@@ -346,16 +346,16 @@ export function ViewMyAlerts({
                 </div>
 
                 <div className="flex w-full items-center justify-center">
-                  <span className="w-3 h-3 bg-secondary rounded-full" />
+                  <span className="h-3 w-3 rounded-full bg-secondary" />
                   <span
                     className={cn(
-                      "w-80 h-0.5",
+                      "h-0.5 w-80",
                       status === "Recuperado" ? "bg-secondary" : "bg-zinc-500",
                     )}
                   />
                   <span
                     className={cn(
-                      "w-3 h-3 rounded-full",
+                      "h-3 w-3 rounded-full",
                       status === "Recuperado" ? "bg-secondary" : "bg-zinc-500",
                     )}
                   />
@@ -364,23 +364,23 @@ export function ViewMyAlerts({
                 </div>
               </div>
 
-              <div className="rounded-lg flex flex-col gap-2 p-4">
-                <h2 className="font-medium text-lg">Detalhes da ocorrência</h2>
+              <div className="flex flex-col gap-2 rounded-lg p-4">
+                <h2 className="text-lg font-medium">Detalhes da ocorrência</h2>
                 <div className="flex flex-col gap-5">
                   <div className="flex">
-                    <span className="font-medium w-44">Dispositivo</span>
+                    <span className="w-44 font-medium">Dispositivo</span>
                     <span className="w-full">
                       {device.phone_model} / {device.brand}
                     </span>
                   </div>
 
                   <div className="flex">
-                    <span className="font-medium w-44">Proprietário</span>
+                    <span className="w-44 font-medium">Proprietário</span>
                     <span className="w-full">{user.name}</span>
                   </div>
 
                   <div className="flex">
-                    <span className="font-medium w-44">Data e hora</span>
+                    <span className="w-44 font-medium">Data e hora</span>
                     <span className="w-full">
                       {status === "Recuperado"
                         ? formatDateTime(events[1].time_event)
@@ -389,28 +389,28 @@ export function ViewMyAlerts({
                   </div>
 
                   <div className="flex">
-                    <span className="font-medium w-44">Descrição</span>
+                    <span className="w-44 font-medium">Descrição</span>
                     <span className="w-full">
                       {events[0].description || "Sem descrição"}
                     </span>
                   </div>
 
                   <div className="flex">
-                    <span className="font-medium w-44">Status</span>
+                    <span className="w-44 font-medium">Status</span>
                     <div className="w-full">
                       <span
                         className={cn(
-                          "w-fit rounded-sm flex items-center justify-center hover:bg-white",
+                          "flex w-fit items-center justify-center rounded-sm hover:bg-white",
                           device.status === "Roubado" &&
-                            "bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500",
+                            "bg-robbery-bg p-1 text-red-600 ring-1 ring-red-500",
                           device.status === "Furtado" &&
-                            "bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500",
+                            "bg-theft-bg p-1 text-orange-600 ring-1 ring-orange-500",
                           device.status === "Perdido" &&
-                            "bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500",
+                            "bg-lost-bg p-1 text-yellow-600 ring-1 ring-yellow-500",
                           device.status === "Recuperado" &&
-                            "bg-recovered-bg text-recovered-text p-1",
+                            "bg-recovered-bg p-1 text-recovered-text",
                           device.status === "Regular" &&
-                            "bg-lime-500/30 text-regular-text p-1",
+                            "bg-lime-500/30 p-1 text-regular-text",
                         )}
                       >
                         {device.status}
@@ -426,7 +426,7 @@ export function ViewMyAlerts({
                 >
                   <Button
                     variant={status === "Recuperado" ? "blue" : "red"}
-                    className="w-full mt-4 gap-2"
+                    className="mt-4 w-full gap-2"
                   >
                     <IoIosWarning size={28} />
                     <span className="">
@@ -465,7 +465,7 @@ export function ViewMyAlerts({
                     <div
                       key={prevEvent.$id}
                       className={cn(
-                        "flex flex-col gap-2 bg-zinc-100/90 border border-zinc-200 p-4 drop-shadow-sm",
+                        "flex flex-col gap-2 border border-zinc-200 bg-zinc-100/90 p-4 drop-shadow-sm",
                         index === events.length - 1 && "rounded-b-3xl",
                         index === 0 && "border-t-0",
                       )}
@@ -490,17 +490,17 @@ export function ViewMyAlerts({
                         <span className="w-32 font-medium">Tipo</span>
                         <span
                           className={cn(
-                            "w-fit rounded-sm flex items-start justify-start",
+                            "flex w-fit items-start justify-start rounded-sm",
                             prevEvent?.type === "Roubo" &&
-                              "bg-robbery-bg text-red-600 px-3 py-1 ring-red-500",
+                              "bg-robbery-bg px-3 py-1 text-red-600 ring-red-500",
                             prevEvent?.type === "Furto simples" &&
-                              "bg-theft-bg text-orange-600 px-3 py-1 ring-orange-500",
+                              "bg-theft-bg px-3 py-1 text-orange-600 ring-orange-500",
                             prevEvent?.type === "Extravio ou Perda" &&
-                              "bg-lost-bg text-yellow-600 px-3 py-1 ring-yellow-500",
+                              "bg-lost-bg px-3 py-1 text-yellow-600 ring-yellow-500",
                             prevEvent?.type === "Recuperado" &&
-                              "bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500",
+                              "bg-lime-500/30 px-3 py-1 text-lime-600 ring-lime-500",
                             prevEvent?.type === "Regular" &&
-                              "bg-lime-500/30 text-lime-600 px-3 py-1 ring-lime-500",
+                              "bg-lime-500/30 px-3 py-1 text-lime-600 ring-lime-500",
                           )}
                         >
                           {prevEvent?.type}

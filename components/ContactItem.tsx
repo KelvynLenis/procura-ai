@@ -39,16 +39,16 @@ export function ContacItem({ contact, setContacts }: ContactItemProps) {
 
   return (
     <>
-      <div className="flex flex-col w-full h-fit bg-white rounded-xl shadow-md">
-        <div className="flex items-center justify-end w-full h-12 bg-primary rounded-t-xl px-4 gap-3">
+      <div className="flex h-fit w-full flex-col rounded-xl bg-white shadow-md">
+        <div className="flex h-12 w-full items-center justify-end gap-3 rounded-t-xl bg-primary px-4">
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <button
                 type="button"
-                className="rounded-lg w-8 h-8 flex ring-1 ring-zinc-300 group relative bg-white hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
+                className="group relative flex h-8 w-8 items-center justify-center rounded-lg bg-white ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700"
               >
                 <Pencil size={26} />
-                <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
                   Editar contato
                 </span>
               </button>
@@ -74,18 +74,18 @@ export function ContacItem({ contact, setContacts }: ContactItemProps) {
           >
             <button
               type="button"
-              className="bg-white flex rounded-lg w-8 h-8 group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90"
+              className="group relative flex h-8 w-8 items-center justify-center gap-2 rounded-lg bg-white text-red-600 ring-1 ring-zinc-300 hover:bg-red-200 hover:opacity-90 hover:ring-red-600"
             >
               <Trash2 size={20} />
-              <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+              <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
                 Deletar contato
               </span>
             </button>
           </ConfirmationDialog>
         </div>
 
-        <div className="flex w-full h-full">
-          <div className="flex flex-col items-start justify-center gap-2 px-4 pt-4 pb-4 h-full">
+        <div className="flex h-full w-full">
+          <div className="flex h-full flex-col items-start justify-center gap-2 px-4 pb-4 pt-4">
             <span className="">Nome</span>
 
             <span className="">
@@ -97,7 +97,7 @@ export function ContacItem({ contact, setContacts }: ContactItemProps) {
             </span>
           </div>
 
-          <div className="flex flex-col items-start justify-center gap-2 px-4 pt-4 w-full h-full">
+          <div className="flex h-full w-full flex-col items-start justify-center gap-2 px-4 pt-4">
             <span className="font-semibold">{contact.name_contact}</span>
 
             <span className="font-semibold">{contact.email_contact}</span>

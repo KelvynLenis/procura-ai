@@ -42,7 +42,7 @@ export function ContactRow({ contact, index, setContacts }: ContactRowProps) {
   return (
     <>
       <TableRow>
-        <TableCell className="text-center py-8 font-bold">
+        <TableCell className="py-8 text-center font-bold">
           {index + 1}
         </TableCell>
         <TableCell className="break-words">
@@ -50,17 +50,17 @@ export function ContactRow({ contact, index, setContacts }: ContactRowProps) {
             {contact.name_contact}
           </div>
         </TableCell>
-        <TableCell className="font-medium break-words">
+        <TableCell className="break-words font-medium">
           {contact.email_contact || "Não informado"}
         </TableCell>
-        <TableCell className={cn("font-medium break-words")}>
+        <TableCell className={cn("break-words font-medium")}>
           <span
-            className={cn("font-medium break-words p-2 rounded-md capitalize")}
+            className={cn("break-words rounded-md p-2 font-medium capitalize")}
           >
             {`(${contact.number_contact.slice(0, 2)}) ${contact.number_contact.slice(2, 7)}-${contact.number_contact.slice(7, 11)}`}
           </span>
         </TableCell>
-        <TableCell className="w-28 p-0 m-0">
+        <TableCell className="m-0 w-28 p-0">
           <div className="flex gap-2">
             {/* <Dialog>
               <DialogTrigger asChild>
@@ -85,17 +85,17 @@ export function ContactRow({ contact, index, setContacts }: ContactRowProps) {
               <DialogTrigger asChild>
                 <button
                   type="button"
-                  className="rounded-lg w-10 h-10 flex ring-1 ring-zinc-300 group relative hover:bg-sky-100 hover:ring-blue-700 hover:text-blue-900 items-center justify-center hover:opacity-90"
+                  className="group relative flex h-10 w-10 items-center justify-center rounded-lg ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700"
                 >
                   <Pencil size={26} />
-                  <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                  <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
                     Editar contato
                   </span>
                 </button>
               </DialogTrigger>
               <DialogContent className="rounded-xl p-0">
                 <DialogHeader className="bg-secondary/10 p-2">
-                  <DialogTitle className="text-secondary text-left w-full">
+                  <DialogTitle className="w-full text-left text-secondary">
                     Editar contato
                   </DialogTitle>
                   <DialogDescription className="text-secondary"></DialogDescription>
@@ -115,10 +115,10 @@ export function ContactRow({ contact, index, setContacts }: ContactRowProps) {
             >
               <button
                 type="button"
-                className="hidden md:flex rounded-lg w-10 h-10 group relative items-center justify-center gap-2 ring-1 ring-zinc-300 hover:bg-red-200 hover:ring-red-600 text-red-600 hover:opacity-90"
+                className="group relative hidden h-10 w-10 items-center justify-center gap-2 rounded-lg text-red-600 ring-1 ring-zinc-300 hover:bg-red-200 hover:opacity-90 hover:ring-red-600 md:flex"
               >
                 <Trash2 size={20} />
-                <span className="hidden opacity-0 group-hover:block group-hover:opacity-100 bg-black/60 w-36 rounded-sm absolute -top-8 right-5 py-1 text-white transition- duration-300">
+                <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
                   Deletar contato
                 </span>
               </button>
