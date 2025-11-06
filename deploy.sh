@@ -51,6 +51,6 @@ $DOCKER_COMPOSE -f docker-compose.prod.yml ps
 echo ""
 echo "✅ Deploy concluído!"
 echo ""
-echo "🌐 Acesse: http://localhost:3000"
+echo "🌐 Acesse: https://procuraai.secties.pb.gov.br/"
 echo "📋 Logs: $DOCKER_COMPOSE -f docker-compose.prod.yml logs -f"
 echo "⏹️  Parar: $DOCKER_COMPOSE -f docker-compose.prod.yml down"
