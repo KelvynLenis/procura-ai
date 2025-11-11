@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/accordion";
 import { LiaSearchSolid } from "react-icons/lia";
 import { listAllUsers } from "@/functions/user/list-all-users";
+import { getNumberOfUsers } from "@/functions/user/get-number-of-users";
 
 function NotificationForm() {
   const [allUsers, setAllUsers] = useState(true);
@@ -344,15 +345,15 @@ function NotificationForm() {
 
   useEffect(() => {
     const getAllUsers = async () => {
-      const userFilter = {
-        method: "equal",
-        attribute: "type",
-        values: ["Usuario"],
-      };
+      // const userFilter = {
+      //   method: "equal",
+      //   attribute: "type",
+      //   values: ["Usuario"],
+      // };
 
-      const users = await getUser({ filters: [userFilter] });
+      const numberOfUsers = await getNumberOfUsers();
 
-      setNumberOfTotalUsers(users.length);
+      setNumberOfTotalUsers(numberOfUsers);
     };
 
     getAllUsers();
