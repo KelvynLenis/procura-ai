@@ -21,6 +21,8 @@ import { useEffect, useState } from "react";
 import { LiaSearchSolid } from "react-icons/lia";
 import { PiArrowCircleRight } from "react-icons/pi";
 import Button from "./Button";
+import ClipLoader from "react-spinners/ClipLoader";
+import { listUsers } from "@/functions/user/list-users";
 
 interface AddUserToPushNotificationListProps {
   targets: User[];
@@ -31,55 +33,54 @@ function AddUserToPushNotificationList({
   targets,
   setTargets,
 }: AddUserToPushNotificationListProps) {
-  const [predictions, setPredictions] = useState<any[]>([]);
+  const [predictions, setPredictions] = useState<User[]>([]);
   const [search, setSearch] = useState("");
   const [countdownId, setcountdownId] = useState<NodeJS.Timeout>();
   // const [targets, setTargets] = useState<User[]>([])
   const [users, setUsers] = useState<User[]>([]);
+  const [isLoadingSearch, setIsLoadingSearch] = useState(false);
 
-  const handleSearchChange = (text: string) => {
-    // clearTimeout(countdownId);
-    // setSearch(text);
-
-    // if (text.length < 3) {
-    //   setPredictions([]);
-    //   return;
-    // }
-
-    // const timerId = setTimeout(async () => {
-    //   try {
-    //     const users = await getUser({ filters:
-    //       [{
-    //         method: 'contains',
-    //         attribute: 'name',
-    //         values: [text]
-    //       }]
-    //     });
-
-    //     if (users.length > 0) {
-    //       setPredictions(users);
-    //     } else {
-    //       setPredictions([]);
-    //     }
-    //   } catch (err) {
-    //     console.error("Erro no autocomplete:", err);
-    //   }
-    // }, 500);
-
-    // setcountdownId(timerId);
-
+  const handleSearchChange = async (text: string) => {
+    setIsLoadingSearch(true);
+    clearTimeout(countdownId);
     setSearch(text);
 
-    if (text.length === 0) {
-      setPredictions(users);
+    if (text.length < 3) {
+      const { documents: usersResponse } = await listUsers(1, 25);
+      const filterAdmin = usersResponse.filter(
+        (user) => user.type !== "Administrador",
+      );
+
+      setPredictions(filterAdmin);
+      setIsLoadingSearch(false);
       return;
     }
 
-    const filteredUsers = users.filter((user) =>
-      user.name.toLowerCase().includes(text.toLowerCase()),
-    );
+    const timerId = setTimeout(async () => {
+      try {
+        const usersResponse = await getUser({
+          filters: [
+            {
+              method: "contains",
+              attribute: "name",
+              values: [text],
+            },
+          ],
+        });
 
-    setPredictions(filteredUsers);
+        if (usersResponse.length > 0) {
+          setPredictions(usersResponse);
+          setIsLoadingSearch(false);
+        } else {
+          setPredictions(users);
+          setIsLoadingSearch(false);
+        }
+      } catch (err) {
+        console.error("Erro no autocomplete:", err);
+      }
+    }, 500);
+
+    setcountdownId(timerId);
   };
 
   function handlePredictionSelect(user: User | undefined) {
@@ -96,13 +97,13 @@ function AddUserToPushNotificationList({
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const usersResponse = await listAllUsers();
+      const { documents: usersResponse } = await listUsers(1, 25);
 
       const filterAdmin = usersResponse.filter(
         (user) => user.type !== "Administrador",
       );
 
-      setUsers(usersResponse);
+      setUsers(filterAdmin);
       setPredictions(filterAdmin);
     };
 
@@ -148,24 +149,39 @@ function AddUserToPushNotificationList({
                   className="w-56 px-2 py-0 focus:outline-none"
                 />
               </div>
-              {predictions.length > 0 && (
-                <ul className="custom-scroll flex h-[12.5rem] w-full flex-col overflow-y-scroll pr-1">
-                  {predictions &&
-                    predictions.map((user: User) => (
-                      <>
-                        <li
-                          key={user.$id}
-                          className="flex cursor-pointer px-1 py-2 italic hover:bg-zinc-100"
-                          onClick={() => handlePredictionSelect(user)}
-                        >
-                          {user.name}
-                          <PiArrowCircleRight className="ml-auto h-6 w-6" />
-                        </li>
-                        <span className="h-[1px] w-[100%] self-center bg-zinc-300" />
-                      </>
-                    ))}
-                </ul>
-              )}
+              {
+                isLoadingSearch ? (
+                  <>
+                    <ClipLoader className="mt-5 self-center" />
+                  </>
+                ) : (
+                  predictions.length > 0 && (
+                    <ul className="custom-scroll flex h-[12.5rem] w-full flex-col overflow-y-scroll pr-1">
+                      {predictions &&
+                        predictions.map((user: User) => (
+                          <>
+                            <li
+                              key={user.$id}
+                              className="flex cursor-pointer px-1 py-2 italic hover:bg-zinc-100"
+                              onClick={() => handlePredictionSelect(user)}
+                            >
+                              {user.name}
+                              <PiArrowCircleRight className="ml-auto h-6 w-6" />
+                            </li>
+                            <span className="h-[1px] w-[100%] self-center bg-zinc-300" />
+                          </>
+                        ))}
+                    </ul>
+                  )
+                )
+                // : (
+                //   <>
+                //     <span className="mt-2 self-center italic text-zinc-500">
+                //       Usuário não encontrado
+                //     </span>
+                //   </>
+                // )
+              }
             </div>
 
             <div className="flex h-full w-80 flex-col">
