@@ -10,7 +10,8 @@ export async function GET(request: Request) {
   // Verifica erros na resposta do Gov.br
   if (error || !code) {
     const errorType = error ? 'govbr_auth_failed' : 'govbr_missing_code'
-    return NextResponse.redirect(new URL(`/login?error=${errorType}`, request.url))
+    const baseUrl = 'https://procuraai.secties.pb.gov.br'
+    return NextResponse.redirect(new URL(`/login?error=${errorType}`, baseUrl))
   }
   
   try {
@@ -19,14 +20,15 @@ export async function GET(request: Request) {
     const userData = await getUserInfo(tokenResponse.access_token)
     const userResult = await createOrUpdateUser(userData)
     
-    // Prepara redirecionamento
-    const redirectUrl = new URL('/meus-dispositivos', request.url)
+    // Prepara redirecionamento usando a URL de produção
+    const baseUrl = 'https://procuraai.secties.pb.gov.br'
+    const redirectUrl = new URL('/meus-dispositivos', baseUrl)
     const response = NextResponse.redirect(redirectUrl)
     
     // Configura cookies
     response.cookies.set('govbr_access_token', tokenResponse.access_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true, // Sempre usar HTTPS em produção
       sameSite: 'lax',
       maxAge: 3600
     })
@@ -43,10 +45,12 @@ export async function GET(request: Request) {
       encodeURIComponent(error.message.substring(0, 100)) : 
       'unknown_error'
     
-    // Adiciona o baseUrl correto para o redirecionamento
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || url.origin
-    return NextResponse.redirect(
-      new URL(`/login?error=govbr_system_error&details=${errorMessage}`, baseUrl)
-    )
+    // Usar a URL base correta para o redirecionamento  
+    const baseUrl = 'https://procuraai.secties.pb.gov.br'
+    const loginUrl = new URL('/login', baseUrl)
+    loginUrl.searchParams.set('error', 'govbr_system_error')
+    loginUrl.searchParams.set('details', errorMessage)
+    
+    return NextResponse.redirect(loginUrl)
   }
 }

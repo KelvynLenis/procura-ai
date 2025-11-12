@@ -57,10 +57,10 @@ export async function createUser(
       const error = await response.text();
       throw new Error(`Erro ao criar usuário: ${error}`);
     }
-
+    console.log("Usuário criado com sucesso:", await response.clone().json());
     return response.json();
   } catch (error) {
-    console.error("Erro ao criar usuário:", error);
+    console.error("Erro Final ao criar usuário:", error);
     throw error;
   }
 }
