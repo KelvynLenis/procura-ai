@@ -116,92 +116,50 @@ function NotificationForm() {
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const statusTarget = Object.keys(statusOptions).filter(
-      (key) => statusOptions[key] === true,
-    );
-    const locationTarget = Object.keys(locationOptions).filter(
-      (key) => locationOptions[key] === true,
-    );
+    if (values.title.length > 65) {
+      // toast.error("O título deve ter no máximo 65 caracteres");
+      form.setError("title", {
+        message: "O título deve ter no máximo 65 caracteres",
+      });
+      return;
+    }
 
-    // console.log("statusTarget", statusTarget)
+    if (values.title.length === 0) {
+      // toast.error("O título é obrigatório.");
+      form.setError("title", { message: "O título é obrigatório." });
+      return;
+    }
 
-    const queryFiltersDevices =
-      statusTarget.length > 0
-        ? [
-            {
-              method: "equal",
-              attribute: "status",
-              values: statusTarget,
-            },
-          ]
-        : [];
+    form.clearErrors("title");
 
-    const allStatusDeviceSource =
-      queryFiltersDevices.length > 0
-        ? await getDevices({ filters: queryFiltersDevices })
-        : [];
+    if (values.description.length > 240) {
+      // toast.error("O corpo da notificação deve ter no.maxcdn 240 caracteres");
+      form.setError("description", {
+        message: "O corpo da notificação deve ter no.maxcdn 240 caracteres",
+      });
+      return;
+    }
 
-    const deviceUserTargets = allStatusDeviceSource.map(
-      (device) => device.auth_id,
-    );
+    if (values.description.length === 0) {
+      // toast.error("O corpo da notificação é obrigatória.");
+      form.setError("description", {
+        message: "O corpo da notificação é obrigatória.",
+      });
+      return;
+    }
 
-    // console.log("deviceUserTargets", deviceUserTargets)
+    form.clearErrors("description");
 
-    const queryFiltersUsers =
-      deviceUserTargets.length > 0
-        ? [
-            {
-              method: "equal",
-              attribute: "user_id",
-              values: deviceUserTargets,
-            },
-          ]
-        : [];
-
-    const targetUsersFromStatusOptions =
-      queryFiltersUsers.length > 0
-        ? await getUser({ filters: queryFiltersUsers })
-        : [];
-
-    // console.log("targetUsersFromStatusOptions", targetUsersFromStatusOptions)
-
-    const mergeTargets = [...selectedUsers, ...targetUsersFromStatusOptions];
-
-    const removeDuplicated = mergeTargets.filter((value, index) => {
-      const _value = JSON.stringify(value);
-      return (
-        index ===
-        mergeTargets.findIndex((obj) => {
-          return JSON.stringify(obj) === _value;
-        })
-      );
-    });
-
-    const removeAdmin = removeDuplicated.filter(
-      (user) => user.type !== "Administrador",
-    );
-
-    const targets = removeAdmin.map((user) => {
-      return { id: user.user_id, push_token: user.push_token };
-    });
-
-    // console.log("targets", targets)
-
-    // console.log(statusTarget);
-
-    const selectedTargetsId = selectedUsers.map((user) => user.user_id);
-
-    // const response = await sendPushNotification(values, targets)
     const response = await fetch("/api/send-push-notification", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         pushToken: "ExponentPushToken[_VFcvcCCGvdKT4jQ3L3K45]",
-        statusOptions: statusTarget,
-        locationOptions: locationTarget,
+        statusOptions: statusOptions,
+        locationOptions: locationOptions,
         isAllUsersChecked: allUsers,
-        selectedTargets: selectedTargetsId,
-        targets: targets,
+        selectedUsers: selectedUsers,
+        // targets: targets,
         title: values.title,
         message: values.description,
       }),
@@ -378,7 +336,7 @@ function NotificationForm() {
       }
 
       const count = await response.json();
-      // console.log("Dados retornados:", count);
+      console.log("Dados retornados:", count);
 
       setNumberOfSelectedUsers(count);
     };
@@ -389,10 +347,7 @@ function NotificationForm() {
   return (
     <>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex w-full flex-col items-center justify-between gap-4 self-center rounded-xl bg-white pb-4 text-zinc-900"
-        >
+        <form className="flex w-full flex-col items-center justify-between gap-4 self-center rounded-xl bg-white pb-4 text-zinc-900">
           <div className="flex w-full justify-start rounded-t-xl bg-[#E6F1FD] px-4 py-2 font-medium">
             {true ? "Criar notificação" : "Editar notificação"}
           </div>
@@ -729,11 +684,11 @@ function NotificationForm() {
                 Cancelar
               </Button>
               <ConfirmationDialog
-                onConfirm={() => form.handleSubmit(onSubmit)}
+                onConfirm={() => onSubmit(form.getValues())}
                 title="Enviar notificação?"
                 description="Tem certeza que deseja enviar a notificação?"
               >
-                <Button variant="blue" type="submit" className="xl:text-base">
+                <Button variant="blue" type="button" className="xl:text-base">
                   Enviar notificação
                 </Button>
               </ConfirmationDialog>

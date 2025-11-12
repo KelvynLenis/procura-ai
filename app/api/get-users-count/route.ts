@@ -21,8 +21,14 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
       const usersList = await getUser({ filters: [userFilters] });
 
+      const removeEmpty = usersList.filter(
+        (user) =>
+          user?.push_token?.length !== undefined &&
+          user?.push_token?.length > 0,
+      );
+
       // console.log("response", usersList.length);
-      return NextResponse.json(usersList.length);
+      return NextResponse.json(removeEmpty.length);
     }
 
     const statusTarget = Object.keys(statusOptions).filter(
@@ -33,7 +39,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       (key) => locationOptions[key] === true,
     );
 
-    // console.log("statusTarget", statusTarget);
+    console.log("statusTarget", statusTarget);
 
     const queryFiltersDevices =
       statusTarget.length > 0
@@ -75,6 +81,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     // console.log("targetUsersFromStatusOptions", targetUsersFromStatusOptions);
 
+    // console.log("selectedUsers", selectedUsers);
+
     const mergeTargets = [...selectedUsers, ...targetUsersFromStatusOptions];
 
     const removeDuplicated = mergeTargets.filter((value, index) => {
@@ -92,7 +100,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     );
 
     const removeUserWithoutToken = removeAdmin.filter(
-      (user) => user.push_token !== null,
+      (user) => user.push_token.length > 0,
     );
 
     // console.log("targets", removeUserWithoutToken);
@@ -101,7 +109,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       return { id: user.user_id, push_token: user.push_token };
     });
 
-    // console.log("targets", targets);
+    // console.log("targets", targets.length);
 
     // console.log("statusTarget", statusTarget);
 
