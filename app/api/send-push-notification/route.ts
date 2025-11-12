@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { Expo } from "expo-server-sdk";
 import { listAllUsers } from "@/functions/user/list-all-users";
 import { createNotification } from "@/functions/notification/create-notification";
+import { getUser } from "@/functions/user/get-user";
+import { getDevices } from "@/functions/devices/list-devices";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
@@ -14,11 +16,19 @@ export async function POST(req: NextRequest, res: NextResponse) {
       title,
       message,
       statusOptions,
-      selectedTargets,
+      selectedUsers,
       locationOptions,
       isAllUsersChecked,
-      targets,
+      // targets,
     } = body;
+
+    const statusTarget = Object.keys(statusOptions).filter(
+      (key) => statusOptions[key] === true,
+    );
+
+    const locationTarget = Object.keys(locationOptions).filter(
+      (key) => locationOptions[key] === true,
+    );
 
     if (isAllUsersChecked) {
       const users = await listAllUsers();
@@ -33,20 +43,22 @@ export async function POST(req: NextRequest, res: NextResponse) {
         event_id: undefined,
         id_device: undefined,
         title: title,
-        device_options: statusOptions,
-        location_options: locationOptions,
+        device_options: statusTarget,
+        location_options: locationTarget,
         is_all_users_checked: isAllUsersChecked,
       });
 
       for (let user of users) {
         if (user.push_token) {
-          messages.push({
-            to: user.push_token,
-            icon: "../../../assets/icons/logo-notification.png",
-            sound: "default",
-            body: message,
-            title: title,
-          });
+          for (let push_token of user.push_token) {
+            messages.push({
+              to: push_token,
+              icon: "../../../assets/icons/logo-notification.png",
+              sound: "default",
+              body: message,
+              title: title,
+            });
+          }
         }
       }
       console.log(messages);
@@ -73,41 +85,98 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     let messages = [];
 
-    await createNotification({
-      sender_id: undefined,
-      receiver_id: targets[0].id,
-      message: message,
-      is_read: false,
-      type: "push",
-      event_id: undefined,
-      id_device: undefined,
-      title: title,
-      device_options: statusOptions,
-      location_options: locationOptions,
-      selected_targets: selectedTargets,
-      is_all_users_checked: isAllUsersChecked,
+    const selectedTargetsId = selectedUsers.map((user) => user.user_id);
+
+    // console.log("locationTarget", locationTarget);
+
+    const queryFiltersDevices =
+      statusTarget.length > 0
+        ? [
+            {
+              method: "equal",
+              attribute: "status",
+              values: statusTarget,
+            },
+          ]
+        : [];
+
+    const allStatusDeviceSource =
+      queryFiltersDevices.length > 0
+        ? await getDevices({ filters: queryFiltersDevices })
+        : [];
+
+    const deviceUserTargets = allStatusDeviceSource.map(
+      (device) => device.auth_id,
+    );
+
+    // console.log("deviceUserTargets", deviceUserTargets);
+
+    const queryFiltersUsers =
+      deviceUserTargets.length > 0
+        ? [
+            {
+              method: "equal",
+              attribute: "user_id",
+              values: deviceUserTargets,
+            },
+          ]
+        : [];
+
+    const targetUsersFromStatusOptions =
+      queryFiltersUsers.length > 0
+        ? await getUser({ filters: queryFiltersUsers })
+        : [];
+
+    // console.log("targetUsersFromStatusOptions", targetUsersFromStatusOptions);
+
+    const mergeTargets = [...selectedUsers, ...targetUsersFromStatusOptions];
+
+    const removeDuplicated = mergeTargets.filter((value, index) => {
+      const _value = JSON.stringify(value);
+      return (
+        index ===
+        mergeTargets.findIndex((obj) => {
+          return JSON.stringify(obj) === _value;
+        })
+      );
+    });
+
+    const removeAdmin = removeDuplicated.filter(
+      (user) => user.type !== "Administrador",
+    );
+
+    const removeUserWithoutToken = removeAdmin.filter(
+      (user) => user.push_token !== null,
+    );
+
+    // console.log("targets", removeUserWithoutToken);
+
+    const targets = removeUserWithoutToken.map((user) => {
+      return { id: user.user_id, push_token: user.push_token };
     });
 
     for (let target of targets) {
-      if (!Expo.isExpoPushToken(target.push_token)) {
-        console.error(`Push token ${target} is not a valid Expo push token`);
-        continue;
-      }
+      for (let push_token of target.push_token) {
+        if (!Expo.isExpoPushToken(push_token)) {
+          console.error(`Push token ${target} is not a valid Expo push token`);
+          continue;
+        }
 
-      messages.push({
-        to: target.push_token,
-        icon: "../../../assets/icons/logo-notification.png",
-        sound: "default",
-        body: message,
-        title: title,
-        data: {
-          screen: "/my-devices",
-          teste: "teste",
-        },
-      });
+        messages.push({
+          to: push_token,
+          icon: "../../../assets/icons/logo-notification.png",
+          sound: "default",
+          body: message,
+          title: title,
+          data: {
+            screen: "/my-devices",
+            teste: "teste",
+          },
+        });
+      }
     }
 
-    console.log(pushToken);
+    // console.log(pushToken);
 
     const response = expo.chunkPushNotifications(messages);
 
@@ -117,7 +186,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       for (let chunk of response) {
         try {
           let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-          console.log(ticketChunk);
+          // console.log(ticketChunk);
           tickets.push(...ticketChunk);
         } catch (error) {
           console.error(error);
@@ -125,11 +194,28 @@ export async function POST(req: NextRequest, res: NextResponse) {
       }
     })();
 
+    // console.log("targets", targets);
+
+    await createNotification({
+      sender_id: undefined,
+      receiver_id: targets[0].id,
+      message: message,
+      is_read: false,
+      type: "push",
+      event_id: undefined,
+      id_device: undefined,
+      title: title,
+      device_options: statusTarget,
+      location_options: locationTarget,
+      selected_targets: selectedTargetsId,
+      is_all_users_checked: isAllUsersChecked,
+    });
+
     // const response = await expo.sendPushNotificationsAsync([
     //   { to: pushToken, icon: '../../../assets/icons/logo-notification.png' , sound: "default", body: message, title: title, data: { screen: "/my-devices", teste: 'teste' } },
     // ]);
 
-    console.log(response);
+    // console.log(response);
 
     return NextResponse.json(response);
   } catch (error) {
