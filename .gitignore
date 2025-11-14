@@ -2,6 +2,9 @@
 
 # Ambiente de produção (NUNCA commitar!)
 .env.production
+.env.development
+.env.local
+.env.test.local
 
 # dependencies
 /node_modules
