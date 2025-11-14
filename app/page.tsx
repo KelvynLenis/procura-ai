@@ -62,7 +62,6 @@ export default function Landing() {
             alt="landing background"
             className="w-full hidden lg:w-1/2 lg:block h-full z-0 -ml-11"
           />
-
           <Image
             src={line}
             alt="landing line image z-0"

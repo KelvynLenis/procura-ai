@@ -21,12 +21,13 @@ import { LoadingToast } from "../LoadingToast";
 import Button from "../Button";
 import { login } from "@/functions/auth/login";
 import { updateLastAccess } from "@/functions/auth/update-last-access";
+import { GovBrButton } from '@/components/GovBr'
 
 const formSchema = z.object({
   email: z.string().email("Email inválido"),
   password: z.string().min(1, "A senha é obrigatória"),
 });
-
+login
 export function LoginForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -72,7 +73,7 @@ export function LoginForm() {
         }
       };
 
-      toast.promise(callFunction, {
+      toast.promise(callFunction(), {
         pending: "Logando...",
       });
     } catch (error: any) {
@@ -107,7 +108,7 @@ export function LoginForm() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex h-[700px] w-full flex-col items-center gap-4 bg-zinc-50 px-10 py-5 md:w-[500px]"
+          className="w-full md:w-[500px] h-[700px] flex flex-col gap-4 bg-zinc-50 items-center px-10 py-5"
         >
           <h3 className="text-center">
             Para acessar o Procura.Aí faça login abaixo:
@@ -117,8 +118,8 @@ export function LoginForm() {
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem className="flex w-full flex-col">
-                <FormLabel className="ml-4 pl-5 font-bold text-zinc-700">
+              <FormItem className="flex flex-col w-full">
+                <FormLabel className="text-zinc-700 ml-4 font-bold pl-5">
                   E-mail
                 </FormLabel>
                 <FormControl>
@@ -126,7 +127,7 @@ export function LoginForm() {
                     type="text"
                     placeholder="Email"
                     {...field}
-                    className="w-64 self-center rounded-full"
+                    className="rounded-full w-64 self-center"
                   />
                 </FormControl>
                 <FormMessage />
@@ -138,8 +139,8 @@ export function LoginForm() {
             control={form.control}
             name="password"
             render={({ field }) => (
-              <FormItem className="flex w-full flex-col">
-                <FormLabel className="ml-4 pl-5 font-bold text-zinc-700">
+              <FormItem className="flex flex-col w-full">
+                <FormLabel className="text-zinc-700 ml-4 font-bold pl-5">
                   Senha
                 </FormLabel>
                 <FormControl>
@@ -147,7 +148,7 @@ export function LoginForm() {
                     type="password"
                     placeholder="Senha"
                     {...field}
-                    className="w-64 self-center rounded-full"
+                    className="rounded-full w-64 self-center"
                   />
                 </FormControl>
                 <FormMessage />
@@ -157,35 +158,31 @@ export function LoginForm() {
           <span
             aria-disabled
             title="Em breve"
-            className="cursor-default self-start pl-10 text-sm underline aria-disabled:text-zinc-700"
+            className="underline cursor-default aria-disabled:text-zinc-700 self-start pl-10 text-sm "
           >
             Esqueci minha senha
           </span>
 
-          <Button type="submit" variant="blue" className="!w-40 text-base">
+          <Button type="submit" variant="blue" className="text-base !w-40">
             Entrar
           </Button>
 
-          <div className="flex w-full flex-col gap-9">
-            <span className="h-[1px] w-full rounded-full bg-primary" />
+          <div className="w-full flex flex-col gap-9">
+            <span className="w-full h-[1px] rounded-full bg-primary" />
 
             <div className="flex flex-col gap-3">
-              <span className="self-center font-bold">
+              <span className="font-bold self-center">
                 Se preferir, acesse pela conta Gov.br
               </span>
-              <span
-                aria-disabled
-                title="Em breve"
-                className="cursor-default self-start pl-10 text-sm underline aria-disabled:text-zinc-400"
-              >
-                Entrar com Gov.br
-              </span>
+              <div className="flex items-center justify-center">
+                <GovBrButton className="text-base w-auto" />
+              </div>
             </div>
 
-            <span className="h-[1px] w-full rounded-full bg-primary" />
+            <span className="w-full h-[1px] rounded-full bg-primary" />
 
-            <div className="flex w-full flex-col gap-3">
-              <span className="self-center font-bold">Não possui conta?</span>
+            <div className="w-full flex flex-col gap-3">
+              <span className="font-bold self-center">Não possui conta?</span>
               <Link
                 href={"/cadastro"}
                 className="flex items-center justify-center"
@@ -194,7 +191,7 @@ export function LoginForm() {
                   onClick={showLoadingToast}
                   type="button"
                   variant="black"
-                  className="!w-40 text-base"
+                  className="text-base !w-40"
                 >
                   Cadastre-se
                 </Button>
