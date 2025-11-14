@@ -11,44 +11,10 @@ import {
 } from "@/components/ui/accordion";
 import { Question, QuestionStep } from "@/types";
 
-import lineFooter from '../../assets/images/line02.svg'
-import govFull from '../../assets/icons/gov.png'
-import logo from "../../assets/icons/logo-text.svg";
-import { cn } from "@/lib/utils";
-import { questions } from "@/utils/FAQ";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Question, QuestionStep } from "@/types";
-
 import lineFooter from "../../assets/images/line02.svg";
 import govFull from "../../assets/icons/gov.png";
 
 export default function Login() {
-  const renderStepContent = (step: QuestionStep) => (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-start gap-4">
-        <div className="flex-shrink-0 w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-          {step.number}
-        </div>
-        <p className="text-white text-lg leading-relaxed pt-2">{step.text}</p>
-      </div>
-      {step.items && (
-        <div className="ml-14 flex flex-col gap-2">
-          {step.items.map((item, idx) => (
-            <div key={idx} className="flex items-center gap-3">
-              <span className="text-pink-400 text-xl">✦</span>
-              <span className="text-white text-lg">{item}</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-
   const renderStepContent = (step: QuestionStep) => (
     <div className="flex flex-col gap-3">
       <div className="flex items-start gap-4">
