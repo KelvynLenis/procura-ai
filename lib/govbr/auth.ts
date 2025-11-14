@@ -91,7 +91,7 @@ export async function createOrUpdateUser(userData: GovBrUserData) {
       await createUser({
         userId,
         name: userName,
-        cpf: userCpf, // Usar o CPF do Gov.br (preferred_username)
+        cpf: userCpf,
         email: userEmail,
         password: userPassword
       })

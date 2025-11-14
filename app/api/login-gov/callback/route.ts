@@ -28,7 +28,7 @@ export async function GET(request: Request) {
     // Configura cookies
     response.cookies.set('govbr_access_token', tokenResponse.access_token, {
       httpOnly: true,
-      secure: true, // Sempre usar HTTPS em produção
+      secure: true,
       sameSite: 'lax',
       maxAge: 3600
     })

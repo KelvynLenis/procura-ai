@@ -12,7 +12,7 @@ export async function GET(request: Request) {
   // Cookie para proteção CSRF
   response.cookies.set('govbr_auth_state', state, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NEXT_PUBLIC_NODE_ENV === 'production',
     sameSite: 'lax',
     maxAge: 15 * 60 // 15 minutos
   })
