@@ -42,14 +42,12 @@ export default function GovBrCallback() {
         // Primeira tentativa: login (usuário já existe)
         try {
           const session = await account.createEmailPasswordSession(appwriteUser.email, appwriteUser.password);
-          console.log('Login realizado - usuário existente:', session.$id);
           setStatus("Login realizado! Redirecionando...");
           
           setTimeout(() => router.push('/meus-dispositivos'), 1000);
           return;
 
         } catch (loginError: any) {
-          console.log('Usuário não encontrado, criando nova conta:', loginError.type || loginError.code);
           
           // Se login falhar por credenciais inválidas, criar usuário
           if (isLoginError(loginError)) {
@@ -73,9 +71,7 @@ export default function GovBrCallback() {
               
               setTimeout(() => router.push('/meus-dispositivos'), 1000);
               
-            } catch (createError: any) {
-              console.log('Erro na criação, verificando duplicação:', createError);
-              
+            } catch (createError: any) {              
               // Se usuário já existe (condição de corrida), tenta login
               if (isUserExistsError(createError)) {
                 setStatus("Usuário já existe, fazendo login...");
