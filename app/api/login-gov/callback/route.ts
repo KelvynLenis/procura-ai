@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server'
-import { exchangeCodeForToken, getUserInfo, createOrUpdateUser } from '@/lib/govbr/auth'
+import { exchangeCodeForToken, getUserInfo } from '@/lib/govbr/auth'
 
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const code = url.searchParams.get('code')
-  const state = url.searchParams.get('state')
   const error = url.searchParams.get('error')
   
   // Verifica erros na resposta do Gov.br
@@ -15,22 +14,27 @@ export async function GET(request: Request) {
   }
   
   try {
-    // Obtém token e informações do usuário
+    // Obtém token e informações do usuário do Gov.br
     const tokenResponse = await exchangeCodeForToken(code)
     const userData = await getUserInfo(tokenResponse.access_token)
-    const userResult = await createOrUpdateUser(userData)
     
-    // Prepara redirecionamento usando a URL de produção
+    // Redireciona para página de callback que processará no cliente
     const baseUrl = 'https://procuraai.secties.pb.gov.br'
-    const redirectUrl = new URL('/meus-dispositivos', baseUrl)
+    const redirectUrl = new URL('/govbr-callback', baseUrl)
     const response = NextResponse.redirect(redirectUrl)
     
-    // Configura cookies
-    response.cookies.set('govbr_access_token', tokenResponse.access_token, {
-      httpOnly: true,
+    // Armazena dados do usuário em cookie temporário para o cliente processar
+    response.cookies.set('govbr_user_data', JSON.stringify({
+      sub: userData.sub,
+      email: userData.email || null,
+      name: userData.name || null,
+      preferred_username: userData.preferred_username || null
+    }), {
+      httpOnly: false, // Cliente precisa acessar
       secure: true,
       sameSite: 'lax',
-      maxAge: 3600
+      maxAge: 300, // 5 minutos apenas
+      path: '/'
     })
     
     response.cookies.set('govbr_auth_state', '', {
