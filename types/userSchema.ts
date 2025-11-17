@@ -20,4 +20,12 @@ export const UserSchema = z.object({
   status: z.string(),
   img_url: z.string().url(),
   push_token: z.string().optional(),
+  is_first_login: z.boolean().optional(),
+  birth_date: z.string().datetime().optional(),
+  CEP: z.string().optional(),
+  address: z.string().optional(),
+  address_number: z.string().optional(),
+  neighborhood: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
 });

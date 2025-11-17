@@ -53,34 +53,6 @@ import { LoadingToast } from "../LoadingToast";
 import { listOperators } from "@/functions/operators/list-operators";
 import type { Operator } from "@/types";
 
-async function getOperatorOptions(): Promise<
-  { label: string; value: string }[]
-> {
-  try {
-    const operators = await listOperators();
-
-    if (!operators || !Array.isArray(operators)) {
-      throw new Error("Dados inválidos da API");
-    }
-
-    const mappedOperators = operators.map((operator: Operator) => ({
-      label: operator.name_operator,
-      value: operator.$id,
-    }));
-
-    return mappedOperators;
-  } catch (error) {
-    console.error("Erro ao buscar operadoras:", error);
-    // Retornar algumas operadoras padrão caso haja erro
-    return [
-      { label: "Vivo", value: "vivo" },
-      { label: "Claro", value: "claro" },
-      { label: "TIM", value: "tim" },
-      { label: "Oi", value: "oi" },
-    ];
-  }
-}
-
 interface AddDeviceFormProps {
   device?: DeviceProps;
   setModalOpen?: (value: boolean) => void;
@@ -952,4 +924,32 @@ export function DeviceForm({
       </div>
     </>
   );
+}
+
+async function getOperatorOptions(): Promise<
+  { label: string; value: string }[]
+> {
+  try {
+    const operators = await listOperators();
+
+    if (!operators || !Array.isArray(operators)) {
+      throw new Error("Dados inválidos da API");
+    }
+
+    const mappedOperators = operators.map((operator: Operator) => ({
+      label: operator.name_operator,
+      value: operator.$id,
+    }));
+
+    return mappedOperators;
+  } catch (error) {
+    console.error("Erro ao buscar operadoras:", error);
+    // Retornar algumas operadoras padrão caso haja erro
+    return [
+      { label: "Vivo", value: "vivo" },
+      { label: "Claro", value: "claro" },
+      { label: "TIM", value: "tim" },
+      { label: "Oi", value: "oi" },
+    ];
+  }
 }

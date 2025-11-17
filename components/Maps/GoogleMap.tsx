@@ -22,7 +22,7 @@ interface GoogleMapProps {
 export default function GoogleMap({
   setPosition,
   setNeighborhoodId,
-}: ParaibaMapProps) {
+}: GoogleMapProps) {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const markerRef = useRef<google.maps.Marker | null>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
