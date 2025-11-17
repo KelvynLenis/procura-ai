@@ -62,7 +62,7 @@ function AddUserToPushNotificationList({
           filters: [
             {
               method: "contains",
-              attribute: "name",
+              attribute: text.match(/\d/) ? "cpf" : "name",
               values: [text],
             },
           ],
