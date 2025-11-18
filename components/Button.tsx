@@ -7,7 +7,7 @@ import { useState } from "react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  variant: "orange" | "blue" | "white" | "red" | "black";
+  variant: "orange" | "blue" | "white" | "red" | "black" | "empty";
   isLoader?: boolean;
   className?: string;
 }
@@ -33,6 +33,8 @@ export default function Button({
           "border-[0.5px] border-black bg-white text-black hover:bg-black hover:text-white",
         variant === "red" &&
           "border-[0.5px] border-red-500 bg-red-500 text-white hover:bg-white hover:text-red-500",
+        variant === "empty" &&
+          "text-primary drop-shadow-none hover:text-primary/80",
         className,
       )}
       onClick={() => setIsLoading(true)}

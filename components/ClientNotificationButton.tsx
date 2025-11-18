@@ -20,183 +20,7 @@ import { getNotificationsUnread } from "@/functions/notification/get-notificatio
 import { account } from "@/lib/appwrite";
 import { Skeleton } from "./ui/skeleton";
 import { markNotificationsAsRead } from "@/functions/notification/mark-as-read";
-
-function RenderNotification({
-  notification,
-}: {
-  notification: NotificationProps;
-}) {
-  const isRecovered = notification.type === "Recuperado";
-  const [device, setDevice] = useState<Device>();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchDevice = async () => {
-      try {
-        if (notification.type === "push") return;
-        const device = await getDeviceById(notification.id_device!);
-        setDevice(device);
-      } catch (err) {
-        console.error("Erro ao buscar device:", err);
-      }
-      setIsLoading(false);
-    };
-    fetchDevice();
-  }, [notification.id_device]);
-
-  return (
-    <div key={notification.$id} className="w-full">
-      <DropdownMenuSeparator />
-      {isLoading ? (
-        <Skeleton className="h-16 w-full" />
-      ) : (
-        <DropdownMenuItem
-          className={`relative flex w-full flex-col items-start gap-2 py-3 ${
-            isRecovered ? "" : "cursor-pointer hover:bg-zinc-50"
-          }`}
-          // onClick={() => !isRecovered && handleNotificationClick(notification)}
-        >
-          <div className="flex h-full w-full gap-4 rounded-lg bg-blue-100/40 px-5 py-3">
-            <Image
-              src={DeviceCheck}
-              alt="device-check"
-              className="h-6 w-6 self-center"
-            />
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <h1 className="text-sm font-bold text-primary">
-                  Seu dispositivo foi recuperado
-                </h1>
-
-                <span className="h-2 w-2 rounded-full bg-[#004EC1]"></span>
-              </div>
-              <p className="text-sm">
-                Informamos que o seu dispositivo {device?.phone_model},{" "}
-                <strong className="font-semibold">
-                  foi localizado e recuperado pela polícia.
-                </strong>
-                Acompanhe todas as atualizações desta ocorrência na página de
-                recuperação.
-              </p>
-              <span className="text-xs">
-                {formatDateTime(notification.time_event)}
-              </span>
-
-              <span className="flex self-end text-sm text-primary underline">
-                Acompanhar atualizações
-                <ChevronRight size={16} />
-              </span>
-            </div>
-          </div>
-        </DropdownMenuItem>
-      )}
-    </div>
-  );
-}
-
-function PreviousNotification({
-  notification,
-}: {
-  notification: Notification;
-}) {
-  const isRecovered = notification.type === "Recuperado";
-  const [device, setDevice] = useState<Device>();
-  const [isLoading, setIsLoading] = useState(true);
-
-  async function markAsReadAndRedirect() {
-    await markNotificationsAsRead(notification.$id!);
-
-    if (notification.type === "push") {
-      window.location.href = `/notificacoes`;
-      return;
-    }
-
-    window.location.href = `/meus-dispositivos?id=${device?.$id}`;
-  }
-
-  useEffect(() => {
-    const fetchDevice = async () => {
-      try {
-        if (notification.type === "push") {
-          setIsLoading(false);
-          return;
-        }
-        const device = await getDeviceById(notification.id_device!);
-        setDevice(device);
-      } catch (err) {
-        console.error("Erro ao buscar device:", err);
-      }
-      setIsLoading(false);
-    };
-    fetchDevice();
-  }, [notification.id_device]);
-
-  return (
-    <div key={notification.$id} className="w-full">
-      <DropdownMenuSeparator />
-      {isLoading ? (
-        <Skeleton className="h-56 w-full" />
-      ) : (
-        <DropdownMenuItem
-          className={`relative flex w-full flex-col items-start gap-2 py-3 ${
-            isRecovered ? "" : "cursor-pointer hover:bg-zinc-50"
-          }`}
-          // onClick={() => !isRecovered && handleNotificationClick(notification)}
-        >
-          <div className="flex h-full w-full gap-4 rounded-lg bg-blue-100/40 px-5 py-3">
-            <Image
-              src={DeviceCheck}
-              alt="device-check"
-              className="h-6 w-6 self-center"
-            />
-            <div className="flex w-full flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <h1 className="text-sm font-bold text-primary">
-                  {notification.type === "push"
-                    ? notification.title
-                    : "Seu dispositivo foi recuperado"}
-                </h1>
-
-                <span
-                  className={cn(
-                    "h-2 w-2 rounded-full",
-                    notification.is_read ? "bg-zinc-400" : "bg-[#004EC1]",
-                  )}
-                ></span>
-              </div>
-              <p className="text-sm">
-                {notification.type === "push" ? (
-                  notification.message
-                ) : (
-                  <>
-                    Informamos que o seu dispositivo {device?.phone_model},{" "}
-                    <strong className="font-semibold">
-                      foi localizado e recuperado pela polícia.
-                    </strong>
-                    Acompanhe todas as atualizações desta ocorrência na página
-                    de recuperação.
-                  </>
-                )}
-              </p>
-              <span className="text-xs">
-                {formatDateTime(notification.$createdAt!)}
-              </span>
-
-              <button
-                onClick={markAsReadAndRedirect}
-                type="button"
-                className="flex self-end text-sm text-secondary underline hover:opacity-70"
-              >
-                Acompanhar atualizações
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
-        </DropdownMenuItem>
-      )}
-    </div>
-  );
-}
+import Button from "./Button";
 
 interface ClientNotificationButtonProps {
   notifications: NotificationProps[];
@@ -211,7 +35,7 @@ function ClientNotificationButton({
 }: ClientNotificationButtonProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [notificationsCount, setNotificationsCount] = useState(0);
-  const [previousNotifications, setPreviousNotifications] = useState<
+  const [unreadNotifications, setUnreadNotifications] = useState<
     Notification[]
   >([]);
 
@@ -230,16 +54,21 @@ function ClientNotificationButton({
     return dateB - dateA;
   });
 
+  const fetchNotificationsUnread = async () => {
+    const user = await account.get();
+
+    const { documents, total } = await getNotificationsUnread(user.$id);
+
+    setUnreadNotifications(documents);
+    setNotificationsCount(total);
+  };
+
+  async function refresh() {
+    await fetchNotificationsUnread();
+    setIsDialogOpen(true);
+  }
+
   useEffect(() => {
-    const fetchNotificationsUnread = async () => {
-      const user = await account.get();
-
-      const { documents, total } = await getNotificationsUnread(user.$id);
-
-      setPreviousNotifications(documents);
-      setNotificationsCount(total);
-    };
-
     fetchNotificationsUnread();
   }, [notifications]);
 
@@ -272,9 +101,14 @@ function ClientNotificationButton({
                 sortedNotifications.map(notification => <RenderNotification notification={notification} />)                 
               } */}
 
-          {previousNotifications.length > 0 ? (
-            previousNotifications.map((notification) => (
-              <PreviousNotification notification={notification} />
+          {unreadNotifications.length > 0 ? (
+            unreadNotifications.map((notification) => (
+              <NotificationItem
+                notification={notification}
+                unreadNotifications={unreadNotifications}
+                setUnreadNotifications={setUnreadNotifications}
+                refresh={refresh}
+              />
             ))
           ) : (
             <p className="p-3 text-sm text-gray-500">
@@ -293,6 +127,130 @@ function ClientNotificationButton({
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+function NotificationItem({
+  notification,
+  unreadNotifications,
+  setUnreadNotifications,
+  refresh,
+}: {
+  notification: Notification;
+  unreadNotifications: Notification[];
+  setUnreadNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
+  refresh: () => void;
+}) {
+  const isRecovered = notification.type === "Recuperado";
+  const [device, setDevice] = useState<Device>();
+  const [isLoading, setIsLoading] = useState(true);
+
+  async function markAsReadAndRedirect() {
+    await markNotificationsAsRead(notification.$id!);
+
+    if (notification.type === "push") {
+      window.location.href = `/notificacoes`;
+      return;
+    }
+
+    window.location.href = `/meus-dispositivos?id=${device?.$id}`;
+  }
+
+  async function markAsRead() {
+    await markNotificationsAsRead(notification.$id!);
+    const removedNotificationFromList = unreadNotifications.filter(
+      (notification) => notification.$id === notification.$id,
+    );
+
+    setUnreadNotifications(removedNotificationFromList);
+
+    refresh();
+  }
+
+  useEffect(() => {
+    const fetchDevice = async () => {
+      try {
+        if (notification.type === "push") {
+          setIsLoading(false);
+          return;
+        }
+        const device = await getDeviceById(notification.id_device!);
+        setDevice(device);
+      } catch (err) {
+        console.error("Erro ao buscar device:", err);
+      }
+      setIsLoading(false);
+    };
+    fetchDevice();
+  }, [notification.id_device]);
+
+  return (
+    <div key={notification.$id} className="w-full">
+      {isLoading ? (
+        <Skeleton className="h-56 w-full" />
+      ) : (
+        <DropdownMenuItem
+          className={`relative flex w-full flex-col items-start gap-2 px-0 py-3 hover:bg-none focus:bg-transparent`}
+          // onClick={() => !isRecovered && handleNotificationClick(notification)}
+        >
+          <div className="flex h-full w-full gap-4 rounded-lg bg-blue-100/40 px-5 py-3 hover:bg-blue-100/90">
+            <Image
+              src={DeviceCheck}
+              alt="device-check"
+              className="h-6 w-6 self-center"
+            />
+            <div className="flex w-full flex-col gap-4">
+              <div className="flex justify-between">
+                <div className="flex items-center gap-2">
+                  <span
+                    className={cn(
+                      "h-2 w-2 rounded-full",
+                      notification.is_read ? "bg-zinc-400" : "bg-[#004EC1]",
+                    )}
+                  />
+                  <h1 className="text-sm font-bold text-primary">
+                    {notification.type === "push"
+                      ? notification.title
+                      : "Seu dispositivo foi recuperado"}
+                  </h1>
+                </div>
+
+                <button className="p-1" onClick={markAsRead}>
+                  <X size={16} />
+                </button>
+              </div>
+              <p className="text-sm">
+                {notification.type === "push" ? (
+                  notification.message
+                ) : (
+                  <>
+                    Informamos que o seu dispositivo {device?.phone_model},{" "}
+                    <strong className="font-semibold">
+                      foi localizado e recuperado pela polícia.
+                    </strong>
+                    Acompanhe todas as atualizações desta ocorrência na página
+                    de recuperação.
+                  </>
+                )}
+              </p>
+              <span className="text-xs">
+                {formatDateTime(notification.$createdAt!)}
+              </span>
+
+              <button
+                onClick={markAsReadAndRedirect}
+                type="button"
+                className="flex self-end text-sm text-secondary underline hover:opacity-70"
+              >
+                Acompanhar atualizações
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        </DropdownMenuItem>
+      )}
+      <DropdownMenuSeparator />
+    </div>
   );
 }
 
