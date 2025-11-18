@@ -44,6 +44,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { completeUserData } from "@/functions/user/complete-user-data";
+import { toast } from "react-toastify";
 
 export function CompleteLogin() {
   const [dropdown, setDropdown] =
@@ -53,6 +54,8 @@ export function CompleteLogin() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [step, setStep] = useState(1);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [lat, setLat] = useState<number>();
+  const [lng, setLng] = useState();
 
   const formSchema = z.object({
     cep: z.string().min(8, "O CEP deve conter exatamente 8 dígitos numéricos."),
@@ -98,6 +101,28 @@ export function CompleteLogin() {
     setIsDialogOpen(false);
   }
 
+  async function getCepByCord(lat: number, lng: number) {
+    const text = `${lat},${lng}`;
+    const response = await fetch(
+      `/api/get-address-by-cep?input=${encodeURIComponent(text)}`,
+    );
+
+    const data = await response.json();
+
+    const results = data.results;
+
+    const cepTypeResult = results.find((result: any) =>
+      result.types.includes("postal_code"),
+    );
+
+    const cep: string = cepTypeResult.address_components[0].long_name;
+
+    form.setValue("cep", cep.replace("-", ""));
+
+    toast.success("CEP encontrado com sucesso!");
+    console.log(cep.replace("-", ""));
+  }
+
   useEffect(() => {
     const checkIfItIsFirstTimeLogin = async () => {
       const userAuth = await account.get();
@@ -111,6 +136,45 @@ export function CompleteLogin() {
 
     checkIfItIsFirstTimeLogin();
   }, []);
+
+  useEffect(() => {
+    if (step === 2) {
+      if ("geolocation" in navigator) {
+        toast.loading("Buscando cep...");
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            toast.dismiss();
+            // Success callback: Permission granted, and location data is available
+            // console.log("Latitude:", position.coords.latitude);
+            // console.log("Longitude:", position.coords.longitude);
+            // setLat(position.coords.latitude);
+            // setLng(position.coords.longitude);
+            getCepByCord(position.coords.latitude, position.coords.longitude);
+          },
+          (error) => {
+            // Error callback: Permission denied or other error occurred
+            toast.error("Erro ao buscar cep");
+            switch (error.code) {
+              case error.PERMISSION_DENIED:
+                console.error("User denied the request for Geolocation.");
+                // You can display a message to the user explaining why location is needed
+                break;
+              case error.POSITION_UNAVAILABLE:
+                console.error("Location information is unavailable.");
+                break;
+              case error.TIMEOUT:
+                console.error("The request to get user location timed out.");
+                break;
+              case error.UNKNOWN_ERROR:
+                console.error("An unknown error occurred.");
+                break;
+            }
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }, // Optional options
+        );
+      }
+    }
+  }, [step]);
 
   useEffect(() => {
     const searchCep = async () => {
