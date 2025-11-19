@@ -169,6 +169,10 @@ export function CompleteLogin() {
                 console.error("An unknown error occurred.");
                 break;
             }
+
+            setTimeout(() => {
+              toast.dismiss();
+            }, 1000);
           },
           { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }, // Optional options
         );
@@ -200,7 +204,7 @@ export function CompleteLogin() {
         <DialogTrigger className="hidden">Open</DialogTrigger>
         <DialogContent
           canClose={false}
-          className="h-screen w-full gap-0 overflow-auto rounded-lg border-0 bg-white p-0 pb-2 text-primary lg:h-[35rem] lg:w-[45rem]"
+          className="h-screen w-full gap-0 overflow-auto rounded-lg border-0 bg-white p-0 pb-2 text-primary lg:h-[35rem] lg:w-[50rem] xl:h-[40rem] 3xl:h-[45rem] 3xl:w-[60rem]"
         >
           <DialogHeader className="m-0 flex h-fit lg:pt-4">
             <div className="h-14 w-full rounded-t-lg bg-primary shadow-none ring-1 ring-zinc-300 md:hidden">
@@ -243,7 +247,7 @@ export function CompleteLogin() {
                     selected={date}
                     onSelect={setDate}
                     captionLayout={dropdown}
-                    className="rounded-lg border bg-zinc-100 shadow-sm [--cell-size:2.5rem] mobile:[--cell-size:2.95rem] mobile-lg:[--cell-size:3.4rem] lg:[--cell-size:3.0rem]"
+                    className="my-calendar rounded-lg border bg-zinc-100 shadow-sm [--cell-size:2.5rem] mobile:[--cell-size:2.95rem] mobile-lg:[--cell-size:3.4rem] lg:[&_.rdp-day]:h-6 lg:[&_.rdp-day]:w-14 xl:[&_.rdp-day]:h-10 3xl:[&_.rdp-day]:h-14"
                   />
                 </>
               )}
