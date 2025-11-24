@@ -86,7 +86,7 @@ export function DeviceItem({
   }
 
   useEffect(() => {
-    console.log(deviceNotificationId, id);
+    // console.log(deviceNotificationId, id);
 
     if (window.innerWidth >= 1080) {
       return;

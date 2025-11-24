@@ -1,6 +1,6 @@
 import { Notification } from "@/types";
 
-export async function getNotificationsUnread(
+export async function getNotificationsRead(
   userId: string,
 ): Promise<{ documents: Notification[]; total: number }> {
   try {
@@ -13,7 +13,7 @@ export async function getNotificationsUnread(
       "queries[1]": JSON.stringify({
         method: "equal",
         attribute: "is_read",
-        values: [false],
+        values: [true],
       }),
       "queries[2]": JSON.stringify({
         method: "orderDesc",
