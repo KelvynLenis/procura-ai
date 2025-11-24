@@ -224,8 +224,8 @@ export function CompleteLogin() {
                 "Agora você pode cadastrar os seus dispositivos e garantir mais segurança em caso de roubos, furtos ou perdas"}
             </DialogDescription>
           </DialogHeader>
-          <div className="self-start px-2">
-            <div className="flex h-full flex-col gap-2 lg:items-center">
+          <div className="h-full self-start px-2">
+            <div className="flex h-full flex-col justify-between gap-2 lg:items-center">
               {step === 1 && (
                 <>
                   <Label className="mt-2 text-primary">
@@ -468,11 +468,18 @@ export function CompleteLogin() {
                 </Form>
               )}
 
-              {step === 3 && <Image src={finishImage} alt="" />}
+              {step === 3 && (
+                <Image
+                  src={finishImage}
+                  alt=""
+                  height={400}
+                  className="md:self-center"
+                />
+              )}
 
               <div
                 className={cn(
-                  "flex w-full justify-between",
+                  "flex w-full justify-between self-end",
                   step === 1 && "justify-end",
                 )}
               >
