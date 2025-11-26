@@ -32,7 +32,7 @@ export function MobileNavBar() {
 
   return (
     <>
-      <div className="flex h-[86px] items-center justify-center bg-white px-2 shadow-lg lg:hidden">
+      <div className="fixed bottom-0 z-[30] flex h-[86px] w-full items-center justify-center bg-white px-2 shadow-lg lg:hidden">
         <button
           type="button"
           className="flex w-1/4 flex-col items-center justify-between gap-2 text-xs"

@@ -23,7 +23,7 @@ export function Footer({
     pathname !== "map/ocorrencias" && (
       <footer
         className={cn(
-          "relative bottom-0 z-[20] flex w-full items-center justify-start md:mt-0",
+          "relative bottom-0 z-[20] hidden w-full items-center justify-start md:mt-0 lg:flex",
           light ? "bg-white" : "bg-primary py-4",
         )}
       >
