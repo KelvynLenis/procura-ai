@@ -76,6 +76,7 @@ export function CompleteLogin() {
       neighborhood: "",
       city: "",
       state: "",
+      complement: "",
     },
   });
 

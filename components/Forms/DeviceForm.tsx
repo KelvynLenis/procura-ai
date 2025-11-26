@@ -660,7 +660,7 @@ export function DeviceForm({
       </div>
 
       {/* Layout Mobile - nova estilização baseada na imagem */}
-      <div className="block min-h-screen bg-gray-50 md:hidden">
+      <div className="block min-h-screen w-[95%] bg-gray-50 pb-20 md:hidden">
         <div className="bg-white">
           {/* Header */}
           <div className="border-b border-gray-200 px-4 py-4">
@@ -858,7 +858,7 @@ export function DeviceForm({
                           onClick={() => setModalOpen!(false)}
                           type="button"
                           variant="white"
-                          className="!w-40"
+                          className="w-28 md:w-40"
                         >
                           Cancelar
                         </Button>
@@ -869,7 +869,7 @@ export function DeviceForm({
                           onClick={() => goBack()}
                           type="button"
                           variant="white"
-                          className="!w-40"
+                          className="w-28 md:w-40"
                         >
                           Cancelar
                         </Button>
@@ -879,7 +879,7 @@ export function DeviceForm({
                       type="submit"
                       disabled={isLoading}
                       variant="blue"
-                      className="!w-40"
+                      className="w-28 md:w-40"
                     >
                       {isLoading ? "Salvando..." : "Salvar alterações"}
                     </Button>
@@ -891,7 +891,7 @@ export function DeviceForm({
                         onClick={() => setModalOpen!(false)}
                         type="button"
                         variant="white"
-                        className="!w-40"
+                        className="w-28 md:w-40"
                       >
                         Cancelar
                       </Button>
@@ -901,7 +901,7 @@ export function DeviceForm({
                           onClick={() => goBack()}
                           type="button"
                           variant="white"
-                          className="!w-40"
+                          className="w-28 md:w-40"
                         >
                           Cancelar
                         </Button>
@@ -911,7 +911,7 @@ export function DeviceForm({
                       type="submit"
                       disabled={isLoading}
                       variant="blue"
-                      className="!w-40"
+                      className="w-28 md:w-40"
                     >
                       {isLoading ? "Cadastrando..." : "Cadastrar"}
                     </Button>

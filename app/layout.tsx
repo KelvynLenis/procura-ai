@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${roboto.className} antialiased min-h-screen bg-white text-procura-ai-zinc`}
+        className={`${roboto.className} min-h-screen bg-white pb-0 text-procura-ai-zinc antialiased md:p-0`}
       >
         {/* <Header /> */}
         {children}
