@@ -21,14 +21,16 @@ import { LoadingToast } from "../LoadingToast";
 import Button from "../Button";
 import { login } from "@/functions/auth/login";
 import { updateLastAccess } from "@/functions/auth/update-last-access";
-import { GovBrButton } from '@/components/GovBr'
+import { GovBrButton } from "@/components/GovBr";
+import Image from "next/image";
+import logo from "../../assets/icons/logo-admin.png";
 
 const formSchema = z.object({
   email: z.string().email("Email inválido"),
   password: z.string().min(1, "A senha é obrigatória"),
 });
-login
-export function LoginForm() {
+login;
+export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -48,6 +50,18 @@ export function LoginForm() {
             values.email,
             values.password,
           );
+
+          if (isAdminPage && !isAdmin) {
+            toast.error("Acesso negado");
+            await account.deleteSession("current");
+            return;
+          }
+
+          if (!isAdminPage && isAdmin) {
+            toast.error("Acesso negado");
+            await account.deleteSession("current");
+            return;
+          }
 
           if (userStatus === "Inativo") {
             toast.error("Esse usuário foi desativado.");
@@ -108,18 +122,25 @@ export function LoginForm() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full md:w-[500px] h-[700px] flex flex-col gap-4 bg-zinc-50 items-center px-10 py-5"
+          className="flex h-[calc(100svh-theme(spacing.19))] w-full flex-col items-center gap-4 bg-zinc-50 px-10 py-5 md:w-[500px]"
         >
-          <h3 className="text-center">
-            Para acessar o Procura.Aí faça login abaixo:
-          </h3>
+          {isAdminPage ? (
+            <div className="relative">
+              <Image src={logo} alt="logo" className="" />
+              <span className="absolute bottom-7 right-6">Administrador</span>
+            </div>
+          ) : (
+            <h3 className="text-center">
+              Para acessar o Procura.Aí faça login abaixo:
+            </h3>
+          )}
 
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
-                <FormLabel className="text-zinc-700 ml-4 font-bold pl-5">
+              <FormItem className="flex w-full flex-col">
+                <FormLabel className="ml-4 pl-5 font-bold text-zinc-700">
                   E-mail
                 </FormLabel>
                 <FormControl>
@@ -127,7 +148,7 @@ export function LoginForm() {
                     type="text"
                     placeholder="Email"
                     {...field}
-                    className="rounded-full w-64 self-center"
+                    className="w-64 self-center rounded-full"
                   />
                 </FormControl>
                 <FormMessage />
@@ -139,8 +160,8 @@ export function LoginForm() {
             control={form.control}
             name="password"
             render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
-                <FormLabel className="text-zinc-700 ml-4 font-bold pl-5">
+              <FormItem className="flex w-full flex-col">
+                <FormLabel className="ml-4 pl-5 font-bold text-zinc-700">
                   Senha
                 </FormLabel>
                 <FormControl>
@@ -148,7 +169,7 @@ export function LoginForm() {
                     type="password"
                     placeholder="Senha"
                     {...field}
-                    className="rounded-full w-64 self-center"
+                    className="w-64 self-center rounded-full"
                   />
                 </FormControl>
                 <FormMessage />
@@ -158,46 +179,55 @@ export function LoginForm() {
           <span
             aria-disabled
             title="Em breve"
-            className="underline cursor-default aria-disabled:text-zinc-700 self-start pl-10 text-sm "
+            className="cursor-default self-start pl-10 text-sm underline aria-disabled:text-zinc-700"
           >
             Esqueci minha senha
           </span>
 
-          <Button type="submit" variant="blue" className="text-base !w-40">
+          <Button type="submit" variant="blue" className="!w-40 text-base">
             Entrar
           </Button>
 
-          <div className="w-full flex flex-col gap-9">
-            <span className="w-full h-[1px] rounded-full bg-primary" />
+          {!isAdminPage && (
+            <div className="flex w-full flex-col gap-9">
+              <span className="h-[1px] w-full rounded-full bg-primary" />
 
-            <div className="flex flex-col gap-3">
-              <span className="font-bold self-center">
-                Se preferir, acesse pela conta Gov.br
-              </span>
-              <div className="flex items-center justify-center">
-                <GovBrButton className="text-base w-auto" />
+              <div className="flex flex-col gap-3">
+                <span className="self-center font-bold">
+                  Se preferir, acesse pela conta Gov.br
+                </span>
+                <div className="flex items-center justify-center">
+                  <GovBrButton className="w-auto text-base" />
+                </div>
+              </div>
+
+              <span className="h-[1px] w-full rounded-full bg-primary" />
+
+              <div className="flex w-full flex-col gap-3">
+                {/* <span className="font-bold self-center">Não possui conta?</span>
+                  <Link
+                    href={"/cadastro"}
+                    className="flex items-center justify-center"
+                  >
+                    <Button
+                      onClick={showLoadingToast}
+                      type="button"
+                      variant="black"
+                      className="text-base !w-40"
+                    >
+                      Cadastre-se
+                    </Button>
+                  </Link> */}
+
+                <Link
+                  href={"/login-admin"}
+                  className="hidden items-center justify-center text-secondary underline hover:opacity-70 lg:flex"
+                >
+                  Entrar como administrador
+                </Link>
               </div>
             </div>
-
-            <span className="w-full h-[1px] rounded-full bg-primary" />
-
-            <div className="w-full flex flex-col gap-3">
-              <span className="font-bold self-center">Não possui conta?</span>
-              <Link
-                href={"/cadastro"}
-                className="flex items-center justify-center"
-              >
-                <Button
-                  onClick={showLoadingToast}
-                  type="button"
-                  variant="black"
-                  className="text-base !w-40"
-                >
-                  Cadastre-se
-                </Button>
-              </Link>
-            </div>
-          </div>
+          )}
         </form>
       </Form>
 
