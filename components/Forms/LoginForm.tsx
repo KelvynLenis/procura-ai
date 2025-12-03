@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form";
 import { Input } from "../Input";
 import Link from "next/link";
 import { account } from "@/lib/appwrite";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,6 +33,8 @@ login;
 export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+
+  const pathname = window.location.hostname;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -122,7 +124,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex h-[calc(100svh-theme(spacing.19))] w-full flex-col items-center gap-4 bg-zinc-50 px-10 py-5 md:w-[500px]"
+          className="flex h-[calc(100svh-theme(spacing.19))] w-full flex-col items-center gap-4 bg-zinc-50 px-8 py-5 md:w-[500px]"
         >
           {isAdminPage ? (
             <div className="relative">
@@ -130,74 +132,82 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
               <span className="absolute bottom-7 right-6">Administrador</span>
             </div>
           ) : (
-            <h3 className="text-center">
-              Para acessar o Procura.Aí faça login abaixo:
-            </h3>
+            <div className="flex flex-col items-center">
+              <Image src={logo} alt="logo" className="" />
+
+              <h3 className="text-center font-medium">
+                Proteja-se agora e fique um passo à frente
+              </h3>
+            </div>
           )}
 
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem className="flex w-full flex-col">
-                <FormLabel className="ml-4 pl-5 font-bold text-zinc-700">
-                  E-mail
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Email"
-                    {...field}
-                    className="w-64 self-center rounded-full"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {pathname === "localhost" && (
+            <>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem className="flex w-full flex-col">
+                    <FormLabel className="ml-4 pl-5 font-bold text-zinc-700">
+                      E-mail
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="Email"
+                        {...field}
+                        className="w-64 self-center rounded-full"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem className="flex w-full flex-col">
-                <FormLabel className="ml-4 pl-5 font-bold text-zinc-700">
-                  Senha
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Senha"
-                    {...field}
-                    className="w-64 self-center rounded-full"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <span
-            aria-disabled
-            title="Em breve"
-            className="cursor-default self-start pl-10 text-sm underline aria-disabled:text-zinc-700"
-          >
-            Esqueci minha senha
-          </span>
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem className="flex w-full flex-col">
+                    <FormLabel className="ml-4 pl-5 font-bold text-zinc-700">
+                      Senha
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Senha"
+                        {...field}
+                        className="w-64 self-center rounded-full"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* <span
+                aria-disabled
+                title="Em breve"
+                className="cursor-default self-start pl-10 text-sm underline aria-disabled:text-zinc-700"
+              >
+                Esqueci minha senha
+              </span> */}
 
-          <Button type="submit" variant="blue" className="!w-40 text-base">
-            Entrar
-          </Button>
+              <Button
+                type="submit"
+                variant="blue"
+                className="mb-5 !w-40 text-base"
+              >
+                Entrar
+              </Button>
+              <span className="h-[1px] w-full rounded-full bg-primary" />
+            </>
+          )}
 
           {!isAdminPage && (
             <div className="flex w-full flex-col gap-9">
-              <span className="h-[1px] w-full rounded-full bg-primary" />
-
               <div className="flex flex-col gap-3">
-                <span className="self-center font-bold">
-                  Se preferir, acesse pela conta Gov.br
-                </span>
                 <div className="flex items-center justify-center">
-                  <GovBrButton className="w-auto text-base" />
+                  <GovBrButton className="w-full bg-[#396DC0] text-base" />
                 </div>
               </div>
 
