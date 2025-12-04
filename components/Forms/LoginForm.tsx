@@ -124,7 +124,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex h-[calc(100svh-theme(spacing.19))] w-full flex-col items-center gap-4 bg-zinc-50 px-8 py-5 md:w-[500px]"
+          className="flex h-fit w-full flex-col items-center gap-4 rounded-lg bg-zinc-50 px-8 py-5 md:w-96"
         >
           {isAdminPage ? (
             <div className="relative">
@@ -184,54 +184,52 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
                   </FormItem>
                 )}
               />
-              {/* <span
-                aria-disabled
-                title="Em breve"
-                className="cursor-default self-start pl-10 text-sm underline aria-disabled:text-zinc-700"
-              >
-                Esqueci minha senha
-              </span> */}
 
-              <Button
-                type="submit"
-                variant="blue"
-                className="mb-5 !w-40 text-base"
-              >
+              <Button type="submit" variant="blue" className="!w-40 text-base">
                 Entrar
               </Button>
-              <span className="h-[1px] w-full rounded-full bg-primary" />
             </>
           )}
 
           {!isAdminPage && (
-            <div className="flex w-full flex-col gap-9">
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-center">
-                  <GovBrButton className="w-full bg-[#396DC0] text-base" />
-                </div>
-              </div>
+            <div className="flex w-fit flex-col">
+              {pathname !== "localhost" && (
+                <>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center justify-center">
+                      <GovBrButton className="w-fit bg-[#396DC0] text-base" />
+                    </div>
+                  </div>
+                  {/* <span className="h-[1px] w-full rounded-full bg-primary" /> */}
+                </>
+              )}
 
-              <span className="h-[1px] w-full rounded-full bg-primary" />
-
-              <div className="flex w-full flex-col gap-3">
-                {/* <span className="font-bold self-center">Não possui conta?</span>
-                  <Link
-                    href={"/cadastro"}
-                    className="flex items-center justify-center"
-                  >
-                    <Button
-                      onClick={showLoadingToast}
-                      type="button"
-                      variant="black"
-                      className="text-base !w-40"
+              <div className="flex w-fit flex-col gap-3">
+                {pathname === "localhost" && (
+                  <>
+                    {/* <span className="self-center font-bold">
+                      Não possui conta?
+                      </span> */}
+                    <Link
+                      href={"/cadastro"}
+                      className="flex items-center justify-center"
                     >
-                      Cadastre-se
-                    </Button>
-                  </Link> */}
+                      <Button
+                        onClick={showLoadingToast}
+                        type="button"
+                        variant="black"
+                        className="!w-40 text-base"
+                      >
+                        Cadastre-se
+                      </Button>
+                    </Link>
+                    <span className="h-[1px] w-full rounded-full bg-primary" />
+                  </>
+                )}
 
                 <Link
                   href={"/login-admin"}
-                  className="hidden items-center justify-center text-secondary underline hover:opacity-70 lg:flex"
+                  className="mt-4 hidden items-center justify-center text-secondary underline hover:opacity-70 lg:flex"
                 >
                   Entrar como administrador
                 </Link>
