@@ -47,11 +47,11 @@ function NotificationForm() {
     Recuperado: false,
   });
   const [locationOptions, setLocationOptions] = useState({
-    JoaoPessoa: false,
+    "João Pessoa": false,
     Cabedelo: false,
-    CampinaGrande: false,
+    "Campina Grande": false,
     Bayeux: false,
-    SantaRita: false,
+    "Santa Rita": false,
   });
   const [refresh, setRefresh] = useState(false);
 
@@ -182,17 +182,17 @@ function NotificationForm() {
       Recuperado: false,
     });
     setLocationOptions({
-      JoaoPessoa: false,
+      "João Pessoa": false,
       Cabedelo: false,
-      CampinaGrande: false,
+      "Campina Grande": false,
       Bayeux: false,
-      SantaRita: false,
+      "Santa Rita": false,
     });
 
     setSelectedUsers([]);
 
-    // const data = await response.json();
-    // console.log(data);
+    const data = await response.json();
+    console.log(data);
   }
 
   function toggleAllStatusOptions() {
@@ -224,40 +224,40 @@ function NotificationForm() {
 
   function toggleAllLocationsOptions() {
     if (
-      locationOptions["JoaoPessoa"] &&
+      locationOptions["João Pessoa"] &&
       locationOptions["Cabedelo"] &&
-      locationOptions["CampinaGrande"] &&
+      locationOptions["Campina Grande"] &&
       locationOptions["Bayeux"] &&
-      locationOptions["SantaRita"]
+      locationOptions["Santa Rita"]
     ) {
       setLocationOptions({
-        JoaoPessoa: false,
+        "João Pessoa": false,
         Cabedelo: false,
-        CampinaGrande: false,
+        "Campina Grande": false,
         Bayeux: false,
-        SantaRita: false,
+        "Santa Rita": false,
       });
       return;
     }
 
     setLocationOptions({
-      JoaoPessoa: true,
+      "João Pessoa": true,
       Cabedelo: true,
-      CampinaGrande: true,
+      "Campina Grande": true,
       Bayeux: true,
-      SantaRita: true,
+      "Santa Rita": true,
     });
   }
 
-  useEffect(() => {
-    if (selectedUsers.length > 0) {
-      setAllUsers(false);
-    }
+  // useEffect(() => {
+  //   if (selectedUsers.length > 0) {
+  //     setAllUsers(false);
+  //   }
 
-    if (selectedUsers.length === 0) {
-      setAllUsers(true);
-    }
-  }, [selectedUsers]);
+  //   if (selectedUsers.length === 0) {
+  //     setAllUsers(true);
+  //   }
+  // }, [selectedUsers]);
 
   useEffect(() => {
     if (allUsers) {
@@ -270,11 +270,11 @@ function NotificationForm() {
         Recuperado: false,
       });
       setLocationOptions({
-        JoaoPessoa: false,
+        "João Pessoa": false,
         Cabedelo: false,
-        CampinaGrande: false,
+        "Campina Grande": false,
         Bayeux: false,
-        SantaRita: false,
+        "Santa Rita": false,
       });
     }
   }, [allUsers]);
@@ -285,7 +285,12 @@ function NotificationForm() {
       statusOptions["Roubado"] ||
       statusOptions["Furtado"] ||
       statusOptions["Perdido"] ||
-      statusOptions["Recuperado"]
+      statusOptions["Recuperado"] ||
+      locationOptions["João Pessoa"] ||
+      locationOptions["Cabedelo"] ||
+      locationOptions["Campina Grande"] ||
+      locationOptions["Bayeux"] ||
+      locationOptions["Santa Rita"]
     ) {
       setAllUsers(false);
     }
@@ -295,11 +300,17 @@ function NotificationForm() {
       !statusOptions["Roubado"] &&
       !statusOptions["Furtado"] &&
       !statusOptions["Perdido"] &&
-      !statusOptions["Recuperado"]
+      !statusOptions["Recuperado"] &&
+      !locationOptions["João Pessoa"] &&
+      !locationOptions["Cabedelo"] &&
+      !locationOptions["Campina Grande"] &&
+      !locationOptions["Bayeux"] &&
+      !locationOptions["Santa Rita"] &&
+      selectedUsers.length === 0
     ) {
       setAllUsers(true);
     }
-  }, [statusOptions]);
+  }, [statusOptions, locationOptions, selectedUsers]);
 
   useEffect(() => {
     const getAllUsers = async () => {
@@ -560,9 +571,8 @@ function NotificationForm() {
                               className="w-56 px-2 py-0 focus:outline-none"
                             />
                           </div>
-                          <div className="flex items-center gap-2 text-zinc-500">
+                          <div className="flex items-center gap-2">
                             <Checkbox
-                              disabled
                               onClick={toggleAllLocationsOptions}
                               className="bg-white shadow-sm drop-shadow-sm"
                             />
@@ -572,14 +582,14 @@ function NotificationForm() {
                           <span className="h-[1px] w-full bg-zinc-300" />
 
                           <div className="flex w-full flex-col items-start gap-4">
-                            <div className="flex items-center gap-2 pl-4 text-zinc-500">
+                            <div className="flex items-center gap-2 pl-4">
                               <Checkbox
-                                disabled
-                                checked={locationOptions.JoaoPessoa}
+                                checked={locationOptions["João Pessoa"]}
                                 onClick={() =>
                                   setLocationOptions({
                                     ...locationOptions,
-                                    JoaoPessoa: !locationOptions["JoaoPessoa"],
+                                    "João Pessoa":
+                                      !locationOptions["João Pessoa"],
                                   })
                                 }
                                 className="bg-white shadow-sm drop-shadow-sm"
@@ -589,9 +599,8 @@ function NotificationForm() {
 
                             <span className="h-[1px] w-full bg-zinc-300" />
 
-                            <div className="flex items-center gap-2 pl-4 text-zinc-500">
+                            <div className="flex items-center gap-2 pl-4">
                               <Checkbox
-                                disabled
                                 checked={locationOptions.Cabedelo}
                                 onClick={() =>
                                   setLocationOptions({
@@ -606,15 +615,14 @@ function NotificationForm() {
 
                             <span className="h-[1px] w-full bg-zinc-300" />
 
-                            <div className="flex items-center gap-2 pl-4 text-zinc-500">
+                            <div className="flex items-center gap-2 pl-4">
                               <Checkbox
-                                disabled
-                                checked={locationOptions.CampinaGrande}
+                                checked={locationOptions["Campina Grande"]}
                                 onClick={() =>
                                   setLocationOptions({
                                     ...locationOptions,
-                                    CampinaGrande:
-                                      !locationOptions["CampinaGrande"],
+                                    "Campina Grande":
+                                      !locationOptions["Campina Grande"],
                                   })
                                 }
                                 className="bg-white shadow-sm drop-shadow-sm"
@@ -624,9 +632,8 @@ function NotificationForm() {
 
                             <span className="h-[1px] w-full bg-zinc-300" />
 
-                            <div className="flex items-center gap-2 pl-4 text-zinc-500">
+                            <div className="flex items-center gap-2 pl-4">
                               <Checkbox
-                                disabled
                                 checked={locationOptions.Bayeux}
                                 onClick={() =>
                                   setLocationOptions({
@@ -641,14 +648,14 @@ function NotificationForm() {
 
                             <span className="h-[1px] w-full bg-zinc-300" />
 
-                            <div className="flex items-center gap-2 pl-4 text-zinc-500">
+                            <div className="flex items-center gap-2 pl-4">
                               <Checkbox
-                                disabled
-                                checked={locationOptions.SantaRita}
+                                checked={locationOptions["Santa Rita"]}
                                 onClick={() =>
                                   setLocationOptions({
                                     ...locationOptions,
-                                    SantaRita: !locationOptions["SantaRita"],
+                                    "Santa Rita":
+                                      !locationOptions["Santa Rita"],
                                   })
                                 }
                                 className="bg-white shadow-sm drop-shadow-sm"

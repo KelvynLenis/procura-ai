@@ -39,7 +39,25 @@ export async function POST(req: NextRequest, res: NextResponse) {
       (key) => locationOptions[key] === true,
     );
 
-    console.log("statusTarget", statusTarget);
+    // console.log("statusTarget", statusTarget);
+    // console.log("locationTarget", locationTarget);
+
+    const queryFiltersLocation =
+      locationTarget.length > 0
+        ? [
+            {
+              method: "equal",
+              attribute: "city",
+              values: locationTarget,
+            },
+          ]
+        : [];
+
+    const usersFromLocationOptions = await getUser({
+      filters: queryFiltersLocation,
+    });
+
+    // console.log("usersFromLocationOptions", usersFromLocationOptions.length);
 
     const queryFiltersDevices =
       statusTarget.length > 0
@@ -81,15 +99,22 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     // console.log("targetUsersFromStatusOptions", targetUsersFromStatusOptions);
 
-    // console.log("selectedUsers", selectedUsers);
+    // console.log("selectedUsers", selectedUsers.length);
 
     const mergeTargets = [...selectedUsers, ...targetUsersFromStatusOptions];
 
-    const removeDuplicated = mergeTargets.filter((value, index) => {
+    // console.log("mergeTargets", mergeTargets.length);
+
+    const mergeTargetsWithLocation = [
+      ...mergeTargets,
+      ...usersFromLocationOptions,
+    ];
+
+    const removeDuplicated = mergeTargetsWithLocation.filter((value, index) => {
       const _value = JSON.stringify(value);
       return (
         index ===
-        mergeTargets.findIndex((obj) => {
+        mergeTargetsWithLocation.findIndex((obj) => {
           return JSON.stringify(obj) === _value;
         })
       );
@@ -99,11 +124,13 @@ export async function POST(req: NextRequest, res: NextResponse) {
       (user) => user.type !== "Administrador",
     );
 
+    // console.log("removeDuplicated", removeAdmin.length);
+
     const removeUserWithoutToken = removeAdmin.filter(
       (user) => user.push_token.length > 0,
     );
 
-    // console.log("targets", removeUserWithoutToken);
+    // console.log("removeUserWithoutToken", removeUserWithoutToken.length);
 
     const targets = removeUserWithoutToken.map((user) => {
       return { id: user.user_id, push_token: user.push_token };

@@ -127,9 +127,9 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
           className="flex h-fit w-full flex-col items-center gap-4 rounded-lg bg-zinc-50 px-8 py-5 md:w-96"
         >
           {isAdminPage ? (
-            <div className="relative">
+            <div className="relative mb-2">
               <Image src={logo} alt="logo" className="" />
-              <span className="absolute bottom-7 right-6">Administrador</span>
+              <span className="absolute -bottom-1 right-4">Administrador</span>
             </div>
           ) : (
             <div className="flex flex-col items-center">
