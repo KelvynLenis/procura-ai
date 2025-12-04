@@ -9,14 +9,8 @@ export default function Login() {
         <Image src={logo} alt="logo" className="relative -left-8 h-16" />
       </header>
       <main className="row-start-2 flex min-h-fit w-full flex-col items-center bg-primary sm:items-start">
-        <div className="relative flex w-full flex-col bg-login-admin-bg bg-cover bg-center bg-no-repeat">
-          <div className="flex w-full">
-            <div className="hidden w-full items-center justify-center md:flex">
-              {/* <Image src={logoLogin} alt="login images" /> */}
-            </div>
-
-            <LoginForm isAdminPage />
-          </div>
+        <div className="mb-0 flex h-[calc(100svh-theme(spacing.19))] w-full flex-col items-center justify-center bg-login-admin-bg bg-cover bg-center bg-no-repeat p-2">
+          <LoginForm isAdminPage />
         </div>
       </main>
     </>
