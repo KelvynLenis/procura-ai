@@ -89,6 +89,21 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     // console.log("locationTarget", locationTarget);
 
+    const queryFiltersLocation =
+      locationOptions.length > 0
+        ? [
+            {
+              method: "equal",
+              attribute: "city",
+              values: locationTarget,
+            },
+          ]
+        : [];
+
+    const usersFromLocationOptions = await getUser({
+      filters: queryFiltersLocation,
+    });
+
     const queryFiltersDevices =
       statusTarget.length > 0
         ? [
@@ -131,25 +146,32 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     const mergeTargets = [...selectedUsers, ...targetUsersFromStatusOptions];
 
-    const removeDuplicated = mergeTargets.filter((value, index) => {
+    const mergeTargetsWithLocation = [
+      ...mergeTargets,
+      ...usersFromLocationOptions,
+    ];
+
+    const removeDuplicated = mergeTargetsWithLocation.filter((value, index) => {
       const _value = JSON.stringify(value);
       return (
         index ===
-        mergeTargets.findIndex((obj) => {
+        mergeTargetsWithLocation.findIndex((obj) => {
           return JSON.stringify(obj) === _value;
         })
       );
     });
+
+    console.log("removeDuplicated", removeDuplicated.length);
 
     const removeAdmin = removeDuplicated.filter(
       (user) => user.type !== "Administrador",
     );
 
     const removeUserWithoutToken = removeAdmin.filter(
-      (user) => user.push_token !== null,
+      (user) => user.push_token.length > 0,
     );
 
-    // console.log("targets", removeUserWithoutToken);
+    console.log("removeUserWithoutToken", removeUserWithoutToken.length);
 
     const targets = removeUserWithoutToken.map((user) => {
       return { id: user.user_id, push_token: user.push_token };
@@ -198,7 +220,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     await createNotification({
       sender_id: undefined,
-      receiver_id: targets[0].id,
       message: message,
       is_read: false,
       type: "push",
@@ -215,7 +236,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     //   { to: pushToken, icon: '../../../assets/icons/logo-notification.png' , sound: "default", body: message, title: title, data: { screen: "/my-devices", teste: 'teste' } },
     // ]);
 
-    // console.log(response);
+    console.log(response);
 
     return NextResponse.json(response);
   } catch (error) {

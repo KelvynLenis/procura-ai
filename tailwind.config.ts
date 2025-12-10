@@ -68,7 +68,7 @@ export default {
       backgroundImage: {
         faq: "url('../assets/images/faq-bg.png')",
         "faq-light": "url('../assets/images/faq-bg-light.png')",
-        "login-bg": "url('../assets/images/login-bg.svg')",
+        "login-bg": "url('../assets/images/login-bg.png')",
         "login-admin-bg": "url('../assets/images/login-admin-bg.png')",
         "device-bg": "url('../assets/images/devices-bg.png')",
         "hero-bg": "url('../assets/images/hero-bg.png')",

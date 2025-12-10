@@ -235,11 +235,17 @@ export function CompleteLogin() {
                   <Input
                     type="date"
                     placeholder="DD/MM/AAAA"
-                    value={date!.toISOString().split("T")[0]}
+                    value={
+                      date instanceof Date && !isNaN(date.getTime())
+                        ? date.toISOString().split("T")[0]
+                        : ""
+                    }
                     className="ring-zinc-300 lg:w-96"
                     onChange={(e) => {
-                      const value = e.target.value; // "2025-11-17"
-                      setDate(new Date(value + "T00:00:00"));
+                      const value = e.target.value;
+                      if (value.length === 10) {
+                        setDate(new Date(value + "T00:00:00"));
+                      }
                     }}
                   />
                   <Calendar
