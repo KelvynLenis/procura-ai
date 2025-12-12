@@ -10,7 +10,7 @@ export async function login(
   email: string,
   password: string,
 ): Promise<LoginResponse> {
-  await account.createEmailPasswordSession(email, password);
+  const session = await account.createEmailPasswordSession(email, password);
   const user = await account.get();
 
   const isAdmin = user.labels[0] === "admin";
