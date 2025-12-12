@@ -1,5 +1,7 @@
+"use client";
+
 import Image from "next/image";
-import { LoginForm } from "@/components/Forms/LoginForm";
+// import { LoginForm } from "@/components/Forms/LoginForm";
 import logo from "../../assets/icons/logo-text.svg";
 import { cn } from "@/lib/utils";
 import { questions } from "@/utils/FAQ";
@@ -13,6 +15,12 @@ import { Question, QuestionStep } from "@/types";
 
 import lineFooter from "../../assets/images/line02.svg";
 import govFull from "../../assets/icons/gov.png";
+import dynamic from "next/dynamic";
+
+const LoginForm = dynamic(
+  () => import("@/components/Forms/LoginForm").then((mod) => mod.LoginForm),
+  { ssr: false },
+);
 
 export default function Login() {
   const renderStepContent = (step: QuestionStep) => (
