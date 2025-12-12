@@ -5,7 +5,12 @@ import pluginReact from "eslint-plugin-react";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
-  { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], plugins: { js }, extends: ["next/core-web-vitals","rocketseat/eslint-config/react"], languageOptions: { globals: globals.browser } },
+  {
+    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    plugins: { js },
+    extends: ["next", "next/core-web-vitals", "rocketseat/eslint-config/react"],
+    languageOptions: { globals: globals.browser },
+  },
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
 ]);
