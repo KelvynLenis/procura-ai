@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { LoginForm } from "@/components/Forms/LoginForm";
 import logo from "../../assets/icons/logo-text.svg";
