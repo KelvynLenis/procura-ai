@@ -52,14 +52,14 @@ export function LoginFormMobile({ isAdminPage }: { isAdminPage?: boolean }) {
     const cookieResponse = await fetch("/api/get-cookie", {
       method: "GET",
     });
-    if (typeof window !== "undefined") {
-      window.ReactNativeWebView?.postMessage(
-        JSON.stringify({
-          type: "login_success",
-          data: data,
-        }),
-      );
-    }
+    // if (typeof window !== "undefined") {
+    //   window.ReactNativeWebView?.postMessage(
+    //     JSON.stringify({
+    //       type: "login_success",
+    //       data: data,
+    //     }),
+    //   );
+    // }
   }
 
   async function onSubmit(
