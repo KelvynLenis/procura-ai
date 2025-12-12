@@ -1,8 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { LoginForm } from "@/components/Forms/LoginForm";
+// import { LoginForm } from "@/components/Forms/LoginForm";
 import logo from "../../assets/icons/logo-text.svg";
+import dynamic from "next/dynamic";
+
+const LoginForm = dynamic(
+  () => import("@/components/Forms/LoginForm").then((mod) => mod.LoginForm),
+  { ssr: false },
+);
 
 export default function Login() {
   return (
