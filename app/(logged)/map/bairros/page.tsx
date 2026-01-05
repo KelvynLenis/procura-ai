@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { OccurrencesHeatMap } from "@/components/Maps/OccurrencesHeatMap";
 import { District } from "@/types";
 import Link from "next/link";
@@ -22,7 +23,7 @@ export default async function Dashboard() {
       <Link href={"/dashboard"}>
         <TbArrowsMinimize
           size={38}
-          className="absolute top-4 right-5 z-10 hover:animate-pulse bg-white rounded-xl p-1 shadow"
+          className="absolute right-5 top-4 z-10 rounded-xl bg-white p-1 shadow hover:animate-pulse"
         />
       </Link>
     </div>
