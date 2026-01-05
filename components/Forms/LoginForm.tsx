@@ -33,8 +33,7 @@ login;
 export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-
-  const pathname = window.location.hostname;
+  const [pathname, setPathname] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -105,6 +104,9 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
   }
 
   useEffect(() => {
+    const pathname = window.location.hostname;
+
+    setPathname(pathname);
     const getSession = async () => {
       try {
         const sessions = await account.get();
