@@ -205,19 +205,19 @@ export function CompleteLogin() {
         <DialogTrigger className="hidden">Open</DialogTrigger>
         <DialogContent
           canClose={false}
-          className="h-screen w-full gap-0 overflow-auto rounded-lg border-0 bg-white p-0 pb-2 text-primary lg:h-[35rem] lg:w-[50rem] xl:h-[40rem] 3xl:h-[45rem] 3xl:w-[60rem]"
+          className="h-screen w-full gap-0 overflow-auto rounded-lg border-0 bg-white p-0 pb-2 text-primary lg:h-[35rem] lg:w-[50rem] xl:h-[35rem] 3xl:h-[45rem] 3xl:w-[60rem]"
         >
           <DialogHeader className="m-0 flex h-fit lg:pt-4">
             <div className="h-14 w-full rounded-t-lg bg-primary shadow-none ring-1 ring-zinc-300 md:hidden">
               <Image src={logo} alt="logo" className="w-32" />
             </div>
             <Steps step={step} />
-            <DialogTitle className="mx-2 w-fit self-start lg:self-center">
+            <DialogTitle className="mx-2 w-fit self-start text-base md:text-lg lg:self-center">
               {step === 1 && "Sua conta está quase pronta"}
               {step === 2 && "Informe seu endereço"}
               {step === 3 && "Pronto! A sua conta foi criada"}
             </DialogTitle>
-            <DialogDescription className="mx-2 w-fit font-medium text-primary lg:self-center">
+            <DialogDescription className="mx-2 w-fit text-xs font-medium text-primary md:text-base lg:self-center">
               {step === 1 &&
                 "Agora você só precisa informar alguns dados básicos"}
               {step === 2 && ""}
@@ -226,7 +226,7 @@ export function CompleteLogin() {
             </DialogDescription>
           </DialogHeader>
           <div className="h-full self-start px-2">
-            <div className="flex h-full flex-col justify-between gap-2 lg:items-center">
+            <div className="hidden h-full flex-col justify-between gap-2 md:flex lg:items-center">
               {step === 1 && (
                 <>
                   <Label className="mt-2 text-primary">
@@ -254,7 +254,7 @@ export function CompleteLogin() {
                     selected={date}
                     onSelect={setDate}
                     captionLayout={dropdown}
-                    className="my-calendar rounded-lg border bg-zinc-100 shadow-sm [--cell-size:2.5rem] mobile:[--cell-size:2.95rem] mobile-lg:[--cell-size:3.4rem] lg:[&_.rdp-day]:h-6 lg:[&_.rdp-day]:w-14 xl:[&_.rdp-day]:h-10 3xl:[&_.rdp-day]:h-14"
+                    className="my-calendar rounded-lg border bg-zinc-100 shadow-sm [--cell-size:2.5rem] mobile:[--cell-size:2.95rem] mobile-lg:[--cell-size:3.4rem] lg:[&_.rdp-day]:h-6 lg:[&_.rdp-day]:w-14 xl:[&_.rdp-day]:h-8 3xl:[&_.rdp-day]:h-14"
                   />
                 </>
               )}
@@ -262,78 +262,190 @@ export function CompleteLogin() {
               {step === 2 && (
                 <Form {...form}>
                   <form
-                    className="flex flex-col gap-2"
+                    className="flex h-full flex-col justify-between"
                     onSubmit={form.handleSubmit(validateForm)}
                   >
-                    <FormField
-                      control={form.control}
-                      name="cep"
-                      render={({ field }) => (
-                        <FormItem className="flex w-full flex-col gap-5 md:flex-row">
-                          <div>
-                            <FormLabel className="flex w-fit items-start text-center text-lg">
-                              CEP
-                            </FormLabel>
-                            <FormControl>
-                              <InputOTP
-                                maxLength={8}
-                                {...field}
-                                containerClassName="ring-1 ring-zinc-300 shadow-3one"
-                                className="flex w-full items-center justify-center"
-                              >
-                                <InputOTPGroup>
-                                  <InputOTPSlot
-                                    className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
-                                    index={0}
-                                  />
-                                  <InputOTPSlot
-                                    className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
-                                    index={1}
-                                  />
-                                  <InputOTPSlot
-                                    className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
-                                    index={2}
-                                  />
-                                  <InputOTPSlot
-                                    className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
-                                    index={3}
-                                  />
-                                  <InputOTPSlot
-                                    className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
-                                    index={4}
-                                  />
-                                </InputOTPGroup>
-                                <InputOTPSeparator data-dash />
-                                <InputOTPGroup>
-                                  <InputOTPSlot
-                                    className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
-                                    index={5}
-                                  />
-                                  <InputOTPSlot
-                                    className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
-                                    index={6}
-                                  />
-                                  <InputOTPSlot
-                                    className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
-                                    index={7}
-                                  />
-                                </InputOTPGroup>
-                              </InputOTP>
-                            </FormControl>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="flex w-full flex-col lg:flex-row lg:gap-4">
+                    <div className="flex flex-col gap-2">
                       <FormField
                         control={form.control}
-                        name="street"
+                        name="cep"
                         render={({ field }) => (
                           <FormItem className="flex w-full flex-col gap-5 md:flex-row">
                             <div>
                               <FormLabel className="flex w-fit items-start text-center text-lg">
-                                Logradouro
+                                CEP
+                              </FormLabel>
+                              <FormControl>
+                                <InputOTP
+                                  maxLength={8}
+                                  {...field}
+                                  containerClassName="ring-1 ring-zinc-300 shadow-3one"
+                                  className="flex w-full items-center justify-center"
+                                >
+                                  <InputOTPGroup>
+                                    <InputOTPSlot
+                                      className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
+                                      index={0}
+                                    />
+                                    <InputOTPSlot
+                                      className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
+                                      index={1}
+                                    />
+                                    <InputOTPSlot
+                                      className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
+                                      index={2}
+                                    />
+                                    <InputOTPSlot
+                                      className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
+                                      index={3}
+                                    />
+                                    <InputOTPSlot
+                                      className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
+                                      index={4}
+                                    />
+                                  </InputOTPGroup>
+                                  <InputOTPSeparator data-dash />
+                                  <InputOTPGroup>
+                                    <InputOTPSlot
+                                      className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
+                                      index={5}
+                                    />
+                                    <InputOTPSlot
+                                      className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
+                                      index={6}
+                                    />
+                                    <InputOTPSlot
+                                      className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
+                                      index={7}
+                                    />
+                                  </InputOTPGroup>
+                                </InputOTP>
+                              </FormControl>
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+
+                      <div className="flex w-full flex-col lg:flex-row lg:gap-4">
+                        <FormField
+                          control={form.control}
+                          name="street"
+                          render={({ field }) => (
+                            <FormItem className="flex w-full flex-col gap-5 md:flex-row">
+                              <div>
+                                <FormLabel className="flex w-fit items-start text-center text-lg">
+                                  Logradouro
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="text"
+                                    {...field}
+                                    className="w-full shadow-none ring-zinc-300 lg:w-80"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="number"
+                          render={({ field }) => (
+                            <FormItem className="flex w-fit flex-col gap-5 md:flex-row">
+                              <div>
+                                <FormLabel className="flex w-fit items-start text-center text-lg">
+                                  Número
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    {...field}
+                                    className="w-16 shadow-none ring-zinc-300 lg:w-20"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+
+                        {/* <FormField
+                          control={form.control}
+                          name="complement"
+                          render={({ field }) => (
+                            <FormItem className="flex w-full flex-col gap-5 md:flex-row">
+                              <div>
+                                <FormLabel className="flex w-fit items-start text-center text-lg">
+                                  Complemento(Opcional)
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="text"
+                                    {...field}
+                                    className="w-full shadow-none ring-zinc-300"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </div>
+                            </FormItem>
+                          )}
+                        /> */}
+                      </div>
+
+                      <FormField
+                        control={form.control}
+                        name="neighborhood"
+                        render={({ field }) => (
+                          <FormItem className="flex w-full flex-col gap-5 md:flex-row">
+                            <div>
+                              <FormLabel className="flex w-fit items-start text-center text-lg">
+                                Bairro
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="text"
+                                  {...field}
+                                  className="w-full shadow-none ring-zinc-300 lg:w-80"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="city"
+                        render={({ field }) => (
+                          <FormItem className="flex w-full flex-col gap-5 md:flex-row">
+                            <div>
+                              <FormLabel className="flex w-fit items-start text-center text-lg">
+                                Cidade
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="text"
+                                  {...field}
+                                  className="w-full shadow-none ring-zinc-300 lg:w-80"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* <FormField
+                        control={form.control}
+                        name="state"
+                        render={({ field }) => (
+                          <FormItem className="flex w-full flex-col gap-5 md:flex-row">
+                            <div>
+                              <FormLabel className="flex w-fit items-start text-center text-lg">
+                                Estado
                               </FormLabel>
                               <FormControl>
                                 <Input
@@ -346,120 +458,10 @@ export function CompleteLogin() {
                             </div>
                           </FormItem>
                         )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="number"
-                        render={({ field }) => (
-                          <FormItem className="flex w-fit flex-col gap-5 md:flex-row">
-                            <div>
-                              <FormLabel className="flex w-fit items-start text-center text-lg">
-                                Número
-                              </FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  {...field}
-                                  className="w-16 shadow-none ring-zinc-300 lg:w-20"
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </div>
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="complement"
-                        render={({ field }) => (
-                          <FormItem className="flex w-full flex-col gap-5 md:flex-row">
-                            <div>
-                              <FormLabel className="flex w-fit items-start text-center text-lg">
-                                Complemento(Opcional)
-                              </FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="text"
-                                  {...field}
-                                  className="w-full shadow-none ring-zinc-300"
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </div>
-                          </FormItem>
-                        )}
-                      />
+                      /> */}
                     </div>
 
-                    <FormField
-                      control={form.control}
-                      name="neighborhood"
-                      render={({ field }) => (
-                        <FormItem className="flex w-full flex-col gap-5 md:flex-row">
-                          <div>
-                            <FormLabel className="flex w-fit items-start text-center text-lg">
-                              Bairro
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                type="text"
-                                {...field}
-                                className="w-full shadow-none ring-zinc-300"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="city"
-                      render={({ field }) => (
-                        <FormItem className="flex w-full flex-col gap-5 md:flex-row">
-                          <div>
-                            <FormLabel className="flex w-fit items-start text-center text-lg">
-                              Cidade
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                type="text"
-                                {...field}
-                                className="w-full shadow-none ring-zinc-300"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="state"
-                      render={({ field }) => (
-                        <FormItem className="flex w-full flex-col gap-5 md:flex-row">
-                          <div>
-                            <FormLabel className="flex w-fit items-start text-center text-lg">
-                              Estado
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                type="text"
-                                {...field}
-                                className="w-full shadow-none ring-zinc-300"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="flex w-full justify-between">
+                    <div className="mt-10 flex w-full justify-between">
                       <Button
                         variant="blue"
                         onClick={() => setStep(step - 1)}
@@ -494,7 +496,7 @@ export function CompleteLogin() {
                   <Button
                     variant="blue"
                     onClick={() => setStep(step + 1)}
-                    className="self-end"
+                    className="self-end lg:text-base"
                   >
                     Avançar
                   </Button>
@@ -519,6 +521,283 @@ export function CompleteLogin() {
                   </>
                 )}
               </div>
+            </div>
+
+            <div className="flex h-full flex-col md:hidden">
+              {step === 1 && (
+                <>
+                  <div className="my-3 flex w-full flex-col gap-4">
+                    <div className="flex flex-col gap-1">
+                      <label>Digite sua data de nascimento:</label>
+                      <Input
+                        type="date"
+                        placeholder="DD/MM/AAAA"
+                        value={
+                          date instanceof Date && !isNaN(date.getTime())
+                            ? date.toISOString().split("T")[0]
+                            : ""
+                        }
+                        className="ring-zinc-300 lg:w-96"
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value.length === 10) {
+                            setDate(new Date(value + "T00:00:00"));
+                          }
+                        }}
+                      />
+                    </div>
+
+                    <span className="h-[1px] w-full rounded-full bg-zinc-500" />
+                  </div>
+                  <Form {...form}>
+                    <form
+                      className="flex h-full flex-col justify-between"
+                      onSubmit={form.handleSubmit(validateForm)}
+                    >
+                      <div className="flex flex-col gap-2">
+                        <FormField
+                          control={form.control}
+                          name="cep"
+                          render={({ field }) => (
+                            <FormItem className="flex w-full flex-col gap-5 md:flex-row">
+                              <div>
+                                <FormLabel className="flex w-fit items-start text-center text-sm">
+                                  CEP
+                                </FormLabel>
+                                <FormControl>
+                                  <InputOTP
+                                    maxLength={8}
+                                    {...field}
+                                    containerClassName="ring-1 ring-zinc-300 shadow-3one"
+                                    className="flex w-full items-center justify-center"
+                                  >
+                                    <InputOTPGroup>
+                                      <InputOTPSlot
+                                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
+                                        index={0}
+                                      />
+                                      <InputOTPSlot
+                                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
+                                        index={1}
+                                      />
+                                      <InputOTPSlot
+                                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
+                                        index={2}
+                                      />
+                                      <InputOTPSlot
+                                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
+                                        index={3}
+                                      />
+                                      <InputOTPSlot
+                                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
+                                        index={4}
+                                      />
+                                    </InputOTPGroup>
+                                    <InputOTPSeparator data-dash />
+                                    <InputOTPGroup>
+                                      <InputOTPSlot
+                                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
+                                        index={5}
+                                      />
+                                      <InputOTPSlot
+                                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
+                                        index={6}
+                                      />
+                                      <InputOTPSlot
+                                        className="h-5 w-4 border-r-0 border-t-0 border-black shadow-transparent"
+                                        index={7}
+                                      />
+                                    </InputOTPGroup>
+                                  </InputOTP>
+                                </FormControl>
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+
+                        <div className="flex w-full flex-col lg:flex-row lg:gap-4">
+                          <FormField
+                            control={form.control}
+                            name="street"
+                            render={({ field }) => (
+                              <FormItem className="flex w-full flex-col gap-5 md:flex-row">
+                                <div>
+                                  <FormLabel className="flex w-fit items-start text-center text-sm">
+                                    Logradouro
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="text"
+                                      {...field}
+                                      className="w-full shadow-none ring-zinc-300 lg:w-80"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </div>
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="number"
+                            render={({ field }) => (
+                              <FormItem className="flex w-fit flex-col gap-5 md:flex-row">
+                                <div>
+                                  <FormLabel className="flex w-fit items-start text-center text-sm">
+                                    Número
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      {...field}
+                                      className="w-16 shadow-none ring-zinc-300 lg:w-20"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </div>
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* <FormField
+                          control={form.control}
+                          name="complement"
+                          render={({ field }) => (
+                            <FormItem className="flex w-full flex-col gap-5 md:flex-row">
+                              <div>
+                                <FormLabel className="flex w-fit items-start text-center text-lg">
+                                  Complemento(Opcional)
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="text"
+                                    {...field}
+                                    className="w-full shadow-none ring-zinc-300"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </div>
+                            </FormItem>
+                          )}
+                        /> */}
+                        </div>
+
+                        <FormField
+                          control={form.control}
+                          name="neighborhood"
+                          render={({ field }) => (
+                            <FormItem className="flex w-full flex-col gap-5 md:flex-row">
+                              <div>
+                                <FormLabel className="flex w-fit items-start text-center text-sm">
+                                  Bairro
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="text"
+                                    {...field}
+                                    className="w-full shadow-none ring-zinc-300 lg:w-80"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="city"
+                          render={({ field }) => (
+                            <FormItem className="flex w-full flex-col gap-5 md:flex-row">
+                              <div>
+                                <FormLabel className="flex w-fit items-start text-center text-sm">
+                                  Cidade
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="text"
+                                    {...field}
+                                    className="w-full shadow-none ring-zinc-300 lg:w-80"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+
+                        {/* <FormField
+                        control={form.control}
+                        name="state"
+                        render={({ field }) => (
+                          <FormItem className="flex w-full flex-col gap-5 md:flex-row">
+                            <div>
+                              <FormLabel className="flex w-fit items-start text-center text-lg">
+                                Estado
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="text"
+                                  {...field}
+                                  className="w-full shadow-none ring-zinc-300"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </div>
+                          </FormItem>
+                        )}
+                      /> */}
+                      </div>
+
+                      <div className="mt-10 flex w-full justify-between">
+                        <Button
+                          variant="blue"
+                          onClick={() => setStep(step - 1)}
+                          className="self-start"
+                        >
+                          Voltar
+                        </Button>
+                        <Button
+                          variant="blue"
+                          type="submit"
+                          className="self-end"
+                          onClick={() => setStep(2)}
+                        >
+                          Avançar
+                        </Button>
+                      </div>
+                    </form>
+                  </Form>
+                </>
+              )}
+
+              {step === 2 && (
+                <div className="flex h-full flex-col justify-between">
+                  <Image
+                    src={finishImage}
+                    alt=""
+                    height={400}
+                    className="md:self-center"
+                  />
+                  <div className="mt-10 flex w-full justify-between">
+                    <Button
+                      variant="blue"
+                      onClick={() => setStep(step - 1)}
+                      className="self-start"
+                    >
+                      Voltar
+                    </Button>
+                    <Button
+                      variant="blue"
+                      onClick={() => onSubmit(form.getValues())}
+                      className="self-end"
+                    >
+                      Concluir
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </DialogContent>
@@ -548,7 +827,7 @@ function Steps({ step }: { step: number }) {
       />
       <div
         className={cn(
-          "h-1.5 w-full rounded-full bg-zinc-200 transition-all duration-200 ease-in",
+          "hidden h-1.5 w-full rounded-full bg-zinc-200 transition-all duration-200 ease-in md:block",
           {
             "bg-secondary": step >= 3,
           },
