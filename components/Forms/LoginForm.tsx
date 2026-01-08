@@ -126,7 +126,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex h-fit w-full flex-col items-center gap-4 rounded-lg bg-zinc-50 px-8 py-5 md:w-96"
+          className="mb-10 flex h-fit w-full flex-col items-center gap-4 rounded-lg bg-zinc-50 px-8 py-5 md:w-96"
         >
           {isAdminPage ? (
             <div className="relative mb-2">
@@ -143,7 +143,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
             </div>
           )}
 
-          {pathname === "localhost" && (
+          {(pathname === "localhost" || isAdminPage) && (
             <>
               <FormField
                 control={form.control}

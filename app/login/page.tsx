@@ -50,7 +50,7 @@ export default function Login() {
           <section
             className={cn(
               "z-[1] flex h-fit w-full flex-col justify-between bg-faq bg-cover pt-24 lg:bg-faq",
-              "-mt-14",
+              "-mt-10",
             )}
           >
             <div className="mb-16 flex flex-col items-center gap-6 px-4">
