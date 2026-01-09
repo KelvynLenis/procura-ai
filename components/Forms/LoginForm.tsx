@@ -231,7 +231,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
 
                 <Link
                   href={"/login-admin"}
-                  className="mt-4 hidden items-center justify-center text-secondary underline hover:opacity-70 lg:flex"
+                  className="mt-4 flex items-center justify-center text-secondary underline hover:opacity-70"
                 >
                   Entrar como administrador
                 </Link>

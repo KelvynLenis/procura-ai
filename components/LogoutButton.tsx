@@ -5,6 +5,7 @@ import Button from "./Button";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { account } from "@/lib/appwrite";
+import { deleteCookie } from "@/lib/govbr-utils";
 
 export function LogoutButton() {
   const { toast } = useToast();
@@ -12,6 +13,8 @@ export function LogoutButton() {
 
   async function handleLogOut() {
     await account.deleteSession("current");
+
+    deleteCookie("govbr_user_data");
 
     router.push("/");
   }
