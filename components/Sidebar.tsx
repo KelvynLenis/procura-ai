@@ -108,17 +108,41 @@ export function AppSidebar({ admin }: SidebarProps) {
   const pathname = usePathname().slice(1);
 
   async function logout() {
-    await account.deleteSession("current");
-
-    setIsLoading(true);
-    toast(<LoadingToast isReactToastifyComponent />, {
-      autoClose: 1000,
-      hideProgressBar: true,
-      position: "top-center",
-      closeOnClick: true,
-    });
-
-    router.push("/");
+    try {
+      const idToken = localStorage.getItem('govbr_id_token') || '';
+      
+      // 1. Deletar sessão do Appwrite
+      await account.deleteSession("current");
+      
+      // 2. Limpar todos os dados locais
+      localStorage.clear();
+      sessionStorage.clear();
+      document.cookie.split(";").forEach((c) => {
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      });
+      
+      const ssoBaseUrl = process.env.NEXT_PUBLIC_GOVBR_SSO_URL;
+      const realm = process.env.NEXT_PUBLIC_GOVBR_REALM;
+      const redirectUri = encodeURIComponent(`${window.location.origin}/login`);
+      
+      // 3. Fazer logout silencioso no Keycloak
+      const logoutKeycloak = `${ssoBaseUrl}realms/${realm}/protocol/openid-connect/logout?id_token_hint=${idToken}&post_logout_redirect_uri=${redirectUri}`;
+      
+      try {
+        await fetch(logoutKeycloak, { method: 'GET', mode: 'no-cors' });
+      } catch (error) {
+        console.error('Erro ao fazer logout no Keycloak:', error);
+      }
+      
+      // 4. Redirecionar para logout do Gov.br (staging para homologação)
+      window.location.href = `https://sso.acesso.gov.br/logout?post_logout_redirect_uri=${redirectUri}`;
+      
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      localStorage.clear();
+      sessionStorage.clear();
+      setTimeout(() => window.location.href = "/login", 1000);
+    }
   }
 
   function showLoadingToast(url: string) {

@@ -19,9 +19,14 @@ export default function GovBrCallback() {
   const router = useRouter();
   const [status, setStatus] = useState("Processando autenticação Gov.br...");
   const [error, setError] = useState<string | null>(null);
+  const [hasProcessed, setHasProcessed] = useState(false);
 
   useEffect(() => {
+    // Prevenir execução múltipla
+    if (hasProcessed) return;
+    
     const processGovBrAuth = async () => {
+      setHasProcessed(true);
       try {
         setStatus("Recuperando dados de autenticação...");
         
@@ -36,6 +41,13 @@ export default function GovBrCallback() {
         deleteCookie('govbr_user_data'); // Limpa cookie imediatamente
 
         const appwriteUser = formatUserData(userData);
+        
+        // Armazena id_token no localStorage para logout
+        const idToken = getCookieValue('govbr_id_token');
+        if (idToken) {
+          localStorage.setItem('govbr_id_token', idToken);
+          deleteCookie('govbr_id_token');
+        }
         
         setStatus("Verificando usuário existente...");
 
@@ -109,7 +121,7 @@ export default function GovBrCallback() {
     };
 
     processGovBrAuth();
-  }, [router]);
+  }, [router, hasProcessed]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-gradient-to-br from-blue-50 to-indigo-100 p-4">

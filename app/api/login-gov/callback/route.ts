@@ -43,6 +43,19 @@ export async function GET(request: Request) {
       },
     );
 
+    // Armazena id_token para uso no logout
+    response.cookies.set(
+      "govbr_id_token",
+      tokenResponse.id_token,
+      {
+        httpOnly: false, // Cliente precisa acessar para logout
+        secure: true,
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 30, // 30 dias
+        path: "/",
+      },
+    );
+
     response.cookies.set("govbr_auth_state", "", {
       expires: new Date(0),
     });
