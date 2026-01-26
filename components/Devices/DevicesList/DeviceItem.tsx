@@ -173,7 +173,10 @@ export function DeviceItem({
                 <Eye size={28} />
               </button>
             </DialogTrigger>
-            <DialogContent className="ml-5 w-full border-none bg-transparent p-0 ring-0">
+            <DialogContent
+              className="ml-5 w-full border-none bg-transparent p-0 ring-0"
+              canClose={false}
+            >
               <DeviceDetailsCard
                 id={id}
                 isStolen={isStolen}
@@ -226,7 +229,7 @@ function ViewDeviceInfoModal({
       <button
         type="button"
         onClick={() => setModalOpen(false)}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-3"
+        className="relative inset-0 z-50 flex items-center justify-center bg-black/50 px-3"
       >
         <X
           size={24}

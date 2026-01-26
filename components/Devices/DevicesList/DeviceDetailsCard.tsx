@@ -162,7 +162,7 @@ export function DeviceDetailsCard({
   return (
     <>
       <div className="flex h-fit w-[88%] flex-col rounded-xl bg-white shadow-md">
-        <div className="flex h-16 w-full items-center justify-end gap-3 rounded-t-xl bg-primary px-4">
+        <div className="flex h-14 w-full items-center justify-end gap-3 rounded-t-xl border-b border-zinc-500 bg-white px-4 drop-shadow-lg">
           <Dialog open={isAlertModalOpen} onOpenChange={setIsAlertModalOpen}>
             <DialogTrigger asChild>
               <button
@@ -260,38 +260,38 @@ export function DeviceDetailsCard({
         </div>
 
         <div className="flex h-full w-full">
-          <div className="flex flex-col items-start justify-center gap-2 bg-procura-ai-zinc/10 px-4 pb-6 pt-4">
-            <span className="">Modelo</span>
-            <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" />
+          <div className="flex flex-col items-start justify-center gap-3 bg-procura-ai-zinc/10 px-4 pb-6 pt-4">
+            <span className="text-sm">Modelo</span>
+            {/* <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" /> */}
 
-            <span className="">Fabricante</span>
-            <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" />
+            <span className="text-sm">Fabricante</span>
+            {/* <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" /> */}
 
-            <span className="">IMEI</span>
-            <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" />
+            <span className="text-sm">IMEI</span>
+            {/* <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" /> */}
 
-            <span className="">Número</span>
-            <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" />
+            <span className="text-sm">Número</span>
+            {/* <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" /> */}
 
-            <span className="">Status</span>
+            <span className="text-sm">Status</span>
           </div>
 
-          <div className="flex h-full w-full flex-col items-start justify-center gap-2 px-4 pb-4 pt-4">
-            <span className="font-semibold">{phone_model}</span>
-            <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" />
+          <div className="flex h-full w-full flex-col items-start justify-center gap-3 px-4 pb-4 pt-4">
+            <span className="mt-1 text-sm font-semibold">{phone_model}</span>
+            {/* <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" /> */}
 
-            <span className="font-semibold">{brand}</span>
-            <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" />
+            <span className="text-sm font-semibold">{brand}</span>
+            {/* <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" /> */}
 
-            <span className="font-semibold">
+            <span className="text-sm font-semibold">
               {`${imei.slice(0, 1)} ${imei.slice(1, 8)} ${imei.slice(9, 15)}`}
             </span>
-            <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" />
+            {/* <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" /> */}
 
-            <span className="font-semibold">
+            <span className="text-sm font-semibold">
               {`(${phone_number.slice(0, 2)}) ${phone_number.slice(2, 7)}-${phone_number.slice(7, 11)}`}
             </span>
-            <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" />
+            {/* <span className="h-[0.5px] w-full rounded-full bg-procura-ai-zinc/70" /> */}
 
             <span
               className={cn(
