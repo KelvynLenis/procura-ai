@@ -15,6 +15,8 @@ export function LogoutButton() {
     await account.deleteSession("current");
 
     deleteCookie("govbr_user_data");
+    document.cookie =
+      "govbr_user_data=; Path=/; Max-Age=0; Secure; SameSite=Lax";
 
     router.push("/");
   }
