@@ -105,3 +105,11 @@
   -moz-user-select: none;
   user-select: none;
 }
+
+@layer utilities {
+  @supports (-moz-appearance: none) {
+    .img-fix {
+      @apply w-full;
+    }
+  }
+}
