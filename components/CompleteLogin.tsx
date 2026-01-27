@@ -205,7 +205,7 @@ export function CompleteLogin() {
         <DialogTrigger className="hidden">Open</DialogTrigger>
         <DialogContent
           canClose={false}
-          className="h-screen w-full gap-0 overflow-auto rounded-lg border-0 bg-white p-0 pb-2 text-primary lg:h-[35rem] lg:w-[50rem] xl:h-[35rem] 3xl:h-[45rem] 3xl:w-[60rem]"
+          className="h-screen w-full gap-0 overflow-auto rounded-lg border-0 bg-white p-0 pb-2 text-primary lg:h-[30rem] lg:w-[50rem] xl:h-[35rem] 3xl:h-[45rem] 3xl:w-[60rem]"
         >
           <DialogHeader className="m-0 flex h-20 lg:pt-4">
             <div className="h-14 w-full rounded-t-lg bg-primary shadow-none ring-1 ring-zinc-300 md:hidden">
@@ -226,7 +226,7 @@ export function CompleteLogin() {
             </DialogDescription>
           </DialogHeader>
           <div className="h-full self-start px-2">
-            <div className="hidden h-full flex-col justify-between gap-0 md:flex lg:items-center">
+            <div className="hidden h-full flex-col justify-between gap-2 md:flex lg:items-center">
               {step === 1 && (
                 <>
                   <Label className="mt-2 text-primary">
