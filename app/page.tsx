@@ -31,17 +31,17 @@ export default function Landing() {
   const renderStepContent = (step: QuestionStep) => (
     <div className="flex flex-col gap-3">
       <div className="flex items-start gap-4">
-        <div className="flex-shrink-0 w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-emerald-500 text-lg font-bold text-white">
           {step.number}
         </div>
-        <p className="text-white text-lg leading-relaxed pt-2">{step.text}</p>
+        <p className="pt-2 text-lg leading-relaxed text-white">{step.text}</p>
       </div>
       {step.items && (
         <div className="ml-14 flex flex-col gap-2">
           {step.items.map((item, idx) => (
             <div key={idx} className="flex items-center gap-3">
-              <span className="text-pink-400 text-xl">✦</span>
-              <span className="text-white text-lg">{item}</span>
+              <span className="text-xl text-pink-400">✦</span>
+              <span className="text-lg text-white">{item}</span>
             </div>
           ))}
         </div>
@@ -51,31 +51,31 @@ export default function Landing() {
 
   return (
     <>
-      <header className="shadow-xl flex items-center h-15 pt-2 z-10 sticky bg-primary">
-        <Image src={logo} alt="logo" className="h-16 -left-5 relative" />
+      <header className="h-15 sticky z-10 flex items-center bg-primary pt-2 shadow-xl">
+        <Image src={logo} alt="logo" className="relative -left-5 h-16" />
       </header>
 
-      <main className="flex flex-col row-start-2 items-center sm:items-start">
-        <section className="z-100 bg-primary w-full h-80 lg:h-fit xl:h-screen bg-hero-bg bg-repeat bg-cover items-end justify-end flex lg:items-center lg:justify-between text-lg md:text-xl lg:text-4xl text-white px-2 md:px-5 lg:px-0 py-0 z-10">
+      <main className="row-start-2 flex flex-col items-center sm:items-start">
+        <section className="z-100 z-10 flex h-80 w-full items-end justify-end bg-primary bg-hero-bg bg-cover bg-repeat px-2 py-0 text-lg text-white md:px-5 md:text-xl lg:h-fit lg:items-center lg:justify-between lg:px-0 lg:text-4xl xl:h-screen">
           <Image
             src={landingImages}
             alt="landing background"
-            className="w-full hidden lg:w-1/2 lg:block h-full z-0 -ml-11"
+            className="lg:img-fix z-0 -ml-11 hidden h-full w-full lg:block lg:w-1/2"
           />
           <Image
             src={line}
             alt="landing line image z-0"
-            className="lg:hidden absolute h-auto left-0 z-0"
+            className="absolute left-0 z-0 h-auto lg:hidden"
           />
-          <div className="flex flex-col items-end gap-4 lg:gap-5 w-full z-10">
-            <span className="font-bold w-[80%] lg:w-[76%] text-end md:text-2xl md:mr-16 md:w-[60%] lg:mr-20 lg:mt-20 xl:mr-28 xl:text-4xl text-white leading-7">
+          <div className="z-10 flex w-full flex-col items-end gap-4 lg:gap-5">
+            <span className="w-[80%] text-end font-bold leading-7 text-white md:mr-16 md:w-[60%] md:text-2xl lg:mr-20 lg:mt-20 lg:w-[76%] xl:mr-28 xl:text-4xl">
               Perdeu ou teve seu celular roubado? O{""}
-              <span className="text-white rounded-lg px-1.5 pt-1 h-fit leading-snug">
+              <span className="h-fit rounded-lg px-1.5 pt-1 leading-snug text-white">
                 Procura.AÍ
               </span>{" "}
               pode te ajudar!
             </span>
-            <span className="font-medium text-xs md:text-lg lg:text-xl xl:text-2xl lg:mr-20 xl:mr-28 break-words w-[65%] lg:w-[75%] xl:w-[80%] text-white text-right">
+            <span className="w-[65%] break-words text-right text-xs font-medium text-white md:text-lg lg:mr-20 lg:w-[75%] lg:text-xl xl:mr-28 xl:w-[80%] xl:text-2xl">
               Cadastre seus dispositivos e, se algo acontecer, acione as
               autoridades de forma rápida e segura. Com ajuda da tecnologia,
               você aumenta as chances de recuperar seu aparelho e ainda
@@ -84,7 +84,7 @@ export default function Landing() {
             </span>
             <Link
               href={"/login"}
-              className="self-end flex lg:self-end mb-4 lg:mb-10 lg:mr-20 xl:mr-28 xl:mt-20"
+              className="mb-4 flex self-end lg:mb-10 lg:mr-20 lg:self-end xl:mr-28 xl:mt-20"
             >
               <Button
                 variant="blue"
@@ -96,11 +96,11 @@ export default function Landing() {
           </div>
         </section>
 
-        <section className="w-full h-full lg:h-fit gap-6 lg:gap-10 relative flex flex-col items-center px-4 z-0 py-5 lg:py-2">
+        <section className="relative z-0 flex h-full w-full flex-col items-center gap-6 px-4 py-5 lg:h-fit lg:gap-10 lg:py-2">
           <Image
             src={shapesLeft}
             alt="formas esquerda"
-            className="absolute hidden md:block top-0 left-0 z-0"
+            className="absolute left-0 top-0 z-0 hidden md:block"
           />
           {/* <Image
             src={line}
@@ -111,25 +111,25 @@ export default function Landing() {
           <Image
             src={shapesRight}
             alt="gradiente direito"
-            className="absolute hidden md:block -bottom-11 w-full right-0 z-[-1]"
+            className="absolute -bottom-11 right-0 z-[-1] hidden w-full md:block"
           />
 
-          <div className="flex flex-col w-full gap-0 z-10 mt-5">
-            <h1 className="text-xl md:text-4xl text-primary font-medium self-center">
+          <div className="z-10 mt-5 flex w-full flex-col gap-0">
+            <h1 className="self-center text-xl font-medium text-primary md:text-4xl">
               Veja como é fácil se proteger
             </h1>
-            <Image src={starsLine} alt="feat1" className="self-center -mt-1" />
+            <Image src={starsLine} alt="feat1" className="-mt-1 self-center" />
           </div>
 
-          <div className="flex md:flex-wrap flex-col items-center justify-center md:flex-row gap-4 z-10">
+          <div className="z-10 flex flex-col items-center justify-center gap-4 md:flex-row md:flex-wrap">
             <div className="flex flex-col gap-2">
-              <span className="font-bold text-primary flex gap-1 text-lg">
-                <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">
+              <span className="flex gap-1 text-lg font-bold text-primary">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white">
                   1
                 </span>
                 Crie uma conta
               </span>
-              <div className="bg-[#B6D7FC] flex items-center justify-center gap-2 rounded-xl px-2 py-4 mobile-sm:w-72 mobile:w-80 drop-shadow-lg">
+              <div className="flex items-center justify-center gap-2 rounded-xl bg-[#B6D7FC] px-2 py-4 drop-shadow-lg mobile-sm:w-72 mobile:w-80">
                 <Image src={feat1} alt="feat1" className="h-24 self-center" />
                 <span className="font-medium">
                   Cadastre-se no Procura.Aí informando alguns dados básicos
@@ -140,13 +140,13 @@ export default function Landing() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <span className="font-bold text-primary flex gap-1 text-lg">
-                <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">
+              <span className="flex gap-1 text-lg font-bold text-primary">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white">
                   2
                 </span>
                 Cadastre seus dispositivos
               </span>
-              <div className="bg-[#C5F4F3] flex items-center justify-center gap-2 rounded-xl px-2 py-4 mobile-sm:w-72 mobile:w-80 drop-shadow-lg">
+              <div className="flex items-center justify-center gap-2 rounded-xl bg-[#C5F4F3] px-2 py-4 drop-shadow-lg mobile-sm:w-72 mobile:w-80">
                 <Image src={feat2} alt="feat2" className="h-24 self-center" />
                 <span className="font-medium">
                   Registre um ou mais celulares para mantê-los protegidos
@@ -157,13 +157,13 @@ export default function Landing() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <span className="font-bold text-primary flex gap-1 text-lg">
-                <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">
+              <span className="flex gap-1 text-lg font-bold text-primary">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white">
                   3
                 </span>
                 Crie um alerta
               </span>
-              <div className="bg-[#F2CDC6] flex items-center justify-center gap-2 rounded-xl px-2 py-4 mobile-sm:w-72 mobile:w-80 drop-shadow-lg">
+              <div className="flex items-center justify-center gap-2 rounded-xl bg-[#F2CDC6] px-2 py-4 drop-shadow-lg mobile-sm:w-72 mobile:w-80">
                 <Image src={feat3} alt="feat3" className="h-24 self-center" />
                 <span className="font-medium">
                   Em caso de roubo, perda ou furto de algum dispositivo, crie um
@@ -175,13 +175,13 @@ export default function Landing() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <span className="font-bold text-primary flex gap-1 text-lg">
-                <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center">
+              <span className="flex gap-1 text-lg font-bold text-primary">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white">
                   4
                 </span>
                 Autoridades são acionadas
               </span>
-              <div className="bg-[#f5df164d] flex items-center justify-center gap-2 rounded-xl px-2 py-4 mobile-sm:w-72 mobile:w-80 drop-shadow-lg">
+              <div className="flex items-center justify-center gap-2 rounded-xl bg-[#f5df164d] px-2 py-4 drop-shadow-lg mobile-sm:w-72 mobile:w-80">
                 <Image src={feat4} alt="feat4" className="h-24 self-center" />
                 <span className="font-medium">
                   Agora seu celular tem mais chances de ser recuperado pelas
@@ -193,7 +193,7 @@ export default function Landing() {
             </div>
           </div>
 
-          <div className="flex flex-col items-center gap-10 z-10">
+          <div className="z-10 flex flex-col items-center gap-10">
             <Link href={"/cadastro"}>
               <Button
                 variant="blue"
@@ -202,8 +202,16 @@ export default function Landing() {
                 Cadastre-se
               </Button>
             </Link>
-            <span className="text-lg md:text-2xl font-bold flex flex-col items-center text-procura-ai-black lg:mb-10 3xl:mb-20">
+            <span className="flex flex-col items-center text-lg font-bold text-procura-ai-black md:text-2xl lg:mb-10 3xl:mb-20">
               Disponível em breve nas principais lojas de aplicativos
+              <Link href={process.env.NEXT_PUBLIC_APK_DOWNLOAD_LINK!}>
+                <button
+                  type="button"
+                  className="rounded-lg bg-none px-4 pb-1.5 pt-2 text-white"
+                >
+                  <Image src={googlePlay} alt="disponível no google play" />
+                </button>
+              </Link>
             </span>
           </div>
 
@@ -220,34 +228,34 @@ export default function Landing() {
 
         <section
           className={cn(
-            "w-full h-fit bg-faq bg-cover lg:bg-faq flex flex-col justify-between z-[1] pt-24",
+            "z-[1] flex h-fit w-full flex-col justify-between bg-faq bg-cover pt-24 lg:bg-faq",
             "lg:pt-10",
             // 'lg:pt-28 lg:pb-0 sm:pb-0 relative lg:-top-16 3xl:-top-24',
             // '-mt-14'
           )}
         >
-          <div className="flex flex-col items-center gap-6 mb-16 px-4">
-            <h2 className="font-bold text-3xl lg:text-4xl text-center text-white tracking-tight">
+          <div className="mb-16 flex flex-col items-center gap-6 px-4">
+            <h2 className="text-center text-3xl font-bold tracking-tight text-white lg:text-4xl">
               Perguntas frequentes
             </h2>
           </div>
 
-          <div className="flex flex-col gap-2 w-full px-4 lg:px-32">
+          <div className="flex w-full flex-col gap-2 px-4 lg:px-32">
             {questions.map((question: Question, index: number) => (
               <Accordion key={index} type="single" collapsible>
                 <AccordionItem
-                  className="border-0 border-b border-slate-600/30 rounded-none"
+                  className="rounded-none border-0 border-b border-slate-600/30"
                   value={`item-${index}`}
                 >
                   <AccordionTrigger
                     className={cn(
-                      "font-normal text-base lg:text-lg px-0 py-6 text-white",
-                      "hover:no-underline hover:text-gray-300 transition-colors duration-200",
-                      "[&>svg]:text-white [&>svg]:h-6 [&>svg]:w-6",
+                      "px-0 py-6 text-base font-normal text-white lg:text-lg",
+                      "transition-colors duration-200 hover:text-gray-300 hover:no-underline",
+                      "[&>svg]:h-6 [&>svg]:w-6 [&>svg]:text-white",
                       "border-0 bg-transparent",
                     )}
                   >
-                    <span className="text-left w-full">
+                    <span className="w-full text-left">
                       {question.question}
                     </span>
                   </AccordionTrigger>
@@ -272,18 +280,18 @@ export default function Landing() {
 
           <footer
             className={cn(
-              "w-full relative h-20 md:mt-0 lg:mt-4 flex items-center justify-start z-[20] bg-white",
+              "relative z-[20] flex h-20 w-full items-center justify-start bg-white md:mt-0 lg:mt-4",
             )}
           >
             <Image
               src={govFull}
               alt="logo"
-              className="w-64 h-12 md:w-96 z-10"
+              className="z-10 h-12 w-64 md:w-96"
             />
             <Image
               src={lineFooter}
               alt="logo"
-              className="h-full absolute right-0 self-end hidden sm:block md:w-[50%] lg:w-[80%] xl:w-[90%] z-0"
+              className="absolute right-0 z-0 hidden h-full self-end sm:block md:w-[50%] lg:w-[80%] xl:w-[90%]"
             />
           </footer>
 
