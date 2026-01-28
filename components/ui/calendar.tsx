@@ -10,6 +10,7 @@ import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { ptBR } from "date-fns/locale";
 
 function Calendar({
   className,
@@ -34,6 +35,7 @@ function Calendar({
         String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
         className,
       )}
+      locale={ptBR}
       captionLayout={captionLayout}
       formatters={{
         formatMonthDropdown: (date) =>
@@ -114,7 +116,7 @@ function Calendar({
           defaultClassNames.today,
         ),
         outside: cn(
-          "text-muted-foreground aria-selected:text-muted-foreground",
+          "text-gray-400 aria-selected:text-muted-foreground",
           defaultClassNames.outside,
         ),
         disabled: cn(
