@@ -226,7 +226,7 @@ export function CompleteLogin() {
             </DialogDescription>
           </DialogHeader>
           <div className="h-full self-start px-2">
-            <div className="hidden h-full flex-col justify-between gap-2 md:flex lg:items-center">
+            <div className="hidden h-full flex-col justify-between gap-2 md:flex lg:items-start">
               {step === 1 && (
                 <>
                   <Label className="mt-2 text-primary">
@@ -262,7 +262,7 @@ export function CompleteLogin() {
               {step === 2 && (
                 <Form {...form}>
                   <form
-                    className="flex h-full flex-col justify-between"
+                    className="flex h-full w-full flex-col justify-between px-4"
                     onSubmit={form.handleSubmit(validateForm)}
                   >
                     <div className="flex flex-col gap-2">
@@ -331,7 +331,7 @@ export function CompleteLogin() {
                           control={form.control}
                           name="street"
                           render={({ field }) => (
-                            <FormItem className="flex w-full flex-col gap-5 md:flex-row">
+                            <FormItem className="w-FIT flex flex-col gap-5 md:flex-row">
                               <div>
                                 <FormLabel className="flex w-fit items-start text-center text-lg">
                                   Logradouro
