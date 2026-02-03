@@ -204,14 +204,6 @@ export default function Landing() {
             </Link>
             <span className="text-lg md:text-2xl font-bold flex flex-col items-center text-procura-ai-black lg:mb-10 3xl:mb-20">
               Disponível em breve nas principais lojas de aplicativos
-              <Link href={process.env.NEXT_PUBLIC_APK_DOWNLOAD_LINK!}>
-                <button
-                  type="button"
-                  className="rounded-lg px-4 pt-2 pb-1.5 text-white bg-none"
-                >
-                  <Image src={googlePlay} alt="disponível no google play" />
-                </button>
-              </Link>
             </span>
           </div>
 

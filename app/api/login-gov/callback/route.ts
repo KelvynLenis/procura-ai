@@ -5,27 +5,94 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const error = url.searchParams.get("error");
+  const state = url.searchParams.get("state");
+  
+  if (!state || state.trim() === "") {
+    return NextResponse.json(
+      { success: false, error: "invalid_state", message: "Token de segurança inválido" },
+      { status: 400 }
+    );
+  }
+  
+  const isMobile = state.startsWith("mobile_");
+  
+  if (isMobile) {
+    try {
+      const stateParts = state.split("_");
+      if (stateParts.length < 2) {
+        throw new Error("State mal formatado");
+      }
+      
+      const timestamp = parseInt(stateParts[1], 10);
+      const now = Date.now();
+      const STATE_MAX_AGE = 5 * 60 * 1000;
+      
+      if (isNaN(timestamp) || (now - timestamp) > STATE_MAX_AGE) {
+        const errorLink = new URL("procuraai://auth-callback");
+        errorLink.searchParams.append("success", "false");
+        errorLink.searchParams.append("error", "state_expired");
+        errorLink.searchParams.append("message", "Token de segurança expirado. Tente novamente.");
+        errorLink.searchParams.append("timestamp", new Date().toISOString());
+        return NextResponse.redirect(errorLink.toString(), 302);
+      }
+    } catch (err) {
+      
+      const errorLink = new URL("procuraai://auth-callback");
+      errorLink.searchParams.append("success", "false");
+      errorLink.searchParams.append("error", "invalid_state_format");
+      errorLink.searchParams.append("message", "Formato de token inválido");
+      errorLink.searchParams.append("timestamp", new Date().toISOString());
+      return NextResponse.redirect(errorLink.toString(), 302);
+    }
+  }
 
   // Verifica erros na resposta do Gov.br
   if (error || !code) {
     const errorType = error ? "govbr_auth_failed" : "govbr_missing_code";
-    const baseUrl =
-      process.env.NEXT_PUBLIC_BASE_URL || new URL(request.url).origin;
+    const errorMessage = error ? `Erro Gov.br: ${error}` : "Código de autorização não fornecido";
+    
+    if (isMobile) {
+      const deepLinkUrl = new URL("procuraai://auth-callback");
+      deepLinkUrl.searchParams.append("success", "false");
+      deepLinkUrl.searchParams.append("error", errorType);
+      deepLinkUrl.searchParams.append("message", errorMessage);
+      deepLinkUrl.searchParams.append("timestamp", new Date().toISOString());
+      return NextResponse.redirect(deepLinkUrl.toString(), 302);
+    }
+    
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://procuraai.secties.pb.gov.br";
     return NextResponse.redirect(new URL(`/login?error=${errorType}`, baseUrl));
   }
 
   try {
-    // Obtém token e informações do usuário do Gov.br
     const tokenResponse = await exchangeCodeForToken(code);
     const userData = await getUserInfo(tokenResponse.access_token);
 
-    // Redireciona para página de callback que processará no cliente
-    const baseUrl =
-      process.env.NEXT_PUBLIC_BASE_URL || new URL(request.url).origin;
+    
+    if (isMobile) {
+      if (!userData.sub) {
+        const errorLink = new URL("procuraai://auth-callback");
+        errorLink.searchParams.append("success", "false");
+        errorLink.searchParams.append("error", "missing_user_id");
+        errorLink.searchParams.append("message", "Identificador de usuário não fornecido pelo Gov.br");
+        errorLink.searchParams.append("timestamp", new Date().toISOString());
+        return NextResponse.redirect(errorLink.toString(), 302);
+      }
+      
+      const deepLinkUrl = new URL("procuraai://auth-callback");
+      deepLinkUrl.searchParams.append("success", "true");
+      deepLinkUrl.searchParams.append("sub", userData.sub);
+      deepLinkUrl.searchParams.append("name", userData.name || "");
+      deepLinkUrl.searchParams.append("email", userData.email || "");
+      deepLinkUrl.searchParams.append("preferred_username", userData.preferred_username || "");
+      deepLinkUrl.searchParams.append("cpf", userData.sub);
+      deepLinkUrl.searchParams.append("timestamp", new Date().toISOString());
+      
+      return NextResponse.redirect(deepLinkUrl.toString(), 302);
+    }
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://procuraai.secties.pb.gov.br";
     const redirectUrl = new URL("/govbr-callback", baseUrl);
     const response = NextResponse.redirect(redirectUrl);
-
-    // Armazena dados do usuário em cookie temporário para o cliente processar
     response.cookies.set(
       "govbr_user_data",
       JSON.stringify({
@@ -35,23 +102,22 @@ export async function GET(request: Request) {
         preferred_username: userData.preferred_username || null,
       }),
       {
-        httpOnly: false, // Cliente precisa acessar
+        httpOnly: false,
         secure: true,
         sameSite: "lax",
-        maxAge: 300, // 5 minutos apenas
+        maxAge: 300,
         path: "/",
       },
     );
 
-    // Armazena id_token para uso no logout
     response.cookies.set(
       "govbr_id_token",
       tokenResponse.id_token,
       {
-        httpOnly: false, // Cliente precisa acessar para logout
+        httpOnly: false,
         secure: true,
         sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 30, // 30 dias
+        maxAge: 60 * 60 * 24 * 30,
         path: "/",
       },
     );
@@ -63,15 +129,24 @@ export async function GET(request: Request) {
     return response;
   } catch (error) {
     console.error("Erro durante autenticação:", error);
+    
+    if (isMobile) {
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+      const deepLinkUrl = new URL("procuraai://auth-callback");
+      deepLinkUrl.searchParams.append("success", "false");
+      deepLinkUrl.searchParams.append("error", "authentication_failed");
+      deepLinkUrl.searchParams.append("message", errorMessage);
+      deepLinkUrl.searchParams.append("timestamp", new Date().toISOString());
+      
+      return NextResponse.redirect(deepLinkUrl.toString(), 302);
+    }
 
     const errorMessage =
       error instanceof Error
         ? encodeURIComponent(error.message.substring(0, 100))
         : "unknown_error";
 
-    // Usar a URL base correta para o redirecionamento
-    const baseUrl =
-      process.env.NEXT_PUBLIC_BASE_URL || new URL(request.url).origin;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://procuraai.secties.pb.gov.br";
     const loginUrl = new URL("/login", baseUrl);
     loginUrl.searchParams.set("error", "govbr_system_error");
     loginUrl.searchParams.set("details", errorMessage);

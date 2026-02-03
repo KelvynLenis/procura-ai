@@ -38,7 +38,7 @@ export default function GovBrCallback() {
         }
 
         const userData: GovBrUserData = JSON.parse(userDataJson);
-        deleteCookie('govbr_user_data'); // Limpa cookie imediatamente
+        deleteCookie('govbr_user_data');
 
         const appwriteUser = formatUserData(userData);
         
@@ -51,7 +51,6 @@ export default function GovBrCallback() {
         
         setStatus("Verificando usuário existente...");
 
-        // Primeira tentativa: login (usuário já existe)
         try {
           const session = await account.createEmailPasswordSession(appwriteUser.email, appwriteUser.password);
           setStatus("Login realizado! Redirecionando...");
@@ -60,8 +59,6 @@ export default function GovBrCallback() {
           return;
 
         } catch (loginError: any) {
-          
-          // Se login falhar por credenciais inválidas, criar usuário
           if (isLoginError(loginError)) {
             setStatus("Criando nova conta Gov.br...");
             
@@ -77,14 +74,12 @@ export default function GovBrCallback() {
 
               setStatus("Conta criada! Fazendo login...");
 
-              // Login após criação
               const session = await account.createEmailPasswordSession(appwriteUser.email, appwriteUser.password);
               setStatus("Login realizado! Redirecionando...");
               
               setTimeout(() => router.push('/meus-dispositivos'), 1000);
               
-            } catch (createError: any) {              
-              // Se usuário já existe (condição de corrida), tenta login
+            } catch (createError: any) {
               if (isUserExistsError(createError)) {
                 setStatus("Usuário já existe, fazendo login...");
                 
@@ -112,7 +107,6 @@ export default function GovBrCallback() {
         setError(errorMessage);
         setStatus("Falha na autenticação");
         
-        // Redireciona para login com erro
         setTimeout(() => {
           const encodedError = encodeURIComponent(errorMessage.substring(0, 100));
           router.push(`/login?error=govbr_auth_failed&details=${encodedError}`);
