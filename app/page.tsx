@@ -60,7 +60,7 @@ export default function Landing() {
           <Image
             src={landingImages}
             alt="landing background"
-            className="lg:img-fix z-0 -ml-11 hidden h-full w-full lg:block lg:w-1/2"
+            className="z-0 -ml-11 hidden h-full w-full lg:block"
           />
           <Image
             src={line}
