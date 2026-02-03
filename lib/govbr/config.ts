@@ -1,9 +1,8 @@
-
 const defaultConfig = {
   ssoUrl: 'https://sso.codata.pb.gov.br/auth/',
   realm: 'paraiba',
   clientId: 'secties',
-  redirectUri: 'https://incubadora.horizontesdeinovacao.pb.gov.br/'
+  redirectUri: 'https://procuraai.secties.pb.gov.br/api/login-gov/callback'
 }
 
 export function getGovBrConfig() {

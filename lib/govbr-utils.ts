@@ -26,8 +26,8 @@ export function formatUserData(userData: GovBrUserData) {
   return {
     email: userData.email || `govbr-${userData.sub}@procuraai.secties.pb.gov.br`,
     password: userData.sub,
-    name: userData.name || 'Usuário Gov.br',
-    cpf: userData.preferred_username || ''
+    name: userData.name || userData.preferred_username || 'Usuário Gov.br',
+    cpf: userData.sub
   };
 }
 
