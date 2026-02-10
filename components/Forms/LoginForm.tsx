@@ -24,6 +24,7 @@ import { updateLastAccess } from "@/functions/auth/update-last-access";
 import { GovBrButton } from "@/components/GovBr";
 import Image from "next/image";
 import logo from "../../assets/icons/logo-admin.png";
+import { Eye, EyeOff } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -34,6 +35,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [pathname, setPathname] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -175,12 +177,26 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
                       Senha
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Senha"
-                        {...field}
-                        className="w-64 self-center rounded-full"
-                      />
+                      <div className="relative flex items-center justify-center">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Senha"
+                          {...field}
+                          className="w-64 self-center rounded-full"
+                        />
+
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword((prev) => !prev)}
+                          className="absolute right-12 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-700"
+                        >
+                          {showPassword ? (
+                            <EyeOff size={18} />
+                          ) : (
+                            <Eye size={18} />
+                          )}
+                        </button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
