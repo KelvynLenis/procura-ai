@@ -53,9 +53,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
           ]
         : [];
 
-    const usersFromLocationOptions = await getUser({
-      filters: queryFiltersLocation,
-    });
+    const usersFromLocationOptions =
+      locationTarget.length > 0
+        ? await getUser({
+            filters: queryFiltersLocation,
+          })
+        : [];
 
     // console.log("usersFromLocationOptions", usersFromLocationOptions.length);
 
@@ -109,6 +112,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
       ...mergeTargets,
       ...usersFromLocationOptions,
     ];
+
+    // console.log("mergeTargetsWithLocation", mergeTargetsWithLocation.length);
 
     const removeDuplicated = mergeTargetsWithLocation.filter((value, index) => {
       const _value = JSON.stringify(value);

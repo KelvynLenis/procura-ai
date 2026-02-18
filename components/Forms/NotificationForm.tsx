@@ -78,6 +78,26 @@ function NotificationForm() {
     },
   });
 
+  function resetForm() {
+    form.reset();
+    setAllUsers(true);
+    setStatusOptions({
+      Regular: false,
+      Roubado: false,
+      Furtado: false,
+      Perdido: false,
+      Recuperado: false,
+    });
+    setLocationOptions({
+      "João Pessoa": false,
+      Cabedelo: false,
+      "Campina Grande": false,
+      Bayeux: false,
+      "Santa Rita": false,
+    });
+    setSelectedUsers([]);
+  }
+
   async function restoreFilterFromHistory({
     is_all_users_checked,
     selected_targets,
@@ -290,7 +310,8 @@ function NotificationForm() {
       locationOptions["Cabedelo"] ||
       locationOptions["Campina Grande"] ||
       locationOptions["Bayeux"] ||
-      locationOptions["Santa Rita"]
+      locationOptions["Santa Rita"] ||
+      selectedUsers.length > 0
     ) {
       setAllUsers(false);
     }
@@ -687,7 +708,12 @@ function NotificationForm() {
             </div>
 
             <div className="flex w-full justify-between">
-              <Button variant="white" type="button" className="xl:text-base">
+              <Button
+                variant="white"
+                type="button"
+                onClick={resetForm}
+                className="xl:text-base"
+              >
                 Cancelar
               </Button>
               <ConfirmationDialog
