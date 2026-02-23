@@ -419,7 +419,7 @@ export function RegisterForm({ admin }: RegisterFormProps) {
           )}
         </form>
       </Form>
-      {isLoading && <LoadingToast />}
+      {/* {isLoading && <LoadingToast />} */}
     </>
   );
 }

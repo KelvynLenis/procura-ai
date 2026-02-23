@@ -124,12 +124,12 @@ export function Header({ isAdmin }: HeaderProps) {
 
   function showLoadingToast(url: string) {
     setIsLoading(true);
-    toast(<LoadingToast isReactToastifyComponent />, {
-      autoClose: 1000,
-      hideProgressBar: true,
-      position: "top-center",
-      closeOnClick: true,
-    });
+    // toast(<LoadingToast isReactToastifyComponent />, {
+    //   autoClose: 1000,
+    //   hideProgressBar: true,
+    //   position: "top-center",
+    //   closeOnClick: true,
+    // });
 
     router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/${url}`);
 
@@ -221,7 +221,11 @@ export function Header({ isAdmin }: HeaderProps) {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
                   <button
-                    onClick={() => showLoadingToast("perfil")}
+                    onClick={() =>
+                      isAdmin
+                        ? showLoadingToast("perfil-admin")
+                        : showLoadingToast("perfil")
+                    }
                     className="flex flex-row items-center gap-2"
                   >
                     <Pencil size={16} />

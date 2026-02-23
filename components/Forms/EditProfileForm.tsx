@@ -190,34 +190,35 @@ export function EditProfileForm() {
 
   async function handleLogout() {
     try {
-      const idToken = localStorage.getItem('govbr_id_token') || '';
-      
+      const idToken = localStorage.getItem("govbr_id_token") || "";
+
       // 1. Deletar sessão do Appwrite
       await account.deleteSession("current");
-      
+
       // 2. Limpar todos os dados locais
       localStorage.clear();
       sessionStorage.clear();
       document.cookie.split(";").forEach((c) => {
-        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        document.cookie = c
+          .replace(/^ +/, "")
+          .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
       });
-      
+
       const ssoBaseUrl = process.env.NEXT_PUBLIC_GOVBR_SSO_URL;
       const realm = process.env.NEXT_PUBLIC_GOVBR_REALM;
       const redirectUri = encodeURIComponent(`${window.location.origin}/login`);
-      
+
       // 3. Fazer logout silencioso no Keycloak
       const logoutKeycloak = `${ssoBaseUrl}realms/${realm}/protocol/openid-connect/logout?id_token_hint=${idToken}&post_logout_redirect_uri=${redirectUri}`;
-      
+
       try {
-        await fetch(logoutKeycloak, { method: 'GET', mode: 'no-cors' });
+        await fetch(logoutKeycloak, { method: "GET", mode: "no-cors" });
       } catch (error) {
-        console.error('Erro ao fazer logout no Keycloak:', error);
+        console.error("Erro ao fazer logout no Keycloak:", error);
       }
-      
+
       // 4. Redirecionar para logout do Gov.br (staging para homologação)
       window.location.href = `https://sso.acesso.gov.br/logout?post_logout_redirect_uri=${redirectUri}`;
-      
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
       window.location.href = "/login";
@@ -471,7 +472,11 @@ export function EditProfileForm() {
               </div>
             </div>
             <div className="flex w-full justify-between">
-              <Button variant="white" type="button">
+              <Button
+                variant="white"
+                type="button"
+                onClick={() => router.back()}
+              >
                 Cancelar
               </Button>
               <Button variant="blue" type="submit" disabled={isSubmitting}>
@@ -479,7 +484,7 @@ export function EditProfileForm() {
               </Button>
             </div>
           </form>
-          <Dialog>
+          {/* <Dialog>
             <DialogTrigger asChild className="ml-3 mt-5">
               <Button variant="blue" type="button">
                 Editar senha
@@ -491,7 +496,7 @@ export function EditProfileForm() {
               </DialogHeader>
               <EditPassword />
             </DialogContent>
-          </Dialog>
+          </Dialog> */}
         </Form>
       </div>
 
@@ -671,6 +676,9 @@ export function EditProfileForm() {
                           variant="white"
                           type="button"
                           className="flex-1"
+                          onClick={() => {
+                            setExpandedSection(null);
+                          }}
                         >
                           Cancelar
                         </Button>
@@ -690,7 +698,7 @@ export function EditProfileForm() {
             </div>
 
             {/* Aba de Alterar Senha */}
-            <div className="border-b border-zinc-200">
+            {/* <div className="border-b border-zinc-200">
               <button
                 onClick={() =>
                   setExpandedSection(
@@ -823,7 +831,6 @@ export function EditProfileForm() {
                         )}
                       />
 
-                      {/* Botões */}
                       <div className="flex gap-4 pt-2">
                         <Button
                           variant="white"
@@ -831,7 +838,7 @@ export function EditProfileForm() {
                           className="flex-1"
                           onClick={() => {
                             passwordForm.reset();
-                            setExpandedSection("profile");
+                            setExpandedSection(null);
                           }}
                         >
                           Cancelar
@@ -849,7 +856,7 @@ export function EditProfileForm() {
                   </Form>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
 
           {/* Botão de logout para mobile */}

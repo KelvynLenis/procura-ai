@@ -279,7 +279,7 @@ export function DeviceForm({
 
   return (
     <>
-      {isLoading && <LoadingToast isReactToastifyComponent={false} />}
+      {/* {isLoading && <LoadingToast isReactToastifyComponent={false} />} */}
 
       {/* Layout Desktop - mantém o formato original */}
       <div className="hidden md:block">

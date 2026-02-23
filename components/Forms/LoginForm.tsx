@@ -257,7 +257,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
         </form>
       </Form>
 
-      {isLoading && <LoadingToast />}
+      {/* {isLoading && <LoadingToast />} */}
     </>
   );
 }

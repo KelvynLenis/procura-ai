@@ -21,12 +21,12 @@ export function MobileNavBar() {
 
   function showLoadingToast(url: string) {
     setIsLoading(true);
-    toast(<LoadingToast isReactToastifyComponent />, {
-      autoClose: 1000,
-      hideProgressBar: true,
-      position: "top-center",
-      closeOnClick: true,
-    });
+    // toast(<LoadingToast isReactToastifyComponent />, {
+    //   autoClose: 1000,
+    //   hideProgressBar: true,
+    //   position: "top-center",
+    //   closeOnClick: true,
+    // });
     router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/${url}`);
   }
 
