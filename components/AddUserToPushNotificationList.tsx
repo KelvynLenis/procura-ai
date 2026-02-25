@@ -112,7 +112,7 @@ function AddUserToPushNotificationList({
 
   return (
     <Dialog>
-      <DialogTrigger className="ring-100 flex h-fit max-h-[81px] w-full flex-col gap-2 rounded-lg bg-zinc-100 px-3 py-1.5 ring-1 ring-zinc-300">
+      <DialogTrigger className="ring-100 flex h-fit w-full flex-col gap-2 rounded-lg bg-zinc-100 px-3 py-1.5 ring-1 ring-zinc-300">
         <div className="flex flex-col items-start gap-1 ring-0">
           <div className="flex w-full justify-between">
             <h3 className="text-sm font-medium">Usuários cadastrados</h3>
