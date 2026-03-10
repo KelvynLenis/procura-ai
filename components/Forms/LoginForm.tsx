@@ -130,7 +130,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="mb-0 flex h-screen w-screen flex-col items-center gap-4 bg-zinc-50 p-0 md:mb-10 md:h-fit md:w-96 md:rounded-lg md:px-8 md:py-5"
+          className="mb-0 flex h-screen w-screen flex-col items-center gap-4 bg-zinc-50 p-0 md:mb-10 md:h-fit md:w-fit md:rounded-lg md:px-8 md:py-5"
         >
           {isAdminPage ? (
             <div className="relative mb-2">
@@ -216,7 +216,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
                 )}
               />
 
-              <Button type="submit" variant="blue" className="!w-40 text-base">
+              <Button type="submit" variant="blue" className="!w-40 !text-base">
                 Entrar
               </Button>
             </>
@@ -228,14 +228,14 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
                 <>
                   <div className="bg-login-mobile-bg flex flex-col gap-3 md:bg-transparent">
                     <div className="flex items-center justify-center">
-                      <GovBrButton className="w-[16.3rem] bg-secondary text-base md:w-fit" />
+                      <GovBrButton className="w-[16.3rem] bg-secondary !text-base md:w-fit" />
                     </div>
                   </div>
                   {/* <span className="h-[1px] w-full rounded-full bg-primary" /> */}
                 </>
               )}
 
-              <div className="mb-20 flex w-fit flex-col gap-3">
+              <div className="mb-0 flex w-fit flex-col gap-3">
                 {pathname === "localhost" && (
                   <>
                     {/* <span className="self-center font-bold">
@@ -249,7 +249,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
                         onClick={showLoadingToast}
                         type="button"
                         variant="black"
-                        className="!w-40 text-base"
+                        className="!w-40 !text-base"
                       >
                         Cadastre-se
                       </Button>
@@ -260,7 +260,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
 
                 <Link
                   href={"/login-admin"}
-                  className="mb-20 mt-4 hidden h-fit items-center justify-center text-secondary underline hover:opacity-70 md:flex"
+                  className="mt-4 hidden h-fit items-center justify-center text-secondary underline hover:opacity-70 md:flex"
                 >
                   Entrar como administrador
                 </Link>
