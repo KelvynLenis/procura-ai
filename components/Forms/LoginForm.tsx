@@ -24,7 +24,9 @@ import { updateLastAccess } from "@/functions/auth/update-last-access";
 import { GovBrButton } from "@/components/GovBr";
 import Image from "next/image";
 import logo from "../../assets/icons/logo-admin.png";
+import loginMobileBanner from "../../assets/images/login-mobile-banner.png";
 import { Eye, EyeOff } from "lucide-react";
+import { AlternateLoginDrawer } from "./AlternateLoginDrawer";
 
 const formSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -128,7 +130,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="mb-10 flex h-fit w-full flex-col items-center gap-4 rounded-lg bg-zinc-50 px-8 py-5 md:w-96"
+          className="mb-0 flex h-screen w-screen flex-col items-center gap-4 bg-zinc-50 p-0 md:mb-10 md:h-fit md:w-fit md:rounded-lg md:px-8 md:py-5"
         >
           {isAdminPage ? (
             <div className="relative mb-2">
@@ -136,12 +138,23 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
               <span className="absolute -bottom-1 right-4">Administrador</span>
             </div>
           ) : (
-            <div className="flex flex-col items-center">
-              <Image src={logo} alt="logo" className="" />
+            <div className="flex w-full flex-col items-center">
+              <Image src={logo} alt="logo" className="hidden md:block" />
+              <Image
+                src={loginMobileBanner}
+                alt="logo"
+                className="h-full w-full md:hidden"
+              />
 
-              <h3 className="text-center font-medium">
+              <span className="hidden text-center font-medium md:block">
                 Proteja-se agora e fique um passo à frente
-              </h3>
+              </span>
+
+              <div className="flex items-center px-5">
+                <span className="mt-4 text-center text-sm md:hidden">
+                  Clique para acessar o Procura.Aí pela sua conta gov.br
+                </span>
+              </div>
             </div>
           )}
 
@@ -203,7 +216,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
                 )}
               />
 
-              <Button type="submit" variant="blue" className="!w-40 text-base">
+              <Button type="submit" variant="blue" className="!w-40 !text-base">
                 Entrar
               </Button>
             </>
@@ -213,16 +226,16 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
             <div className="flex w-fit flex-col">
               {pathname !== "localhost" && (
                 <>
-                  <div className="flex flex-col gap-3">
+                  <div className="bg-login-mobile-bg flex flex-col gap-3 md:bg-transparent">
                     <div className="flex items-center justify-center">
-                      <GovBrButton className="w-fit bg-[#396DC0] text-base" />
+                      <GovBrButton className="w-[16.3rem] bg-secondary !text-base md:w-fit" />
                     </div>
                   </div>
                   {/* <span className="h-[1px] w-full rounded-full bg-primary" /> */}
                 </>
               )}
 
-              <div className="flex w-fit flex-col gap-3">
+              <div className="mb-0 flex w-fit flex-col gap-3">
                 {pathname === "localhost" && (
                   <>
                     {/* <span className="self-center font-bold">
@@ -236,7 +249,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
                         onClick={showLoadingToast}
                         type="button"
                         variant="black"
-                        className="!w-40 text-base"
+                        className="!w-40 !text-base"
                       >
                         Cadastre-se
                       </Button>
@@ -247,10 +260,12 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
 
                 <Link
                   href={"/login-admin"}
-                  className="mt-4 flex items-center justify-center text-secondary underline hover:opacity-70"
+                  className="mt-4 hidden h-fit items-center justify-center text-secondary underline hover:opacity-70 md:flex"
                 >
                   Entrar como administrador
                 </Link>
+
+                <AlternateLoginDrawer />
               </div>
             </div>
           )}

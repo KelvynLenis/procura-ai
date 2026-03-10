@@ -146,3 +146,14 @@ export function validateCoordinates(coordinates: number[]) {
 
   return latitude !== 0 && longitude !== 0;
 }
+
+export function formatEmail(email: string): string {
+  const [username, domain] = email.split("@");
+
+  if (!username || !domain) return email;
+
+  const visiblePart = username.slice(-4); // últimos 3 caracteres
+  const maskedPart = "*".repeat(Math.max(username.length - 3, 0));
+
+  return `${maskedPart}${visiblePart}@${domain}`;
+}

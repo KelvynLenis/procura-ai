@@ -42,15 +42,15 @@ export default function Login() {
         <Image src={logo} alt="logo" className="relative -left-8 h-16" />
       </header>
       <main className="row-start-2 flex h-full min-h-fit w-full flex-col items-center bg-primary sm:items-start">
-        <div className="mb-0 flex h-[calc(100svh-theme(spacing.4))] w-full flex-col items-center justify-center bg-login-bg bg-cover bg-center bg-no-repeat p-2">
+        <div className="mb-0 flex h-[calc(100svh-theme(spacing.4))] w-full flex-col items-center justify-center bg-login-bg bg-cover bg-center bg-no-repeat p-0 mobile-lg:mb-5 md:p-2">
           <LoginForm />
         </div>
 
-        <div className="relative w-full bg-[#F5F5F5]">
-          <section
+        <section className="relative w-full bg-[#F5F5F5]">
+          <div
             className={cn(
               "z-[1] flex h-fit w-full flex-col justify-between bg-faq bg-cover pt-24 lg:bg-faq",
-              "-mt-10",
+              "-mt-10 mobile-sm:-mt-6 mobile-lg:-mt-0 md:-mt-16 lg:-mt-20",
             )}
           >
             <div className="mb-16 flex flex-col items-center gap-6 px-4">
@@ -115,8 +115,8 @@ export default function Login() {
                 className="absolute right-0 z-0 hidden h-full self-end sm:block md:w-[50%] lg:w-[80%] xl:w-[90%]"
               />
             </footer>
-          </section>
-        </div>
+          </div>
+        </section>
       </main>
     </>
   );
