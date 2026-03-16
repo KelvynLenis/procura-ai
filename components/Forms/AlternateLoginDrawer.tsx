@@ -150,35 +150,23 @@ export function AlternateLoginDrawer() {
           </DrawerTrigger>{" "}
           do Procura.Aí apenas com seu e-mail.
         </span>
-        <DrawerContent className="mx-auto flex max-h-[85vh] w-full flex-col overflow-hidden rounded-t-2xl bg-white md:max-w-md">
-          <div className="flex items-center justify-center bg-white pb-1 pt-1.5">
-            <div className="h-1 w-10 rounded-full bg-zinc-300/80" />
-          </div>
-          <div className="flex-1 overflow-y-auto px-4 pb-2 pt-1">
-            <StepOne
-              step={step}
-              cpf={cpf}
-              setCpf={setCpf}
-            />
-            <StepTwo step={step} maskedEmail={maskedEmail} />
-            <StepThree
-              step={step}
-              maskedEmail={maskedEmail}
-              code={code}
-              setCode={setCode}
-              onResendCode={handleSendCode}
-              isSubmitting={isSubmitting}
-            />
-          </div>
-          <DrawerFooter className="flex w-full flex-row justify-between gap-3 border-t bg-white px-4 py-3">
-            <Button variant="white" onClick={handlePreviousButton}>
-              Voltar
-            </Button>
-            <Button
-              variant="blue"
-              onClick={handleNextButton}
-              disabled={isSubmitting}
-            >
+        <DrawerContent className="flex bg-white">
+          <StepOne
+            step={step}
+            setStep={setStep}
+            cpf={cpf}
+            setCpf={setCpf}
+            onClose={handleCloseDrawer}
+          />
+          <StepTwo step={step} setStep={setStep} cpf={cpf} />
+          <StepThree step={step} setStep={setStep} cpf={cpf} setCpf={setCpf} />
+          <DrawerFooter className="flex w-full flex-row justify-between">
+            <DrawerClose>
+              <Button variant="white" onClick={handlePreviousButton}>
+                Voltar
+              </Button>
+            </DrawerClose>
+            <Button variant="blue" onClick={handleNextButton}>
               {step === 1 && "Avançar"}
               {step === 2 && "Enviar Código"}
               {step === 3 && "Validar Código"}
@@ -221,56 +209,56 @@ function StepOne({
             >
               <InputOTPGroup>
                 <InputOTPSlot
-                  className="ml-2.5 h-5 w-10 border-0 border-none shadow-transparent mobile:w-4"
+                  className="-ml-1 h-5 w-3.5 border-0 border-none shadow-transparent mobile:-ml-2 mobile:w-5 mobile-lg:-ml-1 mobile-lg:w-6"
                   index={0}
                 />
                 <InputOTPSlot
-                  className="h-5 w-10 border-0 border-none shadow-transparent mobile:w-4"
+                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
                   index={1}
                 />
                 <InputOTPSlot
-                  className="h-5 w-10 border-0 border-none shadow-transparent mobile:w-4"
+                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
                   index={2}
                 />
               </InputOTPGroup>
               <InputOTPSeparator className="relative -bottom-2" />
               <InputOTPGroup>
                 <InputOTPSlot
-                  className="h-5 w-10 border-0 border-none shadow-transparent mobile:w-4"
+                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
                   index={3}
                 />
                 <InputOTPSlot
-                  className="h-5 w-10 border-0 border-none shadow-transparent mobile:w-4"
+                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
                   index={4}
                 />
                 <InputOTPSlot
-                  className="h-5 w-10 border-0 border-none shadow-transparent mobile:w-4"
+                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
                   index={5}
                 />
               </InputOTPGroup>
               <InputOTPSeparator className="relative -bottom-2" />
               <InputOTPGroup>
                 <InputOTPSlot
-                  className="h-5 w-10 border-0 border-none shadow-transparent mobile:w-4"
+                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
                   index={6}
                 />
                 <InputOTPSlot
-                  className="h-5 w-10 border-0 border-none shadow-transparent mobile:w-4"
+                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
                   index={7}
                 />
                 <InputOTPSlot
-                  className="h-5 w-10 border-0 border-none shadow-transparent mobile:w-4"
+                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
                   index={8}
                 />
               </InputOTPGroup>
               <InputOTPSeparator data-dash />
               <InputOTPGroup>
                 <InputOTPSlot
-                  className="h-5 w-10 border-0 border-none shadow-transparent mobile:w-4"
+                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
                   index={9}
                 />
                 <InputOTPSlot
-                  className="h-5 w-10 border-0 border-none shadow-transparent mobile:w-4"
+                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
                   index={10}
                 />
               </InputOTPGroup>
