@@ -18,11 +18,18 @@ class EmailService {
       throw new Error('EmailService só pode ser inicializado no servidor');
     }
 
+    const gmailUser = process.env.GMAIL_USER ?? process.env.NEXT_PUBLIC_GMAIL_USER;
+    const gmailPassword = process.env.GMAIL_APP_PASSWORD ?? process.env.NEXT_PUBLIC_GMAIL_APP_PASSWORD;
+
+    if (!gmailUser || !gmailPassword) {
+      throw new Error('Credenciais de email nao configuradas');
+    }
+
     this.transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.NEXT_PUBLIC_GMAIL_USER,
-        pass: process.env.NEXT_PUBLIC_GMAIL_APP_PASSWORD, // Senha de aplicativo do Google
+        user: gmailUser,
+        pass: gmailPassword, // Senha de aplicativo do Google
       },
       tls: {
         rejectUnauthorized: false

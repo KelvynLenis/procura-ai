@@ -2,16 +2,15 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import Button from "../Button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { formatEmail, validateCPF } from "@/lib/utils";
 import { getUserByCPF } from "@/functions/user/get-user-by-cpf";
+import { sendVerificationCode } from "@/functions/verification/send-verification-code";
+import { validateVerificationCode } from "@/functions/verification/validate-verification-code";
 import {
   InputOTP,
   InputOTPGroup,
@@ -20,49 +19,127 @@ import {
 } from "../ui/input-otp";
 import { toast } from "react-toastify";
 import Image from "next/image";
-import verifyEmail from "../../assets/images/verify-email.svg";
-import codeSent from "../../assets/images/code-sent.svg";
+import verifyEmail from "../../assets/images/verify-email.png";
+import codeSent from "../../assets/images/code-sent.png";
 
 export function AlternateLoginDrawer() {
   const [step, setStep] = useState(1);
   const [cpf, setCpf] = useState("");
+  const [email, setEmail] = useState("");
+  const [maskedEmail, setMaskedEmail] = useState("");
+  const [userId, setUserId] = useState("");
+  const [userName, setUserName] = useState("");
+  const [code, setCode] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleCloseDrawer() {
     setIsOpen(false);
+    setStep(1);
+    setCpf("");
+    setEmail("");
+    setMaskedEmail("");
+    setUserId("");
+    setUserName("");
+    setCode("");
   }
 
-  function handleValidateCPF() {
+  async function handleValidateCPF() {
     const isValid = validateCPF(cpf);
 
-    if (isValid) {
-      setStep(2);
-    } else {
+    if (!isValid) {
       toast.error("CPF inválido");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const user = await getUserByCPF(cpf);
+
+      if (!user?.email || !user?.user_id) {
+        throw new Error("CPF nao encontrado");
+      }
+
+      setEmail(user.email);
+      setMaskedEmail(formatEmail(user.email));
+      setUserId(user.user_id);
+      setUserName(user.name ?? "");
+      setStep(2);
+    } catch (error: any) {
+      toast.error(error?.message || "CPF não encontrado");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   function handlePreviousButton() {
-    if (step === 1) {
-      handleCloseDrawer();
-    } else if (step === 2) {
+    if (step === 2) {
       setStep(1);
     } else if (step === 3) {
       setStep(2);
     }
   }
 
-  function handleNextButton() {
-    if (step === 1) {
-      handleValidateCPF();
-    } else if (step === 2) {
+  async function handleSendCode() {
+    if (!email || !userId) {
+      toast.error("Valide o CPF antes de continuar");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await sendVerificationCode(email, userId, userName);
       setStep(3);
+      toast.success("Código enviado com sucesso");
+    } catch (error: any) {
+      toast.error(error?.message || "Erro ao enviar código");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleValidateCode() {
+    if (code.length !== 6) {
+      toast.error("Digite o código de 6 dígitos");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const result = await validateVerificationCode(email, code);
+
+      if (!result.success) {
+        toast.error(result.message || "Código inválido");
+        return;
+      }
+
+      toast.success("Código validado com sucesso");
+    } catch (error: any) {
+      toast.error(error?.message || "Erro ao validar código");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleNextButton() {
+    if (step === 1) {
+      await handleValidateCPF();
+      return;
+    }
+
+    if (step === 2) {
+      await handleSendCode();
+      return;
+    }
+
+    if (step === 3) {
+      await handleValidateCode();
     }
   }
 
   return (
     <>
-      <Drawer open={isOpen}>
+      <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <span className="mt-4 bg-[#FAFAFA] px-5 text-center md:hidden">
           Perdeu o acesso à sua conta gov.br?
           <DrawerTrigger
@@ -73,23 +150,35 @@ export function AlternateLoginDrawer() {
           </DrawerTrigger>{" "}
           do Procura.Aí apenas com seu e-mail.
         </span>
-        <DrawerContent className="flex bg-white">
-          <StepOne
-            step={step}
-            setStep={setStep}
-            cpf={cpf}
-            setCpf={setCpf}
-            onClose={handleCloseDrawer}
-          />
-          <StepTwo step={step} setStep={setStep} cpf={cpf} />
-          <StepThree step={step} setStep={setStep} cpf={cpf} setCpf={setCpf} />
-          <DrawerFooter className="flex w-full flex-row justify-between">
-            <DrawerClose>
-              <Button variant="white" onClick={handlePreviousButton}>
-                Cancel
-              </Button>
-            </DrawerClose>
-            <Button variant="blue" onClick={handleNextButton}>
+        <DrawerContent className="mx-auto flex max-h-[85vh] w-full flex-col overflow-hidden rounded-t-2xl bg-white md:max-w-md">
+          <div className="flex items-center justify-center bg-white pb-1 pt-1.5">
+            <div className="h-1 w-10 rounded-full bg-zinc-300/80" />
+          </div>
+          <div className="flex-1 overflow-y-auto px-4 pb-2 pt-1">
+            <StepOne
+              step={step}
+              cpf={cpf}
+              setCpf={setCpf}
+            />
+            <StepTwo step={step} maskedEmail={maskedEmail} />
+            <StepThree
+              step={step}
+              maskedEmail={maskedEmail}
+              code={code}
+              setCode={setCode}
+              onResendCode={handleSendCode}
+              isSubmitting={isSubmitting}
+            />
+          </div>
+          <DrawerFooter className="flex w-full flex-row justify-between gap-3 border-t bg-white px-4 py-3">
+            <Button variant="white" onClick={handlePreviousButton}>
+              Voltar
+            </Button>
+            <Button
+              variant="blue"
+              onClick={handleNextButton}
+              disabled={isSubmitting}
+            >
               {step === 1 && "Avançar"}
               {step === 2 && "Enviar Código"}
               {step === 3 && "Validar Código"}
@@ -103,30 +192,16 @@ export function AlternateLoginDrawer() {
 
 function StepOne({
   step,
-  setStep,
   cpf,
   setCpf,
-  onClose,
 }: {
   step: number;
-  setStep: React.Dispatch<React.SetStateAction<number>>;
   setCpf: React.Dispatch<React.SetStateAction<string>>;
   cpf: string;
-  onClose: () => void;
 }) {
-  function handleValidateCPF() {
-    const isValid = validateCPF(cpf);
-
-    if (isValid) {
-      setStep(2);
-    } else {
-      toast.error("CPF inválido");
-    }
-  }
-
   return (
     step === 1 && (
-      <div className="mb-2 mt-2 flex h-[22rem] w-screen flex-col justify-between gap-0 px-6 duration-700 animate-in slide-in-from-left">
+      <div className="mb-2 mt-2 flex h-[22rem] w-full flex-col justify-between gap-0 duration-700 animate-in slide-in-from-left">
         <div className="flex flex-col items-center justify-center">
           <h1 className="mb-2 text-lg font-bold">
             Acesso limitado ao Procura.Aí
@@ -140,7 +215,7 @@ function StepOne({
             <InputOTP
               maxLength={11}
               containerClassName="ring-1 ring-zinc-400"
-              className="flex w-full items-center justify-center"
+              className="flex w-full items-center justify-center overflow-x-auto"
               value={cpf}
               onChange={(e) => setCpf(e)}
             >
@@ -218,44 +293,30 @@ function StepOne({
 
 function StepTwo({
   step,
-  setStep,
-  cpf,
+  maskedEmail,
 }: {
   step: number;
-  setStep: React.Dispatch<React.SetStateAction<number>>;
-  cpf: string;
+  maskedEmail: string;
 }) {
-  const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (!cpf) return;
-    const getUserEmail = async () => {
-      if (step !== 2) return;
-
-      const { email } = await getUserByCPF(cpf);
-
-      const formattedEmail = formatEmail(email);
-
-      setEmail(formattedEmail);
-      setIsLoading(false);
-    };
-
-    getUserEmail();
-  }, [step]);
+  const displayEmail = maskedEmail || "********abcd@gmail.com";
 
   return (
     step === 2 && (
-      <div className="mb-2 mt-2 flex h-[22rem] w-screen flex-col justify-between gap-0 px-6 duration-700 animate-in slide-in-from-left">
+      <div className="mb-2 mt-2 flex h-[22rem] w-full flex-col justify-between gap-0 duration-700 animate-in slide-in-from-left">
         <div className="flex flex-col items-center">
           <span className="mb-2 text-lg font-bold">Verificação de e-mail</span>
           <span className="text-center">
             Para confirmar que realmente é você, vamos enviar um código de
             verificação para o e-mail{" "}
-            {isLoading ? "********abcd@gmail.com" : email}
+            {displayEmail}
           </span>
 
-          <Image src={verifyEmail} alt="verificar email" className="mt-4" />
+          <Image
+            src={verifyEmail}
+            alt="verificar email"
+            className="mt-4 h-auto w-full max-w-[15rem]"
+            priority
+          />
         </div>
 
         {/* <div className="flex w-full flex-row justify-between">
@@ -273,48 +334,37 @@ function StepTwo({
 
 function StepThree({
   step,
-  setStep,
-  cpf,
-  setCpf,
+  maskedEmail,
+  code,
+  setCode,
+  onResendCode,
+  isSubmitting,
 }: {
   step: number;
-  setStep: React.Dispatch<React.SetStateAction<number>>;
-  setCpf: React.Dispatch<React.SetStateAction<string>>;
-  cpf: string;
+  maskedEmail: string;
+  code: string;
+  setCode: React.Dispatch<React.SetStateAction<string>>;
+  onResendCode: () => Promise<void>;
+  isSubmitting: boolean;
 }) {
-  const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [code, setCode] = useState("");
-
-  useEffect(() => {
-    if (!cpf) return;
-    const getUserEmail = async () => {
-      const { email } = await getUserByCPF(cpf);
-
-      const formattedEmail = formatEmail(email);
-
-      setEmail(formattedEmail);
-      setIsLoading(false);
-    };
-
-    getUserEmail();
-  }, [cpf]);
+  const displayEmail = maskedEmail || "********abcd@gmail.com";
 
   return (
     step === 3 && (
-      <div className="mb-2 mt-2 flex h-[36rem] w-screen flex-col justify-between gap-0 px-6 duration-700 animate-in slide-in-from-left">
+      <div className="mb-2 mt-2 flex min-h-[20rem] w-full flex-col justify-between gap-0 duration-700 animate-in slide-in-from-left">
         <div className="flex flex-col items-center">
           <span className="mb-2 text-lg font-bold">Código enviado</span>
           <span className="text-center">
             Digite o código de 6 dígitos enviado para o e-mail{" "}
-            {isLoading ? "********abcd@gmail.com" : email}
+            {displayEmail}
           </span>
 
           <div className="flex w-full flex-col items-center gap-2">
             <Image
               src={codeSent}
               alt="codigo enviado com sucesso"
-              className="mt-4"
+              className="mt-4 h-auto w-full max-w-[15rem]"
+              priority
             />
             <div className="mb-6 w-full gap-2 self-start">
               <div className="mb-2 w-full">
@@ -354,7 +404,14 @@ function StepThree({
                 </InputOTP>
               </div>
 
-              <span className="self-start">Reenviar código</span>
+              <button
+                className="self-start text-secondary underline"
+                type="button"
+                onClick={onResendCode}
+                disabled={isSubmitting}
+              >
+                Reenviar código
+              </button>
 
               <div className="mt-5 flex w-full flex-col self-start rounded-lg bg-[#C4F3F2] px-4 py-2">
                 <span>
