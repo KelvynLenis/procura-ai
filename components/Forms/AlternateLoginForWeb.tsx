@@ -28,7 +28,7 @@ export function AlternateLoginForWeb({
     if (isValid) {
       setStep(2);
     } else {
-      toast.error("CPF inválido");
+      toast.error("CPF Não Encontrado");
     }
   }
 
@@ -62,6 +62,7 @@ export function AlternateLoginForWeb({
               variant="white"
               onClick={handlePreviousButton}
               className="!text-sm"
+              type="button"
             >
               Voltar
             </Button>
@@ -70,6 +71,7 @@ export function AlternateLoginForWeb({
             variant="blue"
             onClick={handleNextButton}
             className="!text-sm"
+            type="submit"
           >
             {step === 1 && "Avançar"}
             {step === 2 && "Enviar Código"}
@@ -83,25 +85,15 @@ export function AlternateLoginForWeb({
 
 function StepOne({
   step,
-  setStep,
+  handleNextButton,
   cpf,
   setCpf,
 }: {
   step: number;
-  setStep: React.Dispatch<React.SetStateAction<number>>;
+  handleNextButton: () => void;
   setCpf: React.Dispatch<React.SetStateAction<string>>;
   cpf: string;
 }) {
-  function handleValidateCPF() {
-    const isValid = validateCPF(cpf);
-
-    if (isValid) {
-      setStep(2);
-    } else {
-      toast.error("CPF Não Encontrado");
-    }
-  }
-
   return (
     step === 1 && (
       <div className="mb-12 mt-2 flex flex-col justify-between gap-0 px-0 duration-700 animate-in fade-in-5">
@@ -120,6 +112,11 @@ function StepOne({
               containerClassName="ring-1 ring-zinc-400"
               className="flex w-full items-center justify-center"
               value={cpf}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleNextButton();
+                }
+              }}
               onChange={(e) => setCpf(e)}
             >
               <InputOTPGroup>
