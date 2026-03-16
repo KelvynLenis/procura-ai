@@ -279,7 +279,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
                         className="text-secondary underline"
                       >
                         Acesse a versão limitada
-                      </button>
+                      </button>{" "}
                       do Procura.Aí <br />
                       apenas com seu e-mail.
                     </span>
