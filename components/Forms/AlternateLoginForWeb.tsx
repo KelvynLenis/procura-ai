@@ -53,7 +53,7 @@ export function AlternateLoginForWeb({
   return (
     <>
       <div className="hidden w-96 flex-col md:flex">
-        <StepOne step={step} setStep={setStep} cpf={cpf} setCpf={setCpf} />
+        <StepOne step={step} cpf={cpf} setCpf={setCpf} />
         <StepTwo step={step} setStep={setStep} cpf={cpf} />
         <StepThree step={step} setStep={setStep} cpf={cpf} setCpf={setCpf} />
         <div className="mt-4 flex w-full flex-row justify-between">
@@ -85,12 +85,10 @@ export function AlternateLoginForWeb({
 
 function StepOne({
   step,
-  handleNextButton,
   cpf,
   setCpf,
 }: {
   step: number;
-  handleNextButton: () => void;
   setCpf: React.Dispatch<React.SetStateAction<string>>;
   cpf: string;
 }) {
@@ -114,7 +112,6 @@ function StepOne({
               value={cpf}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  handleNextButton();
                 }
               }}
               onChange={(e) => setCpf(e)}
