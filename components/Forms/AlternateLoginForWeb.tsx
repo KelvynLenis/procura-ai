@@ -98,7 +98,7 @@ function StepOne({
     if (isValid) {
       setStep(2);
     } else {
-      toast.error("CPF inválido");
+      toast.error("CPF Não Encontrado");
     }
   }
 
