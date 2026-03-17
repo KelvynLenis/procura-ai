@@ -2,11 +2,21 @@ import { User } from "@/types";
 
 export async function getUserByCPF(cpf: string): Promise<User> {
   try {
+    const cleanCpf = cpf.replace(/\D/g, "");
+    const maskedCpf = cleanCpf.replace(
+      /(\d{3})(\d{3})(\d{3})(\d{2})/,
+      "$1.$2.$3-$4",
+    );
+
+    const cpfCandidates = cleanCpf.length === 11
+      ? [cleanCpf, maskedCpf]
+      : [cpf];
+
     const params = new URLSearchParams({
       "queries[0]": JSON.stringify({
         method: "equal",
         attribute: "cpf",
-        values: [cpf],
+        values: cpfCandidates,
       }),
     });
 
