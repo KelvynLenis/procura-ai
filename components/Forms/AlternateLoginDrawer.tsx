@@ -1,6 +1,5 @@
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerFooter,
   DrawerTrigger,
@@ -15,12 +14,23 @@ import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-  InputOTPSeparator,
 } from "../ui/input-otp";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import verifyEmail from "../../assets/images/verify-email.png";
 import codeSent from "../../assets/images/code-sent.png";
+
+function maskCpf(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 11);
+
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+  if (digits.length <= 9) {
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+  }
+
+  return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+}
 
 export function AlternateLoginDrawer() {
   const [step, setStep] = useState(1);
@@ -33,8 +43,13 @@ export function AlternateLoginDrawer() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleCloseDrawer() {
-    setIsOpen(false);
+  function handleOpenChange(open: boolean) {
+    setIsOpen(open);
+
+    if (open) {
+      return;
+    }
+
     setStep(1);
     setCpf("");
     setEmail("");
@@ -73,6 +88,11 @@ export function AlternateLoginDrawer() {
   }
 
   function handlePreviousButton() {
+    if (step === 1) {
+      setIsOpen(false);
+      return;
+    }
+
     if (step === 2) {
       setStep(1);
     } else if (step === 3) {
@@ -138,8 +158,7 @@ export function AlternateLoginDrawer() {
   }
 
   return (
-    <>
-      <Drawer open={isOpen} onOpenChange={setIsOpen}>
+    <Drawer open={isOpen} onOpenChange={handleOpenChange}>
         <span className="mt-4 bg-[#FAFAFA] px-5 text-center md:hidden">
           Perdeu o acesso à sua conta gov.br?
           <DrawerTrigger
@@ -150,23 +169,26 @@ export function AlternateLoginDrawer() {
           </DrawerTrigger>{" "}
           do Procura.Aí apenas com seu e-mail.
         </span>
-        <DrawerContent className="flex bg-white">
+        <DrawerContent className="flex max-h-[85vh] overflow-y-auto bg-white">
           <StepOne
             step={step}
-            setStep={setStep}
             cpf={cpf}
             setCpf={setCpf}
-            onClose={handleCloseDrawer}
           />
-          <StepTwo step={step} setStep={setStep} cpf={cpf} />
-          <StepThree step={step} setStep={setStep} cpf={cpf} setCpf={setCpf} />
+          <StepTwo step={step} maskedEmail={maskedEmail} />
+          <StepThree
+            step={step}
+            maskedEmail={maskedEmail}
+            code={code}
+            setCode={setCode}
+            onResendCode={handleSendCode}
+            isSubmitting={isSubmitting}
+          />
           <DrawerFooter className="flex w-full flex-row justify-between">
-            <DrawerClose>
-              <Button variant="white" onClick={handlePreviousButton}>
-                Voltar
-              </Button>
-            </DrawerClose>
-            <Button variant="blue" onClick={handleNextButton}>
+            <Button variant="white" onClick={handlePreviousButton}>
+              Voltar
+            </Button>
+            <Button variant="blue" onClick={handleNextButton} disabled={isSubmitting}>
               {step === 1 && "Avançar"}
               {step === 2 && "Enviar Código"}
               {step === 3 && "Validar Código"}
@@ -174,7 +196,6 @@ export function AlternateLoginDrawer() {
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
-    </>
   );
 }
 
@@ -189,8 +210,11 @@ function StepOne({
 }) {
   return (
     step === 1 && (
-      <div className="mb-2 mt-2 flex h-[22rem] w-full flex-col justify-between gap-0 duration-700 animate-in slide-in-from-left">
-        <div className="flex flex-col items-center justify-center">
+      <div className="mb-2 mt-1 flex h-[22rem] w-full flex-col justify-start gap-0 duration-700 animate-in slide-in-from-left">
+        <div className="mb-1 flex w-full justify-center">
+          <span className="block h-1 w-10 rounded-full bg-zinc-400" aria-hidden="true" />
+        </div>
+        <div className="flex flex-col items-center justify-start pt-1">
           <h1 className="mb-2 text-lg font-bold">
             Acesso limitado ao Procura.Aí
           </h1>
@@ -198,82 +222,20 @@ function StepOne({
             Para acessar ao Procura.Aí através do e-mail, insira o seu CPF
           </p>
 
-          <div className="mb-2 w-full">
-            <span className="text-sm">CPF</span>
-            <InputOTP
-              maxLength={11}
-              containerClassName="ring-1 ring-zinc-400"
-              className="flex w-full items-center justify-center overflow-x-auto"
+          <div className="mb-2 mt-3 flex w-full max-w-[28rem] flex-col px-6">
+            <span className="mb-1 w-full text-left text-sm">CPF</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              maxLength={14}
+              placeholder="000.000.000-00"
+              className="h-14 w-full rounded-full border border-zinc-300 bg-white px-5 text-lg text-zinc-700 outline-none transition placeholder:text-zinc-400 focus:border-secondary"
               value={cpf}
-              onChange={(e) => setCpf(e)}
-            >
-              <InputOTPGroup>
-                <InputOTPSlot
-                  className="-ml-1 h-5 w-3.5 border-0 border-none shadow-transparent mobile:-ml-2 mobile:w-5 mobile-lg:-ml-1 mobile-lg:w-6"
-                  index={0}
-                />
-                <InputOTPSlot
-                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
-                  index={1}
-                />
-                <InputOTPSlot
-                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
-                  index={2}
-                />
-              </InputOTPGroup>
-              <InputOTPSeparator className="relative -bottom-2" />
-              <InputOTPGroup>
-                <InputOTPSlot
-                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
-                  index={3}
-                />
-                <InputOTPSlot
-                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
-                  index={4}
-                />
-                <InputOTPSlot
-                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
-                  index={5}
-                />
-              </InputOTPGroup>
-              <InputOTPSeparator className="relative -bottom-2" />
-              <InputOTPGroup>
-                <InputOTPSlot
-                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
-                  index={6}
-                />
-                <InputOTPSlot
-                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
-                  index={7}
-                />
-                <InputOTPSlot
-                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
-                  index={8}
-                />
-              </InputOTPGroup>
-              <InputOTPSeparator data-dash />
-              <InputOTPGroup>
-                <InputOTPSlot
-                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
-                  index={9}
-                />
-                <InputOTPSlot
-                  className="h-5 w-3.5 border-0 border-none shadow-transparent mobile:w-5 mobile-lg:w-6"
-                  index={10}
-                />
-              </InputOTPGroup>
-            </InputOTP>
+              onChange={(e) => setCpf(maskCpf(e.target.value))}
+            />
           </div>
         </div>
-
-        {/* <div className="flex w-full justify-between">
-          <Button variant="white" onClick={onClose}>
-            Voltar
-          </Button>
-          <Button variant="blue" onClick={handleValidateCPF}>
-            Avançar
-          </Button>
-        </div> */}
       </div>
     )
   );
@@ -291,6 +253,9 @@ function StepTwo({
   return (
     step === 2 && (
       <div className="mb-2 mt-2 flex h-[22rem] w-full flex-col justify-between gap-0 duration-700 animate-in slide-in-from-left">
+        <div className="mb-3 flex w-full justify-center">
+          <span className="block h-1 w-10 rounded-full bg-zinc-400" aria-hidden="true" />
+        </div>
         <div className="flex flex-col items-center">
           <span className="mb-2 text-lg font-bold">Verificação de e-mail</span>
           <span className="text-center">
@@ -306,15 +271,6 @@ function StepTwo({
             priority
           />
         </div>
-
-        {/* <div className="flex w-full flex-row justify-between">
-          <Button variant="white" onClick={() => setStep(1)}>
-            Cancelar
-          </Button>
-          <Button variant="blue" onClick={() => setStep(3)}>
-            Enviar Código
-          </Button>
-        </div> */}
       </div>
     )
   );
@@ -340,6 +296,9 @@ function StepThree({
   return (
     step === 3 && (
       <div className="mb-2 mt-2 flex min-h-[20rem] w-full flex-col justify-between gap-0 duration-700 animate-in slide-in-from-left">
+        <div className="mb-3 flex w-full justify-center">
+          <span className="block h-1 w-10 rounded-full bg-zinc-400" aria-hidden="true" />
+        </div>
         <div className="flex flex-col items-center">
           <span className="mb-2 text-lg font-bold">Código enviado</span>
           <span className="text-center">
@@ -347,45 +306,45 @@ function StepThree({
             {displayEmail}
           </span>
 
-          <div className="flex w-full flex-col items-center gap-2">
+          <div className="flex w-full max-w-[22rem] flex-col items-center gap-2">
             <Image
               src={codeSent}
               alt="codigo enviado com sucesso"
               className="mt-4 h-auto w-full max-w-[15rem]"
               priority
             />
-            <div className="mb-6 w-full gap-2 self-start">
+            <div className="mb-6 flex w-full flex-col items-center gap-2">
               <div className="mb-2 w-full">
                 <InputOTP
                   maxLength={6}
                   containerClassName=""
-                  className="flex w-full"
+                  className="flex w-full justify-center"
                   value={code}
                   onChange={(e) => setCode(e)}
                 >
-                  <InputOTPGroup>
+                  <InputOTPGroup className="w-full justify-center gap-2">
                     <InputOTPSlot
-                      className="-ml-2 mr-2.5 h-14 w-9 rounded-lg text-lg shadow-transparent ring-1 ring-zinc-300 mobile:-ml-1 mobile:w-11 mobile:text-2xl mobile-lg:-ml-4 mobile-lg:h-16 mobile-lg:w-14"
+                      className="h-14 w-9 rounded-lg text-lg shadow-transparent ring-1 ring-zinc-300 mobile:w-11 mobile:text-2xl mobile-lg:h-16 mobile-lg:w-14"
                       index={0}
                     />
                     <InputOTPSlot
-                      className="mr-2.5 h-14 w-9 rounded-lg text-lg shadow-transparent ring-1 ring-zinc-300 mobile:w-11 mobile:text-2xl mobile-lg:h-16 mobile-lg:w-14"
+                      className="h-14 w-9 rounded-lg text-lg shadow-transparent ring-1 ring-zinc-300 mobile:w-11 mobile:text-2xl mobile-lg:h-16 mobile-lg:w-14"
                       index={1}
                     />
                     <InputOTPSlot
-                      className="mr-2.5 h-14 w-9 rounded-lg text-lg shadow-transparent ring-1 ring-zinc-300 mobile:w-11 mobile:text-2xl mobile-lg:h-16 mobile-lg:w-14"
+                      className="h-14 w-9 rounded-lg text-lg shadow-transparent ring-1 ring-zinc-300 mobile:w-11 mobile:text-2xl mobile-lg:h-16 mobile-lg:w-14"
                       index={2}
                     />
                     <InputOTPSlot
-                      className="mr-2.5 h-14 w-9 rounded-lg text-lg shadow-transparent ring-1 ring-zinc-300 mobile:w-11 mobile:text-2xl mobile-lg:h-16 mobile-lg:w-14"
+                      className="h-14 w-9 rounded-lg text-lg shadow-transparent ring-1 ring-zinc-300 mobile:w-11 mobile:text-2xl mobile-lg:h-16 mobile-lg:w-14"
                       index={3}
                     />
                     <InputOTPSlot
-                      className="mr-2.5 h-14 w-9 rounded-lg text-lg shadow-transparent ring-1 ring-zinc-300 mobile:w-11 mobile:text-2xl mobile-lg:h-16 mobile-lg:w-14"
+                      className="h-14 w-9 rounded-lg text-lg shadow-transparent ring-1 ring-zinc-300 mobile:w-11 mobile:text-2xl mobile-lg:h-16 mobile-lg:w-14"
                       index={4}
                     />
                     <InputOTPSlot
-                      className="mr-2.5 h-14 w-9 rounded-lg text-lg shadow-transparent ring-1 ring-zinc-300 mobile:w-11 mobile:text-2xl mobile-lg:h-16 mobile-lg:w-14"
+                      className="h-14 w-9 rounded-lg text-lg shadow-transparent ring-1 ring-zinc-300 mobile:w-11 mobile:text-2xl mobile-lg:h-16 mobile-lg:w-14"
                       index={5}
                     />
                   </InputOTPGroup>
@@ -393,7 +352,7 @@ function StepThree({
               </div>
 
               <button
-                className="self-start text-secondary underline"
+                className="text-secondary underline"
                 type="button"
                 onClick={onResendCode}
                 disabled={isSubmitting}
@@ -401,7 +360,7 @@ function StepThree({
                 Reenviar código
               </button>
 
-              <div className="mt-5 flex w-full flex-col self-start rounded-lg bg-[#C4F3F2] px-4 py-2">
+              <div className="mt-5 flex w-full flex-col rounded-lg bg-[#C4F3F2] px-4 py-2 text-center">
                 <span>
                   Atenção <br />
                   Este código tem validade de 5 minutos. <br />
@@ -412,13 +371,6 @@ function StepThree({
             </div>
           </div>
         </div>
-
-        {/* <div className="flex w-full justify-between">
-          <Button variant="white" onClick={() => setStep(2)}>
-            Voltar
-          </Button>
-          <Button variant="blue">Validar Código</Button>
-        </div> */}
       </div>
     )
   );

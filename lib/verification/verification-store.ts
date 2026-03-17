@@ -5,15 +5,10 @@ if (typeof window !== "undefined") {
 interface VerificationCodeDocument {
   $id: string;
   email: string;
-  hashed_code?: string;
-  hashedCode?: string;
-  expires_at?: string;
-  expiresAt?: string;
+  hashed_code: string;
+  expires_at: string;
   attempts: number;
-  user_id?: string | string[] | { $id?: string } | Array<{ $id?: string }>;
-  userId?: string;
-  user_name?: string;
-  userName?: string;
+  user_id: string;
 }
 
 interface SaveCodeInput {
@@ -22,12 +17,6 @@ interface SaveCodeInput {
   expiresAt: string;
   userId: string;
   userName?: string;
-}
-
-interface UserDocument {
-  $id?: string;
-  user_id?: string;
-  email?: string;
 }
 
 const API_URL =
@@ -47,9 +36,6 @@ const DATABASE_ID =
 const VERIFICATION_COLLECTION_ID =
   process.env.APPWRITE_COLLECTION_VERIFICATION_CODES ??
   process.env.NEXT_PUBLIC_COLLECTION_VERIFICATION_CODES;
-
-const USER_COLLECTION_ID =
-  process.env.APPWRITE_COLLECTION_USER ?? process.env.NEXT_PUBLIC_COLLECTION_USER;
 
 function assertConfig() {
   if (!PROJECT_ID || !DATABASE_ID || !VERIFICATION_COLLECTION_ID) {
@@ -100,13 +86,6 @@ export async function saveCode({
 }: SaveCodeInput) {
   await deleteCodeByEmail(email);
 
-  const relationCandidates: Array<Record<string, string | string[]>> = [];
-
-  if (USER_COLLECTION_ID) {
-    relationCandidates.push({ [USER_COLLECTION_ID]: userId });
-    relationCandidates.push({ [USER_COLLECTION_ID]: [userId] });
-  }
-
   // Keep required fields in snake_case and only vary user naming.
   // The collection in Appwrite is strict and may reject unknown attributes.
   const payloadCandidates = [
@@ -125,21 +104,6 @@ export async function saveCode({
       attempts: 0,
       user_id: userId,
     },
-    ...relationCandidates.map((relationValue) => ({
-      email,
-      hashed_code: hashedCode,
-      expires_at: expiresAt,
-      attempts: 0,
-      ...relationValue,
-      user_name: userName ?? "",
-    })),
-    ...relationCandidates.map((relationValue) => ({
-      email,
-      hashed_code: hashedCode,
-      expires_at: expiresAt,
-      attempts: 0,
-      ...relationValue,
-    })),
   ];
 
   let lastError: unknown = null;
@@ -239,39 +203,4 @@ export async function deleteCodeByEmail(email: string) {
   const documents = (data?.documents ?? []) as Array<{ $id: string }>;
 
   await Promise.all(documents.map((doc) => deleteCode(doc.$id)));
-}
-
-export async function getUserIdByEmail(email: string) {
-  assertConfig();
-
-  if (!USER_COLLECTION_ID) {
-    return null;
-  }
-
-  const userCollectionUrl = `${API_URL}/databases/${DATABASE_ID}/collections/${USER_COLLECTION_ID}/documents`;
-
-  const query = buildQueries([
-    {
-      method: "equal",
-      attribute: "email",
-      values: [email],
-    },
-    {
-      method: "limit",
-      values: [1],
-    },
-  ]);
-
-  const data = await requestJson(`${userCollectionUrl}?${query}`, {
-    method: "GET",
-    headers: buildHeaders(),
-  });
-
-  const user = data?.documents?.[0] as UserDocument | undefined;
-
-  if (!user) {
-    return null;
-  }
-
-  return user.user_id ?? user.$id ?? null;
 }

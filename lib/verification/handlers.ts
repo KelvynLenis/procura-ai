@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import {
   deleteCode,
   getCodeByEmail,
-  getUserIdByEmail,
   incrementAttempts,
   saveCode,
 } from "./verification-store";
@@ -11,46 +10,6 @@ import { emailService } from "@/services/email";
 
 const MAX_ATTEMPTS = 5;
 const CODE_TTL_MS = 5 * 60 * 1000;
-
-function getDocField(document: any, keys: string[], fallback = "") {
-  for (const key of keys) {
-    if (document?.[key] !== undefined && document?.[key] !== null) {
-      return document[key];
-    }
-  }
-
-  return fallback;
-}
-
-function resolveRelationUserId(value: unknown) {
-  if (!value) {
-    return "";
-  }
-
-  if (typeof value === "string") {
-    return value;
-  }
-
-  if (Array.isArray(value)) {
-    const first = value[0];
-
-    if (typeof first === "string") {
-      return first;
-    }
-
-    if (first && typeof first === "object" && "$id" in first) {
-      return String((first as { $id?: string }).$id ?? "");
-    }
-
-    return "";
-  }
-
-  if (typeof value === "object" && "$id" in (value as Record<string, unknown>)) {
-    return String((value as { $id?: string }).$id ?? "");
-  }
-
-  return "";
-}
 
 function generateCode() {
   return crypto.randomInt(100000, 1000000).toString();
@@ -130,8 +89,7 @@ export async function handleValidateCode(request: Request) {
       );
     }
 
-    const expiresAtValue = getDocField(document, ["expires_at", "expiresAt"]);
-    const expiresAt = new Date(String(expiresAtValue)).getTime();
+    const expiresAt = new Date(document.expires_at).getTime();
     if (Number.isNaN(expiresAt) || expiresAt < Date.now()) {
       await deleteCode(document.$id);
       return NextResponse.json(
@@ -153,9 +111,7 @@ export async function handleValidateCode(request: Request) {
 
     const hashedInput = hashCode(code);
 
-    const hashedCode = String(
-      getDocField(document, ["hashed_code", "hashedCode"]),
-    );
+    const hashedCode = document.hashed_code;
 
     if (hashedInput !== hashedCode) {
       const nextAttempts = document.attempts + 1;
@@ -185,21 +141,7 @@ export async function handleValidateCode(request: Request) {
 
     await deleteCode(document.$id);
 
-    const relationUserValue = getDocField(document, ["user_id", "userId"]);
-    let resolvedUserId = resolveRelationUserId(relationUserValue);
-
-    if (!resolvedUserId) {
-      const userIdByEmail = await getUserIdByEmail(email);
-
-      if (!userIdByEmail) {
-        return NextResponse.json(
-          { success: false, message: "Usuario nao encontrado para este email." },
-          { status: 404 },
-        );
-      }
-
-      resolvedUserId = userIdByEmail;
-    }
+    const resolvedUserId = document.user_id;
 
     return NextResponse.json({
       success: true,
