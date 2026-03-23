@@ -171,7 +171,7 @@ export function DeviceRow({
         <TableCell className="hidden pl-5 font-medium text-zinc-800 lg:table-cell">
           {index + 1}
         </TableCell>
-        <TableCell className="font-medium text-zinc-800 lg:flex">
+        <TableCell className="font-medium text-zinc-800 md:table-cell">
           {device.phone_model}
         </TableCell>
         <TableCell className="hidden font-medium capitalize md:table-cell">

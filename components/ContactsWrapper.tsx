@@ -17,11 +17,13 @@ import {
 } from "@/components/ui/dialog";
 import { ConctactForm } from "./Forms/ConctactForm";
 import Button from "./Button";
+import { useStatus } from "@/hooks/useStatus";
 
 export function ContactsComponent() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { userStatus } = useStatus();
 
   useEffect(() => {
     const getContacts = async () => {
@@ -52,8 +54,8 @@ export function ContactsComponent() {
               <DialogTrigger className="w-fit">
                 <Button
                   type="button"
-                  variant="blue"
-                  disabled={contacts.length >= 3}
+                  variant={userStatus === "Ativo" ? "blue" : "disabled"}
+                  disabled={contacts.length >= 3 || userStatus !== "Ativo"}
                   className={cn("mt-4 self-start")}
                 >
                   Adicionar contato
@@ -79,9 +81,11 @@ export function ContactsComponent() {
                 contacts.length >= 3 && "text-red-500",
               )}
             >
-              {contacts.length >= 3
-                ? "Você atingiu o limite máximo de contatos cadastrados."
-                : `Você cadastrou ${contacts.length} contatos. Limite máximo de 3
+              {userStatus !== "Ativo"
+                ? "Não é possível cadastrar contatos na versão limitada."
+                : contacts.length >= 3
+                  ? "Você atingiu o limite máximo de contatos cadastrados."
+                  : `Você cadastrou ${contacts.length} contatos. Limite máximo de 3
               contatos.`}
             </span>
           </div>
