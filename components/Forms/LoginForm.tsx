@@ -28,6 +28,7 @@ import loginMobileBanner from "../../assets/images/login-mobile-banner.png";
 import { Eye, EyeOff } from "lucide-react";
 import { AlternateLoginDrawer } from "./AlternateLoginDrawer";
 import { AlternateLoginForWeb } from "./AlternateLoginForWeb";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -211,7 +212,10 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
                             <button
                               type="button"
                               onClick={() => setShowPassword((prev) => !prev)}
-                              className="absolute right-12 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-700"
+                              className={cn(
+                                "absolute top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-700",
+                                isAdminPage ? "right-2" : "right-8",
+                              )}
                             >
                               {showPassword ? (
                                 <EyeOff size={18} />
