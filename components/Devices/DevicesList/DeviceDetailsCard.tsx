@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { getOperator } from "@/functions/operators/get-operator";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
+import { useStatus } from "@/hooks/useStatus";
 
 interface DeviceDetailsCardProps {
   id: string; // ID do dispositivo
@@ -54,6 +55,7 @@ export function DeviceDetailsCard({
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [operator, setOperator] = useState<Operator>();
+  const { userStatus } = useStatus();
 
   const device = {
     id,
@@ -212,7 +214,13 @@ export function DeviceDetailsCard({
             <DialogTrigger>
               <button
                 type="button"
-                className="group relative flex h-10 w-10 items-center justify-center rounded-lg bg-white ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700"
+                disabled={userStatus !== "Ativo"}
+                className={cn(
+                  "group relative flex h-10 w-10 items-center justify-center rounded-lg",
+                  userStatus === "Ativo"
+                    ? "bg-white ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700"
+                    : "bg-transparent text-zinc-400 opacity-50 ring-1 ring-zinc-300",
+                )}
               >
                 <ImPencil size={20} />
               </button>
@@ -232,10 +240,16 @@ export function DeviceDetailsCard({
             title="Tem certeza que deseja excluir esse dispositivo?"
             description="Essa ação não pode ser desfeita. Isso excluirá permanentemente o
             dispositivo e removerá seus dados de nossos servidores."
+            disabled={userStatus !== "Ativo"}
           >
             <button
               type="button"
-              className="group relative flex h-10 w-10 items-center justify-center gap-2 rounded-lg bg-white text-red-600 ring-1 ring-zinc-300 hover:bg-red-200 hover:opacity-90 hover:ring-red-600"
+              className={cn(
+                "group relative flex h-10 w-10 items-center justify-center gap-2 rounded-lg",
+                userStatus === "Ativo"
+                  ? "text-red-600 ring-1 ring-zinc-300 hover:bg-red-200 hover:opacity-90 hover:ring-red-600"
+                  : "bg-transparent text-zinc-400 opacity-50 ring-1 ring-zinc-300",
+              )}
             >
               <Trash2 size={20} />
             </button>
