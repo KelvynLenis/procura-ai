@@ -26,6 +26,9 @@ import deviceInfo from "../../../assets/icons/device-info.png";
 import Image from "next/image";
 import { updateDeviceStatus } from "@/functions/device/update-device-status";
 import { createEvent } from "@/functions/event/create-event";
+import { useStatus } from "@/hooks/useStatus";
+import Button from "@/components/Button";
+import { useRouter } from "next/navigation";
 
 interface DeviceRowProps {
   // key: string
@@ -64,6 +67,9 @@ export function DeviceRow({
   );
   const [isViewAlertModalOpen, setIsViewAlertModalOpen] = useState(false);
   const [operator, setOperator] = useState<Operator>();
+  const { userStatus } = useStatus();
+
+  const router = useRouter();
 
   async function handleDeleteDevice(id: string) {
     try {
@@ -130,6 +136,7 @@ export function DeviceRow({
 
   function showLoadingToast() {
     setIsLoading(true);
+    router.push(`meus-dispositivos/edit/${id}`);
   }
 
   useEffect(() => {
@@ -171,7 +178,7 @@ export function DeviceRow({
         <TableCell className="hidden pl-5 font-medium text-zinc-800 lg:table-cell">
           {index + 1}
         </TableCell>
-        <TableCell className="font-medium text-zinc-800 lg:flex">
+        <TableCell className="font-medium text-zinc-800 md:table-cell">
           {device.phone_model}
         </TableCell>
         <TableCell className="hidden font-medium capitalize md:table-cell">
@@ -275,31 +282,35 @@ export function DeviceRow({
               </DialogContent>
             </Dialog>
 
-            <Link href={`meus-dispositivos/edit/${id}`}>
-              <button
-                type="button"
-                onClick={showLoadingToast}
-                className="group relative hidden h-10 w-10 items-center justify-center rounded-lg ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700 md:flex"
-              >
-                <ImPencil size={16} />
-                <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
-                  Editar dispositivo
-                </span>
-              </button>
-            </Link>
+            <button
+              type="button"
+              disabled={userStatus !== "Ativo"}
+              onClick={showLoadingToast}
+              className="group relative hidden h-10 w-10 items-center justify-center rounded-lg ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700 disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:ring-zinc-300 md:flex"
+            >
+              <ImPencil size={16} />
+              <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
+                Editar dispositivo
+              </span>
+            </button>
 
             <ConfirmationDialog
               title="Deseja deletar este dispositivo?"
               description="Essa ação não pode ser desfeita. Isso excluirá
                     permanentemente o dispositivo e removerá seus dados de
                     nossos servidores."
+              disabled={userStatus !== "Ativo"}
               onConfirm={() => {
                 handleDeleteDevice(id);
               }}
             >
               <div
-                // type="button"
-                className="group relative hidden h-10 w-10 items-center justify-center gap-2 rounded-lg text-red-600 ring-1 ring-zinc-300 hover:bg-red-200 hover:opacity-90 hover:ring-red-600 md:flex"
+                className={cn(
+                  "group relative hidden h-10 w-10 items-center justify-center gap-2 rounded-lg md:flex",
+                  userStatus === "Ativo"
+                    ? "text-red-600 ring-1 ring-zinc-300 hover:bg-red-200 hover:opacity-90 hover:ring-red-600"
+                    : "bg-transparent text-zinc-400 opacity-50 ring-1 ring-zinc-300",
+                )}
               >
                 <Trash2 size={20} />
                 <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">

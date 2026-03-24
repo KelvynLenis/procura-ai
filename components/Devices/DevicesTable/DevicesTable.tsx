@@ -11,6 +11,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import type { DeviceProps } from "@/types";
 import { DeviceRow } from "./DeviceRow";
+import { useStatus } from "@/hooks/useStatus";
 
 interface DevicesTableProps {
   devices: DeviceProps[];

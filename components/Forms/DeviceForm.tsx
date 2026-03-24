@@ -52,6 +52,7 @@ import { checkImei } from "@/functions/device/check-imei";
 import { LoadingToast } from "../LoadingToast";
 import { listOperators } from "@/functions/operators/list-operators";
 import type { Operator } from "@/types";
+import { useStatus } from "@/hooks/useStatus";
 
 interface AddDeviceFormProps {
   device?: DeviceProps;
@@ -73,6 +74,7 @@ export function DeviceForm({
   >([]);
   const [operatorsLoaded, setOperatorsLoaded] = useState(false);
   const route = useRouter();
+  const { userStatus } = useStatus();
 
   const formSchema = z
     .object({
@@ -623,7 +625,12 @@ export function DeviceForm({
                     </Button>
                   </Link>
                 )}
-                <Button type="submit" variant="blue" className="!w-60">
+                <Button
+                  type="submit"
+                  variant={userStatus === "Ativo" ? "blue" : "disabled"}
+                  disabled={userStatus !== "Ativo"}
+                  className="!w-60"
+                >
                   Salvar alterações
                 </Button>
               </div>
@@ -650,7 +657,12 @@ export function DeviceForm({
                     </Button>
                   </Link>
                 )}
-                <Button type="submit" variant="blue" className="!w-60">
+                <Button
+                  type="submit"
+                  variant={userStatus === "Ativo" ? "blue" : "disabled"}
+                  disabled={userStatus !== "Ativo"}
+                  className="!w-60"
+                >
                   Cadastrar
                 </Button>
               </div>

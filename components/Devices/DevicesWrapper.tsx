@@ -8,6 +8,8 @@ import Link from "next/link";
 import { DevicesList } from "./DevicesList/DevicesList";
 import { DevicesTable } from "./DevicesTable/DevicesTable";
 import { listDevices } from "@/functions/device/list-devices";
+import { useStatus } from "@/hooks/useStatus";
+import { useRouter } from "next/navigation";
 
 export function DevicesWrapper({
   deviceNotificationId,
@@ -19,6 +21,8 @@ export function DevicesWrapper({
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [totalDevices, setTotalDevices] = useState(0);
+  const { userStatus } = useStatus();
+  const router = useRouter();
 
   const limit = 100;
 
@@ -28,6 +32,7 @@ export function DevicesWrapper({
   }
 
   function showLoadingToast() {
+    router.push("/cadastrar-dispositivo");
     setIsLoading(true);
   }
 
@@ -65,11 +70,14 @@ export function DevicesWrapper({
           isLoading={isLoading}
           deviceNotificationId={deviceNotificationId}
         />
-        <Link href={"/cadastrar-dispositivo"} className="self-end">
-          <Button onClick={showLoadingToast} variant="blue" className="my-3">
-            Cadastrar dispositivo
-          </Button>
-        </Link>
+        <Button
+          onClick={showLoadingToast}
+          variant={userStatus === "Ativo" ? "blue" : "disabled"}
+          disabled={userStatus !== "Ativo"}
+          className="my-3"
+        >
+          Cadastrar dispositivo
+        </Button>
       </div>
 
       <div className="md:hidden">

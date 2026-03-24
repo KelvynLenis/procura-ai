@@ -7,7 +7,7 @@ import { useState } from "react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  variant: "orange" | "blue" | "white" | "red" | "black" | "empty";
+  variant: "orange" | "blue" | "white" | "red" | "black" | "empty" | "disabled";
   isLoader?: boolean;
   className?: string;
 }
@@ -24,7 +24,7 @@ export default function Button({
   return (
     <button
       className={cn(
-        "flex w-fit items-center justify-center rounded-full px-6 py-2 text-center text-sm font-semibold drop-shadow transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0 lg:text-xl",
+        "flex w-fit items-center justify-center rounded-full px-6 py-2 text-center text-sm font-semibold drop-shadow transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0 lg:text-base",
         variant === "blue" &&
           "border-[0.5px] border-secondary bg-secondary text-white hover:bg-white hover:text-secondary",
         variant === "white" &&
@@ -35,6 +35,8 @@ export default function Button({
           "border-[0.5px] border-red-500 bg-red-500 text-white hover:bg-white hover:text-red-500",
         variant === "empty" &&
           "text-primary drop-shadow-none hover:text-primary/80",
+        variant === "disabled" &&
+          "w-fit bg-zinc-300 font-medium text-zinc-500 opacity-50",
         className,
       )}
       onClick={() => setIsLoading(true)}

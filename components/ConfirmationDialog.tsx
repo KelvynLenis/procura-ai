@@ -15,6 +15,8 @@ interface ConfirmationDialogProps {
   title: string;
   description: string;
   children: React.ReactNode;
+  disabled?: boolean;
+  disabledStyles?: string;
 }
 
 export function ConfirmationDialog({
@@ -22,11 +24,13 @@ export function ConfirmationDialog({
   title,
   description,
   children,
+  disabled,
+  disabledStyles,
 }: ConfirmationDialogProps) {
   return (
     <>
       <AlertDialog>
-        <AlertDialogTrigger>{children}</AlertDialogTrigger>
+        <AlertDialogTrigger disabled={disabled}>{children}</AlertDialogTrigger>
         <AlertDialogContent className="mr-10 w-[90%]">
           <AlertDialogHeader>
             <AlertDialogTitle>{title}</AlertDialogTitle>

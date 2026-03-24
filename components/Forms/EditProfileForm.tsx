@@ -52,6 +52,7 @@ import { EditPassword } from "./EditPassword";
 import ClipLoader from "react-spinners/ClipLoader";
 import { account } from "@/lib/appwrite";
 import { useRouter } from "next/navigation";
+import { useStatus } from "@/hooks/useStatus";
 
 const formSchema = z
   .object({
@@ -90,6 +91,7 @@ export function EditProfileForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [user, setUser] = useState<User>({} as User);
   const [file, setFile] = useState<File>();
+  const { userStatus } = useStatus();
 
   // Estados para controle de imagem
   const [imageState, setImageState] = useState<{
@@ -479,7 +481,11 @@ export function EditProfileForm() {
               >
                 Cancelar
               </Button>
-              <Button variant="blue" type="submit" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                variant={userStatus === "Ativo" ? "blue" : "disabled"}
+                disabled={isSubmitting || userStatus !== "Ativo"}
+              >
                 {isSubmitting ? "Salvando..." : "Salvar"}
               </Button>
             </div>
