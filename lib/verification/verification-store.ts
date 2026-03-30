@@ -37,6 +37,10 @@ const VERIFICATION_COLLECTION_ID =
   process.env.APPWRITE_COLLECTION_VERIFICATION_CODES ??
   process.env.NEXT_PUBLIC_COLLECTION_VERIFICATION_CODES;
 
+const USER_COLLECTION_ID =
+  process.env.APPWRITE_COLLECTION_USER ??
+  process.env.NEXT_PUBLIC_COLLECTION_USER;
+
 function assertConfig() {
   if (!PROJECT_ID || !DATABASE_ID || !VERIFICATION_COLLECTION_ID) {
     throw new Error("Configuracao do Appwrite incompleta para verification_codes");
@@ -203,4 +207,62 @@ export async function deleteCodeByEmail(email: string) {
   const documents = (data?.documents ?? []) as Array<{ $id: string }>;
 
   await Promise.all(documents.map((doc) => deleteCode(doc.$id)));
+}
+
+export async function updateUserStatusByAuthId(
+  authUserId: string,
+  status: string,
+) {
+  if (!USER_COLLECTION_ID) {
+    throw new Error("Configuracao do Appwrite incompleta para users");
+  }
+
+  const query = buildQueries([
+    {
+      method: "equal",
+      attribute: "user_id",
+      values: [authUserId],
+    },
+    {
+      method: "limit",
+      values: [1],
+    },
+  ]);
+
+  const usersResponse = await requestJson(
+    `${API_URL}/databases/${DATABASE_ID}/collections/${USER_COLLECTION_ID}/documents?${query}`,
+    {
+      method: "GET",
+      headers: buildHeaders(),
+    },
+  );
+
+  const userDocument = usersResponse?.documents?.[0] as { $id: string } | undefined;
+
+  if (!userDocument?.$id) {
+    throw new Error("Usuario nao encontrado para atualizar status");
+  }
+
+  return requestJson(
+    `${API_URL}/databases/${DATABASE_ID}/collections/${USER_COLLECTION_ID}/documents/${userDocument.$id}`,
+    {
+      method: "PATCH",
+      headers: buildHeaders(),
+      body: JSON.stringify({
+        data: { status },
+      }),
+    },
+  );
+}
+
+export async function createSessionTokenByAuthUserId(authUserId: string) {
+  if (!API_KEY) {
+    throw new Error("APPWRITE_API_KEY obrigatoria para criar sessao");
+  }
+
+  return requestJson(`${API_URL}/users/${authUserId}/tokens`, {
+    method: "POST",
+    headers: buildHeaders(),
+    body: JSON.stringify({}),
+  });
 }

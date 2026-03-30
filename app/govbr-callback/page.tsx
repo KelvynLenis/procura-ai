@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { account } from "@/lib/appwrite";
 import { createUser } from "@/functions/user/create-user";
+import { getUserInfo } from "@/functions/user/get-user-info";
+import { updateUserStatus } from "@/functions/user/update-user-status";
 import { v4 as uuidv4 } from "uuid";
 import ClipLoader from "react-spinners/ClipLoader";
 import { 
@@ -20,6 +22,18 @@ export default function GovBrCallback() {
   const [status, setStatus] = useState("Processando autenticação Gov.br...");
   const [error, setError] = useState<string | null>(null);
   const [hasProcessed, setHasProcessed] = useState(false);
+
+  const activateLimitedAccessIfNeeded = async (authUserId: string) => {
+    const [userDoc] = await getUserInfo(authUserId);
+
+    if (!userDoc || userDoc.status !== "Limitado") {
+      return;
+    }
+
+    await updateUserStatus(userDoc.$id, {
+      status: "Ativo",
+    });
+  };
 
   useEffect(() => {
     // Prevenir execução múltipla
@@ -53,6 +67,7 @@ export default function GovBrCallback() {
 
         try {
           const session = await account.createEmailPasswordSession(appwriteUser.email, appwriteUser.password);
+          await activateLimitedAccessIfNeeded(session.userId);
           setStatus("Login realizado! Redirecionando...");
           
           setTimeout(() => router.push('/meus-dispositivos'), 1000);
@@ -75,6 +90,7 @@ export default function GovBrCallback() {
               setStatus("Conta criada! Fazendo login...");
 
               const session = await account.createEmailPasswordSession(appwriteUser.email, appwriteUser.password);
+              await activateLimitedAccessIfNeeded(session.userId);
               setStatus("Login realizado! Redirecionando...");
               
               setTimeout(() => router.push('/meus-dispositivos'), 1000);
@@ -85,6 +101,7 @@ export default function GovBrCallback() {
                 
                 try {
                   const session = await account.createEmailPasswordSession(appwriteUser.email, appwriteUser.password);
+                  await activateLimitedAccessIfNeeded(session.userId);
                   setStatus("Login realizado! Redirecionando...");
                   
                   setTimeout(() => router.push('/meus-dispositivos'), 1000);

@@ -2,6 +2,7 @@ interface ValidateVerificationCodeResponse {
   success: boolean;
   message: string;
   userId?: string;
+  sessionSecret?: string;
 }
 
 const HANDLED_STATUSES = new Set([401, 404, 410, 429]);

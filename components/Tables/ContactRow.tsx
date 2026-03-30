@@ -17,6 +17,7 @@ import { deleteContact } from "@/functions/contact/delete-contact";
 import { toast } from "react-toastify";
 import { ConctactForm } from "../Forms/ConctactForm";
 import { useState } from "react";
+import { useStatus } from "@/hooks/useStatus";
 
 interface ContactRowProps {
   contact: Contact;
@@ -26,6 +27,7 @@ interface ContactRowProps {
 
 export function ContactRow({ contact, index, setContacts }: ContactRowProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { userStatus } = useStatus();
 
   async function handleDelete() {
     toast.promise(deleteContact(contact.$id), {
@@ -85,7 +87,13 @@ export function ContactRow({ contact, index, setContacts }: ContactRowProps) {
               <DialogTrigger asChild>
                 <button
                   type="button"
-                  className="group relative flex h-10 w-10 items-center justify-center rounded-lg ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700"
+                  disabled={userStatus !== "Ativo"}
+                  className={cn(
+                    "group relative flex h-10 w-10 items-center justify-center rounded-lg ring-1 ring-zinc-300",
+                    userStatus === "Ativo"
+                      ? "hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700"
+                      : "text-zinc-400 opacity-50",
+                  )}
                 >
                   <Pencil size={26} />
                   <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
@@ -112,10 +120,16 @@ export function ContactRow({ contact, index, setContacts }: ContactRowProps) {
               title="Tem certeza que deseja deletar o contato?"
               description="Ao concordar com esta ação, o contato será removido da lista de contatos. Caso a policia encontre o dispositivo não será possível saber a quem ele pertence e nem te alertar de sua recuperação."
               onConfirm={handleDelete}
+              disabled={userStatus !== "Ativo"}
             >
               <button
                 type="button"
-                className="group relative hidden h-10 w-10 items-center justify-center gap-2 rounded-lg text-red-600 ring-1 ring-zinc-300 hover:bg-red-200 hover:opacity-90 hover:ring-red-600 md:flex"
+                className={cn(
+                  "group relative hidden h-10 w-10 items-center justify-center gap-2 rounded-lg ring-1 ring-zinc-300 md:flex",
+                  userStatus === "Ativo"
+                    ? "text-red-600 hover:bg-red-200 hover:opacity-90 hover:ring-red-600"
+                    : "text-zinc-400 opacity-50",
+                )}
               >
                 <Trash2 size={20} />
                 <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
