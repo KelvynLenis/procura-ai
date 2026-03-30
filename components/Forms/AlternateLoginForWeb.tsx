@@ -4,6 +4,7 @@ import { formatEmail, validateCPF } from "@/lib/utils";
 import { getUserByCPF } from "@/functions/user/get-user-by-cpf";
 import { sendVerificationCode } from "@/functions/verification/send-verification-code";
 import { validateVerificationCode } from "@/functions/verification/validate-verification-code";
+import { createSessionFromToken } from "@/functions/auth/create-session-from-token";
 import {
   InputOTP,
   InputOTPGroup,
@@ -12,6 +13,7 @@ import {
 } from "../ui/input-otp";
 import { toast } from "react-toastify";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import verifyEmail from "../../assets/images/verify-email.svg";
 import codeSent from "../../assets/images/code-sent.svg";
 import { CircleAlert } from "lucide-react";
@@ -29,6 +31,7 @@ export function AlternateLoginForWeb({
   const [userName, setUserName] = useState("");
   const [code, setCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   async function handleValidateCPF() {
     const isValid = validateCPF(cpf);
@@ -91,7 +94,14 @@ export function AlternateLoginForWeb({
         return;
       }
 
+      if (!result.userId || !result.sessionSecret) {
+        throw new Error("Nao foi possivel autenticar o usuario");
+      }
+
+      await createSessionFromToken(result.userId, result.sessionSecret);
+
       toast.success("Código validado com sucesso");
+      router.push("/meus-dispositivos");
     } catch (error: any) {
       toast.error(error?.message || "Erro ao validar código");
     } finally {

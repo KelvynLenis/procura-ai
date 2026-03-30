@@ -33,6 +33,7 @@ import logo from "../assets/icons/logo-text-2.svg";
 // import logo from '../assets/icons/logo-text.svg'
 import Image from "next/image";
 import { RiAlarmWarningFill } from "react-icons/ri";
+import { useStatus } from "@/hooks/useStatus";
 
 const devicesGroup = [
   {
@@ -104,6 +105,7 @@ export function AppSidebar({ admin }: SidebarProps) {
   const [isLoading, setIsLoading] = useState(true);
   const { isMobile, toggleSidebar } = useSidebar();
   const router = useRouter();
+  const { userStatus } = useStatus();
 
   const pathname = usePathname().slice(1);
 
@@ -112,6 +114,10 @@ export function AppSidebar({ admin }: SidebarProps) {
   }
 
   function showLoadingToast(url: string) {
+    if (url === "cadastrar-dispositivo" && userStatus !== "Ativo") {
+      return;
+    }
+
     setIsLoading(true);
     isMobile && toggleSidebar();
     // toast(<LoadingToast isReactToastifyComponent />, {
@@ -188,6 +194,11 @@ export function AppSidebar({ admin }: SidebarProps) {
                           <button
                             type="button"
                             onClick={() => showLoadingToast(item.url)}
+                            disabled={
+                              item.url === "cadastrar-dispositivo" &&
+                              userStatus !== "Ativo"
+                            }
+                            className="disabled:cursor-not-allowed disabled:opacity-50"
                           >
                             {pathname === item.url && (
                               <span className="absolute left-0 h-full w-0.5 rounded-xl bg-secondary" />

@@ -11,9 +11,11 @@ import ContactsFocusedIcon from "@/assets/icons/contacts-focused.svg";
 import { Smartphone, User } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useStatus } from "@/hooks/useStatus";
 
 export function MobileNavBar() {
   const [isLoading, setIsLoading] = useState(true);
+  const { userStatus } = useStatus();
 
   const pathname = usePathname().slice(1);
 
@@ -59,8 +61,9 @@ export function MobileNavBar() {
 
         <button
           type="button"
-          className="flex w-1/4 flex-col items-center justify-between gap-2 text-xs"
+          className="flex w-1/4 flex-col items-center justify-between gap-2 text-xs disabled:opacity-50"
           onClick={() => showLoadingToast("/cadastrar-dispositivo")}
+          disabled={userStatus !== "Ativo"}
         >
           {pathname === "cadastrar-dispositivo" ? (
             <Image

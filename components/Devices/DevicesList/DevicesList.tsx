@@ -5,6 +5,7 @@ import { DeviceItem } from "./DeviceItem";
 import { Skeleton } from "../../ui/skeleton";
 import Link from "next/link";
 import Button from "../../Button";
+import { useStatus } from "@/hooks/useStatus";
 
 interface DevicesListProps {
   devices: DeviceProps[];
@@ -25,7 +26,13 @@ export function DevicesList({
   setIsLoading,
   deviceNotificationId,
 }: DevicesListProps) {
+  const { userStatus } = useStatus();
+
   function showLoadingToast() {
+    if (userStatus !== "Ativo") {
+      return;
+    }
+
     setIsLoading(true);
   }
 
@@ -69,10 +76,19 @@ export function DevicesList({
               />
             ))
           )}
-          <Link href={"/cadastrar-dispositivo"} className="self-end">
+          <Link
+            href={userStatus === "Ativo" ? "/cadastrar-dispositivo" : "#"}
+            className="self-end"
+            onClick={(event) => {
+              if (userStatus !== "Ativo") {
+                event.preventDefault();
+              }
+            }}
+          >
             <Button
               onClick={showLoadingToast}
-              variant="blue"
+              variant={userStatus === "Ativo" ? "blue" : "disabled"}
+              disabled={userStatus !== "Ativo"}
               className="my-3 text-sm"
             >
               Cadastrar dispositivo

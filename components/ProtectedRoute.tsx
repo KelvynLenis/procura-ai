@@ -1,12 +1,23 @@
 "use client";
 
 import { account } from "@/lib/appwrite";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
 import { toast } from "react-toastify";
 import { checkUserStatus } from "@/functions/user/check-user-status";
 import { deleteUserSession } from "@/functions/user/delete-user";
+
+const LIMITED_BLOCKED_PATHS = ["/cadastrar-dispositivo"];
+const LIMITED_BLOCKED_PREFIXES = ["/meus-dispositivos/edit"];
+
+function isLimitedBlockedPath(pathname: string) {
+  if (LIMITED_BLOCKED_PATHS.includes(pathname)) {
+    return true;
+  }
+
+  return LIMITED_BLOCKED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+}
 
 interface ProtectedRouteProps {
   admin?: boolean;
@@ -18,6 +29,7 @@ export default function ProtectedRoute({
   children,
 }: ProtectedRouteProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -50,6 +62,17 @@ export default function ProtectedRoute({
           return;
         }
 
+        // Bloqueia acesso direto por URL para usuário em acesso limitado.
+        if (
+          !admin &&
+          userStatus.status === "Limitado" &&
+          isLimitedBlockedPath(pathname)
+        ) {
+          toast.error("Funcionalidade indisponível para acesso limitado");
+          router.replace("/meus-dispositivos");
+          return;
+        }
+
         setIsAuthenticated(true);
       } catch (error) {
         console.error("Erro na autenticação:", error);
@@ -60,7 +83,7 @@ export default function ProtectedRoute({
     };
 
     checkUserAuthentication();
-  }, [router, admin]);
+  }, [router, admin, pathname]);
 
   if (isLoading) {
     return (

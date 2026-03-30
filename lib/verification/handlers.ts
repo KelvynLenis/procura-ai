@@ -1,10 +1,12 @@
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 import {
+  createSessionTokenByAuthUserId,
   deleteCode,
   getCodeByEmail,
   incrementAttempts,
   saveCode,
+  updateUserStatusByAuthId,
 } from "./verification-store";
 import { emailService } from "@/services/email";
 
@@ -50,6 +52,8 @@ export async function handleSendCode(request: Request) {
       userName,
       code,
     });
+
+    await updateUserStatusByAuthId(userId, "Limitado");
 
     return NextResponse.json({
       success: true,
@@ -142,10 +146,23 @@ export async function handleValidateCode(request: Request) {
     await deleteCode(document.$id);
 
     const resolvedUserId = document.user_id;
+    const token = await createSessionTokenByAuthUserId(resolvedUserId);
+    const sessionSecret = token?.secret as string | undefined;
+
+    if (!sessionSecret || typeof sessionSecret !== "string") {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Nao foi possivel gerar token de sessao para o usuario",
+        },
+        { status: 500 },
+      );
+    }
 
     return NextResponse.json({
       success: true,
       userId: resolvedUserId,
+      sessionSecret,
       message: "Codigo validado com sucesso",
     });
   } catch (error) {

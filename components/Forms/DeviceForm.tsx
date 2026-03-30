@@ -208,6 +208,11 @@ export function DeviceForm({
   };
 
   async function onSubmit(values: DeviceProps) {
+    if (userStatus !== "Ativo") {
+      toast.info("Funcionalidade indisponível para acesso limitado.");
+      return;
+    }
+
     try {
       setIsLoading(true);
       setImeiError("");

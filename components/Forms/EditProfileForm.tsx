@@ -46,6 +46,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { formatCPF, validateCPF } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { uploadImage } from "@/functions/storage/upload-image";
 import { deleteImage } from "@/functions/storage/delete-image";
 import { EditPassword } from "./EditPassword";
@@ -113,6 +114,7 @@ export function EditProfileForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const router = useRouter();
+  const isReadOnlyProfile = userStatus !== "Ativo";
 
   // Função helper para gerar as iniciais do usuário
   const getUserInitials = (name: string | undefined): string => {
@@ -151,6 +153,10 @@ export function EditProfileForm() {
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isReadOnlyProfile) {
+      return;
+    }
+
     const file = e.target.files?.[0];
     if (file) {
       // Limpar blob URL anterior se existir
@@ -170,6 +176,10 @@ export function EditProfileForm() {
   };
 
   const handleRemoveImage = () => {
+    if (isReadOnlyProfile) {
+      return;
+    }
+
     setPreview(null);
     setFile(undefined);
     setImageState((prev) => ({
@@ -195,6 +205,11 @@ export function EditProfileForm() {
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (isReadOnlyProfile) {
+      toast.info("Perfil disponível apenas para visualização no acesso limitado.");
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       const callFunction = async () => {
@@ -359,7 +374,10 @@ export function EditProfileForm() {
                 <div className="flex flex-col gap-4 md:flex-row">
                   <label
                     htmlFor="file"
-                    className="flex max-h-11 w-full max-w-48 cursor-pointer items-center justify-center gap-3 rounded-xl bg-zinc-100 px-4 py-3 text-xs ring-1 ring-[#232323]/30 hover:opacity-70 lg:text-sm"
+                      className={cn(
+                        "flex max-h-11 w-full max-w-48 items-center justify-center gap-3 rounded-xl bg-zinc-100 px-4 py-3 text-xs ring-1 ring-[#232323]/30 lg:text-sm",
+                        isReadOnlyProfile ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:opacity-70",
+                      )}
                   >
                     <input
                       id="file"
@@ -367,6 +385,7 @@ export function EditProfileForm() {
                       className="hidden"
                       accept="image/png, image/jpeg"
                       onChange={handleFileChange}
+                        disabled={isReadOnlyProfile}
                     />
                     <Upload className="h-5 w-5 lg:h-6 lg:w-6" />
                     Selecionar imagem
@@ -376,7 +395,8 @@ export function EditProfileForm() {
                       <button
                         type="button"
                         onClick={handleRemoveImage}
-                        className="max-h-11 max-w-48 rounded-lg bg-zinc-100 px-4 py-2 text-xs text-procura-ai-zinc ring-1 ring-[#232323]/30 lg:text-sm"
+                        className="max-h-11 max-w-48 rounded-lg bg-zinc-100 px-4 py-2 text-xs text-procura-ai-zinc ring-1 ring-[#232323]/30 disabled:cursor-not-allowed disabled:opacity-50 lg:text-sm"
+                        disabled={isReadOnlyProfile}
                       >
                         Remover
                       </button>
@@ -401,6 +421,7 @@ export function EditProfileForm() {
                             type="text"
                             placeholder="Fulano Beltrano de Cicrano"
                             className="bg-zinc-100 shadow-none ring-0"
+                            disabled={isReadOnlyProfile}
                             {...field}
                           />
                         </FormControl>
@@ -422,6 +443,7 @@ export function EditProfileForm() {
                             type="text"
                             placeholder="email@mail.com"
                             className="bg-zinc-100 shadow-none ring-0"
+                            disabled={isReadOnlyProfile}
                             {...field}
                           />
                         </FormControl>
@@ -456,6 +478,11 @@ export function EditProfileForm() {
                 {isSubmitting ? "Salvando..." : "Salvar"}
               </Button>
             </div>
+            {isReadOnlyProfile && (
+              <span className="text-sm text-zinc-500">
+                Perfil em modo somente visualização para acesso limitado.
+              </span>
+            )}
           </form>
           {/* <Dialog>
             <DialogTrigger asChild className="ml-3 mt-5">
@@ -536,7 +563,10 @@ export function EditProfileForm() {
                         <div className="flex flex-col gap-3">
                           <label
                             htmlFor="fileMobile"
-                            className="flex h-11 max-w-48 cursor-pointer items-center justify-center gap-2 rounded-md border border-zinc-400 bg-zinc-100 px-4 py-2 text-sm transition-opacity hover:opacity-70"
+                            className={cn(
+                              "flex h-11 max-w-48 items-center justify-center gap-2 rounded-md border border-zinc-400 bg-zinc-100 px-4 py-2 text-sm transition-opacity",
+                              isReadOnlyProfile ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:opacity-70",
+                            )}
                           >
                             <input
                               id="fileMobile"
@@ -544,6 +574,7 @@ export function EditProfileForm() {
                               className="hidden"
                               accept="image/png, image/jpeg"
                               onChange={handleFileChange}
+                              disabled={isReadOnlyProfile}
                             />
                             <Upload className="h-5 w-5" />
                             Selecionar imagem
@@ -568,7 +599,8 @@ export function EditProfileForm() {
                                   fileInput.value = "";
                                 }
                               }}
-                              className="max-w-48 rounded-md border border-zinc-400 bg-zinc-100 px-4 py-2 text-sm transition-opacity hover:opacity-70"
+                              className="max-w-48 rounded-md border border-zinc-400 bg-zinc-100 px-4 py-2 text-sm transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
+                              disabled={isReadOnlyProfile}
                             >
                               Cancelar
                             </button>
@@ -579,7 +611,8 @@ export function EditProfileForm() {
                               <button
                                 type="button"
                                 onClick={handleRemoveImage}
-                                className="max-w-48 rounded-md border border-zinc-400 bg-zinc-100 px-4 py-2 text-sm transition-opacity hover:opacity-70"
+                                className="max-w-48 rounded-md border border-zinc-400 bg-zinc-100 px-4 py-2 text-sm transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
+                                disabled={isReadOnlyProfile}
                               >
                                 Remover
                               </button>
@@ -604,6 +637,7 @@ export function EditProfileForm() {
                                   type="text"
                                   placeholder="Fulano Beltrano de Cicrano"
                                   className="bg-zinc-100 pr-10 shadow-none ring-0"
+                                  disabled={isReadOnlyProfile}
                                   {...field}
                                 />
                               </FormControl>
@@ -626,6 +660,7 @@ export function EditProfileForm() {
                                   type="email"
                                   placeholder="email@mail.com"
                                   className="bg-zinc-100 pr-10 shadow-none ring-0"
+                                  disabled={isReadOnlyProfile}
                                   {...field}
                                 />
                               </FormControl>
@@ -656,14 +691,19 @@ export function EditProfileForm() {
                           Cancelar
                         </Button>
                         <Button
-                          variant="blue"
+                          variant={userStatus === "Ativo" ? "blue" : "disabled"}
                           type="submit"
                           className="flex-1"
-                          disabled={isSubmitting}
+                          disabled={isSubmitting || userStatus !== "Ativo"}
                         >
                           {isSubmitting ? "Salvando..." : "Salvar"}
                         </Button>
                       </div>
+                      {isReadOnlyProfile && (
+                        <span className="text-sm text-zinc-500">
+                          Perfil em modo somente visualização para acesso limitado.
+                        </span>
+                      )}
                     </form>
                   </Form>
                 </div>

@@ -10,6 +10,7 @@ import { formatEmail, validateCPF } from "@/lib/utils";
 import { getUserByCPF } from "@/functions/user/get-user-by-cpf";
 import { sendVerificationCode } from "@/functions/verification/send-verification-code";
 import { validateVerificationCode } from "@/functions/verification/validate-verification-code";
+import { createSessionFromToken } from "@/functions/auth/create-session-from-token";
 import {
   InputOTP,
   InputOTPGroup,
@@ -17,6 +18,7 @@ import {
 } from "../ui/input-otp";
 import { toast } from "react-toastify";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import verifyEmail from "../../assets/images/verify-email.png";
 import codeSent from "../../assets/images/code-sent.png";
 
@@ -42,6 +44,7 @@ export function AlternateLoginDrawer() {
   const [code, setCode] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   function handleOpenChange(open: boolean) {
     setIsOpen(open);
@@ -133,7 +136,15 @@ export function AlternateLoginDrawer() {
         return;
       }
 
+      if (!result.userId || !result.sessionSecret) {
+        throw new Error("Nao foi possivel autenticar o usuario");
+      }
+
+      await createSessionFromToken(result.userId, result.sessionSecret);
+
       toast.success("Código validado com sucesso");
+      setIsOpen(false);
+      router.push("/meus-dispositivos");
     } catch (error: any) {
       toast.error(error?.message || "Erro ao validar código");
     } finally {

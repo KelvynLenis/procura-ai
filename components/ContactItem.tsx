@@ -16,6 +16,7 @@ import {
 import { ConfirmationDialog } from "./ConfirmationDialog";
 import { ConctactForm } from "./Forms/ConctactForm";
 import { deleteContact } from "@/functions/contact/delete-contact";
+import { useStatus } from "@/hooks/useStatus";
 
 interface ContactItemProps {
   contact: Contact;
@@ -24,6 +25,7 @@ interface ContactItemProps {
 
 export function ContacItem({ contact, setContacts }: ContactItemProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { userStatus } = useStatus();
 
   async function handleDelete() {
     toast.promise(deleteContact(contact.$id), {
@@ -45,7 +47,8 @@ export function ContacItem({ contact, setContacts }: ContactItemProps) {
             <DialogTrigger asChild>
               <button
                 type="button"
-                className="group relative flex h-8 w-8 items-center justify-center rounded-lg bg-white ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700"
+                disabled={userStatus !== "Ativo"}
+                className="group relative flex h-8 w-8 items-center justify-center rounded-lg bg-white ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700 disabled:text-zinc-400 disabled:opacity-50 disabled:hover:bg-white disabled:hover:ring-zinc-300"
               >
                 <Pencil size={26} />
                 <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
@@ -71,10 +74,11 @@ export function ContacItem({ contact, setContacts }: ContactItemProps) {
             title="Tem certeza que deseja deletar o contato?"
             description="Ao concordar com esta ação, o contato será removido da lista de contatos. Caso a policia encontre o dispositivo não será possível saber a quem ele pertence e nem te alertar de sua recuperação."
             onConfirm={handleDelete}
+            disabled={userStatus !== "Ativo"}
           >
             <button
               type="button"
-              className="group relative flex h-8 w-8 items-center justify-center gap-2 rounded-lg bg-white text-red-600 ring-1 ring-zinc-300 hover:bg-red-200 hover:opacity-90 hover:ring-red-600"
+              className="group relative flex h-8 w-8 items-center justify-center gap-2 rounded-lg bg-white text-red-600 ring-1 ring-zinc-300 hover:bg-red-200 hover:opacity-90 hover:ring-red-600 disabled:text-zinc-400 disabled:opacity-50 disabled:hover:bg-white disabled:hover:ring-zinc-300"
             >
               <Trash2 size={20} />
               <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
