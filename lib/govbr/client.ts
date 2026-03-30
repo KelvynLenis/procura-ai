@@ -1,6 +1,7 @@
 'use client'
 
 import { account } from '@/lib/appwrite'
+import { logoutToAppHome } from '@/lib/govbr/logout'
 
 export const GovBrAuthService = {
   login: () => {
@@ -17,10 +18,6 @@ export const GovBrAuthService = {
   },
 
   logout: async (): Promise<void> => {
-    try {
-      await account.deleteSession('current')
-    } catch (error) {
-      console.error('Erro ao fazer logout:', error)
-    }
+    await logoutToAppHome()
   }
 }
