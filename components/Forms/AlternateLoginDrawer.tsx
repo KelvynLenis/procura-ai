@@ -11,11 +11,7 @@ import { getUserByCPF } from "@/functions/user/get-user-by-cpf";
 import { sendVerificationCode } from "@/functions/verification/send-verification-code";
 import { validateVerificationCode } from "@/functions/verification/validate-verification-code";
 import { createSessionFromToken } from "@/functions/auth/create-session-from-token";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "../ui/input-otp";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -170,43 +166,43 @@ export function AlternateLoginDrawer() {
 
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
-        <span className="mt-4 bg-[#FAFAFA] px-5 text-center md:hidden">
-          Perdeu o acesso à sua conta gov.br?
-          <DrawerTrigger
-            className="text-secondary underline"
-            onClick={() => setIsOpen(true)}
+      <span className="mt-4 bg-[#FAFAFA] px-5 text-center md:hidden">
+        Perdeu o acesso à sua conta gov.br?
+        <DrawerTrigger
+          className="text-secondary underline"
+          onClick={() => setIsOpen(true)}
+        >
+          Acesse a versão limitada
+        </DrawerTrigger>{" "}
+        do Procura.Aí apenas com seu e-mail.
+      </span>
+      <DrawerContent className="flex max-h-[90vh] overflow-y-scroll bg-white">
+        <StepOne step={step} cpf={cpf} setCpf={setCpf} />
+        <StepTwo step={step} maskedEmail={maskedEmail} />
+        <StepThree
+          step={step}
+          maskedEmail={maskedEmail}
+          code={code}
+          setCode={setCode}
+          onResendCode={handleSendCode}
+          isSubmitting={isSubmitting}
+        />
+        <DrawerFooter className="flex w-full flex-row justify-between px-2">
+          <Button variant="white" onClick={handlePreviousButton}>
+            Voltar
+          </Button>
+          <Button
+            variant="blue"
+            onClick={handleNextButton}
+            disabled={isSubmitting}
           >
-            Acesse a versão limitada
-          </DrawerTrigger>{" "}
-          do Procura.Aí apenas com seu e-mail.
-        </span>
-        <DrawerContent className="flex max-h-[85vh] overflow-y-auto bg-white">
-          <StepOne
-            step={step}
-            cpf={cpf}
-            setCpf={setCpf}
-          />
-          <StepTwo step={step} maskedEmail={maskedEmail} />
-          <StepThree
-            step={step}
-            maskedEmail={maskedEmail}
-            code={code}
-            setCode={setCode}
-            onResendCode={handleSendCode}
-            isSubmitting={isSubmitting}
-          />
-          <DrawerFooter className="flex w-full flex-row justify-between">
-            <Button variant="white" onClick={handlePreviousButton}>
-              Voltar
-            </Button>
-            <Button variant="blue" onClick={handleNextButton} disabled={isSubmitting}>
-              {step === 1 && "Avançar"}
-              {step === 2 && "Enviar Código"}
-              {step === 3 && "Validar Código"}
-            </Button>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+            {step === 1 && "Avançar"}
+            {step === 2 && "Enviar Código"}
+            {step === 3 && "Validar Código"}
+          </Button>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 }
 
@@ -223,7 +219,10 @@ function StepOne({
     step === 1 && (
       <div className="mb-2 mt-1 flex h-[22rem] w-full flex-col justify-start gap-0 duration-700 animate-in slide-in-from-left">
         <div className="mb-1 flex w-full justify-center">
-          <span className="block h-1 w-10 rounded-full bg-zinc-400" aria-hidden="true" />
+          <span
+            className="block h-1 w-10 rounded-full bg-zinc-400"
+            aria-hidden="true"
+          />
         </div>
         <div className="flex flex-col items-center justify-start pt-1">
           <h1 className="mb-2 text-lg font-bold">
@@ -252,27 +251,23 @@ function StepOne({
   );
 }
 
-function StepTwo({
-  step,
-  maskedEmail,
-}: {
-  step: number;
-  maskedEmail: string;
-}) {
+function StepTwo({ step, maskedEmail }: { step: number; maskedEmail: string }) {
   const displayEmail = maskedEmail || "********abcd@gmail.com";
 
   return (
     step === 2 && (
       <div className="mb-2 mt-2 flex h-[22rem] w-full flex-col justify-between gap-0 duration-700 animate-in slide-in-from-left">
         <div className="mb-3 flex w-full justify-center">
-          <span className="block h-1 w-10 rounded-full bg-zinc-400" aria-hidden="true" />
+          <span
+            className="block h-1 w-10 rounded-full bg-zinc-400"
+            aria-hidden="true"
+          />
         </div>
         <div className="flex flex-col items-center">
           <span className="mb-2 text-lg font-bold">Verificação de e-mail</span>
           <span className="text-center">
             Para confirmar que realmente é você, vamos enviar um código de
-            verificação para o e-mail{" "}
-            {displayEmail}
+            verificação para o e-mail {displayEmail}
           </span>
 
           <Image
@@ -306,26 +301,28 @@ function StepThree({
 
   return (
     step === 3 && (
-      <div className="mb-2 mt-2 flex min-h-[20rem] w-full flex-col justify-between gap-0 duration-700 animate-in slide-in-from-left">
+      <div className="mt-2 flex min-h-[28rem] w-full flex-col justify-between gap-0 duration-700 animate-in slide-in-from-left lg:mb-2">
         <div className="mb-3 flex w-full justify-center">
-          <span className="block h-1 w-10 rounded-full bg-zinc-400" aria-hidden="true" />
+          <span
+            className="block h-1 w-10 rounded-full bg-zinc-400"
+            aria-hidden="true"
+          />
         </div>
         <div className="flex flex-col items-center">
           <span className="mb-2 text-lg font-bold">Código enviado</span>
           <span className="text-center">
-            Digite o código de 6 dígitos enviado para o e-mail{" "}
-            {displayEmail}
+            Digite o código de 6 dígitos enviado para o e-mail {displayEmail}
           </span>
 
-          <div className="flex w-full max-w-[22rem] flex-col items-center gap-2">
+          <div className="flex w-full max-w-[22rem] flex-col items-center lg:gap-2">
             <Image
               src={codeSent}
               alt="codigo enviado com sucesso"
-              className="mt-4 h-auto w-full max-w-[15rem]"
+              className="h-auto w-1/3 lg:mt-4 lg:w-full"
               priority
             />
-            <div className="mb-6 flex w-full flex-col items-center gap-2">
-              <div className="mb-2 w-full">
+            <div className="flex w-full flex-col items-center px-2 lg:mb-6 lg:gap-2">
+              <div className="w-full lg:mb-2">
                 <InputOTP
                   maxLength={6}
                   containerClassName=""
@@ -363,7 +360,7 @@ function StepThree({
               </div>
 
               <button
-                className="text-secondary underline"
+                className="my-2 self-start text-sm"
                 type="button"
                 onClick={onResendCode}
                 disabled={isSubmitting}
@@ -371,7 +368,7 @@ function StepThree({
                 Reenviar código
               </button>
 
-              <div className="mt-5 flex w-full flex-col rounded-lg bg-[#C4F3F2] px-4 py-2 text-center">
+              <div className="flex w-full flex-col rounded-lg bg-[#C4F3F2] px-4 py-2 text-start lg:mt-5">
                 <span>
                   Atenção <br />
                   Este código tem validade de 5 minutos. <br />

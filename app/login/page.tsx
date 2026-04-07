@@ -50,7 +50,7 @@ export default function Login() {
           <div
             className={cn(
               "z-[1] flex h-fit w-full flex-col justify-between bg-faq bg-cover pt-24 lg:bg-faq",
-              "-mt-10 mobile-sm:-mt-6 mobile-lg:-mt-0 md:-mt-16 lg:-mt-20",
+              "-mt-10 mobile-sm:-mt-6 mobile-lg:-mt-0 md:-mt-14 lg:-mt-14 3xl:-mt-20",
             )}
           >
             <div className="mb-16 flex flex-col items-center gap-6 px-4">
