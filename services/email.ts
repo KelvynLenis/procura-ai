@@ -32,13 +32,31 @@ interface VerificationCodeEmailProps {
   code: string;
 }
 
-function buildEmailLayout({ title, content }: { title: string; content: string }) {
+const FOOTER_IMAGE_VERIFICATION = 'https://fra.cloud.appwrite.io/v1/storage/buckets/67daf75a000dd434ce24/files/footer-email/view?project=67ade4080023b74ddeac&mode=admin';
+const FOOTER_IMAGE_RECOVERY = 'https://fra.cloud.appwrite.io/v1/storage/buckets/67daf75a000dd434ce24/files/footer-recovery-device/view?project=67ade4080023b74ddeac&mode=admin';
+
+type EmailLayoutType = 'verification' | 'recovery';
+
+function getFooterImageByType(type: EmailLayoutType) {
+  return type === 'recovery' ? FOOTER_IMAGE_RECOVERY : FOOTER_IMAGE_VERIFICATION;
+}
+
+function buildEmailLayout({
+  title,
+  content,
+  type = 'verification',
+}: {
+  title: string;
+  content: string;
+  type?: EmailLayoutType;
+}) {
+  const footerImage = getFooterImageByType(type);
+
   return `
     <div style="font-family: Arial, sans-serif; width: 100%; margin: 0; padding: 0;">
       <div style="background-color: #0B7AF5; width: 940px; height: 46px; border-radius: 10px; opacity: 1; margin: 40px auto 20px auto; display: flex; align-items: center; justify-content: center; transform: rotate(0deg); text-align: center;">
         <h1 style="color: #ffffff; margin: 0 auto; font-family: Roboto, Arial, sans-serif; font-weight: 600; font-style: normal; font-size: 16px; line-height: 46px; letter-spacing: 0%; text-align: center; width: 100%;">${title}</h1>
       </div>
-
 
       <div style="color: #232323; width: 940px; margin: 0 auto;">
         ${content}
@@ -47,11 +65,10 @@ function buildEmailLayout({ title, content }: { title: string; content: string }
           <p style="color: #232323;">Atenciosamente,</p>
           <p style="color: #232323; font-weight: bold; margin: 0;">Equipe ProcuraAí</p>
         </div>
-        
       </div>
-        <div style="width: 940px; margin: 40px auto 0 auto; text-align: center;">
-          <img src="https://fra.cloud.appwrite.io/v1/storage/buckets/67daf75a000dd434ce24/files/footer-email/view?project=67ade4080023b74ddeac&mode=admin" alt="Footer ProcuraAí" style="width: 940px; max-width: 100%; height: auto; display: inline-block; border-radius: 10px;" />
-        </div>
+      <div style="width: 940px; margin: 40px auto 0 auto; text-align: center;">
+        <img src="${footerImage}" alt="Footer ProcuraAí" style="width: 940px; max-width: 100%; height: auto; display: inline-block; border-radius: 10px;" />
+      </div>
     </div>
   `.trim();
 }
@@ -82,28 +99,55 @@ export const emailService = {
     emergencyContacts,
   }: DeviceRecoveryEmailProps) {
     const content = `
-      <h2 style="color: #212A38;">Olá, ${userName}!</h2>
+      <h2 style="color: #212A38; font-family: Roboto, Arial, sans-serif; font-weight: 600; font-style: normal; font-size: 20px; line-height: 100%; letter-spacing: 0%;">
+        Olá, ${userName}!
+      </h2>
 
-      <p style="font-size: 16px; line-height: 1.5;">
-        Temos boas notícias! Seu dispositivo <strong>${deviceModel} / ${deviceBrand}</strong> foi recuperado.
+      <p style="font-family: Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; font-size: 14px; line-height: 150%; letter-spacing: 0%; color: #232323;">
+        Informamos que o seu dispositivo <strong>${deviceModel} / ${deviceBrand}</strong> foi recuperado pela Polícia Civil do Estado da Paraíba e já se encontra disponível para retirada.
+        Para maior segurança, os seus contatos de confiança já foram comunicados.
       </p>
 
-      <div style="background-color: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
-        <h3 style="color: #212A38; margin-top: 0;">Local para Retirada:</h3>
-        <p style="margin: 0;">${location}</p>
-      </div>
+      <p style="font-family: Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; font-size: 14px; line-height: 150%; letter-spacing: 0%; color: #232323;">
+        Para fazer a retirada do dispositivo, dirija-se ao local indicado abaixo portando um documento oficial com foto.
+      </p>
+
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 20px 0; border-collapse: collapse;">
+        <tr>
+          <td style="width: 72px; vertical-align: middle; padding-right: 12px;">
+            <img src="https://fra.cloud.appwrite.io/v1/storage/buckets/67daf75a000dd434ce24/files/email_icone/view?project=67ade4080023b74ddeac&mode=admin" alt="Ícone de Localização" style="width: 56px; height: 56px; display: block;" />
+          </td>
+          <td style="vertical-align: top;">
+            <div style="background-color: #f5f5f5; padding: 15px; border-radius: 8px;">
+              <h3 style="color: #212A38; margin: 0 0 10px 0; font-family: Roboto, Arial, sans-serif; font-size: 16px;">Local para Retirada</h3>
+              <p style="margin: 0; font-family: Roboto, Arial, sans-serif; font-size: 14px; line-height: 150%; color: #232323;">${location}</p>
+            </div>
+          </td>
+        </tr>
+      </table>
 
       ${description ? `
         <div style="margin-top: 20px;">
-          <h3 style="color: #212A38;">Informações Adicionais:</h3>
-          <p style="font-size: 16px; line-height: 1.5;">${description}</p>
+          <h3 style="color: #212A38; margin: 0 0 10px 0; font-family: Roboto, Arial, sans-serif; font-size: 16px;">Informações Adicionais</h3>
+          <p style="font-family: Roboto, Arial, sans-serif; font-size: 14px; line-height: 150%; color: #232323; margin: 0;">${description}</p>
         </div>
       ` : ''}
+
+      <div style="margin-top: 24px;">
+        <p style="font-family: Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; font-size: 14px; line-height: 150%; letter-spacing: 0%; color: #232323; margin: 0 0 12px 0;">
+          Para mais informações acesse:
+          <a href="https://procura-ai.vercel.app/" style="color: #0B7AF5; text-decoration: none;"> https://procura-ai.vercel.app/</a>
+          <br />
+          Ou baixe nosso aplicativo, disponível nas lojas Google Play e Apple Store.
+        </p>
+        <img src="https://fra.cloud.appwrite.io/v1/storage/buckets/67daf75a000dd434ce24/files/email_lojas/view?project=67ade4080023b74ddeac&mode=admin" alt="Lojas Disponíveis" style="width: 100%; max-width: 300px; height: auto; display: block; margin: 0; border-radius: 10px;" />
+      </div>
     `.trim();
 
     const emailContent = buildEmailLayout({
       title: "Dispositivo Recuperado",
       content,
+      type: 'recovery',
     });
 
     await this.sendEmail({
@@ -112,7 +156,7 @@ export const emailService = {
       users: [{
         email: userEmail,
         name: userName
-      }]
+      }],
     });
 
     if (emergencyContacts && emergencyContacts.length > 0) {
@@ -123,7 +167,7 @@ export const emailService = {
           users: [{
             email: contact.email,
             name: contact.name
-          }]
+          }],
         });
       }
     }
@@ -157,6 +201,7 @@ export const emailService = {
       content: buildEmailLayout({
         title: "Código de Verificação",
         content,
+        type: 'verification',
       }),
       users: [
         {
