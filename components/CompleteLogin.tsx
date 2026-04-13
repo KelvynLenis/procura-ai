@@ -45,6 +45,7 @@ import {
 } from "@/components/ui/form";
 import { completeUserData } from "@/functions/user/complete-user-data";
 import { toast } from "react-toastify";
+import { Checkbox } from "./ui/checkbox";
 
 export function CompleteLogin() {
   const [dropdown, setDropdown] =
@@ -440,6 +441,44 @@ export function CompleteLogin() {
 
                       {/* <FormField
                         control={form.control}
+                        name="firstCondition"
+                        render={({ field }) => (
+                          <FormItem className="flex w-full flex-col gap-5 md:flex-row">
+                            <div>
+                              <FormLabel className="flex w-fit items-start text-center text-lg">
+                                Cidade
+                              </FormLabel>
+                              <FormControl></FormControl>
+                              <FormMessage />
+                            </div>
+                          </FormItem>
+                        )}
+                      /> */}
+
+                      <div className="flex items-center gap-2">
+                        <Checkbox className="shadow-none" />
+                        <span>
+                          Eu declaro que li e concordo com os{" "}
+                          <span className="text-secondary underline">
+                            Termos de Uso
+                          </span>{" "}
+                          estabelecidos pelo Procura.Aí.
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Checkbox className="shadow-none" />
+                        <span>
+                          Eu declaro que li e concordo com a{" "}
+                          <span className="text-secondary underline">
+                            Política de Privacidade
+                          </span>{" "}
+                          estabelecida pelo Procura.Aí.
+                        </span>
+                      </div>
+
+                      {/* <FormField
+                        control={form.control}
                         name="state"
                         render={({ field }) => (
                           <FormItem className="flex w-full flex-col gap-5 md:flex-row">
@@ -726,6 +765,28 @@ export function CompleteLogin() {
                             </FormItem>
                           )}
                         />
+
+                        <div className="flex items-center gap-2 text-sm">
+                          <Checkbox className="shadow-none" />
+                          <span>
+                            Eu declaro que li e concordo com os{" "}
+                            <span className="text-secondary underline">
+                              Termos de Uso
+                            </span>{" "}
+                            estabelecidos pelo Procura.Aí.
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2 text-sm">
+                          <Checkbox className="shadow-none" />
+                          <span>
+                            Eu declaro que li e concordo com a{" "}
+                            <span className="text-secondary underline">
+                              Política de Privacidade
+                            </span>{" "}
+                            estabelecida pelo Procura.Aí.
+                          </span>
+                        </div>
 
                         {/* <FormField
                         control={form.control}
