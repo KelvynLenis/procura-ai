@@ -22,10 +22,17 @@ import feat1 from "../assets/icons/feat1.svg";
 import feat2 from "../assets/icons/feat2.svg";
 import feat3 from "../assets/icons/feat3.svg";
 import feat4 from "../assets/icons/feat4.svg";
+import govFooterMobile from "../assets/icons/gov-footer-mobile.png";
 import logo from "../assets/icons/logo-text.svg";
+import footerLineLeft from "../assets/icons/footer-line-left.svg";
+import footerLineRight from "../assets/icons/footer-line-right.svg";
 import landingImages from "../assets/images/landing-image.png";
 import line from "../assets/images/line01.svg";
-import lineFooter from "../assets/images/line02.svg";
+import footerLogo from "../assets/icons/logo-dark.svg";
+import { FaFacebookF } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+import { FaYoutube } from "react-icons/fa";
+import { FaInstagram } from "react-icons/fa6";
 
 export default function Landing() {
   const renderStepContent = (step: QuestionStep) => (
@@ -276,31 +283,83 @@ export default function Landing() {
             ))}
           </div>
 
-          <div className="mt-16 lg:mt-24"></div>
+          <div className="mt-16 lg:mt-24" />
 
           <footer
             className={cn(
-              "relative z-[20] flex h-20 w-full items-center justify-start bg-white md:mt-0 lg:mt-4",
+              "relative z-[20] flex h-fit w-full flex-col items-center justify-between overflow-hidden bg-white px-5 md:mt-0 lg:mt-4 lg:px-0 lg:pl-11",
             )}
           >
+            <div className="z-10 flex w-full flex-col-reverse pt-10 lg:flex-row lg:pt-0">
+              <div className="flex items-center gap-8">
+                <span className="text-sm font-semibold lg:w-28 lg:text-lg">
+                  Siga nas redes sociais
+                </span>
+
+                <div className="flex gap-2">
+                  <FaFacebookF className="size-5 lg:size-8" />
+                  <FaXTwitter className="size-5 lg:size-8" />
+                  <FaYoutube className="size-5 lg:size-8" />
+                  <FaInstagram className="size-5 lg:size-8" />
+                </div>
+              </div>
+              <div className="flex w-full flex-col items-center justify-end lg:flex-row">
+                <Image
+                  src={govFull}
+                  alt="logo"
+                  className="z-10 hidden h-12 w-64 md:w-96 lg:block"
+                />
+
+                <Image
+                  src={govFooterMobile}
+                  alt="logo"
+                  className="z-10 lg:hidden"
+                />
+
+                <Image
+                  src={footerLogo}
+                  alt="logo"
+                  className="z-10 lg:h-[75%]"
+                />
+              </div>
+            </div>
+
+            <span className="my-5 h-0.5 w-full bg-zinc-200 lg:hidden" />
+
+            <div className="z-10 flex w-full flex-col justify-start gap-4 lg:mb-20">
+              <span className="hidden text-lg font-semibold lg:block">
+                Documentos
+              </span>
+              <div className="flex flex-col gap-2 text-sm">
+                <span className="font-medium">
+                  Termos de uso e Aviso de política de privacidade
+                </span>
+                <span className="font-medium">
+                  Lei geral de proteção de dados (LGPD)
+                </span>
+              </div>
+            </div>
+
+            <span className="my-5 h-0.5 w-full bg-zinc-200 lg:hidden" />
+
+            <span className="z-10 mb-28 w-full text-center text-sm lg:mb-7 lg:mt-10 lg:w-[60%]">
+              Centro Administrativo Estadual – Avenida Dr. João da Mata, nº 200
+              – Jaguaribe – João Pessoa/PB - CEP: 58015-900 Telefones: (83)
+              36125600/ 36125601/ 36125602{" "}
+            </span>
+
             <Image
-              src={govFull}
+              src={footerLineLeft}
               alt="logo"
-              className="z-10 h-12 w-64 md:w-96"
+              className="absolute -bottom-36 -left-10 z-0 h-[90%] lg:-bottom-5"
             />
+
             <Image
-              src={lineFooter}
+              src={footerLineRight}
               alt="logo"
-              className="absolute right-0 z-0 hidden h-full self-end sm:block md:w-[50%] lg:w-[80%] xl:w-[90%]"
+              className="absolute -right-20 -top-32 z-0 h-[90%] rotate-[220deg] mobile:-right-24 mobile:-top-28 mobile-lg:-top-24 lg:-bottom-5 lg:-right-20 lg:top-10 lg:rotate-0"
             />
           </footer>
-
-          {/* <footer className={cn("w-full relative -bottom-20 md:mt-0 lg:mt-4 flex items-center justify-start z-[20] bg-primary py-4")}>
-            <div className={cn('w-full items-center pl-9 justify-center hidden lg:flex md:justify-start py-0 px-8 h-14 md:h-fit')}>
-              <Image src={secties} alt="logo" className='w-28 md:w-auto md:h-12' />
-              <Image src={gov} alt="logo" className='w-28 md:w-auto md:h-12' />            
-            </div>
-          </footer> */}
         </section>
       </main>
     </>
