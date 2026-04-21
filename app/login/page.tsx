@@ -8,20 +8,19 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+
 import { Question, QuestionStep } from "@/types";
+
 import govFooterMobile from "../../assets/icons/gov-footer-mobile.png";
+import sicLogo from "../../assets/icons/sic_logo.png";
 import logo from "../../assets/icons/logo-text.svg";
 import footerLineLeft from "../../assets/icons/footer-line-left.svg";
 import footerLineRight from "../../assets/icons/footer-line-right.svg";
-import landingImages from "../../assets/images/landing-image.png";
-import line from "../../assets/images/line01.svg";
 import footerLogo from "../../assets/icons/logo-dark.svg";
 import { FaFacebookF } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { FaYoutube } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa6";
-
-import lineFooter from "../../assets/images/line02.svg";
 import govFull from "../../assets/icons/gov.png";
 
 export default function Login() {
@@ -166,11 +165,19 @@ export default function Login() {
 
               <span className="my-5 h-0.5 w-full bg-zinc-200 lg:hidden" />
 
-              <span className="z-10 mb-28 w-full text-center text-sm lg:mb-7 lg:mt-10 lg:w-[60%]">
-                Centro Administrativo Estadual – Avenida Dr. João da Mata, nº
-                200 – Jaguaribe – João Pessoa/PB - CEP: 58015-900 Telefones:
-                (83) 36125600/ 36125601/ 36125602{" "}
-              </span>
+              <div className="mb-20 flex flex-col lg:mb-10 lg:mt-0 lg:w-[60%] lg:flex-row">
+                <span className="z-10 w-full text-center text-sm">
+                  Centro Administrativo Estadual – Avenida Dr. João da Mata, nº
+                  200 – Jaguaribe – João Pessoa/PB - CEP: 58015-900 Telefones:
+                  (83) 36125600/ 36125601/ 36125602{" "}
+                </span>
+
+                <Image
+                  src={sicLogo}
+                  alt="sic logo"
+                  className="h-1/4 self-center"
+                />
+              </div>
 
               <Image
                 src={footerLineLeft}

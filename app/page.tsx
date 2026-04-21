@@ -342,11 +342,19 @@ export default function Landing() {
 
             <span className="my-5 h-0.5 w-full bg-zinc-200 lg:hidden" />
 
-            <span className="z-10 mb-28 w-full text-center text-sm lg:mb-7 lg:mt-10 lg:w-[60%]">
-              Centro Administrativo Estadual – Avenida Dr. João da Mata, nº 200
-              – Jaguaribe – João Pessoa/PB - CEP: 58015-900 Telefones: (83)
-              36125600/ 36125601/ 36125602{" "}
-            </span>
+            <div className="mb-20 flex flex-col lg:mb-10 lg:mt-0 lg:w-[60%] lg:flex-row">
+              <span className="z-10 w-full text-center text-sm">
+                Centro Administrativo Estadual – Avenida Dr. João da Mata, nº
+                200 – Jaguaribe – João Pessoa/PB - CEP: 58015-900 Telefones:
+                (83) 36125600/ 36125601/ 36125602{" "}
+              </span>
+
+              <Image
+                src={sicLogo}
+                alt="sic logo"
+                className="h-1/4 self-center"
+              />
+            </div>
 
             <Image
               src={footerLineLeft}
