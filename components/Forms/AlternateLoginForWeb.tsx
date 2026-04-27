@@ -281,13 +281,7 @@ function StepOne({
   );
 }
 
-function StepTwo({
-  step,
-  maskedEmail,
-}: {
-  step: number;
-  maskedEmail: string;
-}) {
+function StepTwo({ step, maskedEmail }: { step: number; maskedEmail: string }) {
   const displayEmail = maskedEmail || "********abcd@gmail.com";
 
   return (
@@ -297,8 +291,7 @@ function StepTwo({
           <span className="mb-2 text-lg font-bold">Verificação de e-mail</span>
           <span className="text-center">
             Para confirmar que realmente é você, vamos enviar um código de
-            verificação para o e-mail{" "}
-            {displayEmail}
+            verificação para o e-mail {displayEmail}
           </span>
 
           <Image src={verifyEmail} alt="verificar email" className="mt-4" />
@@ -340,8 +333,7 @@ function StepThree({
         <div className="flex flex-col items-center">
           <span className="mb-2 text-lg font-bold">Código enviado</span>
           <span className="text-center">
-            Digite o código de 6 dígitos enviado para o e-mail{" "}
-            {displayEmail}
+            Digite o código de 6 dígitos enviado para o e-mail {displayEmail}
           </span>
 
           <div className="flex w-full flex-col items-center">
