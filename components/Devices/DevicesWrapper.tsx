@@ -10,6 +10,8 @@ import { DevicesTable } from "./DevicesTable/DevicesTable";
 import { listDevices } from "@/functions/device/list-devices";
 import { useStatus } from "@/hooks/useStatus";
 import { useRouter } from "next/navigation";
+import { useDeviceStore } from "@/store/device.store";
+import { ConfirmationDialog } from "../ConfirmationDialog";
 
 export function DevicesWrapper({
   deviceNotificationId,
@@ -23,6 +25,14 @@ export function DevicesWrapper({
   const [totalDevices, setTotalDevices] = useState(0);
   const { userStatus } = useStatus();
   const router = useRouter();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const hasCreatedANewDevice = useDeviceStore(
+    (state) => state.hasCreatedANewDevice,
+  );
+  const setHasCreatedANewDevice = useDeviceStore(
+    (state) => state.setHasCreatedANewDevice,
+  );
 
   const limit = 100;
 
@@ -31,10 +41,30 @@ export function DevicesWrapper({
     return userId;
   }
 
+  function handleChangeDeviceStoreState() {
+    setHasCreatedANewDevice(false);
+  }
+
+  const redirectToPolicePage = () => {
+    setHasCreatedANewDevice(false);
+    window.open(
+      "https://delegaciaonline.pc.pb.gov.br/tipo-ocorrencia",
+      "_blank",
+      "noopener,noreferrer",
+    );
+  };
+
   function showLoadingToast() {
     router.push("/cadastrar-dispositivo");
     setIsLoading(true);
   }
+
+  useEffect(() => {
+    console.log(hasCreatedANewDevice);
+    // if (hasCreatedANewDevice) {
+    //   setIsDialogOpen(true);
+    // }
+  }, [hasCreatedANewDevice]);
 
   useEffect(() => {
     const getDevices = async () => {
@@ -89,6 +119,16 @@ export function DevicesWrapper({
           isLoading={isLoading}
           setIsLoading={setIsLoading}
           deviceNotificationId={deviceNotificationId}
+        />
+
+        <ConfirmationDialog
+          title="Dispositivo cadastrado com sucesso"
+          description="Deseja abrir um boletim de ocorrência na Delegacia online da Paraíba?"
+          cancelText="Agora não"
+          confirmText="Criar boletim"
+          isOpen={hasCreatedANewDevice}
+          onConfirm={() => redirectToPolicePage()}
+          onCancel={handleChangeDeviceStoreState}
         />
       </div>
     </>

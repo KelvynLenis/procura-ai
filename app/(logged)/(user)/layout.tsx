@@ -1,4 +1,4 @@
-import { CompleteLogin } from "@/components/CompleteLogin";
+import { CompleteLogin } from "@/components/Forms/CompleteLogin";
 import { CustomSidebarTrigger } from "@/components/CustomSidebarTrigger";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
