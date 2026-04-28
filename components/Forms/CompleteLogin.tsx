@@ -43,6 +43,7 @@ import colorfuLine from "../../assets/images/colorful-line.png";
 import logo from "../../assets/icons/logo-header.png";
 import finishImage from "../../assets/images/third-step-image.png";
 import { CircleCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function CompleteLogin() {
   const [dropdown, setDropdown] =
@@ -56,6 +57,8 @@ export function CompleteLogin() {
   const [lng, setLng] = useState();
   const [isTermsOfUseChecked, setIsTermsOfuseChecked] = useState(false);
   const [isPrivacyPolicyChecked, setIsPrivacyPolicyChecked] = useState(false);
+
+  const router = useRouter();
 
   const formSchema = z.object({
     cep: z.string().min(8, "O CEP deve conter exatamente 8 dígitos numéricos."),
@@ -109,7 +112,10 @@ export function CompleteLogin() {
       birthDate: date?.toISOString() || new Date().toISOString(),
     });
 
-    setIsDialogOpen(false);
+    router.push("/meus-dispositivos");
+    toast.success("Logado com sucesso");
+
+    // setIsDialogOpen(false);
   }
 
   async function getCepByCord(lat: number, lng: number) {
@@ -482,8 +488,8 @@ export function CompleteLogin() {
             )}
 
             {step === 2 && (
-              <div className="flex flex-col gap-3">
-                <span className="my-2 h-[1px] w-full bg-zinc-400" />
+              <div className="mt-2 flex flex-col gap-3 rounded-lg bg-zinc-100 p-4">
+                {/* <span className="my-2 h-[1px] w-full bg-zinc-400" /> */}
 
                 <h1 className="font-medium text-secondary" id="termos">
                   Termos de uso
@@ -681,6 +687,7 @@ export function CompleteLogin() {
                     variant="blue"
                     type="button"
                     onClick={validateCheckbox}
+                    disabled={!isTermsOfUseChecked || !isPrivacyPolicyChecked}
                     className="self-end"
                   >
                     Avançar
