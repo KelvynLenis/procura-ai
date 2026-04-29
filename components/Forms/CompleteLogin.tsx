@@ -112,8 +112,12 @@ export function CompleteLogin() {
       birthDate: date?.toISOString() || new Date().toISOString(),
     });
 
+    if (user) {
+      toast.success("Logado com sucesso");
+    } else {
+      toast.error("Erro ao logar");
+    }
     router.push("/meus-dispositivos");
-    toast.success("Logado com sucesso");
 
     // setIsDialogOpen(false);
   }
@@ -270,7 +274,7 @@ export function CompleteLogin() {
             </div>
             <Steps step={step} />
             <DialogTitle className="h-fit w-fit self-start px-4 text-base md:text-lg">
-              {step >= 1 && "Sua conta está quase pronta"}
+              {(step === 1 || step === 2) && "Sua conta está quase pronta"}
               {step === 3 && "Pronto! A sua conta foi criada"}
             </DialogTitle>
             <DialogDescription className="w-fit px-4 text-xs font-medium text-primary md:text-base">

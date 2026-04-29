@@ -27,10 +27,10 @@ export function DevicesWrapper({
   const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const hasCreatedANewDevice = useAlertStore(
+  const hasCreatedANewAlert = useAlertStore(
     (state) => state.hasCreatedANewAlert,
   );
-  const setHasCreatedANewDevice = useAlertStore(
+  const setHasCreatedANewAlert = useAlertStore(
     (state) => state.setHasCreatedANewAlert,
   );
 
@@ -41,12 +41,12 @@ export function DevicesWrapper({
     return userId;
   }
 
-  function handleChangeDeviceStoreState() {
-    setHasCreatedANewDevice(false);
+  function handleChangeAlertStoreState() {
+    setHasCreatedANewAlert(false);
   }
 
   const redirectToPolicePage = () => {
-    setHasCreatedANewDevice(false);
+    setHasCreatedANewAlert(false);
     window.open(
       "https://delegaciaonline.pc.pb.gov.br/tipo-ocorrencia",
       "_blank",
@@ -60,11 +60,11 @@ export function DevicesWrapper({
   }
 
   useEffect(() => {
-    console.log(hasCreatedANewDevice);
+    console.log(hasCreatedANewAlert);
     // if (hasCreatedANewDevice) {
     //   setIsDialogOpen(true);
     // }
-  }, [hasCreatedANewDevice]);
+  }, [hasCreatedANewAlert]);
 
   useEffect(() => {
     const getDevices = async () => {
@@ -126,9 +126,9 @@ export function DevicesWrapper({
           description="Deseja abrir um boletim de ocorrência na Delegacia online da Paraíba?"
           cancelText="Agora não"
           confirmText="Criar boletim"
-          isOpen={hasCreatedANewDevice}
+          isOpen={hasCreatedANewAlert}
           onConfirm={() => redirectToPolicePage()}
-          onCancel={handleChangeDeviceStoreState}
+          onCancel={handleChangeAlertStoreState}
         />
       </div>
     </>
