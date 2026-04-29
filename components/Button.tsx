@@ -24,7 +24,7 @@ export default function Button({
   return (
     <button
       className={cn(
-        "flex w-fit items-center justify-center rounded-full px-6 py-2 text-center text-sm font-semibold drop-shadow transition-all duration-300 disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0 lg:text-base",
+        "flex w-fit items-center justify-center rounded-full px-6 py-2 text-center text-sm font-semibold drop-shadow transition-all duration-300 disabled:border-none disabled:bg-zinc-300 disabled:text-zinc-400 disabled:ring-0 lg:text-base",
         variant === "blue" &&
           "border-[0.5px] border-secondary bg-secondary text-white hover:bg-white hover:text-secondary",
         variant === "white" &&

@@ -21,7 +21,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             <div className="flex w-full flex-col items-center justify-center px-2 lg:px-0">
               <Header />
-              <CompleteLogin />
+              {/* <CompleteLogin /> */}
               {children}
             </div>
           </div>

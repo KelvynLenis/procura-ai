@@ -4,6 +4,7 @@ interface LoginResponse {
   isAdmin: boolean;
   userId: string;
   userStatus?: string;
+  isFirstLogin?: boolean;
 }
 
 export async function login(
@@ -42,5 +43,6 @@ export async function login(
     isAdmin,
     userId: user.$id,
     userStatus: userDoc?.status,
+    isFirstLogin: userDoc?.is_first_login,
   };
 }

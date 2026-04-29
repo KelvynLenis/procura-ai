@@ -42,6 +42,7 @@ import { MarkAsStolenMapWithGeocoding } from "../Maps/MarkAsStolenMapWithGeocodi
 import { MarkAsStolenMapWithGeocoding2 } from "../Maps/MarkAsStolenMapWithGeocoding2";
 import { MarkAsStolenMapGoogle } from "../Maps/MarkAsStolenMapGoogle";
 import { MarkAsStolenMap } from "../Maps/MarkAsStolenMap";
+import { useAlertStore } from "@/store/alert.store";
 
 interface MarkAsStolenFormProps {
   id: string;
@@ -97,6 +98,12 @@ export function AlertForm({
 }: MarkAsStolenFormProps) {
   const size = useWindowSize();
   const [isIOS, setIsIOS] = useState(false);
+  const hasCreatedANewAlert = useAlertStore(
+    (state) => state.hasCreatedANewAlert,
+  );
+  const setHasCreatedANewAlert = useAlertStore(
+    (state) => state.setHasCreatedANewAlert,
+  );
 
   const occurrenceTypes = [
     { label: "Furto simples", value: "Furto simples" },
@@ -193,6 +200,8 @@ export function AlertForm({
               await updateDistrict(values.id_district, data);
             }
           }
+
+          await setHasCreatedANewAlert(true);
 
           return true;
         } catch (error) {

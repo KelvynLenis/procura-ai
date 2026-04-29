@@ -5,15 +5,13 @@ import { IoIosWarning } from "react-icons/io";
 import { AlertForm } from "../../Forms/AlertForm";
 import type { DeviceProps } from "@/types";
 import { Eye, X } from "lucide-react";
-import { ViewMyAlert } from "../../ViewMyAlert";
-import { toast } from "react-toastify";
+import { ViewMyAlertMobile } from "../../ViewMyAlertMobile";
 import { useEffect, useState } from "react";
 import { DeviceDetailsCard } from "./DeviceDetailsCard";
 import { createEvent } from "@/functions/event/create-event";
 import { updateDeviceStatus } from "@/functions/device/update-device-status";
 
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { ViewMyAlerts } from "@/components/ViewMyAlerts";
 import { useRouter } from "next/navigation";
 
 interface DeviceItemProps {
@@ -142,7 +140,7 @@ export function DeviceItem({
                       Informações da ocorrência
                     </h2>
                   </span>
-                  <ViewMyAlert
+                  <ViewMyAlertMobile
                     id={id}
                     status={status}
                     handleDeviceRecovery={handleDeviceRecovery}

@@ -53,7 +53,6 @@ import { LoadingToast } from "../LoadingToast";
 import { listOperators } from "@/functions/operators/list-operators";
 import type { Operator } from "@/types";
 import { useStatus } from "@/hooks/useStatus";
-import { useDeviceStore } from "@/store/device.store";
 
 interface AddDeviceFormProps {
   device?: DeviceProps;
@@ -76,12 +75,6 @@ export function DeviceForm({
   const [operatorsLoaded, setOperatorsLoaded] = useState(false);
   const route = useRouter();
   const { userStatus } = useStatus();
-  const hasCreatedANewDevice = useDeviceStore(
-    (state) => state.hasCreatedANewDevice,
-  );
-  const setHasCreatedANewDevice = useDeviceStore(
-    (state) => state.setHasCreatedANewDevice,
-  );
 
   const formSchema = z
     .object({
@@ -246,8 +239,6 @@ export function DeviceForm({
         try {
           await createDevice(deviceId, values as Device, userId);
           form.reset();
-
-          await setHasCreatedANewDevice(true);
 
           router.push("/meus-dispositivos");
         } catch (error) {

@@ -29,6 +29,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { AlternateLoginDrawer } from "./AlternateLoginDrawer";
 import { AlternateLoginForWeb } from "./AlternateLoginForWeb";
 import { cn } from "@/lib/utils";
+import { CompleteLogin } from "./CompleteLogin";
 
 const formSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -41,6 +42,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
   const [pathname, setPathname] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isAlternateLogin, setIsAlternateLogin] = useState(false);
+  const [isFirstLogin, setIsFirstLogin] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,7 +56,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
     try {
       const callFunction = async () => {
         try {
-          const { isAdmin, userId, userStatus } = await login(
+          const { isAdmin, userId, userStatus, isFirstLogin } = await login(
             values.email,
             values.password,
           );
@@ -79,9 +81,17 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
 
           await updateLastAccess(userId);
 
-          setIsLoading(true);
-          router.push(isAdmin ? "/dashboard" : "/meus-dispositivos");
-          toast.success("Logado com sucesso");
+          if (isAdmin) {
+            setIsLoading(true);
+            router.push("/dashboard");
+            toast.success("Logado com sucesso");
+            return;
+          }
+
+          if (isFirstLogin) {
+            setIsFirstLogin(true);
+            return;
+          }
         } catch (error: any) {
           if (error.message?.match(/password/)) {
             form.setError("email", { message: "Email ou senha incorretos" });
@@ -130,179 +140,185 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
 
   return (
     <>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="mb-0 flex h-screen w-screen flex-col items-center gap-4 bg-zinc-50 p-0 md:mb-10 md:h-fit md:w-fit md:rounded-lg md:px-8 md:py-5"
-        >
-          {isAlternateLogin ? (
-            <>
-              <AlternateLoginForWeb setIsAlternateLogin={setIsAlternateLogin} />
-            </>
-          ) : (
-            <>
-              {isAdminPage ? (
-                <div className="relative mb-2">
-                  <Image src={logo} alt="logo" className="" />
-                  <span className="absolute -bottom-1 right-4">
-                    Administrador
-                  </span>
-                </div>
-              ) : (
-                <div className="flex w-full flex-col items-center">
-                  <Image src={logo} alt="logo" className="hidden md:block" />
-                  <Image
-                    src={loginMobileBanner}
-                    alt="logo"
-                    className="h-full w-full md:hidden"
-                  />
-
-                  <span className="hidden text-center font-medium md:block">
-                    Proteja-se agora e fique um passo à frente
-                  </span>
-
-                  <div className="flex items-center px-5">
-                    <span className="mt-4 text-center text-sm md:hidden">
-                      Clique para acessar o Procura.Aí pela sua conta gov.br
+      {isFirstLogin ? (
+        <CompleteLogin />
+      ) : (
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="mb-0 flex h-screen w-screen flex-col items-center gap-4 bg-zinc-50 p-0 md:mb-10 md:h-fit md:w-fit md:rounded-lg md:px-8 md:py-5"
+          >
+            {isAlternateLogin ? (
+              <>
+                <AlternateLoginForWeb
+                  setIsAlternateLogin={setIsAlternateLogin}
+                />
+              </>
+            ) : (
+              <>
+                {isAdminPage ? (
+                  <div className="relative mb-2">
+                    <Image src={logo} alt="logo" className="" />
+                    <span className="absolute -bottom-1 right-4">
+                      Administrador
                     </span>
                   </div>
-                </div>
-              )}
+                ) : (
+                  <div className="flex w-full flex-col items-center">
+                    <Image src={logo} alt="logo" className="hidden md:block" />
+                    <Image
+                      src={loginMobileBanner}
+                      alt="logo"
+                      className="h-full w-full md:hidden"
+                    />
 
-              {(pathname === "localhost" || isAdminPage) && (
-                <>
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem className="flex w-full flex-col">
-                        <FormLabel className="ml-4 pl-5 font-bold text-zinc-700">
-                          E-mail
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            placeholder="Email"
-                            {...field}
-                            className="w-64 self-center rounded-full"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    <span className="hidden text-center font-medium md:block">
+                      Proteja-se agora e fique um passo à frente
+                    </span>
 
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem className="flex w-full flex-col">
-                        <FormLabel className="ml-4 pl-5 font-bold text-zinc-700">
-                          Senha
-                        </FormLabel>
-                        <FormControl>
-                          <div className="relative flex items-center justify-center">
+                    <div className="flex items-center px-5">
+                      <span className="mt-4 text-center text-sm md:hidden">
+                        Clique para acessar o Procura.Aí pela sua conta gov.br
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {(pathname === "localhost" || isAdminPage) && (
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem className="flex w-full flex-col">
+                          <FormLabel className="ml-4 pl-5 font-bold text-zinc-700">
+                            E-mail
+                          </FormLabel>
+                          <FormControl>
                             <Input
-                              type={showPassword ? "text" : "password"}
-                              placeholder="Senha"
+                              type="text"
+                              placeholder="Email"
                               {...field}
                               className="w-64 self-center rounded-full"
                             />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                            <button
-                              type="button"
-                              onClick={() => setShowPassword((prev) => !prev)}
-                              className={cn(
-                                "absolute top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-700",
-                                isAdminPage ? "right-2" : "right-8",
-                              )}
-                            >
-                              {showPassword ? (
-                                <EyeOff size={18} />
-                              ) : (
-                                <Eye size={18} />
-                              )}
-                            </button>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem className="flex w-full flex-col">
+                          <FormLabel className="ml-4 pl-5 font-bold text-zinc-700">
+                            Senha
+                          </FormLabel>
+                          <FormControl>
+                            <div className="relative flex items-center justify-center">
+                              <Input
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Senha"
+                                {...field}
+                                className="w-64 self-center rounded-full"
+                              />
 
-                  <Button
-                    type="submit"
-                    variant="blue"
-                    className="!w-40 !text-base"
-                  >
-                    Entrar
-                  </Button>
-                </>
-              )}
+                              <button
+                                type="button"
+                                onClick={() => setShowPassword((prev) => !prev)}
+                                className={cn(
+                                  "absolute top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-700",
+                                  isAdminPage ? "right-2" : "right-8",
+                                )}
+                              >
+                                {showPassword ? (
+                                  <EyeOff size={18} />
+                                ) : (
+                                  <Eye size={18} />
+                                )}
+                              </button>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-              {!isAdminPage && (
-                <div className="flex w-fit flex-col">
-                  {pathname !== "localhost" && (
-                    <>
-                      <div className="bg-login-mobile-bg flex flex-col gap-3 md:bg-transparent">
-                        <div className="flex items-center justify-center">
-                          <GovBrButton className="w-[16.3rem] bg-secondary !text-base md:w-fit" />
-                        </div>
-                      </div>
-                      {/* <span className="h-[1px] w-full rounded-full bg-primary" /> */}
-                    </>
-                  )}
+                    <Button
+                      type="submit"
+                      variant="blue"
+                      className="!w-40 !text-base"
+                    >
+                      Entrar
+                    </Button>
+                  </>
+                )}
 
-                  <div className="mb-0 flex w-fit flex-col gap-3">
-                    {pathname === "localhost" && (
+                {!isAdminPage && (
+                  <div className="flex w-fit flex-col">
+                    {pathname !== "localhost" && (
                       <>
-                        {/* <span className="self-center font-bold">
-                      Não possui conta?
-                      </span> */}
-                        <Link
-                          href={"/cadastro"}
-                          className="flex items-center justify-center"
-                        >
-                          <Button
-                            onClick={showLoadingToast}
-                            type="button"
-                            variant="black"
-                            className="!w-40 !text-base"
-                          >
-                            Cadastre-se
-                          </Button>
-                        </Link>
-                        <span className="h-[1px] w-full rounded-full bg-primary" />
+                        <div className="bg-login-mobile-bg flex flex-col gap-3 md:bg-transparent">
+                          <div className="flex items-center justify-center">
+                            <GovBrButton className="w-[16.3rem] bg-secondary !text-base md:w-fit" />
+                          </div>
+                        </div>
+                        {/* <span className="h-[1px] w-full rounded-full bg-primary" /> */}
                       </>
                     )}
 
-                    <span className="mt-2 hidden text-center md:block">
-                      Perdeu o acesso à sua conta gov.br? <br />
-                      <button
-                        onClick={() => setIsAlternateLogin(true)}
-                        className="text-secondary underline"
+                    <div className="mb-0 flex w-fit flex-col gap-3">
+                      {pathname === "localhost" && (
+                        <>
+                          {/* <span className="self-center font-bold">
+                          Não possui conta?
+                          </span> */}
+                          <Link
+                            href={"/cadastro"}
+                            className="flex items-center justify-center"
+                          >
+                            <Button
+                              onClick={showLoadingToast}
+                              type="button"
+                              variant="black"
+                              className="!w-40 !text-base"
+                            >
+                              Cadastre-se
+                            </Button>
+                          </Link>
+                          <span className="h-[1px] w-full rounded-full bg-primary" />
+                        </>
+                      )}
+
+                      <span className="mt-2 hidden text-center md:block">
+                        Perdeu o acesso à sua conta gov.br? <br />
+                        <button
+                          onClick={() => setIsAlternateLogin(true)}
+                          className="text-secondary underline"
+                        >
+                          Acesse a versão limitada
+                        </button>{" "}
+                        do Procura.Aí <br />
+                        apenas com seu e-mail.
+                      </span>
+
+                      <Link
+                        href={"/login-admin"}
+                        className="hidden h-fit items-center justify-center text-secondary underline hover:opacity-70 md:flex"
                       >
-                        Acesse a versão limitada
-                      </button>{" "}
-                      do Procura.Aí <br />
-                      apenas com seu e-mail.
-                    </span>
+                        Entrar como administrador
+                      </Link>
 
-                    <Link
-                      href={"/login-admin"}
-                      className="hidden h-fit items-center justify-center text-secondary underline hover:opacity-70 md:flex"
-                    >
-                      Entrar como administrador
-                    </Link>
-
-                    <AlternateLoginDrawer />
+                      <AlternateLoginDrawer />
+                    </div>
                   </div>
-                </div>
-              )}
-            </>
-          )}
-        </form>
-      </Form>
+                )}
+              </>
+            )}
+          </form>
+        </Form>
+      )}
 
       {/* {isLoading && <LoadingToast />} */}
     </>
