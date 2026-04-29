@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import type { DeviceProps } from "@/types";
 import { account } from "@/lib/appwrite";
 import Button from "../Button";
-import Link from "next/link";
 import { DevicesList } from "./DevicesList/DevicesList";
 import { DevicesTable } from "./DevicesTable/DevicesTable";
 import { listDevices } from "@/functions/device/list-devices";
 import { useStatus } from "@/hooks/useStatus";
 import { useRouter } from "next/navigation";
-import { useDeviceStore } from "@/store/device.store";
+import { useAlertStore } from "@/store/alert.store";
+
 import { ConfirmationDialog } from "../ConfirmationDialog";
 
 export function DevicesWrapper({
@@ -27,11 +27,11 @@ export function DevicesWrapper({
   const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const hasCreatedANewDevice = useDeviceStore(
-    (state) => state.hasCreatedANewDevice,
+  const hasCreatedANewDevice = useAlertStore(
+    (state) => state.hasCreatedANewAlert,
   );
-  const setHasCreatedANewDevice = useDeviceStore(
-    (state) => state.setHasCreatedANewDevice,
+  const setHasCreatedANewDevice = useAlertStore(
+    (state) => state.setHasCreatedANewAlert,
   );
 
   const limit = 100;
@@ -122,7 +122,7 @@ export function DevicesWrapper({
         />
 
         <ConfirmationDialog
-          title="Dispositivo cadastrado com sucesso"
+          title="Alerta cadastrado com sucesso"
           description="Deseja abrir um boletim de ocorrência na Delegacia online da Paraíba?"
           cancelText="Agora não"
           confirmText="Criar boletim"
