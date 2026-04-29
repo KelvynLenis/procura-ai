@@ -27,7 +27,7 @@ interface ViewMyAlertProps {
   setModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function ViewMyAlert({
+export function ViewMyAlertMobile({
   id,
   status,
   handleDeviceRecovery,

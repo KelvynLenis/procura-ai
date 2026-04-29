@@ -5,9 +5,8 @@ import { IoIosWarning } from "react-icons/io";
 import { AlertForm } from "../../Forms/AlertForm";
 import type { DeviceProps, Operator } from "@/types";
 import { Trash2 } from "lucide-react";
-import { ViewMyAlert } from "../../ViewMyAlert";
+import { ViewMyAlertMobile } from "../../ViewMyAlertMobile";
 import { toast } from "react-toastify";
-import { v4 as uuidv4 } from "uuid";
 import { ImPencil } from "react-icons/im";
 import { useEffect, useState } from "react";
 import Button from "../../Button";
@@ -189,7 +188,7 @@ export function DeviceDetailsCard({
                   <span className="transition- absolute -top-8 right-5 hidden w-32 rounded-sm bg-black/60 px-2 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
                     Visualizar alerta
                   </span>
-                  <ViewMyAlert
+                  <ViewMyAlertMobile
                     id={id}
                     status={status}
                     handleDeviceRecovery={handleDeviceRecovery}
