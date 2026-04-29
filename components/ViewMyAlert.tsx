@@ -15,6 +15,10 @@ import { getUserId } from "@/functions/user/get-user-id";
 import { getUserById } from "@/functions/user/get-user-by-id";
 import ViewOccurenceGoogleMap from "./Maps/ViewOccurenceGoogleMap";
 import Button from "./Button";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
+import Image from "next/image";
+import policeDepartmentLogo from "../assets/images/police-department-logo.png";
 
 interface ViewMyAlertProps {
   id: string;
@@ -214,6 +218,39 @@ export function ViewMyAlert({
                   >
                     {device.status}
                   </span>
+                </div>
+              </div>
+
+              <div className="flex flex-col bg-zinc-100 p-4">
+                <Image
+                  src={policeDepartmentLogo}
+                  alt="Logo da policia civil"
+                  className="w-1/2 self-center"
+                />
+                <div className="flex flex-col gap-2">
+                  <span className="text-sm font-medium">
+                    Deseja criar um boletim de ocorrência na delegacia online da
+                    Polícia Civil?
+                  </span>
+                  <p className="text-justify text-sm">
+                    Em casos de perda, ou furto simples é possível criar um
+                    boletim de ocorrência online, feito diretamente pelo site da
+                    delegacia online da polícia civil da Paraíba. O boletim
+                    criado será analisado pela Polícia Civil e a certidão será
+                    enviada para o e-mail informado. Em caso de roubos, onde
+                    houve ameaça à vida, é necessário se dirigir à uma delegacia
+                    presencialmente.
+                  </p>
+                  <Link
+                    href={
+                      "https://delegaciaonline.pc.pb.gov.br/tipo-ocorrencia"
+                    }
+                    className="flex items-center self-end text-secondary underline"
+                    target="_blank"
+                  >
+                    Criar boletim online
+                    <ChevronRight className="h-6 w-6" />
+                  </Link>
                 </div>
               </div>
             </div>
