@@ -370,11 +370,13 @@ export default function Landing() {
                 (83) 36125600/ 36125601/ 36125602{" "}
               </span>
 
-              <Image
-                src={sicLogo}
-                alt="sic logo"
-                className="h-1/4 self-center"
-              />
+              <Link href="https://sic.pb.gov.br/" target="_blank">
+                <Image
+                  src={sicLogo}
+                  alt="sic logo"
+                  className="h-1/4 self-center"
+                />
+              </Link>
             </div>
 
             <Image
