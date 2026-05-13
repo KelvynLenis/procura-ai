@@ -22,6 +22,7 @@ import { FaXTwitter } from "react-icons/fa6";
 import { FaYoutube } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa6";
 import govFull from "../../assets/icons/gov.png";
+import Link from "next/link";
 
 export default function Login() {
   const renderStepContent = (step: QuestionStep) => (
@@ -120,10 +121,30 @@ export default function Login() {
                   </span>
 
                   <div className="flex gap-2">
-                    <FaFacebookF className="size-5 lg:size-8" />
-                    <FaXTwitter className="size-5 lg:size-8" />
-                    <FaYoutube className="size-5 lg:size-8" />
-                    <FaInstagram className="size-5 lg:size-8" />
+                    <Link
+                      href="https://www.facebook.com/GovernoParaiba"
+                      target="_blank"
+                    >
+                      <FaFacebookF className="size-5 lg:size-8" />
+                    </Link>
+                    <Link
+                      href="https://www.twitter.com/govparaiba"
+                      target="_blank"
+                    >
+                      <FaXTwitter className="size-5 lg:size-8" />
+                    </Link>
+                    <Link
+                      href="https://www.youtube.com/@govparaibadigital"
+                      target="_blank"
+                    >
+                      <FaYoutube className="size-5 lg:size-8" />
+                    </Link>
+                    <Link
+                      href="https://www.instagram.com/govparaiba"
+                      target="_blank"
+                    >
+                      <FaInstagram className="size-5 lg:size-8" />
+                    </Link>
                   </div>
                 </div>
                 <div className="flex w-full flex-col items-center justify-end lg:flex-row">
@@ -172,11 +193,13 @@ export default function Login() {
                   (83) 36125600/ 36125601/ 36125602{" "}
                 </span>
 
-                <Image
-                  src={sicLogo}
-                  alt="sic logo"
-                  className="h-1/4 self-center"
-                />
+                <Link href="https://sic.pb.gov.br/" target="_blank">
+                  <Image
+                    src={sicLogo}
+                    alt="sic logo"
+                    className="h-1/4 self-center"
+                  />
+                </Link>
               </div>
 
               <Image
