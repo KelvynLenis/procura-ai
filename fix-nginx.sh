@@ -33,8 +33,8 @@ server {
     listen [::]:443 ssl http2;
     server_name procuraai-homolog.secties.pb.gov.br;
 
-    ssl_certificate /etc/letsencrypt/live/procuraai.secties.pb.gov.br/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/procuraai.secties.pb.gov.br/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/procuraai-homolog.secties.pb.gov.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/procuraai-homolog.secties.pb.gov.br/privkey.pem;
 
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
@@ -97,5 +97,5 @@ else
     echo "❌ Erro!"
     echo ""
     echo "Verifique se os certificados existem:"
-    ls -la /etc/letsencrypt/live/procuraai.secties.pb.gov.br/
+    ls -la /etc/letsencrypt/live/procuraai-homolog.secties.pb.gov.br/
 fi

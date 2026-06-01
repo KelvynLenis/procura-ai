@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.gitignore
+Dockerfile
+README.md
+README-DEPLOY.md
+*.log
+*.md
+*.sqlite
+*.tar
+*.zip
+*.gz
+.vscode
+.idea
