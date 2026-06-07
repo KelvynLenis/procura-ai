@@ -32,8 +32,8 @@ interface VerificationCodeEmailProps {
   code: string;
 }
 
-const FOOTER_IMAGE_VERIFICATION = 'https://fra.cloud.appwrite.io/v1/storage/buckets/67daf75a000dd434ce24/files/footer-email/view?project=67ade4080023b74ddeac&mode=admin';
-const FOOTER_IMAGE_RECOVERY = 'https://fra.cloud.appwrite.io/v1/storage/buckets/67daf75a000dd434ce24/files/footer-recovery-device/view?project=67ade4080023b74ddeac&mode=admin';
+const FOOTER_IMAGE_VERIFICATION = 'https://200.129.85.133:8443/v1/storage/buckets/6a2334a100098010118e/files/6a233604002aa8a92904/view?project=6a136b34000bc009056d&mode=admin';
+const FOOTER_IMAGE_RECOVERY = 'https://200.129.85.133:8443/v1/storage/buckets/6a2334a100098010118e/files/6a2336000021650a8885/view?project=6a136b34000bc009056d&mode=admin';
 
 type EmailLayoutType = 'verification' | 'recovery';
 
@@ -75,7 +75,7 @@ function buildEmailLayout({
 
 export const emailService = {
   async sendEmail({ subject, content, users }: SendEmailProps) {
-    
+
     try {
       return await nodemailerService.sendEmail({
         from: 'ProcuraAí <procuraai.noreply@gmail.com>',
@@ -115,7 +115,7 @@ export const emailService = {
       <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 20px 0; border-collapse: collapse;">
         <tr>
           <td style="width: 72px; vertical-align: middle; padding-right: 12px;">
-            <img src="https://fra.cloud.appwrite.io/v1/storage/buckets/67daf75a000dd434ce24/files/email_icone/view?project=67ade4080023b74ddeac&mode=admin" alt="Ícone de Localização" style="width: 56px; height: 56px; display: block;" />
+            <img src="https://200.129.85.133:8443/v1/storage/buckets/6a2334a100098010118e/files/6a2335fb00390197c33f/view?project=6a136b34000bc009056d&mode=admin" alt="Ícone de Localização" style="width: 56px; height: 56px; display: block;" />
           </td>
           <td style="vertical-align: top;">
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 8px;">
@@ -140,7 +140,7 @@ export const emailService = {
           <br />
           Ou baixe nosso aplicativo, disponível nas lojas Google Play e Apple Store.
         </p>
-        <img src="https://fra.cloud.appwrite.io/v1/storage/buckets/67daf75a000dd434ce24/files/email_lojas/view?project=67ade4080023b74ddeac&mode=admin" alt="Lojas Disponíveis" style="width: 100%; max-width: 300px; height: auto; display: block; margin: 0; border-radius: 10px;" />
+        <img src="https://200.129.85.133:8443/v1/storage/buckets/6a2334a100098010118e/files/6a2335f0003c2cac6d87/view?project=6a136b34000bc009056d&mode=admin" alt="Lojas Disponíveis" style="width: 100%; max-width: 300px; height: auto; display: block; margin: 0; border-radius: 10px;" />
       </div>
     `.trim();
 

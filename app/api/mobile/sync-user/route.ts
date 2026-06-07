@@ -16,7 +16,16 @@ export async function POST(request: Request) {
     const client = new Client()
       .setEndpoint(process.env.NEXT_PUBLIC_API_URL!)
       .setProject(process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID!)
-      .setKey(process.env.APP_WRITE_API_KEY!);
+      .setKey(
+        process.env.APP_WRITE_API_KEY ?? process.env.NEXT_PUBLIC_APP_WRITE_API_KEY ?? "",
+      );
+
+    if (!process.env.APP_WRITE_API_KEY && !process.env.NEXT_PUBLIC_APP_WRITE_API_KEY) {
+      return NextResponse.json(
+        { error: "APP_WRITE_API_KEY ou NEXT_PUBLIC_APP_WRITE_API_KEY são obrigatórias" },
+        { status: 500 },
+      );
+    }
 
     const databases = new Databases(client);
 

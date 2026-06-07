@@ -8,9 +8,9 @@ services:
     image: procuraai-web:latest
     container_name: procuraai-web
     restart: always
-    ports:
-      - "3000:3000"
+    network_mode: host
     env_file:
       - .env
     environment:
       - NODE_ENV=production
+      - NODE_TLS_REJECT_UNAUTHORIZED=0

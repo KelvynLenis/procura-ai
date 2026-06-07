@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url); // pega a URL da request
   const userId = searchParams.get("userID"); // pega o query param "userId"
+  const appwriteBaseUrl =
+    process.env.NEXT_PUBLIC_API_URL ?? "https://200.129.85.133:8443/v1";
 
   const params = new URLSearchParams({
     "queries[0]": JSON.stringify({
@@ -14,7 +16,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const res = await fetch(
-      `https://fra.cloud.appwrite.io/v1/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_NOTIFICATION}/documents?${params.toString()}`,
+      `${appwriteBaseUrl}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_NOTIFICATION}/documents?${params.toString()}`,
       {
         method: "GET",
         headers: {
