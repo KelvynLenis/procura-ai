@@ -3,7 +3,7 @@ import { Expo } from "expo-server-sdk";
 import { listAllUsers } from "@/functions/user/list-all-users";
 import { createNotification } from "@/functions/notification/create-notification";
 import { getUser } from "@/functions/user/get-user";
-import { getDevices } from "@/functions/devices/list-devices";
+import { getDevices } from "@/functions/device/get-devices";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {

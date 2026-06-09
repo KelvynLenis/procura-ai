@@ -1,10 +1,9 @@
 import type { QueryFilter } from "@/types";
-import { getStolenDevices } from "../devices/list-stolen-devices";
-import { getEvents } from "../event/get-events";
 import { getUser } from "../user/get-user";
-import { getDevices } from "../devices/list-devices";
+import { getDevices } from "../device/get-devices";
 import { listContacts } from "../contact/list-contacts";
 import type { Contact } from "@/types";
+import { listEvents } from "../event/list-events";
 
 interface joinProps {
   devicesFilters?: QueryFilter[];
@@ -24,7 +23,7 @@ export async function joinDevicesEventsUsers(props?: joinProps) {
       return [];
     }
 
-    const activeAlertsEvents = await getEvents();
+    const activeAlertsEvents = await listEvents();
 
     const enrichedDevices = await Promise.all(
       stolenDevices.map(async (device) => {
@@ -93,7 +92,7 @@ export async function joinUsersDevicesEvents(props?: joinProps) {
     filters: activeDevicesFilters,
   });
 
-  const activeAlertsEvents = await getEvents();
+  const activeAlertsEvents = await listEvents();
 
   const enrichedDevices = await Promise.all(
     stolenDevices.map(async (device) => {

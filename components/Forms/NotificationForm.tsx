@@ -19,7 +19,7 @@ import NotificationTable from "../Tables/NotificationTable";
 import { useEffect, useState } from "react";
 import { User } from "@/types";
 import AddUserToPushNotificationList from "../AddUserToPushNotificationList";
-import { getDevices } from "@/functions/devices/list-devices";
+import { getDevices } from "@/functions/device/get-devices";
 import { getUser } from "@/functions/user/get-user";
 import { toast } from "react-toastify";
 import { getUserById } from "@/functions/user/get-user-by-id";

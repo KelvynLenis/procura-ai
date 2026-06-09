@@ -1,0 +1,338 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { handleSendCode, handleValidateCode } from "./handlers";
+
+const saveCodeMock = vi.fn();
+const getCodeByEmailMock = vi.fn();
+const deleteCodeMock = vi.fn();
+const incrementAttemptsMock = vi.fn();
+const createSessionTokenByAuthUserIdMock = vi.fn();
+const updateUserStatusByAuthIdMock = vi.fn();
+
+const sendVerificationCodeEmailMock = vi.fn();
+
+vi.mock("./verification-store", () => ({
+  saveCode: saveCodeMock,
+  getCodeByEmail: getCodeByEmailMock,
+  deleteCode: deleteCodeMock,
+  incrementAttempts: incrementAttemptsMock,
+  createSessionTokenByAuthUserId: createSessionTokenByAuthUserIdMock,
+  updateUserStatusByAuthId: updateUserStatusByAuthIdMock,
+}));
+
+vi.mock("@/services/email", () => ({
+  emailService: {
+    sendVerificationCodeEmail: sendVerificationCodeEmailMock,
+  },
+}));
+
+describe("verification-service", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  describe("handleSendCode", () => {
+    it("deve enviar código com sucesso", async () => {
+      const request = new Request("http://localhost", {
+        method: "POST",
+        body: JSON.stringify({
+          email: "user@test.com",
+          userId: "user-1",
+          userName: "João",
+        }),
+      });
+
+      const response = await handleSendCode(request);
+      const payload = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(payload.success).toBe(true);
+
+      expect(saveCodeMock).toHaveBeenCalledTimes(1);
+
+      expect(sendVerificationCodeEmailMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userEmail: "user@test.com",
+          userName: "João",
+          code: expect.any(String),
+        }),
+      );
+
+      expect(updateUserStatusByAuthIdMock).toHaveBeenCalledWith(
+        "user-1",
+        "Limitado",
+      );
+    });
+
+    it("deve retornar 400 quando email estiver ausente", async () => {
+      const request = new Request("http://localhost", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: "user-1",
+        }),
+      });
+
+      const response = await handleSendCode(request);
+      const payload = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(payload.success).toBe(false);
+    });
+
+    it("deve retornar 400 quando userId estiver ausente", async () => {
+      const request = new Request("http://localhost", {
+        method: "POST",
+        body: JSON.stringify({
+          email: "user@test.com",
+        }),
+      });
+
+      const response = await handleSendCode(request);
+      const payload = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(payload.success).toBe(false);
+    });
+
+    it("deve retornar 500 quando saveCode falhar", async () => {
+      saveCodeMock.mockRejectedValueOnce(new Error("erro"));
+
+      const request = new Request("http://localhost", {
+        method: "POST",
+        body: JSON.stringify({
+          email: "user@test.com",
+          userId: "user-1",
+        }),
+      });
+
+      const response = await handleSendCode(request);
+      const payload = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(payload.success).toBe(false);
+    });
+
+    it("deve retornar 500 quando envio de email falhar", async () => {
+      sendVerificationCodeEmailMock.mockRejectedValueOnce(
+        new Error("email error"),
+      );
+
+      const request = new Request("http://localhost", {
+        method: "POST",
+        body: JSON.stringify({
+          email: "user@test.com",
+          userId: "user-1",
+        }),
+      });
+
+      const response = await handleSendCode(request);
+      const payload = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(payload.success).toBe(false);
+    });
+  });
+
+  describe("handleValidateCode", () => {
+    it("deve validar código com sucesso", async () => {
+      const crypto = await import("crypto");
+
+      const code = "123456";
+      const hashedCode = crypto.createHash("sha256").update(code).digest("hex");
+
+      getCodeByEmailMock.mockResolvedValueOnce({
+        $id: "doc-1",
+        hashed_code: hashedCode,
+        attempts: 0,
+        expires_at: new Date(Date.now() + 60000).toISOString(),
+        user_id: "user-1",
+      });
+
+      createSessionTokenByAuthUserIdMock.mockResolvedValueOnce({
+        secret: "session-secret",
+      });
+
+      const request = new Request("http://localhost", {
+        method: "POST",
+        body: JSON.stringify({
+          email: "user@test.com",
+          code,
+        }),
+      });
+
+      const response = await handleValidateCode(request);
+      const payload = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(payload.success).toBe(true);
+      expect(payload.sessionSecret).toBe("session-secret");
+
+      expect(deleteCodeMock).toHaveBeenCalledWith("doc-1");
+      expect(createSessionTokenByAuthUserIdMock).toHaveBeenCalledWith("user-1");
+    });
+
+    it("deve retornar 400 quando email estiver ausente", async () => {
+      const request = new Request("http://localhost", {
+        method: "POST",
+        body: JSON.stringify({
+          code: "123456",
+        }),
+      });
+
+      const response = await handleValidateCode(request);
+
+      expect(response.status).toBe(400);
+    });
+
+    it("deve retornar 404 quando não existir código", async () => {
+      getCodeByEmailMock.mockResolvedValueOnce(null);
+
+      const request = new Request("http://localhost", {
+        method: "POST",
+        body: JSON.stringify({
+          email: "user@test.com",
+          code: "123456",
+        }),
+      });
+
+      const response = await handleValidateCode(request);
+
+      expect(response.status).toBe(404);
+    });
+
+    it("deve retornar 410 quando código estiver expirado", async () => {
+      getCodeByEmailMock.mockResolvedValueOnce({
+        $id: "doc-1",
+        expires_at: new Date(Date.now() - 1000).toISOString(),
+        attempts: 0,
+      });
+
+      const response = await handleValidateCode(
+        new Request("http://localhost", {
+          method: "POST",
+          body: JSON.stringify({
+            email: "user@test.com",
+            code: "123456",
+          }),
+        }),
+      );
+
+      expect(response.status).toBe(410);
+      expect(deleteCodeMock).toHaveBeenCalledWith("doc-1");
+    });
+
+    it("deve retornar 429 quando atingir limite de tentativas", async () => {
+      getCodeByEmailMock.mockResolvedValueOnce({
+        $id: "doc-1",
+        attempts: 5,
+        expires_at: new Date(Date.now() + 60000).toISOString(),
+      });
+
+      const response = await handleValidateCode(
+        new Request("http://localhost", {
+          method: "POST",
+          body: JSON.stringify({
+            email: "user@test.com",
+            code: "123456",
+          }),
+        }),
+      );
+
+      expect(response.status).toBe(429);
+      expect(deleteCodeMock).toHaveBeenCalledWith("doc-1");
+    });
+
+    it("deve incrementar tentativas quando código estiver incorreto", async () => {
+      getCodeByEmailMock.mockResolvedValueOnce({
+        $id: "doc-1",
+        hashed_code: "hash-incorreto",
+        attempts: 2,
+        expires_at: new Date(Date.now() + 60000).toISOString(),
+      });
+
+      const response = await handleValidateCode(
+        new Request("http://localhost", {
+          method: "POST",
+          body: JSON.stringify({
+            email: "user@test.com",
+            code: "123456",
+          }),
+        }),
+      );
+
+      expect(response.status).toBe(401);
+      expect(incrementAttemptsMock).toHaveBeenCalledWith("doc-1", 3);
+    });
+
+    it("deve excluir código ao atingir limite após erro", async () => {
+      getCodeByEmailMock.mockResolvedValueOnce({
+        $id: "doc-1",
+        hashed_code: "hash-incorreto",
+        attempts: 4,
+        expires_at: new Date(Date.now() + 60000).toISOString(),
+      });
+
+      const response = await handleValidateCode(
+        new Request("http://localhost", {
+          method: "POST",
+          body: JSON.stringify({
+            email: "user@test.com",
+            code: "123456",
+          }),
+        }),
+      );
+
+      expect(response.status).toBe(429);
+      expect(incrementAttemptsMock).toHaveBeenCalledWith("doc-1", 5);
+      expect(deleteCodeMock).toHaveBeenCalledWith("doc-1");
+    });
+
+    it("deve retornar 500 quando token não possuir secret", async () => {
+      const crypto = await import("crypto");
+
+      const code = "123456";
+      const hashedCode = crypto.createHash("sha256").update(code).digest("hex");
+
+      getCodeByEmailMock.mockResolvedValueOnce({
+        $id: "doc-1",
+        hashed_code: hashedCode,
+        attempts: 0,
+        expires_at: new Date(Date.now() + 60000).toISOString(),
+        user_id: "user-1",
+      });
+
+      createSessionTokenByAuthUserIdMock.mockResolvedValueOnce({});
+
+      const response = await handleValidateCode(
+        new Request("http://localhost", {
+          method: "POST",
+          body: JSON.stringify({
+            email: "user@test.com",
+            code,
+          }),
+        }),
+      );
+
+      expect(response.status).toBe(500);
+    });
+
+    it("deve retornar 500 em erro inesperado", async () => {
+      getCodeByEmailMock.mockRejectedValueOnce(new Error("erro"));
+
+      const response = await handleValidateCode(
+        new Request("http://localhost", {
+          method: "POST",
+          body: JSON.stringify({
+            email: "user@test.com",
+            code: "123456",
+          }),
+        }),
+      );
+
+      expect(response.status).toBe(500);
+    });
+  });
+});

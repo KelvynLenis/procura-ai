@@ -1,4 +1,4 @@
-import type { District } from "./types";
+import { District } from "@/types";
 
 export async function updateDistrictCounters(
   district: District,
