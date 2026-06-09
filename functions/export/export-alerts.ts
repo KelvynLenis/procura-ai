@@ -1,7 +1,7 @@
 import * as ExcelJS from "exceljs";
 import { Device, Event, User } from "@/types";
 import { listAllEvents } from "../event/list-all-events";
-import { getDevices } from "../devices/list-devices";
+import { getDevices } from "../device/get-devices";
 import { listAllUsers } from "../user/list-all-users";
 import { toast } from "react-toastify";
 
