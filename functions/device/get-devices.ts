@@ -1,11 +1,5 @@
 import type { Device, QueryFilter } from "../../types";
 
-// interface QueryFilter {
-//   method: string
-//   attribute: string
-//   values: any[]
-// }
-
 interface ListDevicesProps {
   filters?: QueryFilter[]; // Array of filter objects
 }
