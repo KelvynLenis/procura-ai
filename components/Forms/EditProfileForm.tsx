@@ -24,6 +24,7 @@ import {
   LogOut,
   Eye,
   EyeOff,
+  Trash2,
 } from "lucide-react";
 import type { User } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,6 +55,8 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { logoutToAppHome } from "@/lib/govbr/logout";
 import { useRouter } from "next/navigation";
 import { useStatus } from "@/hooks/useStatus";
+import { ConfirmationDialog } from "../ConfirmationDialog";
+import { DeleteAccount } from "../DeleteAccount";
 
 const formSchema = z
   .object({
@@ -206,7 +209,9 @@ export function EditProfileForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (isReadOnlyProfile) {
-      toast.info("Perfil disponível apenas para visualização no acesso limitado.");
+      toast.info(
+        "Perfil disponível apenas para visualização no acesso limitado.",
+      );
       return;
     }
 
@@ -374,10 +379,12 @@ export function EditProfileForm() {
                 <div className="flex flex-col gap-4 md:flex-row">
                   <label
                     htmlFor="file"
-                      className={cn(
-                        "flex max-h-11 w-full max-w-48 items-center justify-center gap-3 rounded-xl bg-zinc-100 px-4 py-3 text-xs ring-1 ring-[#232323]/30 lg:text-sm",
-                        isReadOnlyProfile ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:opacity-70",
-                      )}
+                    className={cn(
+                      "flex max-h-11 w-full max-w-48 items-center justify-center gap-3 rounded-xl bg-zinc-100 px-4 py-3 text-xs ring-1 ring-[#232323]/30 lg:text-sm",
+                      isReadOnlyProfile
+                        ? "cursor-not-allowed opacity-50"
+                        : "cursor-pointer hover:opacity-70",
+                    )}
                   >
                     <input
                       id="file"
@@ -385,7 +392,7 @@ export function EditProfileForm() {
                       className="hidden"
                       accept="image/png, image/jpeg"
                       onChange={handleFileChange}
-                        disabled={isReadOnlyProfile}
+                      disabled={isReadOnlyProfile}
                     />
                     <Upload className="h-5 w-5 lg:h-6 lg:w-6" />
                     Selecionar imagem
@@ -478,6 +485,9 @@ export function EditProfileForm() {
                 {isSubmitting ? "Salvando..." : "Salvar"}
               </Button>
             </div>
+
+            <span className="h-0.5 w-full rounded-md bg-zinc-200" />
+            <DeleteAccount />
             {isReadOnlyProfile && (
               <span className="text-sm text-zinc-500">
                 Perfil em modo somente visualização para acesso limitado.
@@ -565,7 +575,9 @@ export function EditProfileForm() {
                             htmlFor="fileMobile"
                             className={cn(
                               "flex h-11 max-w-48 items-center justify-center gap-2 rounded-md border border-zinc-400 bg-zinc-100 px-4 py-2 text-sm transition-opacity",
-                              isReadOnlyProfile ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:opacity-70",
+                              isReadOnlyProfile
+                                ? "cursor-not-allowed opacity-50"
+                                : "cursor-pointer hover:opacity-70",
                             )}
                           >
                             <input
@@ -701,9 +713,12 @@ export function EditProfileForm() {
                       </div>
                       {isReadOnlyProfile && (
                         <span className="text-sm text-zinc-500">
-                          Perfil em modo somente visualização para acesso limitado.
+                          Perfil em modo somente visualização para acesso
+                          limitado.
                         </span>
                       )}
+
+                      <DeleteAccount />
                     </form>
                   </Form>
                 </div>
