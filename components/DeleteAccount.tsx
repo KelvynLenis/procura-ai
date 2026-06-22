@@ -23,7 +23,6 @@ export function DeleteAccount() {
 
   async function handleDelete() {
     try {
-      // Executa em paralelo
       const [userDocumentId, userId] = await Promise.all([
         getUserDocumentId(),
         getUserId(),
