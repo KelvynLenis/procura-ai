@@ -228,14 +228,49 @@ export function DeviceForm({
         values.brand,
         values.phone_model,
       );
+
       if (!imeiValidation.isValid) {
         setImeiError(imeiValidation.error || "Erro ao validar IMEI");
         setIsLoading(false);
         return;
       }
+
+      if (imeiValidation.isValid && imeiValidation.isUpdate) {
+        const updateDevicePromise = async () => {
+          try {
+            await updateDevice(
+              imeiValidation.deviceId!,
+              {
+                phone_number: values.phone_number,
+                phone_model: values.phone_model,
+                brand: values.brand,
+                imei: values.imei,
+                is_stolen: false,
+                operator_id: values.operator_id,
+              } as Device,
+              userId,
+            );
+            form.reset();
+
+            router.push("/meus-dispositivos");
+          } catch (error) {
+            console.error(`Erro ao criar dispositivo: ${error}`);
+            throw error;
+          }
+        };
+
+        toast.promise(updateDevicePromise(), {
+          pending: "Criando dispositivo...",
+          success: "Dispositivo criado com sucesso!",
+          error: "Erro ao criar dispositivo.",
+        });
+
+        return;
+      }
+
       const deviceId = uuidv4();
 
-      const callFunction = async () => {
+      const createDevicePromise = async () => {
         try {
           await createDevice(deviceId, values as Device, userId);
           form.reset();
@@ -247,7 +282,7 @@ export function DeviceForm({
         }
       };
 
-      toast.promise(callFunction(), {
+      toast.promise(createDevicePromise(), {
         pending: "Criando dispositivo...",
         success: "Dispositivo criado com sucesso!",
         error: "Erro ao criar dispositivo.",
