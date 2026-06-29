@@ -15,6 +15,8 @@ interface ImeiCheckResponse {
 
 interface ImeiValidationResult {
   isValid: boolean;
+  isUpdate?: boolean;
+  deviceId?: string;
   error?: string;
 }
 
@@ -134,6 +136,14 @@ export async function checkImei(
     );
 
     if (imeiExists) {
+      const sameImei = existingDevices.documents.find(
+        (existingDevice: Device) => existingDevice.imei === imei,
+      );
+
+      if (sameImei.auth_id.length === 0) {
+        return { isValid: true, isUpdate: true, deviceId: sameImei.$id };
+      }
+
       return {
         isValid: false,
         error: "Este IMEI já está cadastrado.",

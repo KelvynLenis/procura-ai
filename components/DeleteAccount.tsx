@@ -10,8 +10,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { deleteContactByUserId } from "@/functions/contact/delete-contact-by-user-id";
+import { listDevices } from "@/functions/device/list-devices";
+import { updateDevice } from "@/functions/device/update-device";
 import { deleteUser } from "@/functions/user/delete-user";
 import { getUserDocumentId, getUserId } from "@/functions/user/get-user-id";
+import { Device } from "@/types";
 import { ca } from "date-fns/locale";
 import { Sparkle, Sparkles, Trash2, TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -28,6 +31,24 @@ export function DeleteAccount() {
         getUserId(),
       ]);
 
+      const { documents: userDevices } = await listDevices({
+        userId,
+        limit: 100,
+        page: 1,
+      });
+
+      console.log("userDevices", userDevices);
+
+      for (const device of userDevices) {
+        await updateDevice(
+          device.$id,
+          {
+            auth_id: "",
+          } as Device,
+          "",
+        );
+      }
+
       const hasSucceededToDeleteContacts = await deleteContactByUserId(userId!);
 
       console.log("hasSucceededToDeleteContacts", hasSucceededToDeleteContacts);
@@ -39,7 +60,8 @@ export function DeleteAccount() {
       const response = await deleteUser(userId!, userDocumentId!);
 
       if (response) {
-        router.push("/auth/login");
+        router.refresh();
+        router.push("/login");
       }
     } catch (error) {
       console.error("Erro", error);
