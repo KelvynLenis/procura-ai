@@ -92,6 +92,8 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
             setIsFirstLogin(true);
             return;
           }
+
+          router.push("/meus-dispositivos");
         } catch (error: any) {
           if (error.message?.match(/password/)) {
             form.setError("email", { message: "Email ou senha incorretos" });
