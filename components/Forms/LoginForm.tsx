@@ -35,7 +35,7 @@ const formSchema = z.object({
   email: z.string().email("Email inválido"),
   password: z.string().min(1, "A senha é obrigatória"),
 });
-login;
+// login;
 export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -53,6 +53,7 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
     try {
       const callFunction = async () => {
         try {
@@ -202,6 +203,11 @@ export function LoginForm({ isAdminPage }: { isAdminPage?: boolean }) {
                               placeholder="Email"
                               {...field}
                               className="w-64 self-center rounded-full"
+                              onChange={(e) => {
+                                field.onChange(
+                                  e.target.value.replace(/\s/g, ""),
+                                );
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
