@@ -153,7 +153,7 @@ export function DeviceForm({
         try {
           setIsLoading(true);
           const response = await fetch(
-            `https://alpha.imeicheck.com/api/free_with_key/modelBrandName?key=${process.env.NEXT_PUBLIC_API_KEY_IMEICHECK}&imei=${imeiValue}&format=json`,
+            `/api/check-imei-info?imei=${imeiValue}`,
           );
 
           if (!response.ok) {

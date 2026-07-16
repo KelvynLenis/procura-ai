@@ -4,7 +4,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url); // pega a URL da request
   const userId = searchParams.get("userID"); // pega o query param "userId"
   const appwriteBaseUrl =
-    process.env.NEXT_PUBLIC_API_URL ?? "https://200.129.85.133:8443/v1";
+    process.env.NEXT_PUBLIC_API_URL ?? "https://procuraai-homolog.secties.pb.gov.br/v1";
 
   const params = new URLSearchParams({
     "queries[0]": JSON.stringify({

@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const appwriteBaseUrl =
-    process.env.NEXT_PUBLIC_API_URL ?? "https://200.129.85.133:8443/v1";
+    process.env.NEXT_PUBLIC_API_URL ?? "https://procuraai-homolog.secties.pb.gov.br/v1";
 
   try {
     const res = await fetch(

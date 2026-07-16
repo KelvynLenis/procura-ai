@@ -2,7 +2,7 @@ import { storage } from "@/lib/appwrite";
 import { v4 as uuidv4 } from "uuid";
 
 const APPWRITE_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "https://200.129.85.133:8443/v1";
+  process.env.NEXT_PUBLIC_API_URL ?? "https://procuraai-homolog.secties.pb.gov.br/v1";
 
 export async function uploadImage(file: File) {
   try {

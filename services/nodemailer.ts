@@ -19,7 +19,9 @@ class EmailService {
     }
 
     const gmailUser = process.env.GMAIL_USER ?? process.env.NEXT_PUBLIC_GMAIL_USER;
-    const gmailPassword = process.env.GMAIL_APP_PASSWORD ?? process.env.NEXT_PUBLIC_GMAIL_APP_PASSWORD;
+    const gmailPassword = (
+      process.env.GMAIL_APP_PASSWORD ?? process.env.NEXT_PUBLIC_GMAIL_APP_PASSWORD
+    )?.replace(/\s/g, '');
 
     if (!gmailUser || !gmailPassword) {
       throw new Error('Credenciais de email nao configuradas');
