@@ -1,0 +1,131 @@
+# GitLab CI/CD — ProcuraAI Web
+#
+# Fluxo:
+#   1. Push/MR em develop → valida build
+#   2. Após build OK em develop → merge automático para homolog.secties
+#   3. Push em homolog.secties → deploy no servidor de homologação
+#
+# Variáveis necessárias (Settings → CI/CD → Variables):
+#   SYNC_TOKEN          — Project Access Token com escopo write_repository
+#   SSH_PRIVATE_KEY     — chave privada SSH para o servidor (tipo File, masked)
+#   DEPLOY_HOST         — IP ou hostname do servidor de homolog
+#   DEPLOY_USER         — usuário SSH (ex.: deploy)
+#   DEPLOY_PATH         — caminho do projeto no servidor (padrão: /var/www/procuraai-web)
+#
+# Se preferir GitLab Runner no servidor (executor shell), comente o job
+# deploy_homolog_ssh e use deploy_homolog_runner.
+
+default:
+  image: node:20-alpine
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules/
+  before_script:
+    - npm ci
+
+stages:
+  - validate
+  - sync
+  - deploy
+
+variables:
+  GIT_DEPTH: "0"
+  HOMOLOG_BRANCH: "homolog.secties"
+  NEXT_TELEMETRY_DISABLED: "1"
+
+# ---------------------------------------------------------------------------
+# Validação
+# ---------------------------------------------------------------------------
+
+build:
+  stage: validate
+  script:
+    - npm run build
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - .next/
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_BRANCH == $HOMOLOG_BRANCH
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# ---------------------------------------------------------------------------
+# Sincronização: develop → homolog.secties
+# ---------------------------------------------------------------------------
+
+sync_to_homolog:
+  stage: sync
+  image: alpine:3.20
+  needs:
+    - job: build
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+  before_script:
+    - apk add --no-cache git
+    - git config user.email "gitlab-ci@procuraai.local"
+    - git config user.name "GitLab CI"
+  script:
+    - |
+      if [ -z "${SYNC_TOKEN:-}" ]; then
+        echo "Erro: defina a variável SYNC_TOKEN (Project Access Token com write_repository)."
+        exit 1
+      fi
+    - git remote set-url origin "https://oauth2:${SYNC_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+    - git fetch origin "develop" "${HOMOLOG_BRANCH}"
+    - git checkout "${HOMOLOG_BRANCH}"
+    - git merge "origin/develop" --no-edit -m "chore(ci): sincroniza develop em ${HOMOLOG_BRANCH}"
+    - git push origin "${HOMOLOG_BRANCH}"
+
+# ---------------------------------------------------------------------------
+# Deploy — homologação
+# ---------------------------------------------------------------------------
+
+deploy_homolog_ssh:
+  stage: deploy
+  image: alpine:3.20
+  rules:
+    - if: $CI_COMMIT_BRANCH == $HOMOLOG_BRANCH
+  before_script:
+    - apk add --no-cache openssh-client git
+    - eval "$(ssh-agent -s)"
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+  script:
+    - |
+      DEPLOY_DIR="${DEPLOY_PATH:-/var/www/procuraai-web}"
+      ssh "${DEPLOY_USER}@${DEPLOY_HOST}" "
+        set -euo pipefail
+        cd '${DEPLOY_DIR}'
+        git fetch origin '${HOMOLOG_BRANCH}'
+        git checkout '${HOMOLOG_BRANCH}'
+        git pull origin '${HOMOLOG_BRANCH}'
+        chmod +x deploy.sh
+        ./deploy.sh
+      "
+  environment:
+    name: homolog
+    url: https://procuraai-homolog.secties.pb.gov.br/
+
+# Alternativa: runner instalado no servidor com tag "homolog"
+# deploy_homolog_runner:
+#   stage: deploy
+#   tags:
+#     - homolog
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $HOMOLOG_BRANCH
+#   script:
+#     - cd "${DEPLOY_PATH:-/var/www/procuraai-web}"
+#     - git fetch origin "${HOMOLOG_BRANCH}"
+#     - git checkout "${HOMOLOG_BRANCH}"
+#     - git pull origin "${HOMOLOG_BRANCH}"
+#     - chmod +x deploy.sh
+#     - ./deploy.sh
+#   environment:
+#     name: homolog
+#     url: https://procuraai-homolog.secties.pb.gov.br/
