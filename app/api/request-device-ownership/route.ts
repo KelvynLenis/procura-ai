@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { emailService } from "@/services/email";
 import { getUserById } from "@/functions/user/get-user-by-id";
 import { getDeviceByImei } from "@/functions/device/get-device-by-imei";
+import { getUserId } from "@/functions/user/get-user-id";
 
 export async function POST(request: Request) {
   try {
@@ -23,26 +24,12 @@ export async function POST(request: Request) {
 
       <p style="font-family: Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; font-size: 14px; line-height: 150%; letter-spacing: 0%; color: #232323;">
         Informamos que a posse do seu dispositivo: <strong>${device.phone_model} / ${device.brand}</strong> foi solicitado por ${newOwnerName}.
-        Você confirmar essa solicitação?
+        Você confirma essa solicitação?
       </p>
 
       <p style="font-family: Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; font-size: 14px; line-height: 150%; letter-spacing: 0%; color: #232323;">
         ATENÇÃO: Ao confirmar essa solicitação, o dispositivo passará a pertencer ao novo proprietário.
       </p>
-
-      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 20px 0; border-collapse: collapse;">
-        <tr>
-          <td style="width: 72px; vertical-align: middle; padding-right: 12px;">
-            <img src="${API_BASE}/storage/buckets/6a2334a100098010118e/files/6a2335fb00390197c33f/view?project=6a136b34000bc009056d&mode=admin" alt="Ícone de Localização" style="width: 56px; height: 56px; display: block;" />
-          </td>
-          <td style="vertical-align: top;">
-            <div style="background-color: #f5f5f5; padding: 15px; border-radius: 8px;">
-              <h3 style="color: #212A38; margin: 0 0 10px 0; font-family: Roboto, Arial, sans-serif; font-size: 16px;">Local para Retirada</h3>
-              <p style="margin: 0; font-family: Roboto, Arial, sans-serif; font-size: 14px; line-height: 150%; color: #232323;">${location}</p>
-            </div>
-          </td>
-        </tr>
-      </table>
 
       <div style="margin-top: 24px;">
         <p style="font-family: Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; font-size: 14px; line-height: 150%; letter-spacing: 0%; color: #232323; margin: 0 0 12px 0;">
