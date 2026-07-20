@@ -245,15 +245,151 @@ Esse token permite ao job `sync_to_homolog` fazer push na branch `homolog.sectie
 
 Se o sync falhar com *"not allowed to push"*, ajuste as permissões da branch protegida ou use token com role `Maintainer`.
 
-### 5. GitLab Runner
+### 5. GitLab Runner (instalar na VM com Docker)
 
 **Settings → CI/CD → Runners**
 
 É necessário **pelo menos 1 runner ativo** (status verde). Sem runner, os jobs ficam em `pending`.
 
-O runner pode ser:
-- Compartilhado da instituição (LAVID/UFpb), ou
-- Instalado em uma VM com executor Docker
+Esta VM (`procura-ai`) já tem **Docker** instalado. Falta instalar o **GitLab Runner**.
+
+#### Passo A — Criar o runner no GitLab (interface)
+
+> **Atenção (GitLab 17+ / LAVID):** a mensagem *"Creating runners with runner registration tokens is disabled"* significa que o **token de registro antigo** (copiado da página Runners) **não funciona mais**. Use o fluxo **Create project runner** abaixo.
+
+1. Acesse o projeto: `https://gitlab.lavid.ufpb.br/procuraai/procuraai-web`
+2. **Settings → CI/CD → Runners**
+3. Clique em **New project runner** ou **Create project runner** (botão azul — **não** use o "registration token" no final da página)
+4. Configure:
+
+| Campo | Valor |
+|-------|-------|
+| Tags | `homolog,docker` (opcional) |
+| Run untagged jobs | ✅ **Marcado** (obrigatório — jobs não têm tags) |
+| Protected | ✅ **Marcado** (variáveis CI usam Protect) |
+| Locked | ❌ Desmarcado |
+| Maximum job timeout | padrão ou `3600` |
+| Paused | ❌ Desmarcado |
+
+> **GitLab 19+:** tags, run-untagged e protected são definidos **aqui na UI**, não no comando `gitlab-runner register`. Se faltar "Run untagged jobs", o runner ignorará os jobs.
+
+4. Clique em **Create runner**
+5. **Copie o token** exibido (formato `glrt-...`) — ele só aparece uma vez
+
+#### Passo B — Instalar na VM (terminal)
+
+Conecte na VM e execute:
+
+```bash
+cd /home/procuraai/procuraai-web
+chmod +x scripts/setup-gitlab-runner.sh
+
+sudo RUNNER_TOKEN=glrt-SEU_TOKEN_AQUI ./scripts/setup-gitlab-runner.sh
+```
+
+O script faz automaticamente:
+- Instala o GitLab Runner (Ubuntu 24.04)
+- Adiciona `gitlab-runner` ao grupo `docker`
+- Registra com **executor Docker**
+- Configura `network_mode = "host"` (para jobs de deploy alcançarem SSH na porta 22024)
+- Inicia e habilita o serviço
+
+#### Passo C — Instalação manual (alternativa)
+
+Se preferir instalar passo a passo:
+
+```bash
+# 1. Instalar GitLab Runner
+sudo apt-get update
+sudo apt-get install -y curl ca-certificates
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL "https://packages.gitlab.com/runner/gitlab-runner/gpgkey" \
+  -o /etc/apt/keyrings/gitlab-runner-archive-keyring.asc
+echo "deb [signed-by=/etc/apt/keyrings/gitlab-runner-archive-keyring.asc] https://packages.gitlab.com/runner/gitlab-runner/ubuntu/ noble main" | \
+  sudo tee /etc/apt/sources.list.d/gitlab-runner.list
+sudo apt-get update
+sudo apt-get install -y gitlab-runner
+
+# 2. Permitir Docker para o runner
+sudo usermod -aG docker gitlab-runner
+
+# 3. Registrar (substitua glrt-SEU_TOKEN)
+# GitLab 19+: NÃO use --tag-list, --run-untagged etc. (configure na UI)
+sudo gitlab-runner register \
+  --non-interactive \
+  --url "https://gitlab.lavid.ufpb.br" \
+  --token "glrt-SEU_TOKEN" \
+  --executor "docker" \
+  --docker-image "node:20-alpine" \
+  --description "procuraai-homolog-docker"
+
+# 4. Rede host (deploy via SSH na porta 22024)
+sudo sed -i '/\[runners.docker\]/a\    network_mode = "host"' /etc/gitlab-runner/config.toml
+
+# 5. Iniciar
+sudo gitlab-runner verify
+sudo systemctl enable gitlab-runner
+sudo systemctl restart gitlab-runner
+sudo systemctl status gitlab-runner
+```
+
+#### Passo D — Verificar
+
+**No GitLab:**
+- **Settings → CI/CD → Runners** → runner com **bolinha verde**
+- Deve aparecer: `procuraai-homolog-docker`
+
+**Na VM:**
+```bash
+sudo gitlab-runner status
+sudo gitlab-runner list
+```
+
+**Teste:** faça push em `develop` e veja **Build → Pipelines** — jobs não devem ficar em `pending`.
+
+#### Configuração do executor Docker
+
+| Item | Valor | Motivo |
+|------|-------|--------|
+| Executor | `docker` | Jobs rodam em containers isolados |
+| Imagem padrão | `node:20-alpine` | Usada pelo job `build` |
+| `run-untagged` | `true` (na UI do GitLab) | Jobs do `.gitlab-ci.yml` não têm tags |
+| `network_mode` | `host` | Deploy SSH alcança a VM na porta 22024 |
+
+#### Erros comuns do Runner
+
+| Problema | Solução |
+|----------|---------|
+| Job `pending` forever | Runner offline — `sudo systemctl restart gitlab-runner` |
+| `Cannot connect to Docker daemon` | `sudo usermod -aG docker gitlab-runner` + restart |
+| Runner não pega jobs protegidos | Em Runners, marque **Protected** no runner |
+| SSH deploy falha do container | Confirme `network_mode = "host"` no `config.toml` |
+| `permission denied` no register | Token expirado — crie novo runner no GitLab |
+| `FATAL: Runner configuration other than name...` | GitLab 19+: remova `--tag-list`, `--run-untagged` do register; configure na UI |
+| `Creating runners with runner registration tokens is disabled` | Token antigo — use **Create project runner** e token `glrt-` |
+| `Verifying runner... is not valid` | Token errado (`glpat-` em vez de `glrt-`) ou expirado — crie runner novo na UI |
+
+#### Arquivo de configuração
+
+Após registro, o runner fica em:
+
+```
+/etc/gitlab-runner/config.toml
+```
+
+Exemplo esperado:
+
+```toml
+[[runners]]
+  name = "procuraai-homolog-docker"
+  url = "https://gitlab.lavid.ufpb.br"
+  token = "..."
+  executor = "docker"
+  [runners.docker]
+    network_mode = "host"
+    image = "node:20-alpine"
+    privileged = false
+```
 
 ### 6. Validar o pipeline
 
