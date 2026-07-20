@@ -7,14 +7,11 @@
 #
 # Variáveis necessárias (Settings → CI/CD → Variables):
 #   SYNC_TOKEN          — Project Access Token com escopo write_repository
-#   SSH_PRIVATE_KEY     — chave privada SSH para o servidor (tipo File, masked)
+#   SSH_PRIVATE_KEY     — chave privada SSH para o servidor (tipo File)
 #   DEPLOY_HOST         — IP ou hostname do servidor de homolog
 #   DEPLOY_USER         — usuário SSH (ex.: deploy)
 #   DEPLOY_PATH         — caminho do projeto no servidor (padrão: /home/procuraai/procuraai-web)
 #   DEPLOY_SSH_PORT     — porta SSH do servidor (padrão: 22024)
-#
-# Se preferir GitLab Runner no servidor (executor shell), comente o job
-# deploy_homolog_ssh e use deploy_homolog_runner.
 
 default:
   image: node:20-alpine
@@ -72,15 +69,16 @@ sync_to_homolog:
     - git config user.name "GitLab CI"
   script:
     - |
+      set -euo pipefail
       if [ -z "${SYNC_TOKEN:-}" ]; then
         echo "Erro: defina a variável SYNC_TOKEN (Project Access Token com write_repository)."
         exit 1
       fi
-    - git remote set-url origin "https://oauth2:${SYNC_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
-    - git fetch origin "develop" "${HOMOLOG_BRANCH}"
-    - git checkout "${HOMOLOG_BRANCH}"
-    - git merge "origin/develop" --no-edit -m "chore(ci): sincroniza develop em ${HOMOLOG_BRANCH}"
-    - git push origin "${HOMOLOG_BRANCH}"
+      git remote set-url origin "https://oauth2:${SYNC_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+      git fetch origin "develop" "${HOMOLOG_BRANCH}"
+      git checkout "${HOMOLOG_BRANCH}"
+      git merge "origin/develop" --no-edit -m "chore(ci) sync develop into ${HOMOLOG_BRANCH}"
+      git push origin "${HOMOLOG_BRANCH}"
 
 # ---------------------------------------------------------------------------
 # Deploy — homologação
@@ -95,6 +93,7 @@ deploy_homolog_ssh:
     - apk add --no-cache openssh-client git
     - eval "$(ssh-agent -s)"
     - |
+      set -e
       if [ -f "$SSH_PRIVATE_KEY" ]; then
         chmod 600 "$SSH_PRIVATE_KEY"
         ssh-add "$SSH_PRIVATE_KEY"
@@ -105,6 +104,7 @@ deploy_homolog_ssh:
     - ssh-keyscan -p "${DEPLOY_SSH_PORT:-22024}" -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
   script:
     - |
+      set -euo pipefail
       DEPLOY_DIR="${DEPLOY_PATH:-/home/procuraai/procuraai-web}"
       ssh -p "${DEPLOY_SSH_PORT:-22024}" "${DEPLOY_USER}@${DEPLOY_HOST}" "
         set -euo pipefail
@@ -118,21 +118,3 @@ deploy_homolog_ssh:
   environment:
     name: homolog
     url: https://procuraai-homolog.secties.pb.gov.br/
-
-# Alternativa: runner instalado no servidor com tag "homolog"
-# deploy_homolog_runner:
-#   stage: deploy
-#   tags:
-#     - homolog
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == $HOMOLOG_BRANCH
-#   script:
-#     - cd "${DEPLOY_PATH:-/home/procuraai/procuraai-web}"
-#     - git fetch origin "${HOMOLOG_BRANCH}"
-#     - git checkout "${HOMOLOG_BRANCH}"
-#     - git pull origin "${HOMOLOG_BRANCH}"
-#     - chmod +x deploy.sh
-#     - ./deploy.sh
-#   environment:
-#     name: homolog
-#     url: https://procuraai-homolog.secties.pb.gov.br/
