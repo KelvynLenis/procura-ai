@@ -45,10 +45,6 @@ build:
   stage: validate
   script:
     - npm run build
-  artifacts:
-    expire_in: 1 day
-    paths:
-      - .next/
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == "develop"
