@@ -9,12 +9,13 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { imei, newOwnerName } = body;
 
-    console.log(imei, newOwnerName);
-
     const device = await getDeviceByImei(imei);
-    console.log(device);
     const userId = device.auth_id;
     const user = await getUserById(userId);
+
+    if (!device) {
+      return NextResponse.json({ success: false, error: "device_not_found" });
+    }
 
     const API_BASE =
       process.env.NEXT_PUBLIC_API_URL ??
