@@ -10,7 +10,8 @@
 #   SSH_PRIVATE_KEY     — chave privada SSH para o servidor (tipo File, masked)
 #   DEPLOY_HOST         — IP ou hostname do servidor de homolog
 #   DEPLOY_USER         — usuário SSH (ex.: deploy)
-#   DEPLOY_PATH         — caminho do projeto no servidor (padrão: /var/www/procuraai-web)
+#   DEPLOY_PATH         — caminho do projeto no servidor (padrão: /home/procuraai/procuraai-web)
+#   DEPLOY_SSH_PORT     — porta SSH do servidor (padrão: 22024)
 #
 # Se preferir GitLab Runner no servidor (executor shell), comente o job
 # deploy_homolog_ssh e use deploy_homolog_runner.
@@ -93,13 +94,19 @@ deploy_homolog_ssh:
   before_script:
     - apk add --no-cache openssh-client git
     - eval "$(ssh-agent -s)"
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - |
+      if [ -f "$SSH_PRIVATE_KEY" ]; then
+        chmod 600 "$SSH_PRIVATE_KEY"
+        ssh-add "$SSH_PRIVATE_KEY"
+      else
+        echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+      fi
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
-    - ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+    - ssh-keyscan -p "${DEPLOY_SSH_PORT:-22024}" -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
   script:
     - |
-      DEPLOY_DIR="${DEPLOY_PATH:-/var/www/procuraai-web}"
-      ssh "${DEPLOY_USER}@${DEPLOY_HOST}" "
+      DEPLOY_DIR="${DEPLOY_PATH:-/home/procuraai/procuraai-web}"
+      ssh -p "${DEPLOY_SSH_PORT:-22024}" "${DEPLOY_USER}@${DEPLOY_HOST}" "
         set -euo pipefail
         cd '${DEPLOY_DIR}'
         git fetch origin '${HOMOLOG_BRANCH}'
@@ -120,7 +127,7 @@ deploy_homolog_ssh:
 #   rules:
 #     - if: $CI_COMMIT_BRANCH == $HOMOLOG_BRANCH
 #   script:
-#     - cd "${DEPLOY_PATH:-/var/www/procuraai-web}"
+#     - cd "${DEPLOY_PATH:-/home/procuraai/procuraai-web}"
 #     - git fetch origin "${HOMOLOG_BRANCH}"
 #     - git checkout "${HOMOLOG_BRANCH}"
 #     - git pull origin "${HOMOLOG_BRANCH}"
