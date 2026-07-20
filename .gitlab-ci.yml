@@ -15,6 +15,9 @@
 
 default:
   image: node:20-alpine
+  tags:
+    - homolog
+    - docker
   cache:
     key:
       files:
