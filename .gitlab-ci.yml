@@ -96,6 +96,7 @@ deploy_homolog_ssh:
       KEY_FILE="${CI_PROJECT_DIR}/.ssh_deploy_key"
       if [ -n "${SSH_PRIVATE_KEY:-}" ] && [ -f "$SSH_PRIVATE_KEY" ]; then
         cp "$SSH_PRIVATE_KEY" "$KEY_FILE"
+        sed -i 's/\r$//' "$KEY_FILE"
       elif [ -n "${SSH_PRIVATE_KEY_B64:-}" ]; then
         B64="$(printf '%s' "$SSH_PRIVATE_KEY_B64" | tr -d '[:space:]')"
         if printf '%s' "$B64" | grep -q 'BEGIN.*PRIVATE KEY'; then
@@ -111,7 +112,22 @@ deploy_homolog_ssh:
         exit 1
       fi
       chmod 600 "$KEY_FILE"
-      ssh-keygen -y -f "$KEY_FILE" >/dev/null
+      KEY_BYTES="$(wc -c < "$KEY_FILE" | tr -d ' ')"
+      KEY_HEAD="$(head -1 "$KEY_FILE")"
+      if [ "$KEY_BYTES" -lt 200 ]; then
+        echo "Erro: chave SSH muito curta (${KEY_BYTES} bytes). Cadastrou a chave publica (.pub) em vez da privada?"
+        exit 1
+      fi
+      if ! printf '%s' "$KEY_HEAD" | grep -q 'BEGIN.*PRIVATE KEY'; then
+        echo "Erro: arquivo nao parece chave privada (primeira linha: ${KEY_HEAD})."
+        exit 1
+      fi
+      if ! ssh-keygen -y -f "$KEY_FILE" >/dev/null 2>&1; then
+        echo "Erro: chave SSH invalida (${KEY_BYTES} bytes). Recadastre SSH_PRIVATE_KEY (File) com:"
+        echo "  cat ~/.ssh/gitlab-ci"
+        echo "Sem CRLF/Windows; Type File; Expand desmarcado."
+        exit 1
+      fi
       echo "Chave SSH validada com sucesso."
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - ssh-keyscan -p "${DEPLOY_SSH_PORT:-22024}" -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
