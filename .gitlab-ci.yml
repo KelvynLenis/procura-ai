@@ -6,7 +6,7 @@
 #   3. Push em homolog.secties → deploy no servidor de homologação
 #
 # Variáveis necessárias (Settings → CI/CD → Variables):
-#   SYNC_TOKEN          — Project Access Token (write_repository); apenas sync develop → homolog
+#   SYNC_TOKEN          — (opcional, legado) nao necessario; sync usa CI_JOB_TOKEN
 #   SSH_PRIVATE_KEY_B64 — chave em base64, uma linha (Type: Variable, recomendado)
 #   SSH_PRIVATE_KEY     — alternativa: Type File
 #   DEPLOY_HOST         — IP ou hostname do servidor de homolog
@@ -70,11 +70,8 @@ sync_to_homolog:
   script:
     - |
       set -euo pipefail
-      if [ -z "${SYNC_TOKEN:-}" ]; then
-        echo "Erro: defina a variável SYNC_TOKEN (Project Access Token com write_repository)."
-        exit 1
-      fi
-      git remote set-url origin "https://oauth2:${SYNC_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+      echo "Usando CI_JOB_TOKEN para autenticacao Git."
+      git remote set-url origin "https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
       git fetch origin "develop" "${HOMOLOG_BRANCH}"
       git checkout "${HOMOLOG_BRANCH}"
       git merge "origin/develop" --no-edit -m "chore(ci) sync develop into ${HOMOLOG_BRANCH}"
