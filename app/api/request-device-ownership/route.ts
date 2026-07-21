@@ -2,14 +2,16 @@ import { NextResponse } from "next/server";
 import { emailService } from "@/services/email";
 import { getUserById } from "@/functions/user/get-user-by-id";
 import { getDeviceByImei } from "@/functions/device/get-device-by-imei";
-import { getUserId } from "@/functions/user/get-user-id";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { imei, newOwnerName } = body;
 
-    const device = await getDeviceByImei(imei);
+    const devices = await getDeviceByImei(imei);
+    const device = devices.filter(
+      (device) => device.status !== "Solicitado",
+    )[0];
     const userId = device.auth_id;
     const user = await getUserById(userId);
 
@@ -29,6 +31,14 @@ export async function POST(request: Request) {
       <p style="font-family: Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; font-size: 14px; line-height: 150%; letter-spacing: 0%; color: #232323;">
         Informamos que a posse do seu dispositivo: <strong>${device.phone_model} / ${device.brand}</strong> foi solicitado por ${newOwnerName}.
         Você confirma essa solicitação?
+
+        <a href="https://procura-ai.vercel.app/api/confirm-ownership-transfer/${device.$id}/${imei}">
+          Sim
+        </a>
+
+        <a href="https://procura-ai.vercel.app/">
+          Sim
+        </a>
       </p>
 
       <p style="font-family: Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; font-size: 14px; line-height: 150%; letter-spacing: 0%; color: #232323;">
