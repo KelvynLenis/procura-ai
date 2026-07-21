@@ -28,7 +28,7 @@ build:
     - npm run build
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_BRANCH == "develop" && $CI_PIPELINE_SOURCE == "push"
     - if: $CI_COMMIT_BRANCH == $HOMOLOG_BRANCH
     - if: $CI_COMMIT_BRANCH == "main"
 
@@ -38,7 +38,7 @@ sync_to_homolog:
   needs:
     - job: build
   rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_BRANCH == "develop" && $CI_PIPELINE_SOURCE == "push"
   before_script:
     - apk add --no-cache git
     - git config user.email "gitlab-ci@procuraai.local"
@@ -46,29 +46,24 @@ sync_to_homolog:
   script:
     - |
       set -euo pipefail
+      if [ -z "${SYNC_TOKEN:-}" ] || [ -z "${SYNC_TOKEN_USER:-}" ]; then
+        echo "Defina SYNC_TOKEN e SYNC_TOKEN_USER (glpat + oauth2)"
+        exit 1
+      fi
       REPO="${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
       remote() { printf 'https://%s:%s@%s' "$1" "$2" "$REPO"; }
 
       git remote set-url origin "$(remote gitlab-ci-token "$CI_JOB_TOKEN")"
-      git fetch origin develop "$HOMOLOG_BRANCH"
-      git checkout "$HOMOLOG_BRANCH"
-      git merge origin/develop --no-edit -m "chore(ci) sync develop into $HOMOLOG_BRANCH"
-
-      push_ok=0
-      if [ -n "${SYNC_TOKEN:-}" ] && [ -n "${SYNC_TOKEN_USER:-}" ]; then
-        git remote set-url origin "$(remote "$SYNC_TOKEN_USER" "$SYNC_TOKEN")"
-        git push origin "$HOMOLOG_BRANCH" && push_ok=1 || true
-      fi
-      if [ "$push_ok" -eq 0 ]; then
-        git remote set-url origin "$(remote gitlab-ci-token "$CI_JOB_TOKEN")"
-        git push origin "$HOMOLOG_BRANCH"
-      fi
+      git fetch origin develop
+      git checkout -B "$HOMOLOG_BRANCH" origin/develop
+      git remote set-url origin "$(remote "$SYNC_TOKEN_USER" "$SYNC_TOKEN")"
+      git push origin "$HOMOLOG_BRANCH"
 
 deploy_homolog_ssh:
   stage: deploy
   image: alpine:3.20
   rules:
-    - if: $CI_COMMIT_BRANCH == $HOMOLOG_BRANCH
+    - if: $CI_COMMIT_BRANCH == $HOMOLOG_BRANCH && $CI_PIPELINE_SOURCE == "push"
   before_script:
     - apk add --no-cache openssh-client git
     - |
