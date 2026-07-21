@@ -6,7 +6,7 @@
 #   3. Push em homolog.secties → deploy no servidor de homologação
 #
 # Variáveis necessárias (Settings → CI/CD → Variables):
-#   SYNC_TOKEN          — Project Access Token (write_repository); sync + git pull no deploy
+#   SYNC_TOKEN          — Project Access Token (write_repository); apenas sync develop → homolog
 #   SSH_PRIVATE_KEY_B64 — chave em base64, uma linha (Type: Variable, recomendado)
 #   SSH_PRIVATE_KEY     — alternativa: Type File
 #   DEPLOY_HOST         — IP ou hostname do servidor de homolog
@@ -172,13 +172,9 @@ deploy_homolog_ssh:
   script:
     - |
       set -euo pipefail
-      if [ -z "${SYNC_TOKEN:-}" ]; then
-        echo "Erro: defina SYNC_TOKEN (Project Access Token) para git fetch no servidor."
-        exit 1
-      fi
       DEPLOY_DIR="${DEPLOY_PATH:-/home/procuraai/procuraai-web}"
       SSH_KEY="${CI_PROJECT_DIR}/.ssh_deploy_key"
-      REPO_URL="https://oauth2:${SYNC_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+      REPO_URL="https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
       ssh -i "$SSH_KEY" -o IdentitiesOnly=yes -p "${DEPLOY_SSH_PORT:-22024}" "${DEPLOY_USER}@${DEPLOY_HOST}" "
         set -euo pipefail
         cd '${DEPLOY_DIR}'
