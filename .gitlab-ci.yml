@@ -1,0 +1,189 @@
+# GitLab CI/CD — ProcuraAI Web
+#
+# Fluxo:
+#   1. Push/MR em develop → valida build
+#   2. Após build OK em develop → merge automático para homolog.secties
+#   3. Push em homolog.secties → deploy no servidor de homologação
+#
+# Variáveis necessárias (Settings → CI/CD → Variables):
+#   SYNC_TOKEN          — Project Access Token (write_repository); apenas sync develop → homolog
+#   SSH_PRIVATE_KEY_B64 — chave em base64, uma linha (Type: Variable, recomendado)
+#   SSH_PRIVATE_KEY     — alternativa: Type File
+#   DEPLOY_HOST         — IP ou hostname do servidor de homolog
+#   DEPLOY_USER         — usuário SSH (ex.: deploy)
+#   DEPLOY_PATH         — caminho do projeto no servidor (padrão: /home/procuraai/procuraai-web)
+#   DEPLOY_SSH_PORT     — porta SSH do servidor (padrão: 22024)
+
+default:
+  image: node:20-alpine
+  tags:
+    - homolog
+    - docker
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules/
+  before_script:
+    - npm ci
+
+stages:
+  - validate
+  - sync
+  - deploy
+
+variables:
+  GIT_DEPTH: "0"
+  HOMOLOG_BRANCH: "homolog.secties"
+  NEXT_TELEMETRY_DISABLED: "1"
+
+# ---------------------------------------------------------------------------
+# Validação
+# ---------------------------------------------------------------------------
+
+build:
+  stage: validate
+  script:
+    - npm run build
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_BRANCH == $HOMOLOG_BRANCH
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# ---------------------------------------------------------------------------
+# Sincronização: develop → homolog.secties
+# ---------------------------------------------------------------------------
+
+sync_to_homolog:
+  stage: sync
+  image: alpine:3.20
+  needs:
+    - job: build
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+  before_script:
+    - apk add --no-cache git
+    - git config user.email "gitlab-ci@procuraai.local"
+    - git config user.name "GitLab CI"
+  script:
+    - |
+      set -euo pipefail
+      if [ -z "${SYNC_TOKEN:-}" ]; then
+        echo "Erro: defina a variável SYNC_TOKEN (Project Access Token com write_repository)."
+        exit 1
+      fi
+      git remote set-url origin "https://oauth2:${SYNC_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+      git fetch origin "develop" "${HOMOLOG_BRANCH}"
+      git checkout "${HOMOLOG_BRANCH}"
+      git merge "origin/develop" --no-edit -m "chore(ci) sync develop into ${HOMOLOG_BRANCH}"
+      git push origin "${HOMOLOG_BRANCH}"
+
+# ---------------------------------------------------------------------------
+# Deploy — homologação
+# ---------------------------------------------------------------------------
+
+deploy_homolog_ssh:
+  stage: deploy
+  image: alpine:3.20
+  rules:
+    - if: $CI_COMMIT_BRANCH == $HOMOLOG_BRANCH
+  before_script:
+    - apk add --no-cache openssh-client git
+    - |
+      set -euo pipefail
+      KEY_FILE="${CI_PROJECT_DIR}/.ssh_deploy_key"
+
+      normalize_key_file() {
+        sed -i 's/\r$//' "$KEY_FILE"
+        if [ "$(tail -c1 "$KEY_FILE" | wc -l)" -eq 0 ]; then
+          echo >> "$KEY_FILE"
+        fi
+        chmod 600 "$KEY_FILE"
+      }
+
+      validate_key_file() {
+        KEY_BYTES="$(wc -c < "$KEY_FILE" | tr -d ' ')"
+        KEY_HEAD="$(head -1 "$KEY_FILE")"
+        if [ "$KEY_BYTES" -lt 200 ]; then
+          echo "Chave muito curta (${KEY_BYTES} bytes)."
+          return 1
+        fi
+        if ! printf '%s' "$KEY_HEAD" | grep -q 'BEGIN.*PRIVATE KEY'; then
+          echo "Arquivo nao parece chave privada."
+          return 1
+        fi
+        if ! ssh-keygen -y -f "$KEY_FILE" >/dev/null 2>&1; then
+          echo "Chave invalida (${KEY_BYTES} bytes)."
+          return 1
+        fi
+        return 0
+      }
+
+      try_ssh_private_key_file() {
+        if [ -z "${SSH_PRIVATE_KEY:-}" ] || [ ! -f "$SSH_PRIVATE_KEY" ]; then
+          echo "SSH_PRIVATE_KEY (File) nao disponivel."
+          return 1
+        fi
+        echo "Testando SSH_PRIVATE_KEY (File)..."
+        cp "$SSH_PRIVATE_KEY" "$KEY_FILE"
+        normalize_key_file
+        if validate_key_file; then
+          echo "Chave SSH validada com sucesso (SSH_PRIVATE_KEY File)."
+          return 0
+        fi
+        echo "SSH_PRIVATE_KEY (File) falhou na validacao."
+        return 1
+      }
+
+      try_ssh_private_key_b64() {
+        if [ -z "${SSH_PRIVATE_KEY_B64:-}" ]; then
+          echo "SSH_PRIVATE_KEY_B64 nao definida."
+          return 1
+        fi
+        echo "Testando SSH_PRIVATE_KEY_B64..."
+        B64="$(printf '%s' "$SSH_PRIVATE_KEY_B64" | tr -d '[:space:]')"
+        if printf '%s' "$B64" | grep -q 'BEGIN.*PRIVATE KEY'; then
+          printf '%s\n' "$SSH_PRIVATE_KEY_B64" > "$KEY_FILE"
+        elif ! printf '%s' "$B64" | base64 -d > "$KEY_FILE" 2>/dev/null; then
+          echo "SSH_PRIVATE_KEY_B64 invalido ou truncado (${#B64} chars recebidos)."
+          return 1
+        fi
+        normalize_key_file
+        if validate_key_file; then
+          echo "Chave SSH validada com sucesso (SSH_PRIVATE_KEY_B64)."
+          return 0
+        fi
+        echo "SSH_PRIVATE_KEY_B64 falhou na validacao."
+        return 1
+      }
+
+      if try_ssh_private_key_file || try_ssh_private_key_b64; then
+        :
+      else
+        echo "Erro: nenhuma chave SSH valida."
+        echo "  SSH_PRIVATE_KEY (File): cat ~/.ssh/gitlab-ci | Type File, Expand desmarcado"
+        echo "  SSH_PRIVATE_KEY_B64: base64 -w 0 ~/.ssh/gitlab-ci (~548 chars), sem Mascarado"
+        exit 1
+      fi
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - ssh-keyscan -p "${DEPLOY_SSH_PORT:-22024}" -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+  script:
+    - |
+      set -euo pipefail
+      DEPLOY_DIR="${DEPLOY_PATH:-/home/procuraai/procuraai-web}"
+      SSH_KEY="${CI_PROJECT_DIR}/.ssh_deploy_key"
+      REPO_URL="https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+      ssh -i "$SSH_KEY" -o IdentitiesOnly=yes -p "${DEPLOY_SSH_PORT:-22024}" "${DEPLOY_USER}@${DEPLOY_HOST}" "
+        set -euo pipefail
+        cd '${DEPLOY_DIR}'
+        git fetch '${REPO_URL}' '${HOMOLOG_BRANCH}'
+        git checkout '${HOMOLOG_BRANCH}'
+        git reset --hard FETCH_HEAD
+        chmod +x deploy.sh
+        ./deploy.sh
+      "
+  environment:
+    name: homolog
+    url: https://procuraai-homolog.secties.pb.gov.br/

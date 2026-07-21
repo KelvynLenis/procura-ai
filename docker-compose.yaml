@@ -1,18 +1,15 @@
-version: '3'
+version: '3.8'
+
 services:
-  app:
-    build: .
-    ports:
-      - "3000:3000"  # Web
-      - "19000:19000"  # Expo
-      - "19001:19001"  # Expo
-      - "19002:19002"  # Expo
-      - "8081:8081"  # Metro bundler
-      - "8082:8082"  # Metro bundler alternativo
-    volumes:
-      - ./mobile:/home/node/app
-      - /home/node/app/node_modules
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: procuraai-web:latest
+    container_name: procuraai-web
+    restart: always
+    network_mode: host
+    env_file:
+      - .env
     environment:
-      - REACT_NATIVE_PACKAGER_HOSTNAME=192.168.0.4
-      - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
-    command: npx expo start --host 0.0.0.0
+      - NODE_ENV=production

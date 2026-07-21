@@ -61,9 +61,25 @@ export async function handleSendCode(request: Request) {
     });
   } catch (error) {
     console.error("Erro ao enviar codigo:", error);
+
+    const isEmailAuthError =
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      (error as { code?: string }).code === "EAUTH";
+
+    const isMissingEmailConfig =
+      error instanceof Error &&
+      error.message.includes("Credenciais de email nao configuradas");
+
     return NextResponse.json(
-      { success: false, message: "Erro ao enviar o codigo. Tente novamente." },
-      { status: 500 },
+      {
+        success: false,
+        message: isMissingEmailConfig || isEmailAuthError
+          ? "Servico de e-mail indisponivel. Contate o administrador."
+          : "Erro ao enviar o codigo. Tente novamente.",
+      },
+      { status: isEmailAuthError || isMissingEmailConfig ? 503 : 500 },
     );
   }
 }

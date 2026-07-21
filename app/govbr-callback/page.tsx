@@ -8,13 +8,13 @@ import { getUserInfo } from "@/functions/user/get-user-info";
 import { updateUserStatus } from "@/functions/user/update-user-status";
 import { v4 as uuidv4 } from "uuid";
 import ClipLoader from "react-spinners/ClipLoader";
-import { 
-  getCookieValue, 
-  deleteCookie, 
-  formatUserData, 
-  isLoginError, 
+import {
+  getCookieValue,
+  deleteCookie,
+  formatUserData,
+  isLoginError,
   isUserExistsError,
-  type GovBrUserData 
+  type GovBrUserData
 } from "@/lib/govbr-utils";
 
 export default function GovBrCallback() {
@@ -38,15 +38,15 @@ export default function GovBrCallback() {
   useEffect(() => {
     // Prevenir execução múltipla
     if (hasProcessed) return;
-    
+
     const processGovBrAuth = async () => {
       setHasProcessed(true);
       try {
         setStatus("Recuperando dados de autenticação...");
-        
+
         // Busca dados do usuário do cookie
         const userDataJson = getCookieValue('govbr_user_data');
-        
+
         if (!userDataJson) {
           throw new Error('Dados de autenticação não encontrados');
         }
@@ -55,34 +55,34 @@ export default function GovBrCallback() {
         deleteCookie('govbr_user_data');
 
         const appwriteUser = formatUserData(userData);
-        
+
         // Armazena id_token no localStorage para logout
         const idToken = getCookieValue('govbr_id_token');
         if (idToken) {
           localStorage.setItem('govbr_id_token', idToken);
           deleteCookie('govbr_id_token');
         }
-        
+
         setStatus("Verificando usuário existente...");
 
         try {
           const session = await account.createEmailPasswordSession(appwriteUser.email, appwriteUser.password);
           await activateLimitedAccessIfNeeded(session.userId);
           setStatus("Login realizado! Redirecionando...");
-          
+
           setTimeout(() => router.push('/meus-dispositivos'), 1000);
           return;
 
         } catch (loginError: any) {
           if (isLoginError(loginError)) {
             setStatus("Criando nova conta Gov.br...");
-            
+
             try {
               const userId = uuidv4();
               await createUser({
                 userId,
                 name: appwriteUser.name,
-                cpf: appwriteUser.cpf,
+                cpf: appwriteUser.cpf!,
                 email: appwriteUser.email,
                 password: appwriteUser.password
               });
@@ -92,20 +92,20 @@ export default function GovBrCallback() {
               const session = await account.createEmailPasswordSession(appwriteUser.email, appwriteUser.password);
               await activateLimitedAccessIfNeeded(session.userId);
               setStatus("Login realizado! Redirecionando...");
-              
+
               setTimeout(() => router.push('/meus-dispositivos'), 1000);
-              
+
             } catch (createError: any) {
               if (isUserExistsError(createError)) {
                 setStatus("Usuário já existe, fazendo login...");
-                
+
                 try {
                   const session = await account.createEmailPasswordSession(appwriteUser.email, appwriteUser.password);
                   await activateLimitedAccessIfNeeded(session.userId);
                   setStatus("Login realizado! Redirecionando...");
-                  
+
                   setTimeout(() => router.push('/meus-dispositivos'), 1000);
-                  
+
                 } catch (retryLoginError) {
                   throw new Error(`Falha no login após verificar duplicação: ${retryLoginError}`);
                 }
@@ -123,7 +123,7 @@ export default function GovBrCallback() {
         const errorMessage = err.message || 'Erro desconhecido durante autenticação';
         setError(errorMessage);
         setStatus("Falha na autenticação");
-        
+
         setTimeout(() => {
           const encodedError = encodeURIComponent(errorMessage.substring(0, 100));
           router.push(`/login?error=govbr_auth_failed&details=${encodedError}`);
@@ -139,7 +139,7 @@ export default function GovBrCallback() {
       <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-xl">
         <div className="flex flex-col items-center gap-6">
           <ClipLoader color="#0F2498" size={60} />
-          
+
           <div className="text-center">
             <h1 className="text-xl font-semibold text-gray-800">
               Autenticação Gov.br
@@ -170,7 +170,7 @@ export default function GovBrCallback() {
           )}
         </div>
       </div>
-      
+
       <p className="text-xs text-gray-500 text-center max-w-md">
         Processando autenticação segura via Gov.br.
       </p>
