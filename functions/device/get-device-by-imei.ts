@@ -8,11 +8,6 @@ export async function getDeviceByImei(imei: string): Promise<Device[]> {
         attribute: "imei",
         values: [imei],
       }),
-      "queries[1]": JSON.stringify({
-        method: "notEqual",
-        attribute: "status",
-        values: ["Solicitado"],
-      }),
     });
 
     const response = await fetch(
