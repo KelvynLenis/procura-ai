@@ -6,8 +6,8 @@
 #   3. Push em homolog.secties → deploy no servidor de homologação
 #
 # Variáveis necessárias (Settings → CI/CD → Variables):
-#   SYNC_TOKEN          — Project Access Token (Maintainer, write_repository) para push no sync
-#   SYNC_TOKEN_USER     — username do token de projeto (ex.: project_644_bot); padrao oauth2
+#   SYNC_TOKEN          — Personal/Project Access Token (glpat) para push no sync
+#   SYNC_TOKEN_USER     — oauth2 para glpat pessoal; ou username do bot (token de projeto)
 #   SSH_PRIVATE_KEY_B64 — chave em base64, uma linha (Type: Variable, recomendado)
 #   SSH_PRIVATE_KEY     — alternativa: Type File
 #   DEPLOY_HOST         — IP ou hostname do servidor de homolog
@@ -84,46 +84,46 @@ sync_to_homolog:
         git push origin "${HOMOLOG_BRANCH}"
       }
 
-      echo "Fetch com CI_JOB_TOKEN (leitura)."
+      echo "Fetch com CI_JOB_TOKEN."
       git remote set-url origin "$(git_remote_url gitlab-ci-token "${CI_JOB_TOKEN}")"
       git fetch origin "develop" "${HOMOLOG_BRANCH}"
       git checkout "${HOMOLOG_BRANCH}"
       git merge "origin/develop" --no-edit -m "chore(ci) sync develop into ${HOMOLOG_BRANCH}"
 
       PUSH_OK=0
-      if [ -n "${SYNC_TOKEN:-}" ]; then
-        SYNC_USER="${SYNC_TOKEN_USER:-oauth2}"
-        if try_push "$SYNC_USER" "$SYNC_TOKEN" "SYNC_TOKEN (${SYNC_USER})"; then
+      if try_push "gitlab-ci-token" "$CI_JOB_TOKEN" "CI_JOB_TOKEN"; then
+        PUSH_OK=1
+      else
+        echo "Push com CI_JOB_TOKEN falhou (403 = Opcao A nao habilitada ou branch protegida)."
+      fi
+      if [ "$PUSH_OK" -eq 0 ] && [ -n "${SYNC_TOKEN:-}" ]; then
+        if [ -z "${SYNC_TOKEN_USER:-}" ]; then
+          echo "SYNC_TOKEN definido sem SYNC_TOKEN_USER (Project Access Token exige username do bot)."
+        elif try_push "$SYNC_TOKEN_USER" "$SYNC_TOKEN" "SYNC_TOKEN"; then
           PUSH_OK=1
         else
           echo "Push com SYNC_TOKEN falhou."
         fi
       fi
       if [ "$PUSH_OK" -eq 0 ]; then
-        if try_push "gitlab-ci-token" "$CI_JOB_TOKEN" "CI_JOB_TOKEN"; then
-          PUSH_OK=1
-        else
-          echo "Push com CI_JOB_TOKEN falhou."
-        fi
-      fi
-      if [ "$PUSH_OK" -eq 0 ]; then
         echo ""
-        echo "Erro: nenhum token conseguiu push em ${HOMOLOG_BRANCH}."
-        echo ""
-        echo "Opcao A — habilitar push do CI job token:"
-        echo "  Settings → CI/CD → Job token permissions"
-        echo "  Permita push neste repositorio (push_to_repository)."
-        echo ""
-        echo "Opcao B — cadastrar SYNC_TOKEN (Project Access Token):"
-        echo "  Settings → Access Tokens → Role Maintainer → write_repository"
-        echo "  Variables: SYNC_TOKEN + SYNC_TOKEN_USER (username exibido ao criar o token)"
-        echo "  Expand desmarcado em SYNC_TOKEN."
-        echo ""
-        echo "Opcao C — branch protegida homolog.secties:"
-        echo "  Settings → Repository → Protected branches → Allowed to push: Maintainers"
+        echo "Erro: push em ${HOMOLOG_BRANCH} falhou."
+        echo "Opcao A: Settings → CI/CD → Job token permissions"
+        echo "  → Allow Git push requests to the repository → Save changes"
+        echo "Opcao C: Protected branches → homolog.secties → Allowed to push: Maintainers"
         exit 1
       fi
       echo "Push concluido em ${HOMOLOG_BRANCH}."
+
+trigger_homolog_deploy:
+  stage: sync
+  needs:
+    - job: sync_to_homolog
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+  trigger:
+    branch: homolog.secties
+    strategy: depend
 
 # ---------------------------------------------------------------------------
 # Deploy — homologação
