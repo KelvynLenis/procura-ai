@@ -21,9 +21,14 @@ export function generateAuthState(): string {
   return uuidv4()
 }
 
-export async function exchangeCodeForToken(code: string): Promise<TokenResponse> {
+export async function exchangeCodeForToken(
+  code: string,
+  redirectUri?: string,
+): Promise<TokenResponse> {
   const config = getGovBrConfig()
-  if (!config.clientId || !config.clientSecret || !config.redirectUri) {
+  const finalRedirectUri = redirectUri || config.redirectUri
+
+  if (!config.clientId || !config.clientSecret || !finalRedirectUri) {
     throw new Error('Configurações incompletas para troca de token')
   }
 
@@ -33,7 +38,7 @@ export async function exchangeCodeForToken(code: string): Promise<TokenResponse>
   const formData = new URLSearchParams()
   formData.append('grant_type', 'authorization_code')
   formData.append('code', code)
-  formData.append('redirect_uri', config.redirectUri)
+  formData.append('redirect_uri', finalRedirectUri)
 
   const response = await fetch(tokenEndpoint, {
     method: 'POST',

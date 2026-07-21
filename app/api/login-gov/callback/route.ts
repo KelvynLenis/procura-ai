@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { resolveBaseUrl, resolveGovBrRedirectUri } from "@/lib/base-url";
 import { exchangeCodeForToken, getUserInfo } from "@/lib/govbr/auth";
 
 export async function GET(request: Request) {
@@ -60,12 +61,13 @@ export async function GET(request: Request) {
       return NextResponse.redirect(deepLinkUrl.toString(), 302);
     }
     
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://procuraai.secties.pb.gov.br";
+    const baseUrl = resolveBaseUrl(request);
     return NextResponse.redirect(new URL(`/login?error=${errorType}`, baseUrl));
   }
 
   try {
-    const tokenResponse = await exchangeCodeForToken(code);
+    const redirectUri = resolveGovBrRedirectUri(request);
+    const tokenResponse = await exchangeCodeForToken(code, redirectUri);
     const userData = await getUserInfo(tokenResponse.access_token);
 
     
@@ -90,7 +92,7 @@ export async function GET(request: Request) {
       
       return NextResponse.redirect(deepLinkUrl.toString(), 302);
     }
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://procuraai.secties.pb.gov.br";
+    const baseUrl = resolveBaseUrl(request);
     const redirectUrl = new URL("/govbr-callback", baseUrl);
     const response = NextResponse.redirect(redirectUrl);
     response.cookies.set(
@@ -146,7 +148,7 @@ export async function GET(request: Request) {
         ? encodeURIComponent(error.message.substring(0, 100))
         : "unknown_error";
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://procuraai.secties.pb.gov.br";
+    const baseUrl = resolveBaseUrl(request);
     const loginUrl = new URL("/login", baseUrl);
     loginUrl.searchParams.set("error", "govbr_system_error");
     loginUrl.searchParams.set("details", errorMessage);

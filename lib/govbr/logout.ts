@@ -1,11 +1,8 @@
 import { account } from "@/lib/appwrite";
+import { getPublicBaseUrl } from "@/lib/base-url";
 
 function getAppHomeUrl(): string {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL ||
-    (typeof window !== "undefined" ? window.location.origin : "");
-
-  const safeBaseUrl = baseUrl.replace(/\/$/, "");
+  const safeBaseUrl = getPublicBaseUrl().replace(/\/$/, "");
   return safeBaseUrl ? `${safeBaseUrl}/` : "/";
 }
 
