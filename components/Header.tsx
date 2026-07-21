@@ -27,6 +27,7 @@ import logo from "../assets/icons/logo.svg";
 import { AdminNotificationButton } from "./AdminNotificationButton";
 import { joinDevicesEventsUsers } from "@/functions/occurences/get-occurrences";
 import ClientNotificationButton from "./ClientNotificationButton";
+import { buildAppPath } from "@/lib/base-url";
 
 // Importação condicional do contexto
 let useNotification: any = null;
@@ -131,7 +132,7 @@ export function Header({ isAdmin }: HeaderProps) {
     //   closeOnClick: true,
     // });
 
-    router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/${url}`);
+    router.push(buildAppPath(url));
 
     setIsLoading(false);
   }
