@@ -94,12 +94,20 @@ deploy_homolog_ssh:
     - |
       set -euo pipefail
       KEY_FILE="${CI_PROJECT_DIR}/.ssh_deploy_key"
-      if [ -n "${SSH_PRIVATE_KEY_B64:-}" ]; then
-        echo "$SSH_PRIVATE_KEY_B64" | base64 -d > "$KEY_FILE"
-      elif [ -n "${SSH_PRIVATE_KEY:-}" ] && [ -f "$SSH_PRIVATE_KEY" ]; then
+      if [ -n "${SSH_PRIVATE_KEY:-}" ] && [ -f "$SSH_PRIVATE_KEY" ]; then
         cp "$SSH_PRIVATE_KEY" "$KEY_FILE"
+      elif [ -n "${SSH_PRIVATE_KEY_B64:-}" ]; then
+        B64="$(printf '%s' "$SSH_PRIVATE_KEY_B64" | tr -d '[:space:]')"
+        if printf '%s' "$B64" | grep -q 'BEGIN.*PRIVATE KEY'; then
+          printf '%s\n' "$SSH_PRIVATE_KEY_B64" > "$KEY_FILE"
+        elif ! printf '%s' "$B64" | base64 -d > "$KEY_FILE" 2>/dev/null; then
+          echo "Erro: SSH_PRIVATE_KEY_B64 invalido ou truncado (${#B64} chars recebidos)."
+          echo "Gere com: base64 -w 0 ~/.ssh/gitlab-ci  (~548 chars para ed25519)"
+          echo "Nao use Mascarado: limite GitLab e 255 chars. Prefira Type File (SSH_PRIVATE_KEY)."
+          exit 1
+        fi
       else
-        echo "Erro: defina SSH_PRIVATE_KEY_B64 (Variable) ou SSH_PRIVATE_KEY (File)."
+        echo "Erro: defina SSH_PRIVATE_KEY (File, recomendado) ou SSH_PRIVATE_KEY_B64 (Variable, sem Mascarado)."
         exit 1
       fi
       chmod 600 "$KEY_FILE"
