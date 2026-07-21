@@ -54,10 +54,13 @@ sync_to_homolog:
       remote() { printf 'https://%s:%s@%s' "$1" "$2" "$REPO"; }
 
       git remote set-url origin "$(remote gitlab-ci-token "$CI_JOB_TOKEN")"
-      git fetch origin develop
-      git checkout -B "$HOMOLOG_BRANCH" origin/develop
+      git fetch origin develop "$HOMOLOG_BRANCH"
+      HOMOLOG_SHA="$(git rev-parse "origin/$HOMOLOG_BRANCH")"
+      DEVELOP_SHA="$(git rev-parse origin/develop)"
       git remote set-url origin "$(remote "$SYNC_TOKEN_USER" "$SYNC_TOKEN")"
-      git push origin "$HOMOLOG_BRANCH"
+      git push origin \
+        --force-with-lease="refs/heads/$HOMOLOG_BRANCH:$HOMOLOG_SHA" \
+        "$DEVELOP_SHA:refs/heads/$HOMOLOG_BRANCH"
 
 deploy_homolog_ssh:
   stage: deploy
