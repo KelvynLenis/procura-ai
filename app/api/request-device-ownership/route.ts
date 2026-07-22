@@ -15,6 +15,8 @@ export async function POST(request: Request) {
     const userId = device.auth_id;
     const user = await getUserById(userId);
 
+    console.log(device);
+
     if (!device) {
       return NextResponse.json({ success: false, error: "device_not_found" });
     }
@@ -22,6 +24,9 @@ export async function POST(request: Request) {
     const API_BASE =
       process.env.NEXT_PUBLIC_API_URL ??
       "https://procuraai-homolog.secties.pb.gov.br/v1";
+
+    const BASE_URL =
+      process.env.NEXT_PUBLIC_BASE_URL ?? "https://procuraai.secties.pb.gov.br";
 
     const content = `
       <h2 style="color: #212A38; font-family: Roboto, Arial, sans-serif; font-weight: 600; font-style: normal; font-size: 20px; line-height: 100%; letter-spacing: 0%;">
@@ -32,12 +37,16 @@ export async function POST(request: Request) {
         Informamos que a posse do seu dispositivo: <strong>${device.phone_model} / ${device.brand}</strong> foi solicitado por ${newOwnerName}.
         Você confirma essa solicitação?
 
-        <a href="https://procura-ai.vercel.app/api/confirm-ownership-transfer/${device.$id}/${imei}">
+        <br />
+
+        <a href="${BASE_URL}/confirm-ownership-transfer/${device.$id}/${imei}">
           Sim
         </a>
 
-        <a href="https://procura-ai.vercel.app/">
-          Sim
+        <br />
+
+        <a href="${BASE_URL}/refuse-ownership-transfer/${imei}">
+          Não
         </a>
       </p>
 

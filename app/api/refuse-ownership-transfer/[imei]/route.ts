@@ -11,36 +11,28 @@ export async function POST(
   {
     params,
   }: {
-    params: {
-      deviceId: string;
+    params: Promise<{
       imei: string;
-    };
+    }>;
   },
 ) {
   try {
-    const { deviceId, imei } = await params;
+    const { imei } = await params;
     const devices = await getDeviceByImei(imei);
     const deviceToUpdate = devices.filter(
       (device) => device.status === "Solicitado",
     );
 
-    // console.log("device to update: ", deviceToUpdate);
-    // console.log("device to delete: ", deviceId);
+    // console.log("device to delete: ", deviceToUpdate);
 
-    await updateDeviceStatus(deviceToUpdate[0].$id, {
-      is_stolen: false,
-      status: "Regular",
-    });
-
-    // await deleteDevice(deviceId);
+    // await deleteDevice(deviceToUpdate[0].$id);
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Erro ao enviar notificação:", error);
-    return NextResponse.json({
-      success: false,
-      error: error,
-      status: 500,
-    });
+    return NextResponse.json(
+      { error: "Erro ao enviar notificação" },
+      { status: 500 },
+    );
   }
 }
