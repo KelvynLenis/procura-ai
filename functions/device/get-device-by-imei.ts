@@ -1,4 +1,6 @@
-export async function getDeviceByImei(imei: string) {
+import { Device } from "@/types";
+
+export async function getDeviceByImei(imei: string): Promise<Device[]> {
   try {
     const params = new URLSearchParams({
       "queries[0]": JSON.stringify({
@@ -25,9 +27,9 @@ export async function getDeviceByImei(imei: string) {
 
     const existingDevices = await response.json();
 
-    return existingDevices.documents[0];
+    return existingDevices.documents;
   } catch (error) {
     console.error("Erro ao buscar dispositivo:", error);
-    return;
+    return [];
   }
 }
