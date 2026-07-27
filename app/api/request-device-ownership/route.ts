@@ -2,16 +2,20 @@ import { NextResponse } from "next/server";
 import { emailService } from "@/services/email";
 import { getUserById } from "@/functions/user/get-user-by-id";
 import { getDeviceByImei } from "@/functions/device/get-device-by-imei";
-import { getUserId } from "@/functions/user/get-user-id";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { imei, newOwnerName } = body;
 
-    const device = await getDeviceByImei(imei);
+    const devices = await getDeviceByImei(imei);
+    const device = devices.filter(
+      (device) => device.status !== "Solicitado",
+    )[0];
     const userId = device.auth_id;
     const user = await getUserById(userId);
+
+    console.log(device);
 
     if (!device) {
       return NextResponse.json({ success: false, error: "device_not_found" });
@@ -21,6 +25,9 @@ export async function POST(request: Request) {
       process.env.NEXT_PUBLIC_API_URL ??
       "https://procuraai-homolog.secties.pb.gov.br/v1";
 
+    const BASE_URL =
+      process.env.NEXT_PUBLIC_BASE_URL ?? "https://procuraai.secties.pb.gov.br";
+
     const content = `
       <h2 style="color: #212A38; font-family: Roboto, Arial, sans-serif; font-weight: 600; font-style: normal; font-size: 20px; line-height: 100%; letter-spacing: 0%;">
         Olá, ${user.name}!
@@ -29,6 +36,18 @@ export async function POST(request: Request) {
       <p style="font-family: Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; font-size: 14px; line-height: 150%; letter-spacing: 0%; color: #232323;">
         Informamos que a posse do seu dispositivo: <strong>${device.phone_model} / ${device.brand}</strong> foi solicitado por ${newOwnerName}.
         Você confirma essa solicitação?
+
+        <br />
+
+        <a href="${BASE_URL}/confirm-ownership-transfer/${device.$id}/${imei}">
+          Sim
+        </a>
+
+        <br />
+
+        <a href="${BASE_URL}/refuse-ownership-transfer/${imei}">
+          Não
+        </a>
       </p>
 
       <p style="font-family: Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; font-size: 14px; line-height: 150%; letter-spacing: 0%; color: #232323;">
