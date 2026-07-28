@@ -34,6 +34,7 @@ import logo from "../assets/icons/logo-text-2.svg";
 import Image from "next/image";
 import { RiAlarmWarningFill } from "react-icons/ri";
 import { useStatus } from "@/hooks/useStatus";
+import { buildAppPath } from "@/lib/base-url";
 
 const devicesGroup = [
   {
@@ -126,7 +127,7 @@ export function AppSidebar({ admin }: SidebarProps) {
     //   position: "top-center",
     //   closeOnClick: true,
     // });
-    router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/${url}`);
+    router.push(buildAppPath(url));
   }
 
   return (

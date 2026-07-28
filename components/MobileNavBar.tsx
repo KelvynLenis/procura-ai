@@ -11,6 +11,7 @@ import ContactsFocusedIcon from "@/assets/icons/contacts-focused.svg";
 import { Smartphone, User } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { buildAppPath } from "@/lib/base-url";
 import { useStatus } from "@/hooks/useStatus";
 
 export function MobileNavBar() {
@@ -29,7 +30,7 @@ export function MobileNavBar() {
     //   position: "top-center",
     //   closeOnClick: true,
     // });
-    router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/${url}`);
+    router.push(buildAppPath(url));
   }
 
   return (

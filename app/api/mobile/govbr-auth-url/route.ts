@@ -1,21 +1,20 @@
 import { NextResponse } from 'next/server'
-import { getGovBrConfig, buildAuthorizationUrl } from '@/lib/govbr/config'
+import { resolveGovBrRedirectUri } from '@/lib/base-url'
+import { buildAuthorizationUrl } from '@/lib/govbr/config'
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const config = getGovBrConfig()
-    
     const timestamp = Date.now()
     const randomString = Math.random().toString(36).substring(2, 15)
     const state = `mobile_${timestamp}_${randomString}`
-    
-    const baseUrl = config.redirectUri!.replace('/api/login-gov/callback', '')
-    const authUrl = buildAuthorizationUrl(baseUrl, state)
+
+    const redirectUri = resolveGovBrRedirectUri(request)
+    const authUrl = buildAuthorizationUrl(state, redirectUri)
     
     return NextResponse.json({
       success: true,
       authUrl: authUrl.toString(),
-      redirectUri: config.redirectUri,
+      redirectUri: redirectUri,
       state,
       expiresIn: 300
     }, {
