@@ -13,13 +13,13 @@ import {
 
 import { Question, QuestionStep } from "@/types";
 
-import govFooterMobile from "../../../../assets/icons/gov-footer-mobile.png";
-import sicLogo from "../../../../assets/icons/sic_logo.png";
-import logo from "../../../../assets/icons/logo-text.svg";
-import footerLineLeft from "../../../../assets/icons/footer-line-left.svg";
-import footerLineRight from "../../../../assets/icons/footer-line-right.svg";
-import footerLogo from "../../../../assets/icons/logo-dark.svg";
-import govFull from "../../../../assets/icons/gov.png";
+import govFooterMobile from "../../assets/icons/gov-footer-mobile.png";
+import sicLogo from "../../assets/icons/sic_logo.png";
+import logo from "../../assets/icons/logo-text.svg";
+import footerLineLeft from "../../assets/icons/footer-line-left.svg";
+import footerLineRight from "../../assets/icons/footer-line-right.svg";
+import footerLogo from "../../assets/icons/logo-dark.svg";
+import govFull from "../../assets/icons/gov.png";
 
 import { FaFacebookF } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
@@ -28,13 +28,15 @@ import { FaInstagram } from "react-icons/fa6";
 
 import Link from "next/link";
 import MakeRequest from "./MakeRequest";
+import { useSearchParams } from "next/navigation";
 
-export default async function ConfirmOwnershipTransfer({
-  params,
+export default async function RefuseOwnershipTransfer({
+  searchParams,
 }: {
-  params: Promise<{ deviceId: string; imei: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const { deviceId, imei } = await params;
+  const resolvedParams = await searchParams;
+  const token = resolvedParams.token;
 
   const renderStepContent = (step: QuestionStep) => (
     <div className="flex flex-col gap-3">
@@ -64,7 +66,7 @@ export default async function ConfirmOwnershipTransfer({
       </header>
       <main className="row-start-2 flex h-full min-h-fit w-full flex-col items-center bg-primary sm:items-start">
         <div className="mb-0 flex h-[calc(100svh-theme(spacing.4))] w-full flex-col items-center justify-center bg-login-bg bg-cover bg-center bg-no-repeat p-0 mobile-lg:mb-5 md:p-2">
-          <MakeRequest deviceId={deviceId} imei={imei} />
+          <MakeRequest token={token as string} />
         </div>
 
         <section className="relative w-full bg-[#F5F5F5]">

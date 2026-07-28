@@ -1,12 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 
-interface Params {
-  deviceId: string;
-  imei: string;
-}
-
-function MakeRequest({ deviceId, imei }: Params) {
+function MakeRequest({ token }: { token: string }) {
   const [isSuccessfull, setIsSuccessfull] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -14,7 +9,7 @@ function MakeRequest({ deviceId, imei }: Params) {
     const sendRequest = async () => {
       try {
         const response = await fetch(
-          `/api/confirm-ownership-transfer/${deviceId}/${imei}`,
+          `/api/confirm-ownership-transfer?token=${token}`,
           {
             method: "POST",
             headers: {
