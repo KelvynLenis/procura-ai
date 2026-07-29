@@ -10,8 +10,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { deleteContactByUserId } from "@/functions/contact/delete-contact-by-user-id";
+import { deleteDevice } from "@/functions/device/delete-device";
+import { getDeviceByImei } from "@/functions/device/get-device-by-imei";
 import { listDevices } from "@/functions/device/list-devices";
 import { updateDevice } from "@/functions/device/update-device";
+import { updateDeviceStatus } from "@/functions/device/update-device-status";
 import { deleteUser } from "@/functions/user/delete-user";
 import { getUserDocumentId, getUserId } from "@/functions/user/get-user-id";
 import { Device } from "@/types";
@@ -40,6 +43,27 @@ export function DeleteAccount() {
       console.log("userDevices", userDevices);
 
       for (const device of userDevices) {
+        const devicesWithSameImei = await getDeviceByImei(device.imei);
+        if (
+          devicesWithSameImei.some((device) => device.status === "Solicitado")
+        ) {
+          const requestedDevice = devicesWithSameImei.find(
+            (device) => device.status === "Solicitado",
+          );
+
+          await updateDevice(
+            device.$id,
+            {
+              auth_id: requestedDevice?.auth_id,
+              phone_number: requestedDevice?.phone_number,
+              operator_id: requestedDevice?.operator_id,
+            } as Device,
+            requestedDevice?.auth_id!,
+          );
+
+          continue;
+        }
+
         await updateDevice(
           device.$id,
           {

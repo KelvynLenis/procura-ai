@@ -12,7 +12,7 @@ export async function listDevices({
   limit,
   page,
   isAdmin,
-}: ListDevicesParams) {
+}: ListDevicesParams): Promise<{ total: number; documents: Device[] }> {
   try {
     const queries = [];
 

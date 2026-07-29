@@ -4,7 +4,7 @@ import { TableCell, TableRow } from "../../ui/table";
 import { IoIosWarning } from "react-icons/io";
 import { ImPencil } from "react-icons/im";
 import Link from "next/link";
-import type { DeviceProps, Operator } from "@/types";
+import type { Device, DeviceProps, Operator } from "@/types";
 import { cn } from "@/lib/utils";
 import { Eye, Trash2 } from "lucide-react";
 import {
@@ -29,6 +29,9 @@ import { createEvent } from "@/functions/event/create-event";
 import { useStatus } from "@/hooks/useStatus";
 import Button from "@/components/Button";
 import { useRouter } from "next/navigation";
+import { updateDevice } from "@/functions/device/update-device";
+import { getDeviceByImei } from "@/functions/device/get-device-by-imei";
+import { getDeviceById } from "@/functions/device/get-device-by-id";
 
 interface DeviceRowProps {
   // key: string
@@ -74,10 +77,31 @@ export function DeviceRow({
   async function handleDeleteDevice(id: string) {
     try {
       const callFunction = async () => {
-        const response = await deleteDevice(id);
-        if (response) {
-          setDevices((prevDevices) =>
-            prevDevices.filter((device) => device.$id !== id),
+        const devicesWithSameImei = await getDeviceByImei(device.imei);
+
+        if (
+          devicesWithSameImei.some((device) => device.status === "Solicitado")
+        ) {
+          const requestedDevice = devicesWithSameImei.find(
+            (device) => device.status === "Solicitado",
+          );
+
+          await updateDevice(
+            device.$id!,
+            {
+              auth_id: requestedDevice?.auth_id,
+              phone_number: requestedDevice?.phone_number,
+              operator_id: requestedDevice?.operator_id,
+            } as Device,
+            requestedDevice?.auth_id!,
+          );
+        } else {
+          await updateDevice(
+            device.$id!,
+            {
+              auth_id: "",
+            } as Device,
+            "",
           );
         }
       };

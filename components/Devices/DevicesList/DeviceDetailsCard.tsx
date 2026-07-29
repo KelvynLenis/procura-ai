@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { IoIosWarning } from "react-icons/io";
 import { AlertForm } from "../../Forms/AlertForm";
-import type { DeviceProps, Operator } from "@/types";
+import type { Device, DeviceProps, Operator } from "@/types";
 import { Trash2 } from "lucide-react";
 import { ViewMyAlertMobile } from "../../ViewMyAlertMobile";
 import { toast } from "react-toastify";
@@ -24,6 +24,8 @@ import {
 import { getOperator } from "@/functions/operators/get-operator";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { useStatus } from "@/hooks/useStatus";
+import { updateDevice } from "@/functions/device/update-device";
+import { getDeviceByImei } from "@/functions/device/get-device-by-imei";
 
 interface DeviceDetailsCardProps {
   id: string; // ID do dispositivo
@@ -122,15 +124,32 @@ export function DeviceDetailsCard({
   async function handleDeleteDevice(id: string) {
     try {
       const callFunction = async () => {
-        try {
-          await deleteDevice(id);
-          setDevices((prevDevices) =>
-            prevDevices.filter((device) => device.$id !== id),
+        const devicesWithSameImei = await getDeviceByImei(imei);
+
+        if (
+          devicesWithSameImei.some((device) => device.status === "Solicitado")
+        ) {
+          const requestedDevice = devicesWithSameImei.find(
+            (device) => device.status === "Solicitado",
           );
-          return true;
-        } catch (error) {
-          console.error("Erro ao deletar dispositivo:", error);
-          return false;
+
+          await updateDevice(
+            id,
+            {
+              auth_id: requestedDevice?.auth_id,
+              phone_number: requestedDevice?.phone_number,
+              operator_id: requestedDevice?.operator_id,
+            } as Device,
+            requestedDevice?.auth_id!,
+          );
+        } else {
+          await updateDevice(
+            id,
+            {
+              auth_id: "",
+            } as Device,
+            "",
+          );
         }
       };
 
