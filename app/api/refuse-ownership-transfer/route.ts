@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     await emailService.sendEmail({
       subject: "Solicitação de titularidade de dispositivo",
       content,
-      users: [{ email: "kmartinslenis30@hotmail.com" }],
+      users: [{ email: requestUser.email }],
     });
 
     await deleteDevice(deviceRequested[0].$id);
