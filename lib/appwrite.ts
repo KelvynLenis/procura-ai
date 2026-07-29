@@ -3,7 +3,7 @@ import { Client, Account, Databases, Functions, Storage } from "appwrite";
 export const client = new Client();
 
 client
-  .setEndpoint("https://fra.cloud.appwrite.io/v1")
+  .setEndpoint(process.env.NEXT_PUBLIC_API_URL ?? "https://procuraai-homolog.secties.pb.gov.br/v1")
   .setProject(process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID!);
 // .setKey(process.env.NEXT_PUBLIC_APP_WRITE_KEY!)
 

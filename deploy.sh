@@ -3,6 +3,9 @@
 # Script simples de deploy
 # Uso: ./deploy.sh
 
+set -euo pipefail
+trap 'echo "❌ Erro no deploy (linha $LINENO). Verifique o comando acima." >&2' ERR
+
 echo "🚀 Deploy ProcuraAI"
 echo ""
 
@@ -20,24 +23,24 @@ fi
 echo "✅ Usando: $DOCKER_COMPOSE"
 echo ""
 
-# Verificar se .env.production existe
-if [ ! -f .env.production ]; then
-    echo "❌ Arquivo .env.production não encontrado!"
-    echo "📝 Crie com: cp .env.prod.example .env.production"
+# Verificar se .env existe
+if [ ! -f .env ]; then
+    echo "❌ Arquivo .env nao encontrado!"
+    echo "📝 Crie com: cp .env.example .env"
     exit 1
 fi
 
 # Parar containers antigos
 echo "⏸️  Parando containers antigos..."
-$DOCKER_COMPOSE -f docker-compose.prod.yml down
+$DOCKER_COMPOSE -f docker-compose.yaml down
 
 # Construir nova imagem
 echo "🔨 Construindo imagem..."
-$DOCKER_COMPOSE -f docker-compose.prod.yml build
+$DOCKER_COMPOSE -f docker-compose.yaml build
 
 # Iniciar container
 echo "▶️  Iniciando container..."
-$DOCKER_COMPOSE -f docker-compose.prod.yml up -d
+$DOCKER_COMPOSE -f docker-compose.yaml up -d --remove-orphans
 
 # Aguardar inicialização
 echo "⏳ Aguardando aplicação iniciar..."
@@ -46,11 +49,11 @@ sleep 10
 # Verificar status
 echo ""
 echo "📊 Status:"
-$DOCKER_COMPOSE -f docker-compose.prod.yml ps
+$DOCKER_COMPOSE -f docker-compose.yaml ps
 
 echo ""
 echo "✅ Deploy concluído!"
 echo ""
-echo "🌐 Acesse: https://procuraai.secties.pb.gov.br/"
-echo "📋 Logs: $DOCKER_COMPOSE -f docker-compose.prod.yml logs -f"
-echo "⏹️  Parar: $DOCKER_COMPOSE -f docker-compose.prod.yml down"
+echo "🌐 Acesse: https://procuraai-homolog.secties.pb.gov.br/"
+echo "📋 Logs: $DOCKER_COMPOSE -f docker-compose.yaml logs -f"
+echo "⏹️  Parar: $DOCKER_COMPOSE -f docker-compose.yaml down"

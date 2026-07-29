@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
+import { resolveGovBrRedirectUri } from '@/lib/base-url'
 import { generateAuthState } from '@/lib/govbr/auth'
 import { buildAuthorizationUrl } from '@/lib/govbr/config'
 
 export async function GET(request: Request) {
   const state = generateAuthState()
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || new URL(request.url).origin
-  const authUrl = buildAuthorizationUrl(baseUrl, state)
+  const redirectUri = resolveGovBrRedirectUri(request)
+  const authUrl = buildAuthorizationUrl(state, redirectUri)
   
   const response = NextResponse.redirect(authUrl.toString())
   

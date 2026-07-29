@@ -19,7 +19,9 @@ class EmailService {
     }
 
     const gmailUser = process.env.GMAIL_USER ?? process.env.NEXT_PUBLIC_GMAIL_USER;
-    const gmailPassword = process.env.GMAIL_APP_PASSWORD ?? process.env.NEXT_PUBLIC_GMAIL_APP_PASSWORD;
+    const gmailPassword = (
+      process.env.GMAIL_APP_PASSWORD ?? process.env.NEXT_PUBLIC_GMAIL_APP_PASSWORD
+    )?.replace(/\s/g, '');
 
     if (!gmailUser || !gmailPassword) {
       throw new Error('Credenciais de email nao configuradas');
@@ -68,4 +70,16 @@ class EmailService {
   }
 }
 
-export const emailService = new EmailService(); 
+let emailServiceInstance: EmailService | null = null;
+
+function getEmailService(): EmailService {
+  if (!emailServiceInstance) {
+    emailServiceInstance = new EmailService();
+  }
+  return emailServiceInstance;
+}
+
+export const emailService = {
+  sendEmail: (config: EmailConfig) => getEmailService().sendEmail(config),
+  verifyConnection: () => getEmailService().verifyConnection(),
+};

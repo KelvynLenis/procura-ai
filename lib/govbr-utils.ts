@@ -7,7 +7,7 @@ export interface GovBrUserData {
 
 export function getCookieValue(name: string): string | null {
   if (typeof document === 'undefined') return null;
-  
+
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) {
@@ -26,8 +26,8 @@ export function formatUserData(userData: GovBrUserData) {
   return {
     email: userData.email || `govbr-${userData.sub}@procuraai.secties.pb.gov.br`,
     password: userData.sub,
-    name: userData.name || userData.preferred_username || 'Usuário Gov.br',
-    cpf: userData.sub
+    name: userData.name || 'Usuário Gov.br',
+    cpf: userData.preferred_username
   };
 }
 
@@ -36,7 +36,7 @@ export function isLoginError(error: any): boolean {
 }
 
 export function isUserExistsError(error: any): boolean {
-  return error?.code === 409 || 
-         error?.type === 'user_already_exists' ||
-         error?.message?.includes('user_already_exists');
+  return error?.code === 409 ||
+    error?.type === 'user_already_exists' ||
+    error?.message?.includes('user_already_exists');
 }

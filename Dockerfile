@@ -1,17 +1,23 @@
-FROM node:20-slim
+# Dockerfile para producao
+FROM node:20-alpine
 
-WORKDIR /home/node/app
+WORKDIR /app
 
-RUN apt-get update -y && apt-get install -y openssl
+# Instalar dependencias de build
+COPY package*.json ./
+RUN npm ci
 
-# COPY package.json  ./
-
-# RUN yarn install
-
+# Copiar codigo
 COPY . .
 
-WORKDIR /home/node/app
+# Build da aplicacao
+RUN npm run build
 
-USER node
+# Remover dependencias de desenvolvimento (economizar espaco)
+RUN npm prune --production
 
-EXPOSE 19000 19001 19002 3000 8081 8082
+# Expor porta
+EXPOSE 3000
+
+# Iniciar aplicacao
+CMD ["npm", "start"]

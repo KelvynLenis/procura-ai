@@ -22,7 +22,7 @@ interface SaveCodeInput {
 const API_URL =
   process.env.APPWRITE_API_URL ??
   process.env.NEXT_PUBLIC_API_URL ??
-  "https://fra.cloud.appwrite.io/v1";
+  "https://procuraai-homolog.secties.pb.gov.br/v1";
 
 const PROJECT_ID =
   process.env.APPWRITE_PROJECT_ID ?? process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID;
