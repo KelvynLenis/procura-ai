@@ -6,8 +6,14 @@
 set -euo pipefail
 trap 'echo "❌ Erro no deploy (linha $LINENO). Verifique o comando acima." >&2' ERR
 
-echo "🚀 Deploy ProcuraAI"
+IMAGE_TAG="${IMAGE_TAG:-latest}"
+
+echo "Deploy ProcuraAI (${IMAGE_TAG})"
 echo ""
+
+mkdir -p .deploy
+printf '%s\n' "$IMAGE_TAG" > .deploy/current-tag
+git rev-parse HEAD > .deploy/current-sha
 
 # Detectar comando docker-compose
 if command -v docker-compose &> /dev/null; then

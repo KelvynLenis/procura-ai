@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: procuraai-web:latest
+    image: procuraai-web:${IMAGE_TAG:-latest}
     container_name: procuraai-web
     restart: always
     network_mode: host
