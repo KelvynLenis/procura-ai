@@ -20,7 +20,9 @@ describe("checkImei", () => {
       json: async () => ({
         documents: [
           {
+            $id: "device-123",
             imei: "123456789",
+            auth_id: "user-123",
           },
         ],
       }),
