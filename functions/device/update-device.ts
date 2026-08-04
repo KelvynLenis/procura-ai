@@ -24,16 +24,13 @@ export async function updateDevice(id: string, values: Device, userId: string) {
       },
     );
 
-    const data = await response.json();
-
-    console.log("Response:", data);
-
     if (!response.ok) {
       throw new Error(await response.text());
     }
 
-    return data;
+    return await response.json();
   } catch (error) {
     console.error("Erro ao atualizar dispositivo:", error);
+    throw error;
   }
 }

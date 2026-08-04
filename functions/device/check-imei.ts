@@ -140,7 +140,7 @@ export async function checkImei(
         (existingDevice: Device) => existingDevice.imei === imei,
       );
 
-      if (sameImei.auth_id.length === 0) {
+      if (!sameImei.auth_id || sameImei.auth_id.length === 0) {
         return { isValid: true, isUpdate: true, deviceId: sameImei.$id };
       }
 
