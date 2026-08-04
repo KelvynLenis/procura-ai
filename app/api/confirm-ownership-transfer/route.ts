@@ -34,18 +34,18 @@ export async function POST(request: NextRequest) {
 
     await deleteDevice(deviceRequested[0].$id);
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, device: originalDevice[0] });
   } catch (error) {
-    console.error("Erro ao confirmar transferência:", error);
+    console.error("Erro ao confirmar transferência:", error.message);
     return NextResponse.json({
       success: false,
-      error: error,
+      error: error.message,
       status: 500,
     });
   }
 }
 
-async function verifyToken(token: string): Promise<Transfer> {
+async function getTransfer(token: string) {
   const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
 
   const params = new URLSearchParams({
@@ -75,7 +75,11 @@ async function verifyToken(token: string): Promise<Transfer> {
   const { documents } = await response.json();
   const transfer = documents[0];
 
-  console.log("transfer: ", transfer);
+  return { transfer, tokenHash };
+}
+
+async function verifyToken(token: string): Promise<Transfer> {
+  const { transfer, tokenHash } = await getTransfer(token);
 
   if (!transfer || transfer.token_hash !== tokenHash) {
     throw new Error("Token inválido");

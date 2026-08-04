@@ -12,6 +12,11 @@ export async function POST(request: NextRequest) {
     const transfer = await verifyToken(token!);
 
     const devices = await getDeviceByImei(transfer.device_imei!);
+
+    const originalDevice = devices.filter(
+      (device) => device.status !== "Solicitado",
+    );
+
     const deviceRequested = devices.filter(
       (device) => device.status === "Solicitado",
     );
@@ -50,14 +55,19 @@ export async function POST(request: NextRequest) {
 
     await deleteDevice(deviceRequested[0].$id);
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, device: originalDevice[0] });
   } catch (error) {
     console.error("Erro ao recusar transferência:", error);
-    return NextResponse.json({ error: error }, { status: 500 });
+
+    return NextResponse.json({
+      success: false,
+      error: error.message,
+      status: 500,
+    });
   }
 }
 
-async function verifyToken(token: string): Promise<Transfer> {
+async function getTransfer(token: string) {
   const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
 
   const params = new URLSearchParams({
@@ -87,7 +97,11 @@ async function verifyToken(token: string): Promise<Transfer> {
   const { documents } = await response.json();
   const transfer = documents[0];
 
-  console.log("transfer: ", transfer);
+  return { transfer, tokenHash };
+}
+
+async function verifyToken(token: string): Promise<Transfer> {
+  const { transfer, tokenHash } = await getTransfer(token);
 
   if (!transfer || transfer.token_hash !== tokenHash) {
     throw new Error("Token inválido");
