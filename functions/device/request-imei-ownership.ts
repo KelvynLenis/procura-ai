@@ -20,7 +20,7 @@ export async function requestImeiOwnership(
     const user = await getUserById(userId);
 
     const requestDeviceOwnershipResponse = await fetch(
-      `http://localhost:3000/api/request-device-ownership`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/request-device-ownership`,
       {
         method: "POST",
         headers: {
