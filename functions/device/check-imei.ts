@@ -1,4 +1,6 @@
 import type { Device } from "@/types";
+import { getDeviceByImei } from "./get-device-by-imei";
+import { getUserId } from "../user/get-user-id";
 
 interface ImeiCheckResponse {
   status: string;
@@ -15,9 +17,14 @@ interface ImeiCheckResponse {
 
 interface ImeiValidationResult {
   isValid: boolean;
+  alreadyRegistered?: boolean;
+  isTheUserTryingToRegisterADeviceHeAlreadyOwns?: boolean;
+  error?: string;
+  brand?: string;
+  model?: string;
+  name?: string;
   isUpdate?: boolean;
   deviceId?: string;
-  error?: string;
 }
 
 async function validateImeiWithExternalApi(
@@ -107,54 +114,52 @@ export async function checkImei(
   model?: string,
 ): Promise<ImeiValidationResult> {
   try {
-    const params = new URLSearchParams({
-      "queries[0]": JSON.stringify({
-        method: "equal",
-        attribute: "imei",
-        values: [imei],
-      }),
-    });
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
-        },
-      },
-    );
-
-    if (!response.ok) {
-      throw new Error("Erro ao verificar IMEI");
-    }
-
-    const existingDevices = await response.json();
-    const imeiExists = existingDevices.documents.some(
+    const existingDevices = await getDeviceByImei(imei);
+    const imeiExists = existingDevices.some(
       (existingDevice: Device) => existingDevice.imei === imei,
     );
 
     if (imeiExists) {
-      const sameImei = existingDevices.documents.find(
+      const devicesWithSameIMEI = existingDevices.find(
         (existingDevice: Device) => existingDevice.imei === imei,
       );
 
-      if (sameImei.auth_id.length === 0) {
-        return { isValid: true, isUpdate: true, deviceId: sameImei.$id };
+      const userId = await getUserId();
+
+      // Se o IMEI pertence ao usuário logado
+      if (devicesWithSameIMEI?.auth_id === userId) {
+        return {
+          isValid: true,
+          isTheUserTryingToRegisterADeviceHeAlreadyOwns: true,
+          error: "Este IMEI já foi cadastrado por você.",
+        };
       }
 
-      return {
-        isValid: false,
-        error: "Este IMEI já está cadastrado.",
-      };
+      // Se o IMEI pertence a outro usuário
+      if (
+        devicesWithSameIMEI?.auth_id !== userId &&
+        devicesWithSameIMEI?.auth_id !== null
+      ) {
+        try {
+          return {
+            isValid: true,
+            alreadyRegistered: true,
+          };
+        } catch (error) {
+          return { isValid: true };
+        }
+      }
     }
 
     if (brand && model) {
       return await validateImeiWithExternalApi(imei, brand, model);
     }
 
-    return { isValid: true };
+    return {
+      isValid: true,
+      isUpdate: checkIfNeedsToUpdate(existingDevices, imei)?.isUpdate,
+      deviceId: checkIfNeedsToUpdate(existingDevices, imei)?.deviceId,
+    };
   } catch (error) {
     console.error("Erro ao verificar IMEI:", error);
     return {
@@ -162,5 +167,32 @@ export async function checkImei(
       error:
         "Não foi possível verificar o IMEI no momento. Por favor, tente novamente mais tarde.",
     };
+  }
+}
+
+function checkIfNeedsToUpdate(existingDevices: any, imei: string) {
+  const imeiExists = existingDevices.some(
+    (existingDevice: Device) => existingDevice.imei === imei,
+  );
+
+  if (imeiExists) {
+    const devicesWithSameIMEI = existingDevices.find(
+      (existingDevice: Device) => existingDevice.imei === imei,
+    );
+
+    if (
+      devicesWithSameIMEI.auth_id === null ||
+      devicesWithSameIMEI.auth_id.length === 0
+    ) {
+      return {
+        isValid: true,
+        isUpdate: true,
+        deviceId: devicesWithSameIMEI.$id,
+      };
+    } else {
+      return {
+        isUpdate: false,
+      };
+    }
   }
 }

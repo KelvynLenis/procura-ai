@@ -223,6 +223,8 @@ export function DeviceRow({
                 "bg-regular-bg p-1 text-regular-text",
               device.status === "Furtado" && "bg-theft-bg p-1 text-theft-text",
               device.status === "Perdido" && "bg-lost-bg p-1 text-lost-text",
+              device.status === "Solicitado" &&
+                "bg-requested-bg text-requested-text p-1",
             )}
           >
             {device.status}
@@ -294,6 +296,8 @@ export function DeviceRow({
                                 "text-recovered-textx-3 bg-recovered-bg py-1 ring-lime-500",
                               device.status === "Regular" &&
                                 "bg-lime-500/30 px-3 py-1 text-regular-text ring-lime-500",
+                              device.status === "Solicitado" &&
+                                "bg-requested-bg text-requested-text p-1",
                             )}
                           >
                             {device.status}
@@ -306,44 +310,49 @@ export function DeviceRow({
               </DialogContent>
             </Dialog>
 
-            <button
-              type="button"
-              disabled={userStatus !== "Ativo"}
-              onClick={showLoadingToast}
-              className="group relative hidden h-10 w-10 items-center justify-center rounded-lg ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700 disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:ring-zinc-300 md:flex"
-            >
-              <ImPencil size={16} />
-              <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
-                Editar dispositivo
-              </span>
-            </button>
-
-            <ConfirmationDialog
-              title="Deseja deletar este dispositivo?"
-              description="Essa ação não pode ser desfeita. Isso excluirá
-                    permanentemente o dispositivo e removerá seus dados de
-                    nossos servidores."
-              disabled={userStatus !== "Ativo"}
-              onConfirm={() => {
-                handleDeleteDevice(id);
-              }}
-            >
-              <div
-                className={cn(
-                  "group relative hidden h-10 w-10 items-center justify-center gap-2 rounded-lg md:flex",
-                  userStatus === "Ativo"
-                    ? "text-red-600 ring-1 ring-zinc-300 hover:bg-red-200 hover:opacity-90 hover:ring-red-600"
-                    : "bg-transparent text-zinc-400 opacity-50 ring-1 ring-zinc-300",
-                )}
+            {device.status !== "Solicitado" && (
+              <button
+                type="button"
+                disabled={userStatus !== "Ativo"}
+                onClick={showLoadingToast}
+                className="group relative hidden h-10 w-10 items-center justify-center rounded-lg ring-1 ring-zinc-300 hover:bg-sky-100 hover:text-blue-900 hover:opacity-90 hover:ring-blue-700 disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:ring-zinc-300 md:flex"
               >
-                <Trash2 size={20} />
+                <ImPencil size={16} />
                 <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
-                  Deletar dispositivo
+                  Editar dispositivo
                 </span>
-              </div>
-            </ConfirmationDialog>
+              </button>
+            )}
 
-            {device.status !== "Regular" ? (
+            {device.status !== "Solicitado" && (
+              <ConfirmationDialog
+                title="Deseja deletar este dispositivo?"
+                description="Essa ação não pode ser desfeita. Isso excluirá
+                      permanentemente o dispositivo e removerá seus dados de
+                      nossos servidores."
+                disabled={userStatus !== "Ativo"}
+                onConfirm={() => {
+                  handleDeleteDevice(id);
+                }}
+              >
+                <div
+                  className={cn(
+                    "group relative hidden h-10 w-10 items-center justify-center gap-2 rounded-lg md:flex",
+                    userStatus === "Ativo"
+                      ? "text-red-600 ring-1 ring-zinc-300 hover:bg-red-200 hover:opacity-90 hover:ring-red-600"
+                      : "bg-transparent text-zinc-400 opacity-50 ring-1 ring-zinc-300",
+                  )}
+                >
+                  <Trash2 size={20} />
+                  <span className="transition- absolute -top-8 right-5 hidden w-36 rounded-sm bg-black/60 py-1 text-white opacity-0 duration-300 group-hover:block group-hover:opacity-100">
+                    Deletar dispositivo
+                  </span>
+                </div>
+              </ConfirmationDialog>
+            )}
+
+            {device.status === "Solicitado" ? null : device.status !==
+              "Regular" ? (
               <>
                 <ViewMyAlerts
                   id={id}

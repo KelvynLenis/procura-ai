@@ -91,7 +91,7 @@ export function DevicesTable({
           ) : devices.length > 0 ? (
             devices.map((device, index) => (
               <DeviceRow
-                // key={device.$id!}
+                key={device.$id!}
                 index={index + 1 * ((page - 1) * limit)}
                 id={device.$id!}
                 device={device}
