@@ -25,6 +25,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "../ui/input-otp";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
 import {
   Form,
   FormControl,
@@ -63,6 +64,19 @@ interface AddDeviceFormProps {
   isPopover?: boolean;
 }
 
+const sanitizeImei = (value: string) => value.replace(/\D/g, "").slice(0, 15);
+
+const isImeiControlKey = (key: string) =>
+  [
+    "Backspace",
+    "Delete",
+    "Tab",
+    "ArrowLeft",
+    "ArrowRight",
+    "Home",
+    "End",
+  ].includes(key);
+
 export function DeviceForm({
   device,
   setModalOpen,
@@ -97,9 +111,14 @@ export function DeviceForm({
         message: "O fabricante do dispositivo é obrigatório.",
       }),
       operator_id: z.string().optional(),
-      imei: z.string().min(15, {
-        message: "O IMEI deve conter exatamente 15 dígitos numéricos.",
-      }),
+      imei: z
+        .string()
+        .transform(sanitizeImei)
+        .pipe(
+          z.string().min(15, {
+            message: "O IMEI deve conter exatamente 15 dígitos numéricos.",
+          }),
+        ),
     })
     .refine((data) => validateImeiFormat(data.imei), {
       path: ["imei"],
@@ -122,7 +141,7 @@ export function DeviceForm({
       phone_model: device?.phone_model || "",
       // operator_id: '',
       brand: device?.brand || "",
-      imei: device?.imei || "",
+      imei: sanitizeImei(device?.imei || ""),
     },
   });
 
@@ -366,9 +385,9 @@ export function DeviceForm({
   }, [device, form]);
 
   useEffect(() => {
-    const imeiValue = form.watch("imei");
+    const imeiValue = sanitizeImei(form.watch("imei") || "");
 
-    if (imeiValue && imeiValue.length === 15) {
+    if (imeiValue.length === 15) {
       const validateAndFillForm = async () => {
         try {
           setIsLoading(true);
@@ -439,7 +458,13 @@ export function DeviceForm({
                     <FormControl>
                       <InputOTP
                         maxLength={15}
-                        {...field}
+                        pattern={REGEXP_ONLY_DIGITS}
+                        pasteTransformer={sanitizeImei}
+                        value={field.value}
+                        onChange={(value) => field.onChange(sanitizeImei(value))}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
                         className="flex w-full items-center justify-center"
                       >
                         <InputOTPGroup>
@@ -825,15 +850,28 @@ export function DeviceForm({
                     <FormControl>
                       <div className="relative">
                         <Input
-                          placeholder="12 345678 901234 5"
-                          value={formatImei(field.value || "")}
-                          maxLength={19} // 15 números + 4 espaços
+                          placeholder="123456789012345"
+                          inputMode="numeric"
+                          autoComplete="off"
+                          value={field.value || ""}
+                          maxLength={15}
                           className="h-12 rounded-lg border-gray-200 bg-gray-50 text-center font-mono text-base tracking-wider placeholder:text-gray-400"
+                          onKeyDown={(e) => {
+                            if (isImeiControlKey(e.key) || e.ctrlKey || e.metaKey) {
+                              return;
+                            }
+                            if (!/^\d$/.test(e.key)) {
+                              e.preventDefault();
+                            }
+                          }}
                           onChange={(e) => {
-                            const rawValue = e.target.value
-                              .replace(/\D/g, "")
-                              .slice(0, 15);
-                            field.onChange(rawValue);
+                            field.onChange(sanitizeImei(e.target.value));
+                          }}
+                          onPaste={(e) => {
+                            e.preventDefault();
+                            field.onChange(
+                              sanitizeImei(e.clipboardData.getData("text/plain")),
+                            );
                           }}
                         />
                       </div>
