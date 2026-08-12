@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -35,7 +35,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { account } from "@/lib/appwrite";
+import { account, ID } from "@/lib/appwrite";
 import type { Device, DeviceProps } from "@/types";
 import {
   cn,
@@ -54,6 +54,9 @@ import { LoadingToast } from "../LoadingToast";
 import { listOperators } from "@/functions/operators/list-operators";
 import type { Operator } from "@/types";
 import { useStatus } from "@/hooks/useStatus";
+import { useIsMobile } from "@/hooks/use-mobile";
+import RequestOwnershipWrapper from "./RequestOwnershipWrapper";
+import { requestImeiOwnership } from "@/functions/device/request-imei-ownership";
 
 interface AddDeviceFormProps {
   device?: DeviceProps;
@@ -86,9 +89,14 @@ export function DeviceForm({
   const [operatorOptions, setOperatorOptions] = useState<
     { label: string; value: string }[]
   >([]);
+  const [isRequestDeviceOwnership, setIsRequestDeviceOwnership] =
+    useState<boolean>(false);
   const [operatorsLoaded, setOperatorsLoaded] = useState(false);
   const route = useRouter();
   const { userStatus } = useStatus();
+  const requestOwnershipResolveRef = useRef<
+    ((value: { successfull: boolean }) => void) | null
+  >(null);
 
   const formSchema = z
     .object({
@@ -136,6 +144,218 @@ export function DeviceForm({
       imei: sanitizeImei(device?.imei || ""),
     },
   });
+
+  const router = useRouter();
+
+  function goBack() {
+    router.back();
+  }
+
+  // Função para formatar IMEI (apenas mobile)
+  const formatImei = (value: string) => {
+    const numbers = value.replace(/\D/g, "").slice(0, 15);
+    if (numbers.length <= 2) return numbers;
+    if (numbers.length <= 8)
+      return `${numbers.slice(0, 2)} ${numbers.slice(2)}`;
+    if (numbers.length <= 14)
+      return `${numbers.slice(0, 2)} ${numbers.slice(2, 8)} ${numbers.slice(8)}`;
+    return `${numbers.slice(0, 2)} ${numbers.slice(2, 8)} ${numbers.slice(8, 14)} ${numbers.slice(14)}`;
+  };
+
+  // Função para formatar telefone (apenas mobile)
+  const formatPhone = (value: string) => {
+    const numbers = value.replace(/\D/g, "").slice(0, 11);
+    if (numbers.length <= 2) return numbers.length === 0 ? "" : `(${numbers}`;
+    if (numbers.length <= 7)
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
+  };
+
+  const handleSubmitRequestOwnership = () => {
+    return new Promise<{ successfull: boolean }>((resolve) => {
+      requestOwnershipResolveRef.current = resolve;
+    });
+  };
+
+  const finishRequestOwnership = (result: { successfull: boolean }) => {
+    requestOwnershipResolveRef.current?.(result);
+  };
+
+  async function onSubmit(values: DeviceProps) {
+    if (userStatus !== "Ativo") {
+      toast.info("Funcionalidade indisponível para acesso limitado.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setImeiError("");
+      const { $id: userId } = await account.get();
+
+      const imeiValidation = await checkImei(
+        values.imei,
+        values.brand,
+        values.phone_model,
+      );
+
+      console.log(imeiValidation);
+
+      if (device) {
+        await handleEditDevice(device.$id!, values);
+        return;
+      }
+
+      if (imeiValidation.isTheUserTryingToRegisterADeviceHeAlreadyOwns) {
+        setImeiError("Este IMEI já foi cadastrado por você.");
+        return;
+      }
+
+      if (imeiValidation.isValid && imeiValidation.isUpdate) {
+        const updateDevicePromise = async () => {
+          try {
+            await updateDevice(
+              imeiValidation.deviceId!,
+              {
+                phone_number: values.phone_number,
+                phone_model: values.phone_model,
+                brand: values.brand,
+                imei: values.imei,
+                is_stolen: false,
+                operator_id: values.operator_id,
+              } as Device,
+              userId,
+            );
+            form.reset();
+
+            router.push("/meus-dispositivos");
+          } catch (error) {
+            console.error(`Erro ao criar dispositivo: ${error}`);
+            throw error;
+          }
+        };
+
+        toast.promise(updateDevicePromise(), {
+          pending: "Criando dispositivo...",
+          success: "Dispositivo criado com sucesso!",
+          error: "Erro ao criar dispositivo.",
+        });
+
+        return;
+      }
+
+      if (imeiValidation.alreadyRegistered) {
+        if (!imeiValidation.isValid) {
+          setImeiError(imeiValidation.error || "IMEI inválido");
+          return;
+        }
+
+        setIsRequestDeviceOwnership(true);
+
+        const result = await handleSubmitRequestOwnership();
+
+        if (!result.successfull) {
+          return;
+        }
+
+        const deviceId = uuidv4();
+
+        const createRequestPromise = async () => {
+          try {
+            await createDevice(
+              deviceId,
+              {
+                ...values,
+                status: "Solicitado",
+              } as Device,
+              userId,
+            );
+          } catch (error) {
+            console.error(`Erro ao criar dispositivo: ${error}`);
+            throw error;
+          }
+        };
+
+        toast.promise(createRequestPromise(), {
+          pending: "Requisitando reinvidicação...",
+          success: "Dispositivo requisitado com sucesso!",
+          error: "Erro ao requisitar dispositivo.",
+        });
+
+        const requestStatus = await requestImeiOwnership(values.imei);
+
+        if (requestStatus.isError) {
+          console.error("Erro ao verificar IMEI");
+          return;
+        }
+
+        form.reset();
+
+        router.push("/meus-dispositivos");
+
+        return;
+      }
+
+      if (!imeiValidation.isValid) {
+        setImeiError(imeiValidation.error || "Erro ao validar IMEI");
+        setIsLoading(false);
+        return;
+      }
+
+      const deviceId = uuidv4();
+
+      const createDevicePromise = async () => {
+        try {
+          await createDevice(deviceId, values as Device, userId);
+          form.reset();
+
+          router.push("/meus-dispositivos");
+        } catch (error) {
+          console.error(`Erro ao criar dispositivo: ${error}`);
+          throw error;
+        }
+      };
+
+      toast.promise(createDevicePromise(), {
+        pending: "Criando dispositivo...",
+        success: "Dispositivo criado com sucesso!",
+        error: "Erro ao criar dispositivo.",
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao processar a operação.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleEditDevice(id: string, values: DeviceProps) {
+    try {
+      const { $id: userId } = await account.get();
+
+      const callFunction = async () => {
+        try {
+          await updateDevice(id, values as Device, userId);
+          route.push("/meus-dispositivos");
+        } catch (error) {
+          console.error("Erro ao atualizar dispositivo:", error);
+          throw error;
+        }
+      };
+
+      await toast.promise(callFunction(), {
+        pending: "Atualizando dispositivo...",
+        success: "Dispositivo atualizado com sucesso!",
+        error: "Erro ao atualizar dispositivo.",
+      });
+    } catch (error) {
+      console.error("Erro ao atualizar dispositivo:", error);
+      toast.error("Erro ao atualizar dispositivo. Tente novamente.");
+    }
+  }
+
+  useEffect(() => {
+    console.log("isMobile", window.innerWidth);
+  }, [window.innerWidth]);
 
   useEffect(() => {
     const loadOperators = async () => {
@@ -199,134 +419,6 @@ export function DeviceForm({
       validateAndFillForm();
     }
   }, [form.watch("imei")]);
-
-  const router = useRouter();
-
-  function goBack() {
-    router.back();
-  }
-
-  // Função para formatar telefone (apenas mobile)
-  const formatPhone = (value: string) => {
-    const numbers = value.replace(/\D/g, "").slice(0, 11);
-    if (numbers.length <= 2) return numbers.length === 0 ? "" : `(${numbers}`;
-    if (numbers.length <= 7)
-      return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
-    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
-  };
-
-  async function onSubmit(values: DeviceProps) {
-    if (userStatus !== "Ativo") {
-      toast.info("Funcionalidade indisponível para acesso limitado.");
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      setImeiError("");
-      const { $id: userId } = await account.get();
-
-      if (device) {
-        await handleEditDevice(device.$id!, values);
-        return;
-      }
-
-      const imeiValidation = await checkImei(
-        values.imei,
-        values.brand,
-        values.phone_model,
-      );
-
-      if (!imeiValidation.isValid) {
-        setImeiError(imeiValidation.error || "Erro ao validar IMEI");
-        setIsLoading(false);
-        return;
-      }
-
-      if (imeiValidation.isValid && imeiValidation.isUpdate) {
-        const updateDevicePromise = async () => {
-          try {
-            await updateDevice(
-              imeiValidation.deviceId!,
-              {
-                phone_number: values.phone_number,
-                phone_model: values.phone_model,
-                brand: values.brand,
-                imei: values.imei,
-                is_stolen: false,
-                operator_id: values.operator_id,
-              } as Device,
-              userId,
-            );
-            form.reset();
-
-            router.push("/meus-dispositivos");
-          } catch (error) {
-            console.error(`Erro ao criar dispositivo: ${error}`);
-            throw error;
-          }
-        };
-
-        toast.promise(updateDevicePromise(), {
-          pending: "Criando dispositivo...",
-          success: "Dispositivo criado com sucesso!",
-          error: "Erro ao criar dispositivo.",
-        });
-
-        return;
-      }
-
-      const deviceId = uuidv4();
-
-      const createDevicePromise = async () => {
-        try {
-          await createDevice(deviceId, values as Device, userId);
-          form.reset();
-
-          router.push("/meus-dispositivos");
-        } catch (error) {
-          console.error(`Erro ao criar dispositivo: ${error}`);
-          throw error;
-        }
-      };
-
-      toast.promise(createDevicePromise(), {
-        pending: "Criando dispositivo...",
-        success: "Dispositivo criado com sucesso!",
-        error: "Erro ao criar dispositivo.",
-      });
-    } catch (error) {
-      console.error(error);
-      toast.error("Erro ao processar a operação.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  async function handleEditDevice(id: string, values: DeviceProps) {
-    try {
-      const { $id: userId } = await account.get();
-
-      const callFunction = async () => {
-        try {
-          await updateDevice(id, values as Device, userId);
-          route.push("/meus-dispositivos");
-        } catch (error) {
-          console.error("Erro ao atualizar dispositivo:", error);
-          throw error;
-        }
-      };
-
-      await toast.promise(callFunction(), {
-        pending: "Atualizando dispositivo...",
-        success: "Dispositivo atualizado com sucesso!",
-        error: "Erro ao atualizar dispositivo.",
-      });
-    } catch (error) {
-      console.error("Erro ao atualizar dispositivo:", error);
-      toast.error("Erro ao atualizar dispositivo. Tente novamente.");
-    }
-  }
 
   return (
     <>
@@ -624,9 +716,9 @@ export function DeviceForm({
                           !operatorsLoaded || operatorOptions.length === 0
                         }
                         className={cn(
-                          "border-input h-10 w-full appearance-none rounded-md border bg-zinc-100 px-3 pr-10 text-sm shadow-sm md:w-96 md:text-base xl:w-[25.5rem]",
-                          "focus:ring-ring focus:border-transparent focus:outline-none focus:ring-2",
-                          !field.value && "text-muted-foreground text-zinc-500",
+                          "border-input h-10 w-full appearance-none rounded-md border bg-white px-3 pr-10 text-sm shadow-sm md:w-96 md:text-base xl:w-[25.5rem]",
+                          "focus:border-transparent focus:outline-none focus:ring-0",
+                          !field.value && "text-muted-foreground text-zinc-800",
                           (!operatorsLoaded || operatorOptions.length === 0) &&
                             "cursor-not-allowed opacity-50",
                         )}
@@ -1002,6 +1094,14 @@ export function DeviceForm({
           </Form>
         </div>
       </div>
+
+      <RequestOwnershipWrapper
+        isOpen={isRequestDeviceOwnership}
+        isMobile={window.innerWidth < 768}
+        imei={form.getValues("imei")}
+        onClose={() => setIsRequestDeviceOwnership(false)}
+        onFinish={finishRequestOwnership}
+      />
     </>
   );
 }
