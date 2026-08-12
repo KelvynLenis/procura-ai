@@ -87,7 +87,7 @@ export function ViewMyAlerts({
 
         // console.log('Detalhes do dispositivo:', device)
         // console.log('Detalhes do usuário:', userResponse)
-        // console.log('Detalhes do alerta:', events)
+        // console.log("Detalhes do alerta:", events);
 
         setEvents(events);
       } catch (error) {
@@ -145,88 +145,6 @@ export function ViewMyAlerts({
             </div>
           ) : (
             <div className="flex max-h-[500px] flex-col gap-5 overflow-y-auto p-4 pr-2">
-              {/* <div className="flex">
-              <div className="flex flex-col gap-2 w-full">
-                <div className="font-bold">
-                  Tipo de alerta:{' '}
-                  <span className="font-normal">
-                    {events[0]?.type ? events[0]?.type : 'Tipo de alerta não registrado'}
-                  </span>
-                </div>
-                <div className="font-bold">
-                  Descrição do alerta:{' '}
-                  <span className="font-normal">
-                    {events[0]?.description
-                      ? events[0]?.description
-                      : 'Descrição não registrada teste'}
-                  </span>
-                </div>
-                <div className="font-bold">
-                  Data e hora da ocorrência:{' '}
-                  <span className="font-normal">
-                    {events[0].time_event
-                      ? formatDateTime(events[0].time_event)
-                      : 'Data não registrada'}
-                  </span>
-                </div>
-
-                <div className="font-bold">
-                  Local de recuperação:{' '}
-                  <span className="font-normal">
-                    {status === 'Recuperado'
-                      ? events[0]?.retrieval_location
-                        ? events[0].retrieval_location
-                        : 'Local não registrado'
-                      : 'Esse dispositivo ainda não foi recuperado'}
-                  </span>
-                </div>
-
-                <div className="font-bold">
-                  Endereço:{' '}
-                  <span className="font-normal">
-                    {status === 'Recuperado'
-                      ? events[0]?.address
-                        ? events[0]?.address
-                        : 'Endereço não registrado'
-                      : 'Esse dispositivo ainda não foi recuperado'}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex flex-col w-1/3 items-end">
-                <ConfirmationDialog
-                  title="Tem certeza que deseja marcar o dispositivo como regular?"
-                  description="Ao concordar com esta ação, o dispositivo será marcado como regular e os dados da recuperação serão perdidos.
-                  Tenha certeza que já tem o aparelho em mãos antes de prosseguir."
-                  onConfirm={handleConfirmDialog}
-                >
-                  <button
-                    type="button"
-                    className={cn(
-                      'w-fit top-5 gap-2 group relative rounded-lg flex flex-col md:flex-row items-center justify-center hover:bg-white',
-                      status === 'Roubado' &&
-                        'bg-robbery-bg text-red-600 p-1 ring-1 ring-red-500',
-                      status === 'Furtado' &&
-                        'bg-theft-bg text-orange-600 p-1 ring-1 ring-orange-500',
-                      status === 'Perdido' &&
-                        'bg-lost-bg text-yellow-600 p-1 ring-1 ring-yellow-500',
-                      status === 'Recuperado' &&
-                        'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500 animate-pulse',
-                      status === 'Regular' &&
-                        'bg-lime-500/30 text-lime-600 p-1 ring-1 ring-lime-500'
-                    )}
-                  >
-                    <IoIosWarning size={28} />
-                    <span className="hidden md:block">
-                      {status === 'Recuperado'
-                        ? 'Já busquei'
-                        : 'Desativar alerta'}
-                    </span>
-                  </button>
-                </ConfirmationDialog>
-              </div>
-            </div> */}
-
               <div>
                 {status === "Recuperado" ? (
                   <span>
@@ -341,12 +259,6 @@ export function ViewMyAlerts({
                         formatDateTime(events[0].time_event)}
                     </span>
                   </div>
-
-                  {/* <div className='w-60 flex flex-col items-center'>
-                  <span className={cn('w-10 h-10 border-2 border-zinc-500 rounded-full')} />
-                  <span className='text-zinc-500 font-medium text-center'>Dispositivo ainda não está disponível para retirada</span>
-                  <span className='text- text-sm'>{formatDateTime(events[0].time_event)}</span>
-                </div> */}
                 </div>
 
                 <div className="flex w-full items-center justify-center">
@@ -415,6 +327,8 @@ export function ViewMyAlerts({
                             "bg-recovered-bg p-1 text-recovered-text",
                           device.status === "Regular" &&
                             "bg-lime-500/30 p-1 text-regular-text",
+                          device.status === "Solicitado" &&
+                            "bg-requested-bg text-requested-text p-1",
                         )}
                       >
                         {device.status}

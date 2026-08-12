@@ -358,6 +358,8 @@ export function UserRow({ user, index, setUsers }: UserRowProps) {
                                         "bg-lime-500/30 px-3 py-1 text-lime-600 ring-lime-500",
                                       device.status === "Regular" &&
                                         "bg-lime-500/30 px-3 py-1 text-lime-600 ring-lime-500",
+                                      device.status === "Solicitado" &&
+                                        "bg-requested-bg text-requested-text p-1",
                                     )}
                                   >
                                     {device.status}

@@ -8,6 +8,7 @@ import type { QueryFilterSchema } from "./queryFilter";
 import type { UserSchema } from "./userSchema";
 import type OperatorSchema from "./operatorSchema";
 import NotificationSchema from "./NotificationSchema";
+import TransferSchema from "./transferSchema";
 
 export interface DeviceProps {
   $id?: string; // ID do dispositivo
@@ -67,3 +68,4 @@ export type QueryFilter = z.infer<typeof QueryFilterSchema>;
 export type User = z.infer<typeof UserSchema>;
 export type Operator = z.infer<typeof OperatorSchema>;
 export type Notification = z.infer<typeof NotificationSchema>;
+export type Transfer = z.infer<typeof TransferSchema>;
