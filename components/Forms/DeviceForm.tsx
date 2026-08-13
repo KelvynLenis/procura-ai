@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -25,6 +25,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "../ui/input-otp";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
 import {
   Form,
   FormControl,
@@ -34,7 +35,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { account } from "@/lib/appwrite";
+import { account, ID } from "@/lib/appwrite";
 import type { Device, DeviceProps } from "@/types";
 import {
   cn,
@@ -53,12 +54,28 @@ import { LoadingToast } from "../LoadingToast";
 import { listOperators } from "@/functions/operators/list-operators";
 import type { Operator } from "@/types";
 import { useStatus } from "@/hooks/useStatus";
+import { useIsMobile } from "@/hooks/use-mobile";
+import RequestOwnershipWrapper from "./RequestOwnershipWrapper";
+import { requestImeiOwnership } from "@/functions/device/request-imei-ownership";
 
 interface AddDeviceFormProps {
   device?: DeviceProps;
   setModalOpen?: (value: boolean) => void;
   isPopover?: boolean;
 }
+
+const sanitizeImei = (value: string) => value.replace(/\D/g, "").slice(0, 15);
+
+const isImeiControlKey = (key: string) =>
+  [
+    "Backspace",
+    "Delete",
+    "Tab",
+    "ArrowLeft",
+    "ArrowRight",
+    "Home",
+    "End",
+  ].includes(key);
 
 export function DeviceForm({
   device,
@@ -72,9 +89,14 @@ export function DeviceForm({
   const [operatorOptions, setOperatorOptions] = useState<
     { label: string; value: string }[]
   >([]);
+  const [isRequestDeviceOwnership, setIsRequestDeviceOwnership] =
+    useState<boolean>(false);
   const [operatorsLoaded, setOperatorsLoaded] = useState(false);
   const route = useRouter();
   const { userStatus } = useStatus();
+  const requestOwnershipResolveRef = useRef<
+    ((value: { successfull: boolean }) => void) | null
+  >(null);
 
   const formSchema = z
     .object({
@@ -89,9 +111,14 @@ export function DeviceForm({
         message: "O fabricante do dispositivo é obrigatório.",
       }),
       operator_id: z.string().optional(),
-      imei: z.string().min(15, {
-        message: "O IMEI deve conter exatamente 15 dígitos numéricos.",
-      }),
+      imei: z
+        .string()
+        .transform(sanitizeImei)
+        .pipe(
+          z.string().min(15, {
+            message: "O IMEI deve conter exatamente 15 dígitos numéricos.",
+          }),
+        ),
     })
     .refine((data) => validateImeiFormat(data.imei), {
       path: ["imei"],
@@ -114,72 +141,9 @@ export function DeviceForm({
       phone_model: device?.phone_model || "",
       // operator_id: '',
       brand: device?.brand || "",
-      imei: device?.imei || "",
+      imei: sanitizeImei(device?.imei || ""),
     },
   });
-
-  useEffect(() => {
-    const loadOperators = async () => {
-      try {
-        setOperatorsLoaded(false);
-        const options = await getOperatorOptions();
-        setOperatorOptions(options);
-        setOperatorsLoaded(true);
-
-        if (device?.operator_id) {
-          form.setValue("operator_id", device.operator_id);
-        }
-      } catch (error) {
-        console.error("Erro ao carregar operadoras:", error);
-        setOperatorsLoaded(true);
-        // Define operadoras fallback para teste
-        setOperatorOptions([
-          { label: "Vivo", value: "vivo" },
-          { label: "Claro", value: "claro" },
-          { label: "TIM", value: "tim" },
-          { label: "Oi", value: "oi" },
-        ]);
-      }
-    };
-
-    loadOperators();
-  }, [device, form]);
-
-  useEffect(() => {
-    const imeiValue = form.watch("imei");
-
-    if (imeiValue && imeiValue.length === 15) {
-      const validateAndFillForm = async () => {
-        try {
-          setIsLoading(true);
-          const response = await fetch(
-            `/api/check-imei-info?imei=${imeiValue}`,
-          );
-
-          if (!response.ok) {
-            toast.error("Erro ao validar IMEI. Por favor, tente novamente.");
-            return;
-          }
-
-          const data = await response.json();
-
-          if (data.status === "succes" && data.object) {
-            form.setValue("brand", data.object.brand);
-            form.setValue("phone_model", data.object.name);
-          } else {
-            toast.error("Não foi possível obter informações do IMEI.");
-          }
-        } catch (error) {
-          console.error("Erro ao validar IMEI:", error);
-          toast.error("Erro ao validar IMEI. Por favor, tente novamente.");
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      validateAndFillForm();
-    }
-  }, [form.watch("imei")]);
 
   const router = useRouter();
 
@@ -207,6 +171,16 @@ export function DeviceForm({
     return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
   };
 
+  const handleSubmitRequestOwnership = () => {
+    return new Promise<{ successfull: boolean }>((resolve) => {
+      requestOwnershipResolveRef.current = resolve;
+    });
+  };
+
+  const finishRequestOwnership = (result: { successfull: boolean }) => {
+    requestOwnershipResolveRef.current?.(result);
+  };
+
   async function onSubmit(values: DeviceProps) {
     if (userStatus !== "Ativo") {
       toast.info("Funcionalidade indisponível para acesso limitado.");
@@ -218,20 +192,21 @@ export function DeviceForm({
       setImeiError("");
       const { $id: userId } = await account.get();
 
-      if (device) {
-        await handleEditDevice(device.$id!, values);
-        return;
-      }
-
       const imeiValidation = await checkImei(
         values.imei,
         values.brand,
         values.phone_model,
       );
 
-      if (!imeiValidation.isValid) {
-        setImeiError(imeiValidation.error || "Erro ao validar IMEI");
-        setIsLoading(false);
+      console.log(imeiValidation);
+
+      if (device) {
+        await handleEditDevice(device.$id!, values);
+        return;
+      }
+
+      if (imeiValidation.isTheUserTryingToRegisterADeviceHeAlreadyOwns) {
+        setImeiError("Este IMEI já foi cadastrado por você.");
         return;
       }
 
@@ -265,6 +240,64 @@ export function DeviceForm({
           error: "Erro ao criar dispositivo.",
         });
 
+        return;
+      }
+
+      if (imeiValidation.alreadyRegistered) {
+        if (!imeiValidation.isValid) {
+          setImeiError(imeiValidation.error || "IMEI inválido");
+          return;
+        }
+
+        setIsRequestDeviceOwnership(true);
+
+        const result = await handleSubmitRequestOwnership();
+
+        if (!result.successfull) {
+          return;
+        }
+
+        const deviceId = uuidv4();
+
+        const createRequestPromise = async () => {
+          try {
+            await createDevice(
+              deviceId,
+              {
+                ...values,
+                status: "Solicitado",
+              } as Device,
+              userId,
+            );
+          } catch (error) {
+            console.error(`Erro ao criar dispositivo: ${error}`);
+            throw error;
+          }
+        };
+
+        toast.promise(createRequestPromise(), {
+          pending: "Requisitando reinvidicação...",
+          success: "Dispositivo requisitado com sucesso!",
+          error: "Erro ao requisitar dispositivo.",
+        });
+
+        const requestStatus = await requestImeiOwnership(values.imei);
+
+        if (requestStatus.isError) {
+          console.error("Erro ao verificar IMEI");
+          return;
+        }
+
+        form.reset();
+
+        router.push("/meus-dispositivos");
+
+        return;
+      }
+
+      if (!imeiValidation.isValid) {
+        setImeiError(imeiValidation.error || "Erro ao validar IMEI");
+        setIsLoading(false);
         return;
       }
 
@@ -320,6 +353,73 @@ export function DeviceForm({
     }
   }
 
+  useEffect(() => {
+    console.log("isMobile", window.innerWidth);
+  }, [window.innerWidth]);
+
+  useEffect(() => {
+    const loadOperators = async () => {
+      try {
+        setOperatorsLoaded(false);
+        const options = await getOperatorOptions();
+        setOperatorOptions(options);
+        setOperatorsLoaded(true);
+
+        if (device?.operator_id) {
+          form.setValue("operator_id", device.operator_id);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar operadoras:", error);
+        setOperatorsLoaded(true);
+        // Define operadoras fallback para teste
+        setOperatorOptions([
+          { label: "Vivo", value: "vivo" },
+          { label: "Claro", value: "claro" },
+          { label: "TIM", value: "tim" },
+          { label: "Oi", value: "oi" },
+        ]);
+      }
+    };
+
+    loadOperators();
+  }, [device, form]);
+
+  useEffect(() => {
+    const imeiValue = sanitizeImei(form.watch("imei") || "");
+
+    if (imeiValue.length === 15) {
+      const validateAndFillForm = async () => {
+        try {
+          setIsLoading(true);
+          const response = await fetch(
+            `/api/check-imei-info?imei=${imeiValue}`,
+          );
+
+          if (!response.ok) {
+            toast.error("Erro ao validar IMEI. Por favor, tente novamente.");
+            return;
+          }
+
+          const data = await response.json();
+
+          if (data.status === "succes" && data.object) {
+            form.setValue("brand", data.object.brand);
+            form.setValue("phone_model", data.object.name);
+          } else {
+            toast.error("Não foi possível obter informações do IMEI.");
+          }
+        } catch (error) {
+          console.error("Erro ao validar IMEI:", error);
+          toast.error("Erro ao validar IMEI. Por favor, tente novamente.");
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      validateAndFillForm();
+    }
+  }, [form.watch("imei")]);
+
   return (
     <>
       {/* {isLoading && <LoadingToast isReactToastifyComponent={false} />} */}
@@ -358,7 +458,13 @@ export function DeviceForm({
                     <FormControl>
                       <InputOTP
                         maxLength={15}
-                        {...field}
+                        pattern={REGEXP_ONLY_DIGITS}
+                        pasteTransformer={sanitizeImei}
+                        value={field.value}
+                        onChange={(value) => field.onChange(sanitizeImei(value))}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
                         className="flex w-full items-center justify-center"
                       >
                         <InputOTPGroup>
@@ -610,9 +716,9 @@ export function DeviceForm({
                           !operatorsLoaded || operatorOptions.length === 0
                         }
                         className={cn(
-                          "border-input h-10 w-full appearance-none rounded-md border bg-zinc-100 px-3 pr-10 text-sm shadow-sm md:w-96 md:text-base xl:w-[25.5rem]",
-                          "focus:ring-ring focus:border-transparent focus:outline-none focus:ring-2",
-                          !field.value && "text-muted-foreground text-zinc-500",
+                          "border-input h-10 w-full appearance-none rounded-md border bg-white px-3 pr-10 text-sm shadow-sm md:w-96 md:text-base xl:w-[25.5rem]",
+                          "focus:border-transparent focus:outline-none focus:ring-0",
+                          !field.value && "text-muted-foreground text-zinc-800",
                           (!operatorsLoaded || operatorOptions.length === 0) &&
                             "cursor-not-allowed opacity-50",
                         )}
@@ -744,15 +850,28 @@ export function DeviceForm({
                     <FormControl>
                       <div className="relative">
                         <Input
-                          placeholder="12 345678 901234 5"
-                          value={formatImei(field.value || "")}
-                          maxLength={19} // 15 números + 4 espaços
+                          placeholder="123456789012345"
+                          inputMode="numeric"
+                          autoComplete="off"
+                          value={field.value || ""}
+                          maxLength={15}
                           className="h-12 rounded-lg border-gray-200 bg-gray-50 text-center font-mono text-base tracking-wider placeholder:text-gray-400"
+                          onKeyDown={(e) => {
+                            if (isImeiControlKey(e.key) || e.ctrlKey || e.metaKey) {
+                              return;
+                            }
+                            if (!/^\d$/.test(e.key)) {
+                              e.preventDefault();
+                            }
+                          }}
                           onChange={(e) => {
-                            const rawValue = e.target.value
-                              .replace(/\D/g, "")
-                              .slice(0, 15);
-                            field.onChange(rawValue);
+                            field.onChange(sanitizeImei(e.target.value));
+                          }}
+                          onPaste={(e) => {
+                            e.preventDefault();
+                            field.onChange(
+                              sanitizeImei(e.clipboardData.getData("text/plain")),
+                            );
                           }}
                         />
                       </div>
@@ -975,6 +1094,14 @@ export function DeviceForm({
           </Form>
         </div>
       </div>
+
+      <RequestOwnershipWrapper
+        isOpen={isRequestDeviceOwnership}
+        isMobile={window.innerWidth < 768}
+        imei={form.getValues("imei")}
+        onClose={() => setIsRequestDeviceOwnership(false)}
+        onFinish={finishRequestOwnership}
+      />
     </>
   );
 }

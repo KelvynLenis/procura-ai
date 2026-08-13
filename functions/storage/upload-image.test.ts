@@ -1,4 +1,9 @@
+import { File as NodeFile } from "node:buffer";
 import { describe, it, expect, vi, beforeEach } from "vitest";
+
+if (typeof globalThis.File === "undefined") {
+  globalThis.File = NodeFile as unknown as typeof globalThis.File;
+}
 
 vi.mock("@/lib/appwrite", () => ({
   storage: {
@@ -19,6 +24,7 @@ describe("uploadImage", () => {
 
     process.env.NEXT_PUBLIC_APP_WRITE_STORAGE_ID = "storage-id";
     process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID = "project-id";
+    process.env.NEXT_PUBLIC_API_URL = "https://fra.cloud.appwrite.io/v1";
   });
 
   it("deve fazer upload da imagem e retornar a URL", async () => {

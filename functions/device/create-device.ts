@@ -23,6 +23,7 @@ export async function createDevice(
           is_stolen: false,
           auth_id: userId,
           operator_id: values.operator_id,
+          status: values.status ? values.status : "Regular",
         },
       }),
     },
