@@ -1,3 +1,5 @@
+'use client'
+
 export function MapTileAttribution() {
   const usesMapTiler = Boolean(process.env.NEXT_PUBLIC_MAPTILER_API_KEY);
 

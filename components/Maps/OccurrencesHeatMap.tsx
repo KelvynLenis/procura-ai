@@ -155,8 +155,7 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
   }
 
   return (
-    <>
-      <div className="map-with-bottom-legend relative inline-block">
+    <div className="map-with-bottom-legend relative w-full">
       <Map
         provider={mapTilerTileProvider}
         {...mapAttributionProps}
@@ -288,7 +287,6 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
           </Overlay>
         )}
       </Map>
-      </div>
-    </>
+    </div>
   )
 }
