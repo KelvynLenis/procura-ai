@@ -14,23 +14,36 @@ default:
 
 stages:
   - validate
+  - build
   - sync
   - deploy
 
 variables:
   GIT_DEPTH: "0"
   HOMOLOG_BRANCH: "homolog.secties"
+  HEALTH_URL: "https://procuraai-homolog.secties.pb.gov.br/"
   NEXT_TELEMETRY_DISABLED: "1"
 
-build:
-  stage: validate
-  script:
-    - npm run build
+.test_rules: &test_rules
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == "develop" && $CI_PIPELINE_SOURCE == "push"
-    - if: $CI_COMMIT_BRANCH == $HOMOLOG_BRANCH
+    - if: $CI_COMMIT_BRANCH == $HOMOLOG_BRANCH && $CI_PIPELINE_SOURCE == "push"
     - if: $CI_COMMIT_BRANCH == "main"
+
+test:
+  stage: validate
+  script:
+    - npm run test:ci
+  <<: *test_rules
+
+build:
+  stage: build
+  needs:
+    - job: test
+  script:
+    - npm run build
+  <<: *test_rules
 
 sync_to_homolog:
   stage: sync
@@ -47,12 +60,11 @@ sync_to_homolog:
     - |
       set -euo pipefail
       if [ -z "${SYNC_TOKEN:-}" ] || [ -z "${SYNC_TOKEN_USER:-}" ]; then
-        echo "Defina SYNC_TOKEN e SYNC_TOKEN_USER (glpat + oauth2)"
+        echo "Defina SYNC_TOKEN e SYNC_TOKEN_USER"
         exit 1
       fi
       REPO="${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
       remote() { printf 'https://%s:%s@%s' "$1" "$2" "$REPO"; }
-
       git remote set-url origin "$(remote gitlab-ci-token "$CI_JOB_TOKEN")"
       git fetch origin develop "$HOMOLOG_BRANCH"
       git checkout -B "$HOMOLOG_BRANCH" "origin/$HOMOLOG_BRANCH"
@@ -63,6 +75,8 @@ sync_to_homolog:
 deploy_homolog_ssh:
   stage: deploy
   image: alpine:3.20
+  needs:
+    - job: build
   rules:
     - if: $CI_COMMIT_BRANCH == $HOMOLOG_BRANCH && $CI_PIPELINE_SOURCE == "push"
   before_script:
@@ -70,7 +84,6 @@ deploy_homolog_ssh:
     - |
       set -euo pipefail
       KEY="${CI_PROJECT_DIR}/.ssh_deploy_key"
-
       prep_key() {
         sed -i 's/\r$//' "$KEY"
         [ "$(tail -c1 "$KEY" | wc -l)" -eq 0 ] && echo >> "$KEY"
@@ -92,18 +105,48 @@ deploy_homolog_ssh:
   script:
     - |
       set -euo pipefail
+      PKG_VERSION="$(sed -n 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' package.json | head -1)"
+      RELEASE_VERSION="${PKG_VERSION}-homolog.${CI_PIPELINE_IID}"
       DIR="${DEPLOY_PATH:-/home/procuraai/procuraai-web}"
       KEY="${CI_PROJECT_DIR}/.ssh_deploy_key"
       URL="https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
       ssh -i "$KEY" -o IdentitiesOnly=yes -p "${DEPLOY_SSH_PORT:-22024}" "${DEPLOY_USER}@${DEPLOY_HOST}" "
         set -euo pipefail
         cd '$DIR'
+        mkdir -p .deploy
+        git rev-parse HEAD > .deploy/previous-sha
+        cat .deploy/current-tag 2>/dev/null > .deploy/previous-tag || echo latest > .deploy/previous-tag
         git fetch '$URL' '$HOMOLOG_BRANCH'
         git checkout '$HOMOLOG_BRANCH'
         git reset --hard FETCH_HEAD
-        chmod +x deploy.sh
-        ./deploy.sh
+        chmod +x deploy.sh scripts/ci/deploy-homolog.sh
+        ./scripts/ci/deploy-homolog.sh '$RELEASE_VERSION' '$HEALTH_URL' '$HOMOLOG_BRANCH'
       "
   environment:
     name: homolog
     url: https://procuraai-homolog.secties.pb.gov.br/
+
+release_homolog:
+  stage: deploy
+  image: alpine:3.20
+  needs:
+    - job: deploy_homolog_ssh
+  rules:
+    - if: $CI_COMMIT_BRANCH == $HOMOLOG_BRANCH && $CI_PIPELINE_SOURCE == "push"
+  before_script:
+    - apk add --no-cache git
+    - git config user.email "gitlab-ci@procuraai.local"
+    - git config user.name "GitLab CI"
+  script:
+    - |
+      set -euo pipefail
+      if [ -z "${SYNC_TOKEN:-}" ] || [ -z "${SYNC_TOKEN_USER:-}" ]; then
+        echo "SYNC_TOKEN ausente — tag de release ignorada"
+        exit 0
+      fi
+      PKG_VERSION="$(sed -n 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' package.json | head -1)"
+      TAG="homolog/v${PKG_VERSION}-${CI_PIPELINE_IID}"
+      REPO="${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+      git remote set-url origin "https://${SYNC_TOKEN_USER}:${SYNC_TOKEN}@${REPO}"
+      git tag -a "$TAG" -m "Homolog ${CI_COMMIT_SHORT_SHA}" "$CI_COMMIT_SHA"
+      git push origin "$TAG"

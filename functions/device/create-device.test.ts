@@ -65,6 +65,7 @@ describe("createDevice", () => {
             is_stolen: false,
             auth_id: "user-123",
             operator_id: "operator-123",
+            status: "Regular",
           },
         }),
       },

@@ -1,60 +1,56 @@
 // check-imei.test.ts
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("./get-device-by-imei", () => ({
+  getDeviceByImei: vi.fn(),
+}));
+
+vi.mock("../user/get-user-id", () => ({
+  getUserId: vi.fn(),
+}));
+
 import { checkImei } from "./check-imei";
+import { getDeviceByImei } from "./get-device-by-imei";
+import { getUserId } from "../user/get-user-id";
 
 describe("checkImei", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-
-    process.env.NEXT_PUBLIC_API_URL = "https://api.test.com";
-    process.env.NEXT_PUBLIC_DATABASE_ID = "database-id";
-    process.env.NEXT_PUBLIC_COLLECTION_DEVICE = "devices";
-    process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID = "project-id";
-    process.env.NEXT_PUBLIC_API_KEY_IMEICHECK = "api-key";
+    vi.mocked(getUserId).mockResolvedValue("current-user");
   });
 
-  it("deve retornar erro quando o IMEI já existe", async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        documents: [
-          {
-            $id: "device-123",
-            imei: "123456789",
-            auth_id: "user-123",
-          },
-        ],
-      }),
-    }) as any;
-
-    const result = await checkImei("123456789");
-
-    expect(result).toEqual({
-      isValid: false,
-      error: "Este IMEI já está cadastrado.",
-    });
-  });
-
-  it("deve retornar válido quando o IMEI não existe", async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        documents: [],
-      }),
-    }) as any;
+  it("deve retornar alreadyRegistered quando o IMEI pertence a outro usuário", async () => {
+    vi.mocked(getDeviceByImei).mockResolvedValue([
+      {
+        $id: "device-123",
+        imei: "123456789",
+        auth_id: "other-user",
+      } as any,
+    ]);
 
     const result = await checkImei("123456789");
 
     expect(result).toEqual({
       isValid: true,
+      alreadyRegistered: true,
+    });
+  });
+
+  it("deve retornar válido quando o IMEI não existe", async () => {
+    vi.mocked(getDeviceByImei).mockResolvedValue([]);
+
+    const result = await checkImei("123456789");
+
+    expect(result).toEqual({
+      isValid: true,
+      isUpdate: undefined,
+      deviceId: undefined,
     });
   });
 
   it("deve retornar erro quando a consulta ao banco falhar", async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: false,
-    }) as any;
+    vi.mocked(getDeviceByImei).mockRejectedValue(new Error("Erro ao verificar IMEI"));
 
     const result = await checkImei("123456789");
 
@@ -66,25 +62,19 @@ describe("checkImei", () => {
   });
 
   it("deve validar IMEI na API externa quando fabricante e modelo forem informados", async () => {
-    global.fetch = vi
-      .fn()
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          documents: [],
-        }),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          status: "succes",
-          object: {
-            brand: "Samsung",
-            name: "Galaxy S23",
-            model: "SM-S911B",
-          },
-        }),
-      });
+    vi.mocked(getDeviceByImei).mockResolvedValue([]);
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: "succes",
+        object: {
+          brand: "Samsung",
+          name: "Galaxy S23",
+          model: "SM-S911B",
+        },
+      }),
+    }) as any;
 
     const result = await checkImei("123456789", "Samsung", "Galaxy S23");
 
@@ -94,25 +84,19 @@ describe("checkImei", () => {
   });
 
   it("deve retornar erro quando fabricante não corresponder", async () => {
-    global.fetch = vi
-      .fn()
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          documents: [],
-        }),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          status: "succes",
-          object: {
-            brand: "Apple",
-            name: "iPhone 15",
-            model: "A3090",
-          },
-        }),
-      });
+    vi.mocked(getDeviceByImei).mockResolvedValue([]);
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: "succes",
+        object: {
+          brand: "Apple",
+          name: "iPhone 15",
+          model: "A3090",
+        },
+      }),
+    }) as any;
 
     const result = await checkImei("123456789", "Samsung", "Galaxy S23");
 
@@ -123,25 +107,19 @@ describe("checkImei", () => {
   });
 
   it("deve retornar erro quando modelo não corresponder", async () => {
-    global.fetch = vi
-      .fn()
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          documents: [],
-        }),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          status: "succes",
-          object: {
-            brand: "Samsung",
-            name: "Galaxy S24",
-            model: "SM-S921B",
-          },
-        }),
-      });
+    vi.mocked(getDeviceByImei).mockResolvedValue([]);
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: "succes",
+        object: {
+          brand: "Samsung",
+          name: "Galaxy S24",
+          model: "SM-S921B",
+        },
+      }),
+    }) as any;
 
     const result = await checkImei("123456789", "Samsung", "Galaxy S23");
 
@@ -152,20 +130,14 @@ describe("checkImei", () => {
   });
 
   it("deve retornar erro quando a API externa retornar status inválido", async () => {
-    global.fetch = vi
-      .fn()
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          documents: [],
-        }),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          status: "error",
-        }),
-      });
+    vi.mocked(getDeviceByImei).mockResolvedValue([]);
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: "error",
+      }),
+    }) as any;
 
     const result = await checkImei("123456789", "Samsung", "Galaxy S23");
 
@@ -177,17 +149,11 @@ describe("checkImei", () => {
   });
 
   it("deve retornar erro quando a API externa falhar", async () => {
-    global.fetch = vi
-      .fn()
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          documents: [],
-        }),
-      })
-      .mockResolvedValueOnce({
-        ok: false,
-      });
+    vi.mocked(getDeviceByImei).mockResolvedValue([]);
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+    }) as any;
 
     const result = await checkImei("123456789", "Samsung", "Galaxy S23");
 
@@ -199,15 +165,9 @@ describe("checkImei", () => {
   });
 
   it("deve retornar erro quando ocorrer exceção na API externa", async () => {
-    global.fetch = vi
-      .fn()
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          documents: [],
-        }),
-      })
-      .mockRejectedValueOnce(new Error("Network Error"));
+    vi.mocked(getDeviceByImei).mockResolvedValue([]);
+
+    global.fetch = vi.fn().mockRejectedValue(new Error("Network Error")) as any;
 
     const result = await checkImei("123456789", "Samsung", "Galaxy S23");
 
