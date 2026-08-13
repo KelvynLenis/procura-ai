@@ -15,7 +15,25 @@
 }
 
 .pigeon-attribution {
-  display: none;
+  z-index: 10;
+  border-radius: 4px 0 0 0;
+  line-height: 1.3;
+  max-width: min(100%, 360px);
+  pointer-events: auto;
+}
+
+.pigeon-attribution a {
+  color: #0078a8;
+  text-decoration: none;
+}
+
+.pigeon-attribution a:hover {
+  text-decoration: underline;
+}
+
+.map-with-bottom-legend .pigeon-attribution {
+  left: 0;
+  right: auto;
 }
 
 .pac-container {

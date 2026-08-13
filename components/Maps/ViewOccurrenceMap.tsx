@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import { Map, Marker, ZoomControl } from 'pigeon-maps'
+import { mapTilerTileProvider } from '@/lib/map-tile-provider'
+import { mapAttributionProps } from './MapTileAttribution'
 
 interface MarkAsStolenMapProps {
   position: [number, number]
@@ -80,6 +82,8 @@ export function ViewOccurrenceMap({ position }: MarkAsStolenMapProps) {
 
   return (
     <Map
+      provider={mapTilerTileProvider}
+      {...mapAttributionProps}
       width={setWidth()}
       height={setHeight()}
       defaultCenter={position}

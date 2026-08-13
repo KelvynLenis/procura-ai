@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react'
 import { Map, Marker, Overlay } from 'pigeon-maps'
 import type { NotificationProps, OccurrencesProps } from '@/types'
+import { mapTilerTileProvider } from '@/lib/map-tile-provider'
+import { mapAttributionProps } from './MapTileAttribution'
 import { usePathname } from 'next/navigation'
 import { EventDetails } from '../EventDetails'
 import { Triangle } from 'lucide-react'
@@ -223,6 +225,8 @@ export function OccurrencesMap({
   return (
     <>
       <Map
+        provider={mapTilerTileProvider}
+        {...mapAttributionProps}
         onClick={() => closePopup()}
         width={setWidth()}
         height={setHeight()}

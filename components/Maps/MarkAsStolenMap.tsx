@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import { GeoJsonLoader, Map, Marker, ZoomControl } from 'pigeon-maps'
+import { mapTilerTileProvider } from '@/lib/map-tile-provider'
+import { mapAttributionProps } from './MapTileAttribution'
 import * as turf from '@turf/turf'
 import { toast } from 'react-toastify'
 import { getNeighborhoodId } from '../../functions/district/get-neighborhood-id'
@@ -120,6 +122,8 @@ export function MarkAsStolenMap({
 
   return (
     <Map
+      provider={mapTilerTileProvider}
+      {...mapAttributionProps}
       width={setWidth()}
       height={size.width < 768 ? size.height / 2.5 : size.height / 1.5}
       defaultCenter={[-7.1509317, -34.8446769]}
