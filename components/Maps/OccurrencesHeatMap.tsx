@@ -7,6 +7,8 @@ import { Map, GeoJsonLoader, Overlay } from 'pigeon-maps'
 import { useState } from 'react'
 import { FaCircleExclamation } from 'react-icons/fa6'
 import ColorScale from 'color-scales'
+import { mapTilerTileProvider } from '@/lib/map-tile-provider'
+import { mapAttributionProps } from './MapTileAttribution'
 
 const geoJsonLink = process.env.NEXT_PUBLIC_NEIGHBORHOODS_GEOJSON_URL
 
@@ -153,8 +155,10 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
   }
 
   return (
-    <>
+    <div className="map-with-bottom-legend relative w-full">
       <Map
+        provider={mapTilerTileProvider}
+        {...mapAttributionProps}
         width={setWidth()}
         height={setHeight()}
         defaultCenter={[-7.1509317, -34.8446769]}
@@ -244,49 +248,45 @@ export function OccurrencesHeatMap({ districts }: OccurrencesHeatMapProps) {
             </li>
           </ul>
         </div>
+        {isOverlayOpen && (
+          <Overlay className="flex w-full" anchor={OverlayData.anchor}>
+            <div
+              className={cn(
+                'flex flex-col absolute gap-2 w-56 rounded-xl h-fit bg-primary ring-1 ring-black/50 text-white font-semibold'
+              )}
+              style={{
+                top: `${isFullScreen ? OverlayData.anchor.y : -130}px`,
+                left: `${isFullScreen ? OverlayData.anchor.x : 5}px`,
+              }}
+              onClick={() => setIsOverlayOpen(false)}
+            >
+              <div className="bg-white text-primary rounded-t-xl px-2 py-1 flex items-center break-words">
+                {OverlayData.district?.name_neighborhood &&
+                  OverlayData.district.name_neighborhood}
+              </div>
+              <div className="py-0.5 px-2">
+                <span className="font-bold">
+                  {OverlayData.district?.robbery_counter ?
+                    OverlayData.district.robbery_counter : 0}{' '}
+                  {OverlayData.district?.robbery_counter > 1 ? 'roubos' : 'roubo'}{' '}
+                  <br />
+                  {OverlayData.district?.theft_counter ?
+                    OverlayData.district.theft_counter : 0}{' '}
+                  {OverlayData.district?.theft_counter > 1 ? 'furtos' : 'furto'}{' '}
+                  <br />
+                  {OverlayData.district?.lost_counter ?
+                    OverlayData.district.lost_counter : 0}{' '}
+                  {OverlayData.district?.lost_counter > 1 ? 'perdas' : 'perda'}{' '}
+                  <br />
+                </span>
+              </div>
+              <div className="flex gap-2 px-2">
+                <FaCircleExclamation /> baixa periculosidade
+              </div>
+            </div>
+          </Overlay>
+        )}
       </Map>
-      {isOverlayOpen && (
-        <Overlay className="flex w-full" anchor={OverlayData.anchor}>
-          <div
-            className={cn(
-              'flex flex-col absolute gap-2 w-56 rounded-xl h-fit bg-primary ring-1 ring-black/50 text-white font-semibold'
-            )}
-            style={{
-              top: `${isFullScreen ? OverlayData.anchor.y : -130}px`,
-              left: `${isFullScreen ? OverlayData.anchor.x : 5}px`,
-            }}
-            onClick={() => setIsOverlayOpen(false)}
-          >
-            {/* <span
-                className="w-3 h-3 rounded-full ring-1 ring-black"
-                style={{ backgroundColor: OverlayData.color }}
-              ></span> */}
-            <div className="bg-white text-primary rounded-t-xl px-2 py-1 flex items-center break-words">
-              {OverlayData.district?.name_neighborhood &&
-                OverlayData.district.name_neighborhood}
-            </div>
-            <div className="py-0.5 px-2">
-              <span className="font-bold">
-                {OverlayData.district?.robbery_counter ?
-                  OverlayData.district.robbery_counter : 0}{' '}
-                {OverlayData.district?.robbery_counter > 1 ? 'roubos' : 'roubo'}{' '}
-                <br />
-                {OverlayData.district?.theft_counter ?
-                  OverlayData.district.theft_counter : 0}{' '}
-                {OverlayData.district?.theft_counter > 1 ? 'furtos' : 'furto'}{' '}
-                <br />
-                {OverlayData.district?.lost_counter ?
-                  OverlayData.district.lost_counter : 0}{' '}
-                {OverlayData.district?.lost_counter > 1 ? 'perdas' : 'perda'}{' '}
-                <br />
-              </span>
-            </div>
-            <div className="flex gap-2 px-2">
-              <FaCircleExclamation /> baixa periculosidade
-            </div>
-          </div>
-        </Overlay>
-      )}
-    </>
+    </div>
   )
 }
