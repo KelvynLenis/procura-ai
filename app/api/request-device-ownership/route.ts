@@ -20,6 +20,10 @@ export async function POST(request: Request) {
       (device) => device.status === "Solicitado",
     )[0];
 
+    console.log("originalDevice: ", originalDevice);
+    console.log("requestedDevice: ", requestedDevice);
+    console.log("devices: ", devices);
+
     const ownerId = originalDevice.auth_id;
     const owner = await getUserById(ownerId);
 
