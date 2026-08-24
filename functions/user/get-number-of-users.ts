@@ -24,6 +24,16 @@ export async function getNumberOfUsers(): Promise<number> {
         values: [offset],
       }),
     );
+
+    params.append(
+      `queries[2]`,
+      JSON.stringify({
+        method: "equal",
+        attribute: "type",
+        values: ["Usuario"],
+      }),
+    );
+
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_USER}/documents?${params.toString()}`,

@@ -13,13 +13,20 @@ export async function POST(req: NextRequest, res: NextResponse) {
       body;
 
     if (isAllUsersChecked) {
-      const userFilters = {
-        method: "isNotNull",
-        attribute: "push_token",
-        values: [],
-      };
+      const userFilters = [
+        {
+          method: "isNotNull",
+          attribute: "push_token",
+          values: [],
+        },
+        {
+          method: "equal",
+          attribute: "type",
+          values: ["Usuario"],
+        },
+      ];
 
-      const usersList = await getUser({ filters: [userFilters] });
+      const usersList = await getUser({ filters: userFilters });
 
       const removeEmpty = usersList.filter(
         (user) =>
@@ -129,7 +136,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       (user) => user.type !== "Administrador",
     );
 
-    // console.log("removeDuplicated", removeAdmin.length);
+    console.log("removeDuplicated", removeAdmin.length);
 
     const removeUserWithoutToken = removeAdmin.filter(
       (user) => user.push_token.length > 0,
@@ -141,7 +148,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       return { id: user.user_id, push_token: user.push_token };
     });
 
-    // console.log("targets", targets.length);
+    console.log("targets", targets.length);
 
     // console.log("statusTarget", statusTarget);
 

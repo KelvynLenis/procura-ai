@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
           </p>
           <br />
 
-          <h1 style="font-weight: bold; font-size: 16px;">Por que isso aconteceu?</h1>
+          <h1 style="font-weight: bold; font-size: 14px;">Por que isso aconteceu?</h1>
 
           <p>Sua solicitação foi negada porque o proprietário atual negou a transferência  do dispositivo ou não conseguimos entrar em contato com ele.</p>
           
