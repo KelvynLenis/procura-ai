@@ -28,7 +28,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       );
 
       // console.log("response", usersList.length);
-      return NextResponse.json(removeEmpty.length);
+      return NextResponse.json(usersList.length);
     }
 
     const statusTarget = Object.keys(statusOptions).filter(
@@ -137,7 +137,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     // console.log("removeUserWithoutToken", removeUserWithoutToken.length);
 
-    const targets = removeUserWithoutToken.map((user) => {
+    const targets = removeAdmin.map((user) => {
       return { id: user.user_id, push_token: user.push_token };
     });
 

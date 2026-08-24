@@ -370,6 +370,10 @@ function NotificationForm() {
       const count = await response.json();
       console.log("Dados retornados:", count);
 
+      // if (count > 0) {
+      //   setAllUsers(false);
+      // }
+
       setNumberOfSelectedUsers(count);
     };
 
@@ -466,7 +470,7 @@ function NotificationForm() {
                         </div>
                       </AccordionTrigger>
                       <span className="text-sm font-normal">
-                        Defina o público selecioando um ou mais status de
+                        Defina o público selecionando um ou mais status de
                         dispositivos
                       </span>
                     </div>
