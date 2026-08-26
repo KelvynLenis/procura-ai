@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
@@ -17,7 +19,7 @@ import { FaYoutube } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa6";
 
 import Link from "next/link";
-import MakeRequest from "./MakeRequest";
+import ConfirmWrapper from "./ConfirmWrapper";
 
 export default async function ConfirmOwnershipTransfer({
   searchParams,
@@ -33,8 +35,8 @@ export default async function ConfirmOwnershipTransfer({
         <Image src={logo} alt="logo" className="relative -left-8 h-16" />
       </header>
       <main className="row-start-2 flex h-full min-h-fit w-full flex-col items-center bg-primary sm:items-start">
-        <div className="p- mb-0 flex h-[calc(100svh-theme(spacing.4))] w-full flex-col bg-white md:p-2">
-          <MakeRequest token={token as string} />
+        <div className="mb-0 flex h-[calc(100svh-theme(spacing.4))] w-full flex-col bg-white p-4 md:p-2">
+          <ConfirmWrapper token={token as string} />
         </div>
 
         <section className="relative w-full bg-[#F5F5F5]">

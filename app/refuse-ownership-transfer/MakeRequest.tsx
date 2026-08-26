@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import crypto from "crypto";
 
 import failedImage from "../../assets/images/transfer-failed.svg";
 import ClipLoader from "react-spinners/ClipLoader";
-import { Device } from "@/types";
+import { Device, Transfer } from "@/types";
 
 function MakeRequest({ token }: { token: string }) {
   const [isSuccessfull, setIsSuccessfull] = useState(false);
@@ -13,9 +14,44 @@ function MakeRequest({ token }: { token: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [device, setDevice] = useState({} as Device);
 
+  async function getTransfer(token: string) {
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+    const params = new URLSearchParams({
+      "queries[0]": JSON.stringify({
+        method: "equal",
+        attribute: "token_hash",
+        values: [tokenHash],
+      }),
+    });
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_TRANSFER_TOKENS}/documents?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,
+        },
+      },
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Erro ao validar token: ${error}`);
+    }
+
+    const { documents } = await response.json();
+    const transfer = documents[0];
+
+    return transfer;
+  }
+
   useEffect(() => {
     const sendRequest = async () => {
       try {
+        const transfer = await getTransfer(token);
+
         const response = await fetch(
           `/api/refuse-ownership-transfer?token=${token}`,
           {
@@ -30,6 +66,24 @@ function MakeRequest({ token }: { token: string }) {
 
         if (!data.success) {
           setErrorMessage(data.error);
+        }
+
+        const responsePushNotification = await fetch(
+          "/api/send-transfer-push-notification",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              title: "Transferencia de posse recusada",
+              message: "O proprietário recusou a transferencia de posse",
+              requesterId: transfer.requester_id,
+              ownerId: transfer.owner_id,
+            }),
+          },
+        );
+
+        if (!responsePushNotification.ok) {
+          console.error("Erro ao enviar notificação");
         }
 
         setDevice(data.device);

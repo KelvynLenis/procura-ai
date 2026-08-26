@@ -19,8 +19,6 @@ import NotificationTable from "../Tables/NotificationTable";
 import { useEffect, useState } from "react";
 import { User } from "@/types";
 import AddUserToPushNotificationList from "../AddUserToPushNotificationList";
-import { getDevices } from "@/functions/device/get-devices";
-import { getUser } from "@/functions/user/get-user";
 import { toast } from "react-toastify";
 import { getUserById } from "@/functions/user/get-user-by-id";
 import { ConfirmationDialog } from "../ConfirmationDialog";
@@ -269,18 +267,12 @@ function NotificationForm() {
     });
   }
 
-  // useEffect(() => {
-  //   if (selectedUsers.length > 0) {
-  //     setAllUsers(false);
-  //   }
-
-  //   if (selectedUsers.length === 0) {
-  //     setAllUsers(true);
-  //   }
-  // }, [selectedUsers]);
-
-  useEffect(() => {
+  function handleChangeAllUsersCheckbox() {
     if (allUsers) {
+      setAllUsers(false);
+      setNumberOfSelectedUsers(0);
+    } else {
+      setAllUsers(true);
       setSelectedUsers([]);
       setStatusOptions({
         Regular: false,
@@ -297,84 +289,61 @@ function NotificationForm() {
         "Santa Rita": false,
       });
     }
-  }, [allUsers]);
+  }
+
+  async function updateUsersCount() {
+    const response = await fetch("/api/get-users-count", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        isAllUsersChecked: checkIfShouldUpdateUsersCount(),
+        statusOptions,
+        locationOptions,
+        selectedUsers,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("Erro ao buscar dados:", response.status);
+      return;
+    }
+
+    const count = await response.json();
+    console.log("Dados retornados:", count);
+
+    setNumberOfSelectedUsers(count);
+  }
+
+  function checkIfShouldUpdateUsersCount() {
+    const hasStatusSelected = Object.values(statusOptions).some(Boolean);
+    const hasLocationSelected = Object.values(locationOptions).some(Boolean);
+    const hasUsersSelected = selectedUsers.length > 0;
+
+    const shouldSelectAll =
+      !hasStatusSelected && !hasLocationSelected && !hasUsersSelected;
+
+    return shouldSelectAll;
+  }
 
   useEffect(() => {
-    if (
-      statusOptions["Regular"] ||
-      statusOptions["Roubado"] ||
-      statusOptions["Furtado"] ||
-      statusOptions["Perdido"] ||
-      statusOptions["Recuperado"] ||
-      locationOptions["João Pessoa"] ||
-      locationOptions["Cabedelo"] ||
-      locationOptions["Campina Grande"] ||
-      locationOptions["Bayeux"] ||
-      locationOptions["Santa Rita"] ||
-      selectedUsers.length > 0
-    ) {
-      setAllUsers(false);
-    }
+    const shouldSelectAll = checkIfShouldUpdateUsersCount();
 
-    if (
-      !statusOptions["Regular"] &&
-      !statusOptions["Roubado"] &&
-      !statusOptions["Furtado"] &&
-      !statusOptions["Perdido"] &&
-      !statusOptions["Recuperado"] &&
-      !locationOptions["João Pessoa"] &&
-      !locationOptions["Cabedelo"] &&
-      !locationOptions["Campina Grande"] &&
-      !locationOptions["Bayeux"] &&
-      !locationOptions["Santa Rita"] &&
-      selectedUsers.length === 0
-    ) {
-      setAllUsers(true);
-    }
+    setAllUsers(shouldSelectAll);
+
+    updateUsersCount();
   }, [statusOptions, locationOptions, selectedUsers]);
 
   useEffect(() => {
     const getAllUsers = async () => {
-      // const userFilter = {
-      //   method: "equal",
-      //   attribute: "type",
-      //   values: ["Usuario"],
-      // };
-
       const numberOfUsers = await getNumberOfUsers();
+
+      console.log(numberOfUsers);
 
       setNumberOfTotalUsers(numberOfUsers);
     };
 
     getAllUsers();
   }, []);
-
-  useEffect(() => {
-    const updateUsersCount = async () => {
-      const response = await fetch("/api/get-users-count", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          isAllUsersChecked: allUsers,
-          statusOptions,
-          locationOptions,
-          selectedUsers,
-        }),
-      });
-
-      if (!response.ok) {
-        console.error("Erro ao buscar dados:", response.status);
-        return;
-      }
-
-      const count = await response.json();
-      console.log("Dados retornados:", count);
-
-      setNumberOfSelectedUsers(count);
-    };
-
-    updateUsersCount();
-  }, [allUsers, selectedUsers, statusOptions, locationOptions]);
 
   return (
     <>
@@ -466,7 +435,7 @@ function NotificationForm() {
                         </div>
                       </AccordionTrigger>
                       <span className="text-sm font-normal">
-                        Defina o público selecioando um ou mais status de
+                        Defina o público selecionando um ou mais status de
                         dispositivos
                       </span>
                     </div>
@@ -695,7 +664,7 @@ function NotificationForm() {
                 <div className="flex items-center gap-2">
                   <Checkbox
                     checked={allUsers}
-                    onClick={() => setAllUsers(!allUsers)}
+                    onClick={handleChangeAllUsersCheckbox}
                     className="bg-white shadow-sm drop-shadow-sm"
                   />
                   Selecionar todos os usuários cadastrados
