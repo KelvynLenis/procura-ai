@@ -30,8 +30,8 @@ export default async function RefuseOwnershipTransfer({
       <header className="h-15 sticky z-10 flex items-center bg-primary px-5 pt-2 shadow-lg">
         <Image src={logo} alt="logo" className="relative -left-8 h-16" />
       </header>
-      <main className="row-start-2 flex h-full min-h-fit w-full flex-col items-center bg-primary sm:items-start">
-        <div className="p- mb-0 flex h-[calc(100svh-theme(spacing.4))] w-full flex-col bg-white md:p-2">
+      <main className="row-start-2 flex h-full min-h-fit w-full flex-col items-center bg-primary bg-cover bg-center bg-no-repeat sm:items-start lg:bg-login-bg">
+        <div className="mb-0 flex h-[calc(100svh-theme(spacing.4))] w-full flex-col items-center justify-center">
           <MakeRequest token={token as string} />
         </div>
 
