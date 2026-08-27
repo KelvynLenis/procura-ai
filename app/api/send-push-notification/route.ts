@@ -220,7 +220,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     await createNotification({
       sender_id: undefined,
-      receiver_id: undefined,
       message: message,
       is_read: false,
       type: "push",
