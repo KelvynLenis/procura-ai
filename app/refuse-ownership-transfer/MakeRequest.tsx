@@ -66,6 +66,7 @@ function MakeRequest({ token }: { token: string }) {
 
         if (!data.success) {
           setErrorMessage(data.error);
+          return;
         }
 
         const responsePushNotification = await fetch(
@@ -101,33 +102,35 @@ function MakeRequest({ token }: { token: string }) {
   }, []);
 
   return (
-    <div className="flex flex-col gap-2 px-3 py-6">
-      {isLoading ? (
-        <ClipLoader color="#212A38" className="self-center" />
-      ) : isSuccessfull ? (
-        <>
-          <h1 className="font-medium">
-            Reivindicação negada! O dispositivo {device.phone_model} continua
-            cadastrado em sua conta
-          </h1>
-          <p className="text-sm font-medium">
-            Já informamos em nosso sistema que este dispositivo continua sob sua
-            responsabilidade.
-          </p>
+    <div className="flex w-full lg:h-screen lg:items-center lg:justify-center lg:bg-black/50">
+      <div className="flex h-fit flex-col gap-4 rounded-lg bg-white p-4 lg:mt-4 lg:w-[80%] lg:max-w-[800px]">
+        {isLoading ? (
+          <ClipLoader color="#212A38" className="self-center" />
+        ) : isSuccessfull ? (
+          <>
+            <h1 className="font-medium">
+              Reivindicação negada! O dispositivo {device.phone_model} continua
+              cadastrado em sua conta
+            </h1>
+            <p className="text-sm font-medium">
+              Já informamos em nosso sistema que este dispositivo continua sob
+              sua responsabilidade.
+            </p>
 
-          <Image
-            src={failedImage}
-            alt="transferencia concluida com sucesso"
-            className="mt-20 self-center"
-          />
-        </>
-      ) : (
-        <>
-          <h1 className="font-medium">
-            Erro ao transferir o dispositivo: {errorMessage}
-          </h1>
-        </>
-      )}
+            <Image
+              src={failedImage}
+              alt="transferencia concluida com sucesso"
+              className="mt-20 self-center"
+            />
+          </>
+        ) : (
+          <>
+            <h1 className="font-medium">
+              Erro ao transferir o dispositivo: {errorMessage}
+            </h1>
+          </>
+        )}
+      </div>
     </div>
   );
 }
