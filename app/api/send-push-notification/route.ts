@@ -36,7 +36,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       let messages = [];
       await createNotification({
         sender_id: undefined,
-        receiver_id: "All users",
+        receiver_id: ["All users"],
         message: message,
         is_read: false,
         type: "push",
@@ -218,9 +218,13 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     // console.log("targets", targets);
 
+    const receivers = targets.map((receiver) => {
+      return receiver.id;
+    });
+
     await createNotification({
       sender_id: undefined,
-      receiver_id: undefined,
+      receiver_id: receivers,
       message: message,
       is_read: false,
       type: "push",
