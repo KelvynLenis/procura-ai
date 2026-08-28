@@ -6,7 +6,6 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import successfullImage from "../../assets/images/transfer-successfull.svg";
 import ClipLoader from "react-spinners/ClipLoader";
-import failedImage from "../../assets/images/transfer-failed.svg";
 import crypto from "crypto";
 import { toast } from "react-toastify";
 
@@ -45,7 +44,6 @@ function ConfirmWrapper({ token }: { token: string }) {
 
       if (!data.success) {
         setErrorMessage(data.error);
-        return;
       }
 
       const responsePushNotification = await fetch(
@@ -105,7 +103,6 @@ function ConfirmWrapper({ token }: { token: string }) {
 
       if (!data.success) {
         setErrorMessage(data.error);
-        return;
       }
 
       const responsePushNotification = await fetch(
@@ -126,10 +123,6 @@ function ConfirmWrapper({ token }: { token: string }) {
         console.error("Erro ao enviar notificação");
       }
 
-      setHasAccepted(false);
-
-      setStep(2);
-
       setDevice(data.device);
       toast.success("Transferencia recusada com sucesso");
       setIsSuccessfull(data.success);
@@ -143,9 +136,6 @@ function ConfirmWrapper({ token }: { token: string }) {
       setIsLoading(false);
     }
   }
-
-  const wasRequestMade = isRequestMade && isLoading;
-  const wasAccepted = hasAccepted && isSuccessfull;
 
   useEffect(() => {
     async function getTransfer(token: string) {
@@ -179,20 +169,18 @@ function ConfirmWrapper({ token }: { token: string }) {
       const transfer = documents[0];
 
       setTransfer(transfer);
-      setIsLoading(false);
     }
 
     getTransfer(token);
   }, []);
 
   return (
-    <div className="flex w-full lg:h-screen lg:items-center lg:justify-center lg:bg-black/50">
-      <div className="flex h-fit flex-col gap-4 rounded-lg bg-white p-4 lg:mt-4 lg:w-[80%] lg:max-w-[800px]">
-        {step === 1 && (
-          <>
-            <h1 className="font-medium">
-              Confirmar transferência do dispositivo
-            </h1>
+    <div className="flex h-full flex-col gap-4">
+      {!isRequestMade && (
+        <>
+          <h1 className="font-medium">
+            Confirmar transferência do dispositivo
+          </h1>
 
             <p>
               Ao continuar, o Galaxy A17 vai deixar de estar vinculado à sua
@@ -337,8 +325,71 @@ function ConfirmWrapper({ token }: { token: string }) {
           <p className="text-sm font-medium text-red-500">
             Erro ao transferir o dispositivo: {errorMessage}
           </p>
-        )} */}
-      </div>
+          <p>
+            Isso significa que você não vai mais conseguir ter acesso a este
+            dispositivo dentro do Procura.Aí e a proteção passa para o novo
+            dono, assim que ele completar o cadastro.
+          </p>
+
+          <div className="w-full max-w-[320px] rounded-lg bg-cyan-50 px-4 py-2">
+            <div className="flex items-center gap-2">
+              <CircleAlert className="" />
+              Atenção
+            </div>
+            Essa ação não pode ser desfeita. Se você não vendeu/doou este
+            dispositivo, volte ao e-mail e escolha "Este dispositivo ainda é
+            meu".
+          </div>
+
+          <div className="flex gap-2">
+            <Checkbox
+              checked={isUserAwareChecked}
+              onCheckedChange={(checked) =>
+                setisUserAwareChecked(checked === true)
+              }
+              className="mt-1 shadow-none data-[state=checked]:bg-secondary"
+            />
+            Estou ciente que estou abrindo mão da propriedade deste dispositivo
+            e não terei mais acesso ao cadastro dele.
+          </div>
+
+          <div className="mt-20 flex justify-between">
+            <Button onClick={handleRefuseTransfer} variant="black">
+              Cancelar
+            </Button>
+            <Button onClick={handleConfirmTransfer} variant="blue">
+              Confirmar
+            </Button>
+          </div>
+        </>
+      )}
+
+      {isRequestMade && isLoading ? (
+        <ClipLoader color="#212A38" className="self-center" />
+      ) : isSuccessfull ? (
+        <>
+          <h1 className="font-medium">
+            Pronto! O dispositivo {device.phone_model} não está cadastrado mais
+            na sua conta
+          </h1>
+          <p className="text-sm font-medium">
+            Se isso foi um engano, por favor, acesse o Procura.Aí para
+            reivindicar a posse.
+          </p>
+
+          <Image
+            src={successfullImage}
+            alt="transferencia concluida com sucesso"
+            className="mt-20 self-center"
+          />
+        </>
+      ) : (
+        <>
+          <h1 className="font-medium">
+            Erro ao transferir o dispositivo: {errorMessage}
+          </h1>
+        </>
+      )}
     </div>
   );
 }
