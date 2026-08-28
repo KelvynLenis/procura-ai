@@ -122,7 +122,7 @@ export async function POST(request: Request) {
     await emailService.sendEmail({
       subject: "Solicitação de titularidade de dispositivo",
       content,
-      users: [{ email: owner.email }],
+      users: [{ email: "kmartins.dev@gmail.com" }],
     });
 
     return NextResponse.json({ success: true });

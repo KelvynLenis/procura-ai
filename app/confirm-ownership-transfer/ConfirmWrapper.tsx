@@ -8,6 +8,7 @@ import successfullImage from "../../assets/images/transfer-successfull.svg";
 import ClipLoader from "react-spinners/ClipLoader";
 import failedImage from "../../assets/images/transfer-failed.svg";
 import crypto from "crypto";
+import { toast } from "react-toastify";
 
 function ConfirmWrapper({ token }: { token: string }) {
   const [isSuccessfull, setIsSuccessfull] = useState(false);
@@ -19,11 +20,15 @@ function ConfirmWrapper({ token }: { token: string }) {
   const [transfer, setTransfer] = useState({} as Transfer);
   const [hasAccepted, setHasAccepted] = useState(false);
   const [step, setStep] = useState(1);
-  const [isSending, setIsSending] = useState(false);
 
   async function handleConfirmTransfer() {
     try {
       setIsLoading(true);
+      toast("Realizando transferencia...", {
+        autoClose: 2500,
+        customProgressBar: false,
+      });
+
       const response = await fetch(
         `/api/confirm-ownership-transfer?token=${token}`,
         {
@@ -62,11 +67,15 @@ function ConfirmWrapper({ token }: { token: string }) {
 
       setHasAccepted(true);
 
+      setStep(2);
+
       setDevice(data.device);
+      toast.success("Transferencia realizada com sucesso");
       setIsSuccessfull(data.success);
     } catch (error) {
       console.error(error);
       setErrorMessage(error.message);
+      toast.error("Erro ao aceitar transferencia");
       setIsSuccessfull(false);
     } finally {
       setIsRequestMade(true);
@@ -77,6 +86,11 @@ function ConfirmWrapper({ token }: { token: string }) {
   async function handleRefuseTransfer() {
     try {
       setIsLoading(true);
+      toast("Recusando transferencia...", {
+        autoClose: 2500,
+        customProgressBar: false,
+      });
+
       const response = await fetch(
         `/api/refuse-ownership-transfer?token=${token}`,
         {
@@ -117,10 +131,12 @@ function ConfirmWrapper({ token }: { token: string }) {
       setStep(2);
 
       setDevice(data.device);
+      toast.success("Transferencia recusada com sucesso");
       setIsSuccessfull(data.success);
     } catch (error) {
       console.error(error);
       setErrorMessage(error.message);
+      toast.error("Erro ao recusar transferencia");
       setIsSuccessfull(false);
     } finally {
       setIsRequestMade(true);
@@ -211,11 +227,19 @@ function ConfirmWrapper({ token }: { token: string }) {
             </div>
 
             <div className="mt-0 flex justify-between mobile:mt-20">
-              <Button onClick={handleRefuseTransfer} variant="black">
-                Cancelar
+              <Button
+                onClick={handleRefuseTransfer}
+                variant="black"
+                disabled={isLoading}
+              >
+                {isLoading ? "Carregando..." : "Cancelar"}
               </Button>
-              <Button onClick={handleConfirmTransfer} variant="blue">
-                Confirmar
+              <Button
+                onClick={handleConfirmTransfer}
+                variant="blue"
+                disabled={isLoading}
+              >
+                {isLoading ? "Carregando..." : "Confirmar"}
               </Button>
             </div>
           </>
