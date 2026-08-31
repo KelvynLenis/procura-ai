@@ -194,7 +194,7 @@ export function Header({ isAdmin }: HeaderProps) {
             <DropdownMenu>
               <DropdownMenuTrigger className="mr-2 hidden flex-row items-center justify-center gap-2 text-white md:flex">
                 {isLoading ? (
-                  <Skeleton className="flex size-10 items-center justify-center rounded-full bg-secondary" />
+                  <Skeleton className="flex size-11 items-center justify-center rounded-full bg-secondary" />
                 ) : imgPreview ? (
                   <Avatar>
                     <AvatarImage src={imgPreview} />
@@ -206,7 +206,7 @@ export function Header({ isAdmin }: HeaderProps) {
                     </AvatarFallback>
                   </Avatar>
                 ) : (
-                  <span className="flex size-10 items-center justify-center rounded-full bg-secondary uppercase">
+                  <span className="flex size-11 items-center justify-center rounded-full bg-secondary uppercase">
                     {user.name.split(" ").length > 1
                       ? user.name.split(" ")[0][0] + user.name.split(" ")[1][0]
                       : user.name.split(" ")[0][0]}
