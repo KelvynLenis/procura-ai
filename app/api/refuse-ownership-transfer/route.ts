@@ -5,6 +5,7 @@ import { getDeviceByImei } from "@/functions/device/get-device-by-imei";
 import crypto from "crypto";
 import { Transfer } from "@/types";
 import { deleteDevice } from "@/functions/device/delete-device";
+import { createNotification } from "@/functions/notification/create-notification";
 
 export async function POST(request: NextRequest) {
   try {
@@ -75,6 +76,14 @@ export async function POST(request: NextRequest) {
         </div>
       </div>
     `.trim();
+
+    await createNotification({
+      receiver_id: requestUserId,
+      message: `A solicitação de posse do dispositivo ${deviceRequested[0].phone_model} foi negada!`,
+      title: "Solicitação de titularidade de dispositivo negada",
+      is_read: false,
+      type: "push",
+    });
 
     await emailService.sendEmail({
       subject: "Solicitação de titularidade de dispositivo",

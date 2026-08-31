@@ -4,6 +4,7 @@ import crypto from "crypto";
 import { Transfer } from "@/types";
 import { updateDevice } from "@/functions/device/update-device";
 import { deleteDevice } from "@/functions/device/delete-device";
+import { createNotification } from "@/functions/notification/create-notification";
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,6 +34,14 @@ export async function POST(request: NextRequest) {
     );
 
     await deleteDevice(deviceRequested[0].$id);
+
+    await createNotification({
+      receiver_id: deviceRequested[0].auth_id,
+      message: `A solicitação de posse do dispositivo ${deviceRequested[0].phone_model} foi aceita!`,
+      title: "Solicitação de titularidade de dispositivo aceita",
+      is_read: false,
+      type: "push",
+    });
 
     return NextResponse.json({ success: true, device: originalDevice[0] });
   } catch (error) {
