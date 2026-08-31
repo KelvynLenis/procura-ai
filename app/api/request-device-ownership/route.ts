@@ -122,7 +122,7 @@ export async function POST(request: Request) {
 
     await createNotification({
       sender_id: requester.user_id,
-      receiver_id: requester.user_id,
+      receiver_id: owner.user_id,
       message: `O dispositivo ${requestedDevice.phone_model} foi solicitado por ${requester.name}!`,
       title: "Solicitação de titularidade de dispositivo",
       is_read: false,
