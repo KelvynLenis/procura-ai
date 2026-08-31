@@ -8,7 +8,7 @@ const NotificationSchema = z.object({
   $permissions: z.array(z.string()).optional(),
   $updatedAt: z.string().datetime().optional(),
   sender_id: z.string().optional(),
-  receiver_id: z.string().array().optional(),
+  receiver_id: z.string().optional(),
   message: z.string(),
   is_read: z.boolean().optional(),
   type: z.string(),

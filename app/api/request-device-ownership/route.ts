@@ -4,6 +4,7 @@ import { getUserById } from "@/functions/user/get-user-by-id";
 import { getDeviceByImei } from "@/functions/device/get-device-by-imei";
 import crypto from "crypto";
 import { v4 as uuidv4 } from "uuid";
+import { createNotification } from "@/functions/notification/create-notification";
 
 export async function POST(request: Request) {
   try {
@@ -119,16 +120,30 @@ export async function POST(request: Request) {
       </div>
     `.trim();
 
+    await createNotification({
+      sender_id: requester.user_id,
+      receiver_id: owner.user_id,
+      message: `O dispositivo ${requestedDevice.phone_model} foi solicitado por ${requester.name}!`,
+      title: "Solicitação de titularidade de dispositivo",
+      is_read: false,
+      type: "push",
+    });
+
     await emailService.sendEmail({
       subject: "Solicitação de titularidade de dispositivo",
       content,
-      users: [{ email: owner.email }],
+      users: [{ email: requester.email }],
     });
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Erro ao solicitar transferência:", error);
-    return NextResponse.json({ error: error }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 },
+    );
   }
 }
 
