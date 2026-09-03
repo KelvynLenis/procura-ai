@@ -88,15 +88,16 @@ export function NotificationProvider({ children, isAdmin }: { children: ReactNod
       if (relevantTypes.includes(payload.type)) {
 
         if (!isAdmin) {
-          if (payload.type === 'push') return
-          const idDevice = payload.id_device
-
-          const userAuth = await account.get()
-          const userDevices = await listUserDevices(userAuth.$id)
-
-          if (!userDevices.some(device => device.$id === idDevice)) {
-            // console.log('Contexto: Ignorando notificação de um dispositivo que o usuário não possui')
-            return
+          if (payload.type !== 'push') {
+            const idDevice = payload.id_device
+  
+            const userAuth = await account.get()
+            const userDevices = await listUserDevices(userAuth.$id)
+  
+            if (!userDevices.some(device => device.$id === idDevice)) {
+              // console.log('Contexto: Ignorando notificação de um dispositivo que o usuário não possui')
+              return
+            }
           }
         }
 
