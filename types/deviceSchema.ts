@@ -19,6 +19,7 @@ const DeviceSchema = z.object({
   phone_number: z.string(),
   status: z.string(),
   operator_id: z.string(),
+  device_id: z.string(),
 });
 
 export default DeviceSchema;

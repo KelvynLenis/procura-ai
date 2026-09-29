@@ -19,6 +19,7 @@ export async function updateDevice(id: string, values: Device, userId: string) {
             imei: values.imei,
             is_stolen: false,
             operator_id: values.operator_id,
+            device_id: values.device_id,
           },
         }),
       },
