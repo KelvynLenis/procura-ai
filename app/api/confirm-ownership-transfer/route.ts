@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
       {
         phone_number: deviceRequested[0].phone_number,
         operator_id: deviceRequested[0].operator_id,
+        device_id: deviceRequested[0].device_id,
       },
       deviceRequested[0].auth_id,
     );
