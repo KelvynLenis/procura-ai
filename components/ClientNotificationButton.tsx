@@ -21,6 +21,7 @@ import { account } from "@/lib/appwrite";
 import { Skeleton } from "./ui/skeleton";
 import { markNotificationsAsRead } from "@/functions/notification/mark-as-read";
 import Button from "./Button";
+import { useRouter } from "next/navigation";
 
 interface ClientNotificationButtonProps {
   notifications: NotificationProps[];
@@ -144,16 +145,19 @@ function NotificationItem({
   const isRecovered = notification.type === "Recuperado";
   const [device, setDevice] = useState<Device>();
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   async function markAsReadAndRedirect() {
     await markNotificationsAsRead(notification.$id!);
 
     if (notification.type === "push") {
-      window.location.href = `/notificacoes`;
+      router.push("/notificacoes");
+
       return;
     }
 
-    window.location.href = `/meus-dispositivos?id=${device?.$id}`;
+    // window.location.href = `/meus-dispositivos?id=${device?.$id}`;
+    router.push(`/meus-dispositivos?id=${device?.$id}`);
   }
 
   async function markAsRead() {

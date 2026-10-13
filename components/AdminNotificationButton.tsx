@@ -6,6 +6,7 @@ import { useState } from "react";
 import DeviceCheck from "../assets/icons/device-check.svg";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import {
   DropdownMenu,
@@ -31,6 +32,7 @@ export function AdminNotificationButton({
   const [isListVisible, setIsListVisible] = useState(false);
 
   const toggleList = () => setIsListVisible((prev) => !prev);
+  const router = useRouter();
 
   // Ordenar por mais recente primeiro - evento mais recente no topo
   const sortedNotifications = [...notifications].sort((a, b) => {
@@ -49,6 +51,10 @@ export function AdminNotificationButton({
   });
 
   function handleNotificationClick(notification: NotificationProps) {
+    if (window.location.pathname !== "/dashboard") {
+      router.push("/dashboard");
+    }
+
     if (notification.type === "Recuperado") return;
 
     // Fechar o dropdown antes de navegar
@@ -103,10 +109,13 @@ export function AdminNotificationButton({
             </span>
 
             {!isRecovered && (
-              <div className="mt-2 flex items-center gap-1 text-xs text-blue-600">
+              <button
+                onClick={() => handleNotificationClick(notification)}
+                className="mt-2 flex items-center gap-1 text-xs text-blue-600"
+              >
                 Clique para ver detalhes
                 <ChevronRight size={12} />
-              </div>
+              </button>
             )}
           </div>
         </DropdownMenuItem>

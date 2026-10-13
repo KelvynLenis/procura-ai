@@ -15,6 +15,7 @@ interface DevicesListProps {
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   deviceNotificationId?: string;
+  setIsRedirectModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function DevicesList({
@@ -25,6 +26,7 @@ export function DevicesList({
   isLoading,
   setIsLoading,
   deviceNotificationId,
+  setIsRedirectModalOpen,
 }: DevicesListProps) {
   const { userStatus } = useStatus();
 
@@ -73,6 +75,7 @@ export function DevicesList({
                 status={device.status!}
                 setDevices={setDevices}
                 deviceNotificationId={deviceNotificationId}
+                setIsRedirectModalOpen={setIsRedirectModalOpen}
               />
             ))
           )}

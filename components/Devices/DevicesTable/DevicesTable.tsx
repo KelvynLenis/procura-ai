@@ -12,6 +12,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { DeviceProps } from "@/types";
 import { DeviceRow } from "./DeviceRow";
 import { useStatus } from "@/hooks/useStatus";
+import { ConfirmationDialog } from "@/components/ConfirmationDialog";
+import { useState } from "react";
 
 interface DevicesTableProps {
   devices: DeviceProps[];
@@ -22,6 +24,7 @@ interface DevicesTableProps {
   limit: number;
   isLoading: boolean;
   deviceNotificationId?: string;
+  setIsRedirectModalOpen?: (value: boolean) => void;
 }
 
 export function DevicesTable({
@@ -33,6 +36,7 @@ export function DevicesTable({
   limit,
   isLoading,
   deviceNotificationId,
+  setIsRedirectModalOpen,
 }: DevicesTableProps) {
   return (
     <>
@@ -97,6 +101,7 @@ export function DevicesTable({
                 device={device}
                 setDevices={setDevices}
                 deviceNotificationId={deviceNotificationId}
+                setIsRedirectModalOpen={setIsRedirectModalOpen}
               />
             ))
           ) : (

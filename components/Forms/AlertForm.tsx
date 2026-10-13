@@ -51,6 +51,7 @@ interface MarkAsStolenFormProps {
   setModalOpen?: (value: boolean) => void;
   setIsDialogOpen?: (value: boolean) => void;
   isPopup?: boolean;
+  setIsRedirectModalOpen?: (value: boolean) => void;
 }
 
 const formSchema = z
@@ -95,6 +96,7 @@ export function AlertForm({
   setModalOpen,
   setIsDialogOpen,
   isPopup,
+  setIsRedirectModalOpen,
 }: MarkAsStolenFormProps) {
   const size = useWindowSize();
   const [isIOS, setIsIOS] = useState(false);
@@ -201,6 +203,7 @@ export function AlertForm({
             }
           }
 
+          setIsRedirectModalOpen?.(true);
           await setHasCreatedANewAlert(true);
 
           return true;
