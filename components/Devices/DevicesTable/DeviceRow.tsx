@@ -64,7 +64,6 @@ export function DeviceRow({
   setDevices,
   index,
   deviceNotificationId,
-  setIsRedirectModalOpen,
 }: DeviceRowProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(
@@ -73,6 +72,7 @@ export function DeviceRow({
   const [isViewAlertModalOpen, setIsViewAlertModalOpen] = useState(false);
   const [operator, setOperator] = useState<Operator>();
   const { userStatus } = useStatus();
+  const [isRedirectModalOpen, setIsRedirectModalOpen] = useState(false);
 
   const router = useRouter();
 
@@ -164,6 +164,15 @@ export function DeviceRow({
     setIsLoading(true);
     router.push(`meus-dispositivos/edit/${id}`);
   }
+
+  const redirectToPolicePage = () => {
+    setIsRedirectModalOpen(false);
+    window.open(
+      "https://delegaciaonline.pc.pb.gov.br/tipo-ocorrencia",
+      "_blank",
+      "noopener,noreferrer",
+    );
+  };
 
   useEffect(() => {
     fetchOperator();
@@ -398,6 +407,16 @@ export function DeviceRow({
           </div>
         </TableCell>
       </TableRow>
+
+      <ConfirmationDialog
+        title="Alerta cadastrado com sucesso"
+        description="Deseja abrir um boletim de ocorrência na Delegacia online da Paraíba?"
+        cancelText="Agora não"
+        confirmText="Criar boletim"
+        isOpen={isRedirectModalOpen}
+        onConfirm={() => redirectToPolicePage()}
+        onCancel={() => setIsRedirectModalOpen(false)}
+      />
     </>
   );
 }

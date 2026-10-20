@@ -203,9 +203,6 @@ export function AlertForm({
             }
           }
 
-          setIsRedirectModalOpen?.(true);
-          await setHasCreatedANewAlert(true);
-
           return true;
         } catch (error) {
           console.error("Ocorreu um erro em uma das operações:", error);
@@ -233,6 +230,7 @@ export function AlertForm({
         );
 
         setIsDialogOpen?.(false);
+        setIsRedirectModalOpen?.(true);
       }
 
       if (setModalOpen) {
