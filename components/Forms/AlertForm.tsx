@@ -51,6 +51,7 @@ interface MarkAsStolenFormProps {
   setModalOpen?: (value: boolean) => void;
   setIsDialogOpen?: (value: boolean) => void;
   isPopup?: boolean;
+  setIsRedirectModalOpen?: (value: boolean) => void;
 }
 
 const formSchema = z
@@ -95,6 +96,7 @@ export function AlertForm({
   setModalOpen,
   setIsDialogOpen,
   isPopup,
+  setIsRedirectModalOpen,
 }: MarkAsStolenFormProps) {
   const size = useWindowSize();
   const [isIOS, setIsIOS] = useState(false);
@@ -201,8 +203,6 @@ export function AlertForm({
             }
           }
 
-          await setHasCreatedANewAlert(true);
-
           return true;
         } catch (error) {
           console.error("Ocorreu um erro em uma das operações:", error);
@@ -230,6 +230,7 @@ export function AlertForm({
         );
 
         setIsDialogOpen?.(false);
+        setIsRedirectModalOpen?.(true);
       }
 
       if (setModalOpen) {

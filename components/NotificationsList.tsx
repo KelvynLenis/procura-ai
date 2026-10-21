@@ -11,6 +11,7 @@ import { cn, formatDateTime } from "@/lib/utils";
 import { Device, Notification } from "@/types";
 import { Check, CheckCircle, ChevronRight, Mail, MailOpen } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function NotificationsList() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -119,6 +120,7 @@ function NotificationItem({
   refresh,
 }: NotitificationItemProps) {
   const [device, setDevice] = useState<Device>();
+  const router = useRouter();
 
   async function markAsReadAndRedirect() {
     await markNotificationsAsRead(notification.$id!);
@@ -128,7 +130,8 @@ function NotificationItem({
       return;
     }
 
-    window.location.href = `/meus-dispositivos?id=${device?.$id}`;
+    // window.location.href = `/meus-dispositivos?id=${device?.$id}`;
+    router.push(`/meus-dispositivos?id=${device?.$id}`);
   }
 
   async function markAsRead() {

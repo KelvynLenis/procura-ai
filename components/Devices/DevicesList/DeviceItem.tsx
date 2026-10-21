@@ -26,6 +26,7 @@ interface DeviceItemProps {
   index: number;
   status: string;
   deviceNotificationId?: string;
+  setIsRedirectModalOpen?: (value: boolean) => void;
 }
 
 export function DeviceItem({
@@ -40,6 +41,7 @@ export function DeviceItem({
   setDevices,
   index,
   deviceNotificationId,
+  setIsRedirectModalOpen,
 }: DeviceItemProps) {
   const [isViewDeviceDetailsCardOpen, setIsViewDeviceDetailsCardOpen] =
     useState(false);
@@ -156,6 +158,7 @@ export function DeviceItem({
                     setDevices={setDevices}
                     setIsDialogOpen={setIsAlertModalOpen}
                     isPopup
+                    setIsRedirectModalOpen={setIsRedirectModalOpen}
                   />
                 </div>
               )}

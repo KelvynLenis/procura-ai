@@ -22,8 +22,12 @@ import { listAllEvents } from "@/functions/event/list-all-events";
 
 interface RecoverDeviceFormProps {
   occurrence?: OccurrencesProps;
+  deviceNotificationId?: string;
 }
-export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
+export function OccurrenceDetails({
+  occurrence,
+  deviceNotificationId,
+}: RecoverDeviceFormProps) {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [operator, setOperator] = useState<Operator>();
   const [events, setEvents] = useState<Event[]>([]);
@@ -69,7 +73,7 @@ export function OccurrenceDetails({ occurrence }: RecoverDeviceFormProps) {
 
   return (
     <>
-      <Dialog>
+      <Dialog open={deviceNotificationId === occurrence?.device.$id}>
         <DialogTrigger asChild>
           <button
             type="button"

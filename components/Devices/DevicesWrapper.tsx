@@ -23,16 +23,11 @@ export function DevicesWrapper({
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [totalDevices, setTotalDevices] = useState(0);
-  const { userStatus } = useStatus();
-  const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isRedirectModalOpen, setIsRedirectModalOpen] = useState(false);
 
-  const hasCreatedANewAlert = useAlertStore(
-    (state) => state.hasCreatedANewAlert,
-  );
-  const setHasCreatedANewAlert = useAlertStore(
-    (state) => state.setHasCreatedANewAlert,
-  );
+  const router = useRouter();
+  const { userStatus } = useStatus();
 
   const limit = 100;
 
@@ -41,12 +36,8 @@ export function DevicesWrapper({
     return userId;
   }
 
-  function handleChangeAlertStoreState() {
-    setHasCreatedANewAlert(false);
-  }
-
   const redirectToPolicePage = () => {
-    setHasCreatedANewAlert(false);
+    setIsRedirectModalOpen(false);
     window.open(
       "https://delegaciaonline.pc.pb.gov.br/tipo-ocorrencia",
       "_blank",
@@ -58,13 +49,6 @@ export function DevicesWrapper({
     router.push("/cadastrar-dispositivo");
     setIsLoading(true);
   }
-
-  useEffect(() => {
-    console.log(hasCreatedANewAlert);
-    // if (hasCreatedANewDevice) {
-    //   setIsDialogOpen(true);
-    // }
-  }, [hasCreatedANewAlert]);
 
   useEffect(() => {
     const getDevices = async () => {
@@ -99,6 +83,7 @@ export function DevicesWrapper({
           pages={pages}
           isLoading={isLoading}
           deviceNotificationId={deviceNotificationId}
+          setIsRedirectModalOpen={setIsRedirectModalOpen}
         />
         <Button
           onClick={showLoadingToast}
@@ -119,18 +104,19 @@ export function DevicesWrapper({
           isLoading={isLoading}
           setIsLoading={setIsLoading}
           deviceNotificationId={deviceNotificationId}
-        />
-
-        <ConfirmationDialog
-          title="Alerta cadastrado com sucesso"
-          description="Deseja abrir um boletim de ocorrência na Delegacia online da Paraíba?"
-          cancelText="Agora não"
-          confirmText="Criar boletim"
-          isOpen={hasCreatedANewAlert}
-          onConfirm={() => redirectToPolicePage()}
-          onCancel={handleChangeAlertStoreState}
+          setIsRedirectModalOpen={setIsRedirectModalOpen}
         />
       </div>
+
+      <ConfirmationDialog
+        title="Alerta cadastrado com sucesso"
+        description="Deseja abrir um boletim de ocorrência na Delegacia online da Paraíba?"
+        cancelText="Agora não"
+        confirmText="Criar boletim"
+        isOpen={isRedirectModalOpen}
+        onConfirm={() => redirectToPolicePage()}
+        onCancel={() => setIsRedirectModalOpen(false)}
+      />
     </>
   );
 }

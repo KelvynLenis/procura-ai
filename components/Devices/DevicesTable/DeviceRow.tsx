@@ -47,6 +47,7 @@ interface DeviceRowProps {
   setDevices: React.Dispatch<React.SetStateAction<DeviceProps[]>>;
   index: number;
   deviceNotificationId?: string;
+  setIsRedirectModalOpen?: (value: boolean) => void;
 }
 
 export function DeviceRow({
@@ -71,6 +72,7 @@ export function DeviceRow({
   const [isViewAlertModalOpen, setIsViewAlertModalOpen] = useState(false);
   const [operator, setOperator] = useState<Operator>();
   const { userStatus } = useStatus();
+  const [isRedirectModalOpen, setIsRedirectModalOpen] = useState(false);
 
   const router = useRouter();
 
@@ -163,6 +165,15 @@ export function DeviceRow({
     router.push(`meus-dispositivos/edit/${id}`);
   }
 
+  const redirectToPolicePage = () => {
+    setIsRedirectModalOpen(false);
+    window.open(
+      "https://delegaciaonline.pc.pb.gov.br/tipo-ocorrencia",
+      "_blank",
+      "noopener,noreferrer",
+    );
+  };
+
   useEffect(() => {
     fetchOperator();
 
@@ -224,7 +235,7 @@ export function DeviceRow({
               device.status === "Furtado" && "bg-theft-bg p-1 text-theft-text",
               device.status === "Perdido" && "bg-lost-bg p-1 text-lost-text",
               device.status === "Solicitado" &&
-                "bg-requested-bg text-requested-text p-1",
+                "bg-requested-bg p-1 text-requested-text",
             )}
           >
             {device.status}
@@ -297,7 +308,7 @@ export function DeviceRow({
                               device.status === "Regular" &&
                                 "bg-lime-500/30 px-3 py-1 text-regular-text ring-lime-500",
                               device.status === "Solicitado" &&
-                                "bg-requested-bg text-requested-text p-1",
+                                "bg-requested-bg p-1 text-requested-text",
                             )}
                           >
                             {device.status}
@@ -387,6 +398,7 @@ export function DeviceRow({
                     isStolen={device.is_stolen!}
                     setDevices={setDevices}
                     setIsDialogOpen={setIsDialogOpen}
+                    setIsRedirectModalOpen={setIsRedirectModalOpen}
                     isPopup
                   />
                 </DialogContent>
@@ -395,6 +407,16 @@ export function DeviceRow({
           </div>
         </TableCell>
       </TableRow>
+
+      <ConfirmationDialog
+        title="Alerta cadastrado com sucesso"
+        description="Deseja abrir um boletim de ocorrência na Delegacia online da Paraíba?"
+        cancelText="Agora não"
+        confirmText="Criar boletim"
+        isOpen={isRedirectModalOpen}
+        onConfirm={() => redirectToPolicePage()}
+        onCancel={() => setIsRedirectModalOpen(false)}
+      />
     </>
   );
 }

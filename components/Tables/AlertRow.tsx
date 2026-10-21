@@ -13,9 +13,15 @@ interface AlertRowProps {
   index: number;
   occurrence?: OccurrencesProps;
   setOccurrences: React.Dispatch<React.SetStateAction<OccurrencesProps[]>>;
+  deviceNotificationId?: string;
 }
 
-export function AlertRow({ index, occurrence, setOccurrences }: AlertRowProps) {
+export function AlertRow({
+  index,
+  occurrence,
+  setOccurrences,
+  deviceNotificationId,
+}: AlertRowProps) {
   return (
     <>
       <TableRow className="text-base">
@@ -54,7 +60,10 @@ export function AlertRow({ index, occurrence, setOccurrences }: AlertRowProps) {
         </TableCell>
         <TableCell className="flex h-20 items-center gap-2 py-28 pr-7 md:py-10">
           <div className="flex w-full flex-col items-center gap-2 md:flex-row">
-            <OccurrenceDetails occurrence={occurrence} />
+            <OccurrenceDetails
+              occurrence={occurrence}
+              deviceNotificationId={deviceNotificationId}
+            />
             {occurrence?.event ? (
               <RecoverDeviceForm
                 occurrence={occurrence}

@@ -34,6 +34,7 @@ interface DevicesTableProps {
   pages?: number;
   limit?: number;
   isLoading?: boolean;
+  deviceNotificationId?: string;
 }
 
 export function AlertsTable({
@@ -41,6 +42,7 @@ export function AlertsTable({
   page,
   pages,
   limit,
+  deviceNotificationId,
 }: DevicesTableProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isFilterOptionsOpen, setIsFilterOptionsOpen] = useState(false);
@@ -387,6 +389,7 @@ export function AlertsTable({
                 index={index}
                 occurrence={occurence}
                 setOccurrences={setOccurrences}
+                deviceNotificationId={deviceNotificationId}
               />
             ))
           ) : (
