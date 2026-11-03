@@ -89,11 +89,11 @@ export function PendingIncidentModal({
             Se você foi furtado ou roubado, confirme a ocorrência.
           </p>
 
-          <div className="flex gap-3">
+          <div className="flex w-full gap-4">
             <Button
               type="button"
               variant="white"
-              className="flex-1 border border-[#0B7AF5] text-[#0B7AF5]"
+              className="w-full flex-1 text-sm"
               disabled={isClearing}
               onClick={onImOk}
             >
@@ -102,7 +102,7 @@ export function PendingIncidentModal({
             <Button
               type="button"
               variant="blue"
-              className="flex-1 bg-[#0B7AF5] hover:bg-[#0B7AF5]/90"
+              className="w-full flex-1 self-center text-sm"
               disabled={isClearing}
               onClick={onRegisterOccurrence}
             >
