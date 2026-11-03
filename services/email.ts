@@ -32,6 +32,20 @@ interface VerificationCodeEmailProps {
   code: string;
 }
 
+interface IncidentAlertEmailProps {
+  userName?: string;
+  userEmail: string;
+  kind: "roubo" | "furto";
+  deviceModel?: string;
+  deviceBrand?: string;
+  timeEvent?: string;
+  location?: string;
+  emergencyContacts?: Array<{
+    name: string;
+    email: string;
+  }>;
+}
+
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL ??
   "https://procuraai-homolog.secties.pb.gov.br/v1";
@@ -217,5 +231,100 @@ export const emailService = {
         },
       ],
     });
+  },
+
+  async sendIncidentAlertEmail({
+    userName,
+    userEmail,
+    kind,
+    deviceModel,
+    deviceBrand,
+    timeEvent,
+    location,
+    emergencyContacts,
+  }: IncidentAlertEmailProps) {
+    const displayName = userName?.trim() || "Usuario";
+    const deviceLabel = [deviceBrand, deviceModel].filter(Boolean).join(" / ") || "seu dispositivo";
+    const suggestedType = kind === "roubo" ? "Roubo" : "Furto";
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL ??
+      "https://procuraai-homolog.secties.pb.gov.br";
+
+    const content = `
+      <h2 style="color: #212A38; font-family: Roboto, Arial, sans-serif; font-weight: 600; font-style: normal; font-size: 20px; line-height: 100%; letter-spacing: 0%;">
+        Olá, ${displayName}!
+      </h2>
+
+      <p style="font-family: Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; font-size: 14px; line-height: 150%; letter-spacing: 0%; color: #232323;">
+        Detectamos atividade suspeita no dispositivo <strong>${deviceLabel}</strong>.
+        Isso pode indicar um possível <strong>${suggestedType.toLowerCase()}</strong>.
+      </p>
+
+      <div style="background-color: #C4F3F2; padding: 16px; border-radius: 8px; margin: 20px 0;">
+        <p style="margin: 0 0 8px 0; font-family: Roboto, Arial, sans-serif; font-size: 14px; color: #212A38;">
+          <strong>Ocorrência sugerida:</strong> ${suggestedType}
+        </p>
+        <p style="margin: 0 0 8px 0; font-family: Roboto, Arial, sans-serif; font-size: 14px; color: #212A38;">
+          <strong>Data:</strong> ${timeEvent || "—"}
+        </p>
+        <p style="margin: 0; font-family: Roboto, Arial, sans-serif; font-size: 14px; color: #212A38;">
+          <strong>Local aproximado:</strong> ${location || "Local não disponível"}
+        </p>
+      </div>
+
+      <p style="font-family: Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; font-size: 14px; line-height: 150%; letter-spacing: 0%; color: #232323;">
+        Abra o Procura.Aí em outro aparelho ou no navegador para confirmar a ocorrência ou marcar que está tudo bem.
+      </p>
+
+      <div style="text-align: center; margin: 24px 0;">
+        <a
+          href="${baseUrl}/meus-dispositivos"
+          style="
+            display: inline-block;
+            padding: 12px 28px;
+            background-color: #0B7AF5;
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: 40px;
+            font-family: Roboto, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+          "
+        >
+          Abrir Procura.Aí
+        </a>
+      </div>
+    `.trim();
+
+    const emailContent = buildEmailLayout({
+      title: "Possível incidente detectado",
+      content,
+      type: "verification",
+    });
+
+    const recipients = new Map<string, { email: string; name?: string }>();
+    recipients.set(userEmail.toLowerCase(), {
+      email: userEmail,
+      name: displayName,
+    });
+
+    for (const contact of emergencyContacts ?? []) {
+      if (!contact?.email) continue;
+      const key = contact.email.toLowerCase();
+      if (!recipients.has(key)) {
+        recipients.set(key, {
+          email: contact.email,
+          name: contact.name,
+        });
+      }
+    }
+
+    for (const recipient of recipients.values()) {
+      await this.sendEmail({
+        subject: "Possível incidente detectado | ProcuraAí",
+        content: emailContent,
+        users: [recipient],
+      });
+    }
   },
 }; 
