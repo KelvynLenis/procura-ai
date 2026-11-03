@@ -3,6 +3,7 @@ import { CustomSidebarTrigger } from "@/components/CustomSidebarTrigger";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MobileNavBar } from "@/components/MobileNavBar";
+import { PendingIncidentGuard } from "@/components/PendingIncidentGuard";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { AppSidebar } from "@/components/Sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -28,6 +29,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </main>
         <Footer />
         <MobileNavBar />
+        <PendingIncidentGuard />
       </NotificationProvider>
     </ProtectedRoute>
   );

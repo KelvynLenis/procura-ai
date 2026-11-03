@@ -43,6 +43,9 @@ import { MarkAsStolenMapWithGeocoding2 } from "../Maps/MarkAsStolenMapWithGeocod
 import { MarkAsStolenMapGoogle } from "../Maps/MarkAsStolenMapGoogle";
 import { MarkAsStolenMap } from "../Maps/MarkAsStolenMap";
 import { useAlertStore } from "@/store/alert.store";
+import { deleteIncidentDraft } from "@/functions/incident/delete-incident-draft";
+import { deleteIncidentEvidence } from "@/functions/incident/delete-incident-evidence";
+import { notifyDevicesChanged } from "@/lib/device-events";
 
 interface MarkAsStolenFormProps {
   id: string;
@@ -52,6 +55,13 @@ interface MarkAsStolenFormProps {
   setIsDialogOpen?: (value: boolean) => void;
   isPopup?: boolean;
   setIsRedirectModalOpen?: (value: boolean) => void;
+  initialType?: string;
+  initialDescription?: string;
+  initialDatetime?: string;
+  initialCoordinates?: [number, number];
+  draftId?: string;
+  evidenceUri?: string | null;
+  onDraftCleared?: () => void;
 }
 
 const formSchema = z
@@ -97,6 +107,13 @@ export function AlertForm({
   setIsDialogOpen,
   isPopup,
   setIsRedirectModalOpen,
+  initialType = "",
+  initialDescription = "",
+  initialDatetime = "",
+  initialCoordinates,
+  draftId,
+  evidenceUri,
+  onDraftCleared,
 }: MarkAsStolenFormProps) {
   const size = useWindowSize();
   const [isIOS, setIsIOS] = useState(false);
@@ -116,10 +133,10 @@ export function AlertForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      datetime: "",
-      description: "",
-      type: "",
-      coordinates: [0, 0],
+      datetime: initialDatetime || "",
+      description: initialDescription || "",
+      type: initialType || "",
+      coordinates: initialCoordinates ?? [0, 0],
       id_district: "",
     },
   });
@@ -203,6 +220,19 @@ export function AlertForm({
             }
           }
 
+          if (draftId) {
+            await deleteIncidentDraft(draftId);
+            try {
+              await deleteIncidentEvidence(evidenceUri);
+            } catch (evidenceError) {
+              console.error(
+                "Erro ao apagar evidência do rascunho:",
+                evidenceError,
+              );
+            }
+            onDraftCleared?.();
+          }
+
           return true;
         } catch (error) {
           console.error("Ocorreu um erro em uma das operações:", error);
@@ -217,17 +247,24 @@ export function AlertForm({
       });
 
       if (success) {
+        const nextStatus = getDeviceStatus(values.type);
+
         setDevices((prevDevices) =>
           prevDevices.map((device) =>
             device.$id === id
               ? {
                   ...device,
                   is_stolen: true,
-                  status: getDeviceStatus(values.type),
+                  status: nextStatus,
                 }
               : device,
           ),
         );
+        notifyDevicesChanged({
+          deviceId: id,
+          status: nextStatus,
+          is_stolen: true,
+        });
 
         setIsDialogOpen?.(false);
         setIsRedirectModalOpen?.(true);
@@ -256,7 +293,8 @@ export function AlertForm({
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         onKeyDown={(e) => {
-          if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+          const target = e.target as HTMLElement;
+          if (e.key === "Enter" && target.tagName !== "TEXTAREA") {
             e.preventDefault();
           }
         }}
@@ -372,6 +410,7 @@ export function AlertForm({
                     <GoogleMap
                       setPosition={handleSetPosition}
                       setNeighborhoodId={handleSetNeighborhood}
+                      initialPosition={initialCoordinates}
                     />
                   </FormControl>
                   <FormMessage />
