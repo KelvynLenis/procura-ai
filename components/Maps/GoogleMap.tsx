@@ -17,11 +17,13 @@ const geoJsonPB = process.env.NEXT_PUBLIC_PARAIBA_GEOJSON_URL!;
 interface GoogleMapProps {
   setPosition: (coordinates: [number, number]) => void;
   setNeighborhoodId: (districtId: string) => void;
+  initialPosition?: [number, number];
 }
 
 export default function GoogleMap({
   setPosition,
   setNeighborhoodId,
+  initialPosition,
 }: GoogleMapProps) {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const markerRef = useRef<google.maps.Marker | null>(null);
@@ -185,9 +187,18 @@ export default function GoogleMap({
     const initializeMap = () => {
       if (!window.google || !mapRef.current) return;
 
+      const hasInitial =
+        Array.isArray(initialPosition) &&
+        initialPosition.length >= 2 &&
+        !(initialPosition[0] === 0 && initialPosition[1] === 0);
+
+      const center = hasInitial
+        ? { lat: initialPosition![0], lng: initialPosition![1] }
+        : { lat: -7.1509317, lng: -34.8446769 };
+
       const map = new google.maps.Map(mapRef.current, {
-        zoom: 12,
-        center: { lat: -7.1509317, lng: -34.8446769 },
+        zoom: hasInitial ? 14 : 12,
+        center,
         restriction: {
           latLngBounds: {
             north: -5.7,
@@ -203,6 +214,12 @@ export default function GoogleMap({
       });
 
       mapInstance.current = map;
+
+      if (hasInitial) {
+        setMarker(center, map);
+        setPosition([center.lat, center.lng]);
+        checkDistrict(center);
+      }
 
       map.addListener("click", (event) => {
         const latLng = {
