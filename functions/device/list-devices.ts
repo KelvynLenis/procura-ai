@@ -45,6 +45,7 @@ export async function listDevices({
       `${process.env.NEXT_PUBLIC_API_URL}/databases/${process.env.NEXT_PUBLIC_DATABASE_ID}/collections/${process.env.NEXT_PUBLIC_COLLECTION_DEVICE}/documents?${params.toString()}`,
       {
         method: "GET",
+        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
           "X-Appwrite-Project": `${process.env.NEXT_PUBLIC_APP_WRITE_PROJECT_ID}`,

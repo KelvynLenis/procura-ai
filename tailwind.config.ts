@@ -41,6 +41,8 @@ export default {
         "recovered-text": "rgb(33 127 125)",
         "requested-text": "rgb(40 96 208)",
         "requested-bg": "rgb(40 96 208 / 0.26)",
+        "suspect-bg": "rgb(216 169 19 / 0.26)",
+        "suspect-text": "#C89900",
         "heat-1": "#FECF3E",
         "heat-2": "#F3AD39",
         "heat-3": "#E78A33",

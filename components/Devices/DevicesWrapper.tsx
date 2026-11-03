@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { DeviceProps } from "@/types";
 import { account } from "@/lib/appwrite";
 import Button from "../Button";
@@ -9,7 +9,10 @@ import { DevicesTable } from "./DevicesTable/DevicesTable";
 import { listDevices } from "@/functions/device/list-devices";
 import { useStatus } from "@/hooks/useStatus";
 import { useRouter } from "next/navigation";
-import { useAlertStore } from "@/store/alert.store";
+import {
+  DEVICES_CHANGED_EVENT,
+  type DevicesChangedDetail,
+} from "@/lib/device-events";
 
 import { ConfirmationDialog } from "../ConfirmationDialog";
 
@@ -50,9 +53,9 @@ export function DevicesWrapper({
     setIsLoading(true);
   }
 
-  useEffect(() => {
-    const getDevices = async () => {
-      setIsLoading(true);
+  const getDevices = useCallback(
+    async (showLoading = true) => {
+      if (showLoading) setIsLoading(true);
       try {
         const userId = await getUserId();
         const result = await listDevices({ userId, limit, page });
@@ -64,12 +67,43 @@ export function DevicesWrapper({
       } catch (err) {
         console.error("Erro ao buscar dispositivos:", err);
       } finally {
-        setIsLoading(false);
+        if (showLoading) setIsLoading(false);
       }
+    },
+    [page, limit],
+  );
+
+  useEffect(() => {
+    getDevices();
+  }, [getDevices]);
+
+  useEffect(() => {
+    const handleDevicesChanged = (event: Event) => {
+      const detail = (event as CustomEvent<DevicesChangedDetail | undefined>)
+        .detail;
+
+      if (detail?.deviceId) {
+        setDevices((prevDevices) =>
+          prevDevices.map((device) =>
+            device.$id === detail.deviceId
+              ? {
+                  ...device,
+                  status: detail.status,
+                  is_stolen: detail.is_stolen,
+                }
+              : device,
+          ),
+        );
+      }
+
+      void getDevices(false);
     };
 
-    getDevices();
-  }, [page, limit]);
+    window.addEventListener(DEVICES_CHANGED_EVENT, handleDevicesChanged);
+    return () => {
+      window.removeEventListener(DEVICES_CHANGED_EVENT, handleDevicesChanged);
+    };
+  }, [getDevices]);
 
   return (
     <>

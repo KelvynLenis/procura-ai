@@ -236,6 +236,8 @@ export function DeviceRow({
               device.status === "Perdido" && "bg-lost-bg p-1 text-lost-text",
               device.status === "Solicitado" &&
                 "bg-requested-bg p-1 text-requested-text",
+              device.status === "Suspeito" &&
+                "bg-suspect-bg p-1 text-suspect-text",
             )}
           >
             {device.status}
@@ -309,6 +311,8 @@ export function DeviceRow({
                                 "bg-lime-500/30 px-3 py-1 text-regular-text ring-lime-500",
                               device.status === "Solicitado" &&
                                 "bg-requested-bg p-1 text-requested-text",
+                              device.status === "Suspeito" &&
+                                "bg-suspect-bg px-3 py-1 text-suspect-text",
                             )}
                           >
                             {device.status}

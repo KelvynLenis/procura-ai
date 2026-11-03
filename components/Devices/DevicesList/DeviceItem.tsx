@@ -113,6 +113,7 @@ export function DeviceItem({
               status === "Regular" && "bg-regular-bg p-2 text-regular-text",
               status === "Furtado" && "bg-theft-bg p-2 text-theft-text",
               status === "Perdido" && "bg-lost-bg p-2 text-lost-text",
+              status === "Suspeito" && "bg-suspect-bg p-2 text-suspect-text",
             )}
           >
             {status.replace(" ", "")}
