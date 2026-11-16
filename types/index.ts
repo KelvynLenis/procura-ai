@@ -9,6 +9,7 @@ import type { UserSchema } from "./userSchema";
 import type OperatorSchema from "./operatorSchema";
 import NotificationSchema from "./NotificationSchema";
 import TransferSchema from "./transferSchema";
+import type { IncidentDraft as IncidentDraftType } from "./incidentDraftSchema";
 
 export interface DeviceProps {
   $id?: string; // ID do dispositivo
@@ -69,3 +70,4 @@ export type User = z.infer<typeof UserSchema>;
 export type Operator = z.infer<typeof OperatorSchema>;
 export type Notification = z.infer<typeof NotificationSchema>;
 export type Transfer = z.infer<typeof TransferSchema>;
+export type IncidentDraft = IncidentDraftType;

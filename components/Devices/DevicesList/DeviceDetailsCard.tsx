@@ -334,6 +334,7 @@ export function DeviceDetailsCard({
                 status === "Regular" && "bg-regular-bg p-1 text-regular-text",
                 status === "Furtado" && "bg-theft-bg p-1 text-theft-text",
                 status === "Perdido" && "bg-lost-bg p-1 text-lost-text",
+                status === "Suspeito" && "bg-suspect-bg p-1 text-suspect-text",
               )}
             >
               {status === "Recuperado" ? "Regular" : status.replace(" ", "")}
